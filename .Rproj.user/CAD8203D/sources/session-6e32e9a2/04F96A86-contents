@@ -4,3 +4,4 @@ git commit -m "Crear sitio inicial del curso"
 git branch -M main
 git remote add origin https://github.com/tu-usuario/bioestadistica-avanzada.git
 git push -u origin main
+margerRaffes3cengum
