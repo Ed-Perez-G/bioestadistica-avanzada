@@ -2,15 +2,85 @@
   {
     "objectID": "about.html",
     "href": "about.html",
-    "title": "About",
+    "title": "Acerca del curso",
     "section": "",
-    "text": "About this site\n\n1 + 1\n\n[1] 2"
+    "text": "Este es un curso de nivel intermedio-avanzado que se enfocado en el análisis de datos biomédicos con R. Este curso se retomarán aspectos básicos de R relacionados con la en la exploración, limpieza, manipulación y manejo de bases de datos. Además, se revisarán y aplicarán métodos bioestadísticos avanzados, como regresión múltiple, regresión logística, datos longitudinales, análisis de supervivencia, medidas repetidas, agrupamiento de datos, técnicas de reducción dimensiones e imputación de datos.\nEl curso busca el desarrollo del pensamiento bioestadístico, el pensamiento crítico y las habilidades de programación necesarias para seleccionar, implementar, diagnosticar e interpretar modelos, así como para comunicar sus resultados y limitaciones de manera clara y reproducible. Los ejercicios y proyectos utilizarán datos biomédicos y podrán incorporar ejemplos de genética humana y biología molecular"
+  },
+  {
+    "objectID": "about.html#descripción-del-curso",
+    "href": "about.html#descripción-del-curso",
+    "title": "Acerca del curso",
+    "section": "",
+    "text": "Este es un curso de nivel intermedio-avanzado que se enfocado en el análisis de datos biomédicos con R. Este curso se retomarán aspectos básicos de R relacionados con la en la exploración, limpieza, manipulación y manejo de bases de datos. Además, se revisarán y aplicarán métodos bioestadísticos avanzados, como regresión múltiple, regresión logística, datos longitudinales, análisis de supervivencia, medidas repetidas, agrupamiento de datos, técnicas de reducción dimensiones e imputación de datos.\nEl curso busca el desarrollo del pensamiento bioestadístico, el pensamiento crítico y las habilidades de programación necesarias para seleccionar, implementar, diagnosticar e interpretar modelos, así como para comunicar sus resultados y limitaciones de manera clara y reproducible. Los ejercicios y proyectos utilizarán datos biomédicos y podrán incorporar ejemplos de genética humana y biología molecular"
+  },
+  {
+    "objectID": "about.html#organización-del-sitio",
+    "href": "about.html#organización-del-sitio",
+    "title": "Acerca del curso",
+    "section": "Organización del sitio",
+    "text": "Organización del sitio\nEste sitio reúne los materiales de apoyo de la asignatura Bioestadística avanzada con R. Su propósito es facilitar el acceso a las notas de clase, scripts, conjuntos de datos, ejercicios y otros recursos utilizados durante el curso.\nLos contenidos están organizados por tema. En cada sección se podrán encontrar, según corresponda:\n\nObjetivos y contenidos de la sesión.\nNotas y conceptos revisados en clase.\nScripts iniciales para seguir las demostraciones.\nScripts desarrollados o completados durante la clase.\nConjuntos de datos para realizar los análisis.\nEjercicios de práctica.\nSoluciones comentadas, una vez que sean publicadas.\nLecturas y recursos complementarios.\n\n\n\n\n\n\n\nNoteImportante\n\n\n\nEste sitio funciona únicamente como repositorio de materiales académicos. Los avisos oficiales, actividades, fechas de entrega, recepción de tareas, retroalimentación y calificaciones se gestionarán mediante Google Classroom."
+  },
+  {
+    "objectID": "about.html#uso-de-los-materiales",
+    "href": "about.html#uso-de-los-materiales",
+    "title": "Acerca del curso",
+    "section": "Uso de los materiales",
+    "text": "Uso de los materiales\nLos documentos pueden consultarse directamente desde el navegador. Los scripts y conjuntos de datos también podrán descargarse para trabajar en RStudio.\nLos materiales se actualizarán progresivamente durante el semestre. Por ello, se recomienda consultar la página correspondiente antes y después de cada sesión.\nCuando existan dos versiones de un script, se utilizarán los siguientes nombres:\n\nScript inicial: archivo preparado para comenzar la actividad.\nScript de clase: versión desarrollada o completada durante la sesión.\nSolución comentada: propuesta de resolución publicada posteriormente."
+  },
+  {
+    "objectID": "about.html#reproducibilidad",
+    "href": "about.html#reproducibilidad",
+    "title": "Acerca del curso",
+    "section": "Reproducibilidad",
+    "text": "Reproducibilidad\nLos ejemplos del curso se desarrollarán mediante R y Quarto. Siempre que sea posible, los análisis incluirán el código, los resultados y su interpretación para que puedan ser reproducidos y modificados por los estudiantes.\nPara la construccción de este sitio se empleó: R version 4.5.1 (2025-06-13) y RStudio 2026.08.0+187 (2026.08.0+187)."
+  },
+  {
+    "objectID": "about.html#responsabilidad-del-estudiante",
+    "href": "about.html#responsabilidad-del-estudiante",
+    "title": "Acerca del curso",
+    "section": "Responsabilidad del estudiante",
+    "text": "Responsabilidad del estudiante\nLos materiales del sitio complementan las explicaciones y actividades de clase, pero no sustituyen la participación en las sesiones ni la consulta de las instrucciones oficiales publicadas en Google Classroom."
   },
   {
     "objectID": "index.html",
     "href": "index.html",
-    "title": "ioestadistica-avanzada",
+    "title": "Bioestadística avanzada con R",
     "section": "",
-    "text": "This is a Quarto website.\nTo learn more about Quarto websites visit https://quarto.org/docs/websites.\n\n1 + 1\n\n[1] 2"
+    "text": "En este sitio contiene los recursos y materiales para el curso-taller de bioestadística avanzada del doctorado en genética humana."
+  },
+  {
+    "objectID": "temas/tema-01/index.html",
+    "href": "temas/tema-01/index.html",
+    "title": "Tema 1: Repaso de R y análisis reproducible",
+    "section": "",
+    "text": "Organizar y documentar un flujo completo de análisis utilizando R, tidyverse y Quarto."
+  },
+  {
+    "objectID": "temas/tema-01/index.html#objetivo",
+    "href": "temas/tema-01/index.html#objetivo",
+    "title": "Tema 1: Repaso de R y análisis reproducible",
+    "section": "",
+    "text": "Organizar y documentar un flujo completo de análisis utilizando R, tidyverse y Quarto."
+  },
+  {
+    "objectID": "temas/tema-01/index.html#contenidos",
+    "href": "temas/tema-01/index.html#contenidos",
+    "title": "Tema 1: Repaso de R y análisis reproducible",
+    "section": "Contenidos",
+    "text": "Contenidos\n\nRepaso selectivo de R.\nOrganización de proyectos.\nIntroducción a Quarto.\nImportación y transformación de datos.\nElaboración de reportes reproducibles."
+  },
+  {
+    "objectID": "temas/tema-01/index.html#material-de-clase",
+    "href": "temas/tema-01/index.html#material-de-clase",
+    "title": "Tema 1: Repaso de R y análisis reproducible",
+    "section": "Material de clase",
+    "text": "Material de clase\nRepaso de R y fundamentos de Quarto"
+  },
+  {
+    "objectID": "temas/tema-01/index.html#archivos-para-descargar",
+    "href": "temas/tema-01/index.html#archivos-para-descargar",
+    "title": "Tema 1: Repaso de R y análisis reproducible",
+    "section": "Archivos para descargar",
+    "text": "Archivos para descargar\nDescargar el reporte en PDF"
   }
 ]

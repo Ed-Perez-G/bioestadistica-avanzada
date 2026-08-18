@@ -1,0 +1,1393 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="es" xml:lang="es"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.8.25">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Edsaúl Emilio Pérez Guerrero">
+
+<title>Repaso de R y fundamentos de Quarto – Bioestadística avanzada</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../site_libs/quarto-html/axe/axe-check.js" type="module"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-7b89279ff1a6dce999919e0e67d4d9ec.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap-a8976c3e89df70b272bdfba3d2fda974.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No se han encontrado resultados",
+    "search-matching-documents-text": "documentos encontrados",
+    "search-copy-link-title": "Copiar el enlace en la búsqueda",
+    "search-hide-matches-text": "Ocultar resultados adicionales",
+    "search-more-match-text": "resultado adicional en este documento",
+    "search-more-matches-text": "resultados adicionales en este documento",
+    "search-clear-button-title": "Borrar",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancelar",
+    "search-submit-button-title": "Enviar",
+    "search-label": "Buscar"
+  }
+}</script>
+
+
+<link rel="stylesheet" href="../../styles.css">
+</head>
+
+<body class="nav-fixed quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a href="../../index.html" class="navbar-brand navbar-brand-logo">
+    </a>
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">Bioestadística avanzada</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Buscar"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Navegación de palanca" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../index.html"> 
+<span class="menu-text">Inicio</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../about.html"> 
+<span class="menu-text">Acerca del curso</span></a>
+  </li>  
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-temas" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Temas</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-temas">    
+        <li>
+    <a class="dropdown-item" href="../../temas/tema-01/index.html">
+ <span class="dropdown-text">Tema 1: Repaso de R y análisis reproducible</span></a>
+  </li>  
+    </ul>
+  </li>
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">En esta página</h2>
+   
+  <ul>
+  <li><a href="#presentación-de-la-sesión" id="toc-presentación-de-la-sesión" class="nav-link active" data-scroll-target="#presentación-de-la-sesión">Presentación de la sesión</a>
+  <ul class="collapse">
+  <li><a href="#objetivo-de-aprendizaje" id="toc-objetivo-de-aprendizaje" class="nav-link" data-scroll-target="#objetivo-de-aprendizaje">Objetivo de aprendizaje</a></li>
+  <li><a href="#productos-de-la-sesión" id="toc-productos-de-la-sesión" class="nav-link" data-scroll-target="#productos-de-la-sesión">Productos de la sesión</a></li>
+  <li><a href="#organización-sugerida-de-las-dos-horas" id="toc-organización-sugerida-de-las-dos-horas" class="nav-link" data-scroll-target="#organización-sugerida-de-las-dos-horas">Organización sugerida de las dos horas</a></li>
+  </ul></li>
+  <li><a href="#qué-significa-que-un-análisis-sea-reproducible" id="toc-qué-significa-que-un-análisis-sea-reproducible" class="nav-link" data-scroll-target="#qué-significa-que-un-análisis-sea-reproducible">¿Qué significa que un análisis sea reproducible?</a></li>
+  <li><a href="#organización-del-proyecto" id="toc-organización-del-proyecto" class="nav-link" data-scroll-target="#organización-del-proyecto">Organización del proyecto</a></li>
+  <li><a href="#anatomía-de-un-documento-quarto" id="toc-anatomía-de-un-documento-quarto" class="nav-link" data-scroll-target="#anatomía-de-un-documento-quarto">Anatomía de un documento Quarto</a></li>
+  <li><a href="#preparación-del-entorno" id="toc-preparación-del-entorno" class="nav-link" data-scroll-target="#preparación-del-entorno">Preparación del entorno</a></li>
+  <li><a href="#repaso-selectivo-de-r" id="toc-repaso-selectivo-de-r" class="nav-link" data-scroll-target="#repaso-selectivo-de-r">Repaso selectivo de R</a>
+  <ul class="collapse">
+  <li><a href="#r-como-calculadora" id="toc-r-como-calculadora" class="nav-link" data-scroll-target="#r-como-calculadora">R como calculadora</a></li>
+  <li><a href="#objetos-y-asignación" id="toc-objetos-y-asignación" class="nav-link" data-scroll-target="#objetos-y-asignación">Objetos y asignación</a></li>
+  <li><a href="#vectores" id="toc-vectores" class="nav-link" data-scroll-target="#vectores">Vectores</a></li>
+  <li><a href="#valores-faltantes" id="toc-valores-faltantes" class="nav-link" data-scroll-target="#valores-faltantes">Valores faltantes</a></li>
+  <li><a href="#clases-de-objetos" id="toc-clases-de-objetos" class="nav-link" data-scroll-target="#clases-de-objetos">Clases de objetos</a></li>
+  </ul></li>
+  <li><a href="#creación-de-los-datos-de-práctica" id="toc-creación-de-los-datos-de-práctica" class="nav-link" data-scroll-target="#creación-de-los-datos-de-práctica">Creación de los datos de práctica</a></li>
+  <li><a href="#exploración-inicial-de-los-datos" id="toc-exploración-inicial-de-los-datos" class="nav-link" data-scroll-target="#exploración-inicial-de-los-datos">Exploración inicial de los datos</a>
+  <ul class="collapse">
+  <li><a href="#pausa-de-interpretación" id="toc-pausa-de-interpretación" class="nav-link" data-scroll-target="#pausa-de-interpretación">Pausa de interpretación</a></li>
+  </ul></li>
+  <li><a href="#transformación-con-tidyverse" id="toc-transformación-con-tidyverse" class="nav-link" data-scroll-target="#transformación-con-tidyverse">Transformación con <code>tidyverse</code></a>
+  <ul class="collapse">
+  <li><a href="#seleccionar-variables" id="toc-seleccionar-variables" class="nav-link" data-scroll-target="#seleccionar-variables">Seleccionar variables</a></li>
+  <li><a href="#filtrar-observaciones" id="toc-filtrar-observaciones" class="nav-link" data-scroll-target="#filtrar-observaciones">Filtrar observaciones</a></li>
+  <li><a href="#crear-o-modificar-variables" id="toc-crear-o-modificar-variables" class="nav-link" data-scroll-target="#crear-o-modificar-variables">Crear o modificar variables</a></li>
+  <li><a href="#resumir-por-grupos" id="toc-resumir-por-grupos" class="nav-link" data-scroll-target="#resumir-por-grupos">Resumir por grupos</a></li>
+  </ul></li>
+  <li><a href="#presentación-de-resultados" id="toc-presentación-de-resultados" class="nav-link" data-scroll-target="#presentación-de-resultados">Presentación de resultados</a>
+  <ul class="collapse">
+  <li><a href="#tabla-descriptiva" id="toc-tabla-descriptiva" class="nav-link" data-scroll-target="#tabla-descriptiva">Tabla descriptiva</a></li>
+  <li><a href="#visualización" id="toc-visualización" class="nav-link" data-scroll-target="#visualización">Visualización</a></li>
+  <li><a href="#interpretación-de-la-figura" id="toc-interpretación-de-la-figura" class="nav-link" data-scroll-target="#interpretación-de-la-figura">Interpretación de la figura</a></li>
+  </ul></li>
+  <li><a href="#actividad-integradora" id="toc-actividad-integradora" class="nav-link" data-scroll-target="#actividad-integradora">Actividad integradora</a>
+  <ul class="collapse">
+  <li><a href="#desarrollo" id="toc-desarrollo" class="nav-link" data-scroll-target="#desarrollo">Desarrollo</a>
+  <ul class="collapse">
+  <li><a href="#discusión" id="toc-discusión" class="nav-link" data-scroll-target="#discusión">Discusión</a></li>
+  </ul></li>
+  </ul></li>
+  <li><a href="#renderización-del-reporte" id="toc-renderización-del-reporte" class="nav-link" data-scroll-target="#renderización-del-reporte">Renderización del reporte</a></li>
+  <li><a href="#lista-de-verificación" id="toc-lista-de-verificación" class="nav-link" data-scroll-target="#lista-de-verificación">Lista de verificación</a></li>
+  <li><a href="#cierre" id="toc-cierre" class="nav-link" data-scroll-target="#cierre">Cierre</a></li>
+  <li><a href="#información-de-la-sesión-de-r" id="toc-información-de-la-sesión-de-r" class="nav-link" data-scroll-target="#información-de-la-sesión-de-r">Información de la sesión de R</a></li>
+  </ul>
+<div class="quarto-alternate-formats"><h2>Otros formatos</h2><ul><li><a href="tema-01-repaso-r-quarto.pdf"><i class="bi bi-file-pdf"></i>PDF</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Repaso de R y fundamentos de Quarto</h1>
+<p class="subtitle lead">Bioestadística avanzada con R · Semana 1</p>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Autor/a</div>
+    <div class="quarto-title-meta-contents">
+             <p>Edsaúl Emilio Pérez Guerrero </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Fecha de publicación</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">17 de agosto de 2026</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="presentación-de-la-sesión" class="level1">
+<h1>Presentación de la sesión</h1>
+<p>En esta sesión repasaremos los fundamentos de R mientras construimos un reporte reproducible con Quarto. El propósito no es revisar exhaustivamente la sintaxis del lenguaje, sino recuperar las herramientas necesarias para organizar, analizar, interpretar y comunicar datos biomédicos.</p>
+<p>Trabajaremos en un solo documento que integrará texto, código, resultados, tablas y figuras. Al finalizar, este documento se convertirá en un archivo PDF que podrá compartirse sin necesidad de entregar por separado el código y la interpretación.</p>
+<section id="objetivo-de-aprendizaje" class="level2">
+<h2 class="anchored" data-anchor-id="objetivo-de-aprendizaje">Objetivo de aprendizaje</h2>
+<p>Al finalizar la sesión, el estudiante será capaz de crear y renderizar un documento Quarto que importe, explore, transforme y resuma una base de datos mediante R y <code>tidyverse</code>, incorporando código, resultados e interpretaciones en un reporte reproducible.</p>
+</section>
+<section id="productos-de-la-sesión" class="level2">
+<h2 class="anchored" data-anchor-id="productos-de-la-sesión">Productos de la sesión</h2>
+<p>Al terminar la actividad, cada estudiante contará con:</p>
+<ul>
+<li>un proyecto organizado de R;</li>
+<li>un documento fuente en formato <code>.qmd</code>;</li>
+<li>un análisis básico y reproducible de datos;</li>
+<li>una tabla y una figura acompañadas de su interpretación;</li>
+<li>un reporte final en formato PDF.</li>
+</ul>
+</section>
+<section id="organización-sugerida-de-las-dos-horas" class="level2">
+<h2 class="anchored" data-anchor-id="organización-sugerida-de-las-dos-horas">Organización sugerida de las dos horas</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 18%">
+<col style="width: 81%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: right;">Tiempo</th>
+<th>Actividad</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">0–15 min</td>
+<td>Proyectos y análisis reproducible</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">15–35 min</td>
+<td>Anatomía de un documento Quarto</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">35–60 min</td>
+<td>Repaso selectivo de objetos y operaciones en R</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">60–90 min</td>
+<td>Importación, exploración y transformación con <code>tidyverse</code></td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">90–110 min</td>
+<td>Construcción de tablas, figuras e interpretación</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">110–120 min</td>
+<td>Renderización a PDF, revisión y cierre</td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="qué-significa-que-un-análisis-sea-reproducible" class="level1">
+<h1>¿Qué significa que un análisis sea reproducible?</h1>
+<p>Un análisis es reproducible cuando otra persona —o nosotros mismos en el futuro— puede reconstruir los resultados a partir de los datos y del código documentado. Esto requiere que la importación, la limpieza, las transformaciones, el análisis y la presentación de resultados formen parte de un flujo explícito.</p>
+<p>En un reporte reproducible:</p>
+<ul>
+<li>los datos originales se conservan sin modificaciones manuales;</li>
+<li>las transformaciones quedan registradas como código;</li>
+<li>las tablas y figuras se generan automáticamente;</li>
+<li>las decisiones analíticas se explican por escrito;</li>
+<li>el documento puede volver a ejecutarse cuando cambian los datos.</li>
+</ul>
+<div class="callout callout-style-default callout-note callout-titled" title="Idea central">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Nota</span>Idea central
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Un documento Quarto no es solamente un archivo de código. Es un reporte en el que conviven el razonamiento científico, el código, los resultados y su interpretación.</p>
+</div>
+</div>
+</section>
+<section id="organización-del-proyecto" class="level1">
+<h1>Organización del proyecto</h1>
+<p>Para esta práctica se propone la siguiente estructura:</p>
+<pre class="text"><code>semana-01/
+├── reporte_semana01.qmd
+├── datos/
+│   └── pacientes.csv
+├── scripts/
+└── figuras/</code></pre>
+<p>El archivo <code>.qmd</code> se guarda en la carpeta principal. Los datos se colocan dentro de <code>datos/</code>. De esta forma podemos utilizar rutas relativas, por ejemplo:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>readr<span class="sc">::</span><span class="fu">read_csv</span>(<span class="st">"datos/pacientes.csv"</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Debe evitarse el uso de rutas absolutas como:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># No ejecutar: solamente es un ejemplo</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>readr<span class="sc">::</span><span class="fu">read_csv</span>(<span class="st">"/Users/mi_nombre/Documentos/curso/pacientes.csv"</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Las rutas absolutas dependen de una computadora y de un usuario específicos. Las rutas relativas parten de la carpeta del proyecto y facilitan que el análisis funcione en otros equipos.</p>
+</section>
+<section id="anatomía-de-un-documento-quarto" class="level1">
+<h1>Anatomía de un documento Quarto</h1>
+<p>Un documento Quarto contiene tres elementos principales:</p>
+<ol type="1">
+<li><strong>Encabezado YAML:</strong> define el título, autor, fecha y formato de salida.</li>
+<li><strong>Texto en Markdown:</strong> contiene explicaciones, preguntas e interpretaciones.</li>
+<li><strong>Bloques de código:</strong> ejecutan el análisis y producen resultados.</li>
+</ol>
+<p>El encabezado de este documento se encuentra entre dos líneas de guiones al inicio del archivo. Un bloque de código de R se escribe de la siguiente manera:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>::: {.cell}</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="in">```{.r .cell-code}</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="dv">2</span> <span class="sc">+</span> <span class="dv">2</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>::: {.cell-output .cell-output-stdout}</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="in">[1] 4</span></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>:::</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Al renderizar el documento, Quarto ejecuta los bloques en orden e incorpora sus resultados al PDF.</p>
+<div class="callout callout-style-default callout-tip callout-titled" title="Buena práctica">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Buena práctica
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>El documento debe poder ejecutarse desde el inicio hasta el final en una sesión limpia de R. No debemos depender de objetos creados previamente en la consola.</p>
+</div>
+</div>
+</section>
+<section id="preparación-del-entorno" class="level1">
+<h1>Preparación del entorno</h1>
+<p>Comenzamos cargando los paquetes que utilizaremos. El paquete <code>tidyverse</code> reúne herramientas para importar, transformar, resumir y visualizar datos.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Si el paquete no está instalado, se instala una sola vez desde la consola:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">"tidyverse"</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<p>La instalación no debe incluirse como parte del análisis cotidiano, pues intentaría repetirse cada vez que se renderice el documento.</p>
+</section>
+<section id="repaso-selectivo-de-r" class="level1">
+<h1>Repaso selectivo de R</h1>
+<section id="r-como-calculadora" class="level2">
+<h2 class="anchored" data-anchor-id="r-como-calculadora">R como calculadora</h2>
+<p>R permite realizar operaciones aritméticas y utilizar funciones matemáticas.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="dv">2</span> <span class="sc">+</span> <span class="dv">3</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 5</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="dv">10</span> <span class="sc">/</span> <span class="dv">4</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 2.5</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="dv">2</span><span class="sc">^</span><span class="dv">3</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 8</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sqrt</span>(<span class="dv">25</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 5</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">log</span>(<span class="dv">10</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 2.302585</code></pre>
+</div>
+</div>
+</section>
+<section id="objetos-y-asignación" class="level2">
+<h2 class="anchored" data-anchor-id="objetos-y-asignación">Objetos y asignación</h2>
+<p>El operador <code>&lt;-</code> asigna un valor a un objeto.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>edad <span class="ot">&lt;-</span> <span class="dv">42</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>peso_kg <span class="ot">&lt;-</span> <span class="fl">71.5</span></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>estatura_m <span class="ot">&lt;-</span> <span class="fl">1.68</span></span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>imc <span class="ot">&lt;-</span> peso_kg <span class="sc">/</span> estatura_m<span class="sc">^</span><span class="dv">2</span></span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>imc</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 25.33305</code></pre>
+</div>
+</div>
+<p>Los nombres claros permiten entender el análisis sin depender de comentarios adicionales. Conviene evitar nombres ambiguos como <code>x</code>, <code>dato1</code> o <code>final_final</code>.</p>
+</section>
+<section id="vectores" class="level2">
+<h2 class="anchored" data-anchor-id="vectores">Vectores</h2>
+<p>Un vector reúne varios valores del mismo tipo.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>edades <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">34</span>, <span class="dv">51</span>, <span class="dv">46</span>, <span class="dv">29</span>, <span class="dv">63</span>)</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="fu">length</span>(edades)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 5</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(edades)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 44.6</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">median</span>(edades)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 46</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sd</span>(edades)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 13.57571</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">range</span>(edades)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 29 63</code></pre>
+</div>
+</div>
+</section>
+<section id="valores-faltantes" class="level2">
+<h2 class="anchored" data-anchor-id="valores-faltantes">Valores faltantes</h2>
+<p>R representa los valores faltantes mediante <code>NA</code>. Muchas funciones requieren indicar explícitamente cómo manejarlos.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>biomarcador <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fl">12.1</span>, <span class="fl">10.8</span>, <span class="cn">NA</span>, <span class="fl">13.4</span>, <span class="fl">11.7</span>)</span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a><span class="fu">is.na</span>(biomarcador)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] FALSE FALSE  TRUE FALSE FALSE</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sum</span>(<span class="fu">is.na</span>(biomarcador))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 1</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(biomarcador, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 12</code></pre>
+</div>
+</div>
+<div class="callout callout-style-default callout-important callout-titled" title="Interpretación">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Importante</span>Interpretación
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Usar <code>na.rm = TRUE</code> elimina temporalmente los valores faltantes para realizar el cálculo; no constituye un método de imputación ni resuelve el mecanismo que produjo la ausencia de datos.</p>
+</div>
+</div>
+</section>
+<section id="clases-de-objetos" class="level2">
+<h2 class="anchored" data-anchor-id="clases-de-objetos">Clases de objetos</h2>
+<p>La clase de una variable determina las operaciones que pueden realizarse con ella.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="fu">class</span>(<span class="dv">42</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "numeric"</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="fu">class</span>(<span class="st">"control"</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "character"</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="fu">class</span>(<span class="cn">TRUE</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "logical"</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="fu">class</span>(<span class="fu">as.Date</span>(<span class="st">"2026-08-17"</span>))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "Date"</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="creación-de-los-datos-de-práctica" class="level1">
+<h1>Creación de los datos de práctica</h1>
+<p>Para que este documento pueda ejecutarse desde el inicio, construiremos una pequeña base de datos simulada. En una práctica posterior sustituiremos este bloque por la importación de un archivo externo.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>pacientes <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">id =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">20</span>,</span>
+<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">grupo =</span> <span class="fu">rep</span>(<span class="fu">c</span>(<span class="st">"Control"</span>, <span class="st">"Tratamiento"</span>), <span class="at">each =</span> <span class="dv">10</span>),</span>
+<span id="cb43-4"><a href="#cb43-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">sexo =</span> <span class="fu">rep</span>(<span class="fu">c</span>(<span class="st">"Mujer"</span>, <span class="st">"Hombre"</span>), <span class="at">times =</span> <span class="dv">10</span>),</span>
+<span id="cb43-5"><a href="#cb43-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">edad =</span> <span class="fu">c</span>(<span class="dv">34</span>, <span class="dv">51</span>, <span class="dv">46</span>, <span class="dv">29</span>, <span class="dv">63</span>, <span class="dv">42</span>, <span class="dv">38</span>, <span class="dv">55</span>, <span class="dv">47</span>, <span class="dv">60</span>,</span>
+<span id="cb43-6"><a href="#cb43-6" aria-hidden="true" tabindex="-1"></a>           <span class="dv">36</span>, <span class="dv">49</span>, <span class="dv">41</span>, <span class="dv">32</span>, <span class="dv">58</span>, <span class="dv">45</span>, <span class="dv">39</span>, <span class="dv">53</span>, <span class="dv">44</span>, <span class="dv">57</span>),</span>
+<span id="cb43-7"><a href="#cb43-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">imc =</span> <span class="fu">c</span>(<span class="fl">23.1</span>, <span class="fl">27.4</span>, <span class="fl">25.8</span>, <span class="fl">22.6</span>, <span class="fl">30.2</span>, <span class="fl">26.1</span>, <span class="cn">NA</span>, <span class="fl">28.7</span>, <span class="fl">24.9</span>, <span class="fl">29.4</span>,</span>
+<span id="cb43-8"><a href="#cb43-8" aria-hidden="true" tabindex="-1"></a>          <span class="fl">22.8</span>, <span class="fl">25.6</span>, <span class="fl">24.2</span>, <span class="fl">21.9</span>, <span class="fl">27.5</span>, <span class="fl">23.7</span>, <span class="fl">24.5</span>, <span class="cn">NA</span>, <span class="fl">23.9</span>, <span class="fl">26.8</span>),</span>
+<span id="cb43-9"><a href="#cb43-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">biomarcador =</span> <span class="fu">c</span>(<span class="fl">12.4</span>, <span class="fl">14.1</span>, <span class="fl">13.2</span>, <span class="fl">11.8</span>, <span class="fl">15.7</span>, <span class="fl">13.6</span>, <span class="fl">12.9</span>, <span class="fl">15.1</span>, <span class="fl">13.5</span>, <span class="fl">14.8</span>,</span>
+<span id="cb43-10"><a href="#cb43-10" aria-hidden="true" tabindex="-1"></a>                  <span class="fl">10.9</span>, <span class="fl">12.3</span>, <span class="fl">11.4</span>, <span class="fl">10.7</span>, <span class="fl">13.1</span>, <span class="fl">11.6</span>, <span class="fl">11.2</span>, <span class="fl">12.8</span>, <span class="fl">11.5</span>, <span class="fl">12.4</span>)</span>
+<span id="cb43-11"><a href="#cb43-11" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb43-12"><a href="#cb43-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-13"><a href="#cb43-13" aria-hidden="true" tabindex="-1"></a>pacientes</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 20 × 6
+      id grupo       sexo    edad   imc biomarcador
+   &lt;int&gt; &lt;chr&gt;       &lt;chr&gt;  &lt;dbl&gt; &lt;dbl&gt;       &lt;dbl&gt;
+ 1     1 Control     Mujer     34  23.1        12.4
+ 2     2 Control     Hombre    51  27.4        14.1
+ 3     3 Control     Mujer     46  25.8        13.2
+ 4     4 Control     Hombre    29  22.6        11.8
+ 5     5 Control     Mujer     63  30.2        15.7
+ 6     6 Control     Hombre    42  26.1        13.6
+ 7     7 Control     Mujer     38  NA          12.9
+ 8     8 Control     Hombre    55  28.7        15.1
+ 9     9 Control     Mujer     47  24.9        13.5
+10    10 Control     Hombre    60  29.4        14.8
+11    11 Tratamiento Mujer     36  22.8        10.9
+12    12 Tratamiento Hombre    49  25.6        12.3
+13    13 Tratamiento Mujer     41  24.2        11.4
+14    14 Tratamiento Hombre    32  21.9        10.7
+15    15 Tratamiento Mujer     58  27.5        13.1
+16    16 Tratamiento Hombre    45  23.7        11.6
+17    17 Tratamiento Mujer     39  24.5        11.2
+18    18 Tratamiento Hombre    53  NA          12.8
+19    19 Tratamiento Mujer     44  23.9        11.5
+20    20 Tratamiento Hombre    57  26.8        12.4</code></pre>
+</div>
+</div>
+<p>Para practicar la importación desde un archivo, podemos guardar esta tabla como CSV. Esta instrucción se ejecuta una sola vez:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="fu">write_csv</span>(pacientes, <span class="st">"datos/pacientes.csv"</span>, <span class="at">na =</span> <span class="st">""</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Posteriormente, la importación se realiza así:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a>pacientes <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"datos/pacientes.csv"</span>, <span class="at">show_col_types =</span> <span class="cn">FALSE</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="exploración-inicial-de-los-datos" class="level1">
+<h1>Exploración inicial de los datos</h1>
+<p>Antes de aplicar cualquier modelo debemos conocer la estructura y la calidad de los datos.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(pacientes)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Rows: 20
+Columns: 6
+$ id          &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17,…
+$ grupo       &lt;chr&gt; "Control", "Control", "Control", "Control", "Control", "Co…
+$ sexo        &lt;chr&gt; "Mujer", "Hombre", "Mujer", "Hombre", "Mujer", "Hombre", "…
+$ edad        &lt;dbl&gt; 34, 51, 46, 29, 63, 42, 38, 55, 47, 60, 36, 49, 41, 32, 58…
+$ imc         &lt;dbl&gt; 23.1, 27.4, 25.8, 22.6, 30.2, 26.1, NA, 28.7, 24.9, 29.4, …
+$ biomarcador &lt;dbl&gt; 12.4, 14.1, 13.2, 11.8, 15.7, 13.6, 12.9, 15.1, 13.5, 14.8…</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(pacientes)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 6
+     id grupo   sexo    edad   imc biomarcador
+  &lt;int&gt; &lt;chr&gt;   &lt;chr&gt;  &lt;dbl&gt; &lt;dbl&gt;       &lt;dbl&gt;
+1     1 Control Mujer     34  23.1        12.4
+2     2 Control Hombre    51  27.4        14.1
+3     3 Control Mujer     46  25.8        13.2
+4     4 Control Hombre    29  22.6        11.8
+5     5 Control Mujer     63  30.2        15.7
+6     6 Control Hombre    42  26.1        13.6</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(pacientes)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 20  6</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb53"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(pacientes)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>       id           grupo               sexo                edad      
+ Min.   : 1.00   Length:20          Length:20          Min.   :29.00  
+ 1st Qu.: 5.75   Class :character   Class :character   1st Qu.:38.75  
+ Median :10.50   Mode  :character   Mode  :character   Median :45.50  
+ Mean   :10.50                                         Mean   :45.95  
+ 3rd Qu.:15.25                                         3rd Qu.:53.50  
+ Max.   :20.00                                         Max.   :63.00  
+                                                                      
+      imc         biomarcador   
+ Min.   :21.90   Min.   :10.70  
+ 1st Qu.:23.75   1st Qu.:11.57  
+ Median :25.25   Median :12.60  
+ Mean   :25.51   Mean   :12.75  
+ 3rd Qu.:27.25   3rd Qu.:13.53  
+ Max.   :30.20   Max.   :15.70  
+ NA's   :2                      </code></pre>
+</div>
+</div>
+<p>La exploración inicial debe responder, al menos, las siguientes preguntas:</p>
+<ul>
+<li>¿Cuál es la unidad de observación?</li>
+<li>¿Cuántas observaciones y variables existen?</li>
+<li>¿Qué representa cada variable?</li>
+<li>¿Las clases de las variables son correctas?</li>
+<li>¿Existen valores faltantes o valores poco plausibles?</li>
+<li>¿Hay identificadores duplicados?</li>
+</ul>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb55"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a>pacientes <span class="sc">|&gt;</span></span>
+<span id="cb55-2"><a href="#cb55-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb55-3"><a href="#cb55-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">n =</span> <span class="fu">n</span>(),</span>
+<span id="cb55-4"><a href="#cb55-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">identificadores_unicos =</span> <span class="fu">n_distinct</span>(id),</span>
+<span id="cb55-5"><a href="#cb55-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">faltantes_imc =</span> <span class="fu">sum</span>(<span class="fu">is.na</span>(imc)),</span>
+<span id="cb55-6"><a href="#cb55-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">faltantes_biomarcador =</span> <span class="fu">sum</span>(<span class="fu">is.na</span>(biomarcador))</span>
+<span id="cb55-7"><a href="#cb55-7" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 4
+      n identificadores_unicos faltantes_imc faltantes_biomarcador
+  &lt;int&gt;                  &lt;int&gt;         &lt;int&gt;                 &lt;int&gt;
+1    20                     20             2                     0</code></pre>
+</div>
+</div>
+<section id="pausa-de-interpretación" class="level2">
+<h2 class="anchored" data-anchor-id="pausa-de-interpretación">Pausa de interpretación</h2>
+<p>Escriba dos o tres oraciones sobre la estructura y la calidad de la base. No se limite a copiar los resultados: explique qué implican para el análisis.</p>
+<blockquote class="blockquote">
+<p><strong>Interpretación del estudiante:</strong> Reemplace este texto con su interpretación.</p>
+</blockquote>
+</section>
+</section>
+<section id="transformación-con-tidyverse" class="level1">
+<h1>Transformación con <code>tidyverse</code></h1>
+<section id="seleccionar-variables" class="level2">
+<h2 class="anchored" data-anchor-id="seleccionar-variables">Seleccionar variables</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb57"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb57-1"><a href="#cb57-1" aria-hidden="true" tabindex="-1"></a>pacientes <span class="sc">|&gt;</span></span>
+<span id="cb57-2"><a href="#cb57-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(id, grupo, edad, biomarcador)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 20 × 4
+      id grupo        edad biomarcador
+   &lt;int&gt; &lt;chr&gt;       &lt;dbl&gt;       &lt;dbl&gt;
+ 1     1 Control        34        12.4
+ 2     2 Control        51        14.1
+ 3     3 Control        46        13.2
+ 4     4 Control        29        11.8
+ 5     5 Control        63        15.7
+ 6     6 Control        42        13.6
+ 7     7 Control        38        12.9
+ 8     8 Control        55        15.1
+ 9     9 Control        47        13.5
+10    10 Control        60        14.8
+11    11 Tratamiento    36        10.9
+12    12 Tratamiento    49        12.3
+13    13 Tratamiento    41        11.4
+14    14 Tratamiento    32        10.7
+15    15 Tratamiento    58        13.1
+16    16 Tratamiento    45        11.6
+17    17 Tratamiento    39        11.2
+18    18 Tratamiento    53        12.8
+19    19 Tratamiento    44        11.5
+20    20 Tratamiento    57        12.4</code></pre>
+</div>
+</div>
+</section>
+<section id="filtrar-observaciones" class="level2">
+<h2 class="anchored" data-anchor-id="filtrar-observaciones">Filtrar observaciones</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb59"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb59-1"><a href="#cb59-1" aria-hidden="true" tabindex="-1"></a>pacientes <span class="sc">|&gt;</span></span>
+<span id="cb59-2"><a href="#cb59-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(edad <span class="sc">&gt;=</span> <span class="dv">50</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 7 × 6
+     id grupo       sexo    edad   imc biomarcador
+  &lt;int&gt; &lt;chr&gt;       &lt;chr&gt;  &lt;dbl&gt; &lt;dbl&gt;       &lt;dbl&gt;
+1     2 Control     Hombre    51  27.4        14.1
+2     5 Control     Mujer     63  30.2        15.7
+3     8 Control     Hombre    55  28.7        15.1
+4    10 Control     Hombre    60  29.4        14.8
+5    15 Tratamiento Mujer     58  27.5        13.1
+6    18 Tratamiento Hombre    53  NA          12.8
+7    20 Tratamiento Hombre    57  26.8        12.4</code></pre>
+</div>
+</div>
+</section>
+<section id="crear-o-modificar-variables" class="level2">
+<h2 class="anchored" data-anchor-id="crear-o-modificar-variables">Crear o modificar variables</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb61"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb61-1"><a href="#cb61-1" aria-hidden="true" tabindex="-1"></a>pacientes <span class="ot">&lt;-</span> pacientes <span class="sc">|&gt;</span></span>
+<span id="cb61-2"><a href="#cb61-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb61-3"><a href="#cb61-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">grupo =</span> <span class="fu">factor</span>(grupo, <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"Control"</span>, <span class="st">"Tratamiento"</span>)),</span>
+<span id="cb61-4"><a href="#cb61-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">sexo =</span> <span class="fu">factor</span>(sexo),</span>
+<span id="cb61-5"><a href="#cb61-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">edad_centrada =</span> edad <span class="sc">-</span> <span class="fu">mean</span>(edad, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb61-6"><a href="#cb61-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">imc_alto =</span> <span class="fu">if_else</span>(imc <span class="sc">&gt;=</span> <span class="dv">25</span>, <span class="st">"Sí"</span>, <span class="st">"No"</span>, <span class="at">missing =</span> <span class="cn">NA_character_</span>)</span>
+<span id="cb61-7"><a href="#cb61-7" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb61-8"><a href="#cb61-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb61-9"><a href="#cb61-9" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(pacientes)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Rows: 20
+Columns: 8
+$ id            &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 1…
+$ grupo         &lt;fct&gt; Control, Control, Control, Control, Control, Control, Co…
+$ sexo          &lt;fct&gt; Mujer, Hombre, Mujer, Hombre, Mujer, Hombre, Mujer, Homb…
+$ edad          &lt;dbl&gt; 34, 51, 46, 29, 63, 42, 38, 55, 47, 60, 36, 49, 41, 32, …
+$ imc           &lt;dbl&gt; 23.1, 27.4, 25.8, 22.6, 30.2, 26.1, NA, 28.7, 24.9, 29.4…
+$ biomarcador   &lt;dbl&gt; 12.4, 14.1, 13.2, 11.8, 15.7, 13.6, 12.9, 15.1, 13.5, 14…
+$ edad_centrada &lt;dbl&gt; -11.95, 5.05, 0.05, -16.95, 17.05, -3.95, -7.95, 9.05, 1…
+$ imc_alto      &lt;chr&gt; "No", "Sí", "Sí", "No", "Sí", "Sí", NA, "Sí", "No", "Sí"…</code></pre>
+</div>
+</div>
+</section>
+<section id="resumir-por-grupos" class="level2">
+<h2 class="anchored" data-anchor-id="resumir-por-grupos">Resumir por grupos</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb63"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb63-1"><a href="#cb63-1" aria-hidden="true" tabindex="-1"></a>resumen_grupos <span class="ot">&lt;-</span> pacientes <span class="sc">|&gt;</span></span>
+<span id="cb63-2"><a href="#cb63-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(grupo) <span class="sc">|&gt;</span></span>
+<span id="cb63-3"><a href="#cb63-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb63-4"><a href="#cb63-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">n =</span> <span class="fu">n</span>(),</span>
+<span id="cb63-5"><a href="#cb63-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">edad_media =</span> <span class="fu">mean</span>(edad, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb63-6"><a href="#cb63-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">edad_de =</span> <span class="fu">sd</span>(edad, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb63-7"><a href="#cb63-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">biomarcador_media =</span> <span class="fu">mean</span>(biomarcador, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb63-8"><a href="#cb63-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">biomarcador_de =</span> <span class="fu">sd</span>(biomarcador, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb63-9"><a href="#cb63-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">.groups =</span> <span class="st">"drop"</span></span>
+<span id="cb63-10"><a href="#cb63-10" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb63-11"><a href="#cb63-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb63-12"><a href="#cb63-12" aria-hidden="true" tabindex="-1"></a>resumen_grupos</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 2 × 6
+  grupo           n edad_media edad_de biomarcador_media biomarcador_de
+  &lt;fct&gt;       &lt;int&gt;      &lt;dbl&gt;   &lt;dbl&gt;             &lt;dbl&gt;          &lt;dbl&gt;
+1 Control        10       46.5   11.1               13.7          1.23 
+2 Tratamiento    10       45.4    8.78              11.8          0.814</code></pre>
+</div>
+</div>
+<p>El operador <code>|&gt;</code> se lee como “luego”. Permite expresar el flujo del análisis de izquierda a derecha: partimos de una base, la agrupamos y después calculamos los resúmenes.</p>
+</section>
+</section>
+<section id="presentación-de-resultados" class="level1">
+<h1>Presentación de resultados</h1>
+<section id="tabla-descriptiva" class="level2">
+<h2 class="anchored" data-anchor-id="tabla-descriptiva">Tabla descriptiva</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb65"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb65-1"><a href="#cb65-1" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(</span>
+<span id="cb65-2"><a href="#cb65-2" aria-hidden="true" tabindex="-1"></a>  resumen_grupos,</span>
+<span id="cb65-3"><a href="#cb65-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">digits =</span> <span class="dv">2</span>,</span>
+<span id="cb65-4"><a href="#cb65-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">col.names =</span> <span class="fu">c</span>(</span>
+<span id="cb65-5"><a href="#cb65-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Grupo"</span>, <span class="st">"n"</span>, <span class="st">"Edad: media"</span>, <span class="st">"Edad: DE"</span>,</span>
+<span id="cb65-6"><a href="#cb65-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Biomarcador: media"</span>, <span class="st">"Biomarcador: DE"</span></span>
+<span id="cb65-7"><a href="#cb65-7" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb65-8"><a href="#cb65-8" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="tbl-descriptiva" class="cell quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-descriptiva-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Tabla&nbsp;1: Resumen descriptivo por grupo de estudio.
+</figcaption>
+<div aria-describedby="tbl-descriptiva-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="cell-output-display">
+<table class="do-not-create-environment cell caption-top table table-sm table-striped small">
+<colgroup>
+<col style="width: 16%">
+<col style="width: 4%">
+<col style="width: 16%">
+<col style="width: 12%">
+<col style="width: 26%">
+<col style="width: 22%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Grupo</th>
+<th style="text-align: right;">n</th>
+<th style="text-align: right;">Edad: media</th>
+<th style="text-align: right;">Edad: DE</th>
+<th style="text-align: right;">Biomarcador: media</th>
+<th style="text-align: right;">Biomarcador: DE</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Control</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">46.5</td>
+<td style="text-align: right;">11.07</td>
+<td style="text-align: right;">13.71</td>
+<td style="text-align: right;">1.23</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Tratamiento</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">45.4</td>
+<td style="text-align: right;">8.78</td>
+<td style="text-align: right;">11.79</td>
+<td style="text-align: right;">0.81</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</figure>
+</div>
+</div>
+<p>Una tabla debe poder comprenderse sin inspeccionar el código. Necesita un título informativo, nombres claros, unidades cuando correspondan y un número razonable de decimales.</p>
+</section>
+<section id="visualización" class="level2">
+<h2 class="anchored" data-anchor-id="visualización">Visualización</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb66"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb66-1"><a href="#cb66-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(pacientes, <span class="fu">aes</span>(<span class="at">x =</span> grupo, <span class="at">y =</span> biomarcador, <span class="at">fill =</span> grupo)) <span class="sc">+</span></span>
+<span id="cb66-2"><a href="#cb66-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>(<span class="at">width =</span> <span class="fl">0.55</span>, <span class="at">alpha =</span> <span class="fl">0.75</span>, <span class="at">show.legend =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
+<span id="cb66-3"><a href="#cb66-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_jitter</span>(<span class="at">width =</span> <span class="fl">0.08</span>, <span class="at">alpha =</span> <span class="fl">0.65</span>, <span class="at">show.legend =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
+<span id="cb66-4"><a href="#cb66-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb66-5"><a href="#cb66-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Grupo de estudio"</span>,</span>
+<span id="cb66-6"><a href="#cb66-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Biomarcador (unidades)"</span></span>
+<span id="cb66-7"><a href="#cb66-7" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb66-8"><a href="#cb66-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>(<span class="at">base_size =</span> <span class="dv">11</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div id="fig-biomarcador-grupo" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-biomarcador-grupo-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="tema-01-repaso-r-quarto_files/figure-html/fig-biomarcador-grupo-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-biomarcador-grupo-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figura&nbsp;1: Distribución del biomarcador según el grupo de estudio.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="interpretación-de-la-figura" class="level2">
+<h2 class="anchored" data-anchor-id="interpretación-de-la-figura">Interpretación de la figura</h2>
+<p>Describa el patrón observado sin afirmar que existe una diferencia estadísticamente significativa. Considere la tendencia central, la dispersión, el posible solapamiento entre grupos y el tamaño de la muestra.</p>
+<blockquote class="blockquote">
+<p><strong>Interpretación del estudiante:</strong> Reemplace este texto con una interpretación de tres a cinco oraciones.</p>
+</blockquote>
+</section>
+</section>
+<section id="actividad-integradora" class="level1">
+<h1>Actividad integradora</h1>
+<p>A partir de la base <code>pacientes</code>, realice las siguientes tareas:</p>
+<ol type="1">
+<li>Compruebe si existen valores faltantes en cada variable.</li>
+<li>Calcule la edad mediana y el rango intercuartílico por sexo.</li>
+<li>Calcule la media y la desviación estándar del biomarcador por grupo y sexo.</li>
+<li>Construya una figura que muestre la relación entre edad y biomarcador, diferenciando los grupos mediante color.</li>
+<li>Añada títulos y etiquetas claras a la tabla y a la figura.</li>
+<li>Escriba un párrafo breve que interprete los resultados y señale al menos una limitación.</li>
+</ol>
+<section id="desarrollo" class="level2">
+<h2 class="anchored" data-anchor-id="desarrollo">Desarrollo</h2>
+<p>Utilice los siguientes bloques como punto de partida. Modifique el código donde sea necesario.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb67"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb67-1"><a href="#cb67-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Escriba aquí su código</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div class="cell" data-tbl-cap="Edad y biomarcador según las variables de agrupación.">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb68"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb68-1"><a href="#cb68-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Escriba aquí su código</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb69"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb69-1"><a href="#cb69-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Escriba aquí su código</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<section id="discusión" class="level3">
+<h3 class="anchored" data-anchor-id="discusión">Discusión</h3>
+<blockquote class="blockquote">
+<p><strong>Discusión del estudiante:</strong> Presente los principales hallazgos, distinga la descripción de la inferencia y señale una limitación del análisis.</p>
+</blockquote>
+</section>
+</section>
+</section>
+<section id="renderización-del-reporte" class="level1">
+<h1>Renderización del reporte</h1>
+<p>Antes de generar el PDF:</p>
+<ol type="1">
+<li>guarde el archivo <code>.qmd</code>;</li>
+<li>reinicie la sesión de R si desea comprobar la reproducibilidad;</li>
+<li>utilice el botón <strong>Render</strong>;</li>
+<li>revise que no existan errores;</li>
+<li>verifique títulos, tablas, figuras y saltos de página;</li>
+<li>abra el PDF final y compruebe que sea legible.</li>
+</ol>
+<p>Para generar archivos PDF, Quarto necesita una distribución de LaTeX. Puede instalarse TinyTeX desde la terminal con:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb70"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb70-1"><a href="#cb70-1" aria-hidden="true" tabindex="-1"></a><span class="ex">quarto</span> install tinytex</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Esta instalación se realiza una sola vez.</p>
+</section>
+<section id="lista-de-verificación" class="level1">
+<h1>Lista de verificación</h1>
+<ul class="task-list">
+<li><label><input type="checkbox">El documento se ejecuta desde el inicio hasta el final.</label></li>
+<li><label><input type="checkbox">Todas las librerías necesarias se cargan en el documento.</label></li>
+<li><label><input type="checkbox">Los datos se leen mediante una ruta relativa.</label></li>
+<li><label><input type="checkbox">Las transformaciones están documentadas mediante código.</label></li>
+<li><label><input type="checkbox">La tabla tiene un título y nombres comprensibles.</label></li>
+<li><label><input type="checkbox">La figura tiene título, ejes y unidades apropiadas.</label></li>
+<li><label><input type="checkbox">Los resultados están acompañados de interpretación.</label></li>
+<li><label><input type="checkbox">El archivo PDF se generó correctamente.</label></li>
+</ul>
+</section>
+<section id="cierre" class="level1">
+<h1>Cierre</h1>
+<p>En esta sesión utilizamos R y Quarto como componentes de un mismo flujo analítico. El objetivo no fue únicamente obtener resultados, sino construir un documento que permita comprender de dónde provienen, cómo se calcularon y qué significan.</p>
+<p>En la segunda sesión trabajaremos con un script deliberadamente desorganizado. Identificaremos problemas de rutas, nombres, repetición, transformaciones manuales y resultados sin interpretar; después lo convertiremos en un proyecto reproducible.</p>
+</section>
+<section id="información-de-la-sesión-de-r" class="level1">
+<h1>Información de la sesión de R</h1>
+<p>Registrar las versiones del software y de los paquetes ayuda a documentar el entorno en el que se realizó el análisis.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb71"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb71-1"><a href="#cb71-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sessionInfo</span>()</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>R version 4.5.1 (2025-06-13)
+Platform: aarch64-apple-darwin20
+Running under: macOS Tahoe 26.5.2
+
+Matrix products: default
+BLAS:   /Library/Frameworks/R.framework/Versions/4.5-arm64/Resources/lib/libRblas.0.dylib 
+LAPACK: /Library/Frameworks/R.framework/Versions/4.5-arm64/Resources/lib/libRlapack.dylib;  LAPACK version 3.12.1
+
+locale:
+[1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
+
+time zone: America/New_York
+tzcode source: internal
+
+attached base packages:
+[1] stats     graphics  grDevices utils     datasets  methods   base     
+
+other attached packages:
+ [1] lubridate_1.9.5 forcats_1.0.1   stringr_1.6.0   dplyr_1.2.1    
+ [5] purrr_1.2.2     readr_2.2.0     tidyr_1.3.2     tibble_3.3.1   
+ [9] ggplot2_4.0.2   tidyverse_2.0.0
+
+loaded via a namespace (and not attached):
+ [1] gtable_0.3.6       jsonlite_2.0.0     compiler_4.5.1     tidyselect_1.2.1  
+ [5] scales_1.4.0       yaml_2.3.12        fastmap_1.2.0      R6_2.6.1          
+ [9] labeling_0.4.3     generics_0.1.4     knitr_1.51         htmlwidgets_1.6.4 
+[13] pillar_1.11.1      RColorBrewer_1.1-3 tzdb_0.5.0         rlang_1.2.0       
+[17] utf8_1.2.6         stringi_1.8.7      xfun_0.57          S7_0.2.1          
+[21] otel_0.2.0         timechange_0.4.0   cli_3.6.6          withr_3.0.2       
+[25] magrittr_2.0.5     digest_0.6.39      grid_4.5.1         rstudioapi_0.18.0 
+[29] hms_1.1.4          lifecycle_1.0.5    vctrs_0.7.3        evaluate_1.0.5    
+[33] glue_1.8.1         farver_2.1.2       rmarkdown_2.31     tools_4.5.1       
+[37] pkgconfig_2.0.3    htmltools_0.5.9   </code></pre>
+</div>
+</div>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copiado");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copiado");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+<p>© 2026 Edsaúl E. Pérez-Guerrero</p>
+</div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    </div>
+    <div class="nav-footer-right">
+<p>Construido con <a href="https://quarto.org/">Quarto</a>; R version 4.5.1</p>
+</div>
+  </div>
+</footer>
+
+
+
+
+</body></html>
