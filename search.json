@@ -1,5 +1,12 @@
 [
   {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Bioestadística avanzada con R",
+    "section": "",
+    "text": "En este sitio contiene los recursos y materiales para el curso-taller de bioestadística avanzada del doctorado en genética humana."
+  },
+  {
     "objectID": "about.html",
     "href": "about.html",
     "title": "Acerca del curso",
@@ -42,13 +49,6 @@
     "text": "Responsabilidad del estudiante\nLos materiales del sitio complementan las explicaciones y actividades de clase, pero no sustituyen la participación en las sesiones ni la consulta de las instrucciones oficiales publicadas en Google Classroom."
   },
   {
-    "objectID": "index.html",
-    "href": "index.html",
-    "title": "Bioestadística avanzada con R",
-    "section": "",
-    "text": "En este sitio contiene los recursos y materiales para el curso-taller de bioestadística avanzada del doctorado en genética humana."
-  },
-  {
     "objectID": "temas/tema-01/index.html",
     "href": "temas/tema-01/index.html",
     "title": "Tema 1: Repaso de R y análisis reproducible",
@@ -74,13 +74,6 @@
     "href": "temas/tema-01/index.html#material-de-clase",
     "title": "Tema 1: Repaso de R y análisis reproducible",
     "section": "Material de clase",
-    "text": "Material de clase\nRepaso de R y fundamentos de Quarto"
-  },
-  {
-    "objectID": "temas/tema-01/index.html#archivos-para-descargar",
-    "href": "temas/tema-01/index.html#archivos-para-descargar",
-    "title": "Tema 1: Repaso de R y análisis reproducible",
-    "section": "Archivos para descargar",
-    "text": "Archivos para descargar\nDescargar el reporte en PDF"
+    "text": "Material de clase\nDescargar el documento editable de Quarto"
   }
 ]
