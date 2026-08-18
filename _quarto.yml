@@ -1,19 +1,30 @@
 project:
   type: website
 
+  render:
+    - "*.qmd"
+    - "temas/**/*.qmd"
+    - "!descargas/**"
+
+  resources:
+    - "descargas/**"
+
 website:
-  title: "Bioestadística avanzada"
+  title: "Bioestadística avanzada"
+
   navbar:
     left:
       - href: index.qmd
         text: Inicio
+
       - href: about.qmd
         text: Acerca del curso
+
       - text: Temas
         menu:
           - href: temas/tema-01/index.qmd
-            text: "Tema 1: Repaso de R y análisis reproducible"
-            
+            text: "Tema 1: Repaso de R y análisis reproducible"
+
   page-footer:
     left: "© 2026 Edsaúl E. Pérez-Guerrero"
     right: "Construido con [Quarto](https://quarto.org/); R version 4.5.1"
@@ -25,7 +36,7 @@ format:
       - brand
     css: styles.css
     toc: true
-    toc-title: "En esta página"
+    toc-title: "En esta página"
     code-copy: true
 
-editor: visual
+editor: source

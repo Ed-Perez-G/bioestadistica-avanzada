@@ -25,11 +25,11 @@ En esta sesión repasaremos los fundamentos de `R` mientras construimos un repor
 
 Trabajaremos en un solo documento que integrará texto, código, resultados, tablas y figuras, por ello vamos a utilizar Quarto como base, aunqe también son libres de utlizar markdown. Al finalizar, este documento se convertirá en un archivo PDF o htlm que podrá compartirse sin necesidad de entregar por separado el código y la interpretación.
 
-Además, trabajar con este tipo de documentos mejora mucho la logíca y presentación del código.
+Además, trabajar con este tipo de documentos mejora mucho la logíca y presentación del código. 
 
 ## Objetivo de aprendizaje
 
-Al finalizar la sesión, el estudiante será capaz de crear y renderizar un documento Quarto que importe, explore, transforme y resuma una base de datos mediante R y `tidyverse`, incorporando código, resultados e interpretaciones en un reporte reproducible. Nota: aquí solo veremos conceptos básico de `tidyverse` tendremos una clase específica para la manipulación de bases de datos con `tidyverse`.
+Al finalizar la sesión, el estudiante será capaz de crear y renderizar un documento Quarto que importe, explore, transforme y resuma una base de datos mediante R y `tidyverse`, incorporando código, resultados e interpretaciones en un reporte reproducible. Nota: aquí solo veremos conceptos básico de `tidyverse` tendremos una clase específica para la manipulación de bases de datos con `tidyverse`. 
 
 ## Productos de la sesión
 
@@ -105,9 +105,12 @@ Al renderizar el documento, Quarto ejecuta los bloques en orden e incorpora sus 
 El documento debe poder ejecutarse desde el inicio hasta el final en una sesión limpia de R. No debemos depender de objetos creados previamente en la consola.
 :::
 
+
 ::: {.callout-tip title="No olvides"}
 El documento debe poder ejecutarse desde el inicio hasta el final.
 :::
+
+
 
 # Preparación del entorno
 
@@ -129,11 +132,11 @@ La instalación no debe incluirse como parte del análisis cotidiano, pues inten
 
 # Creación de un proyecto en R
 
-Antes de comenzar a repasar se recomienda crear un nuevo proyecto desde RStudio. Un proyecto en RStudio es una característica que te permite organizar y gestionar tu trabajo de forma más eficiente. Una definición más formal es que es un contenedor organizacional que agrupa todos los archivos relacionados con un análisis o tarea específica en un mismo directorio
+Antes de comenzar a repasar se recomienda crear un nuevo proyecto desde RStudio. Un proyecto en RStudio es una característica que te permite organizar y gestionar tu trabajo de forma más eficiente.  Una definición más formal es que es un contenedor organizacional que agrupa todos los archivos relacionados con un análisis o tarea específica en un mismo directorio
 
 Las ventajas de crear un proyecto es que automáticamente nuestro directorio de trabajo cambiará al del proyecto, y desde aquí podemos manipular todos los archivos con los que trabaje. Se recomienda crear un proyecto para seguir los ejemplos de este libro, en el que incluya una carpeta de bases de datos, otra de gráficos y otra de scripts.
 
-Se recomiendo una estructura similar o parecida a esta:
+Se recomiendo una estructura similar o parecida a esta: 
 
 ``` text
 semana-01/
@@ -144,9 +147,13 @@ semana-01/
 └── figuras/
 ```
 
+
 # Repaso selectivo de R
 
-Se recomienda revisar los capitulos: - Capítulo 2. Laboratorio de R 1 - Capítulo 4. Laboratorio de R 2 - Capítulo 6. Laboratorio de R 3
+Se recomienda revisar los capitulos:
+- Capítulo 2. Laboratorio de R 1
+- Capítulo 4. Laboratorio de R 2
+- Capítulo 6. Laboratorio de R 3
 
 ## R como calculadora
 
@@ -175,7 +182,7 @@ imc
 
 Los nombres claros permiten entender el análisis sin depender de comentarios adicionales. Conviene evitar nombres ambiguos como `x`, `dato1` o `final_final`.
 
-Use siempre la misma estructura en nombres de los objetos.
+Use siempre la misma estructura en nombres de los objetos. 
 
 ## Vectores
 
@@ -343,7 +350,7 @@ A partir de la base `pacientes`, realice las siguientes tareas:
 4.  Construya una figura que muestre la relación entre edad y biomarcador, diferenciando los grupos mediante color. Utilice de momento R base.
 5.  Añada títulos y etiquetas claras a la figura.
 6.  Escriba un párrafo breve que interprete los resultados y señale al menos una limitación.
-7.  Integre sus resultados e interpretación en un documento de Quarto. Sino puede compilar en PDF compile en word o en su defecto en htlm. https://quarto.org
+7. Integre sus resultados e interpretación en un documento de Quarto. Sino puede compilar en PDF compile en word o en su defecto en htlm. https://quarto.org
 
 ## Desarrollo
 
@@ -390,7 +397,7 @@ Para generar archivos PDF, Quarto necesita una distribución de LaTeX. Puede ins
 quarto install tinytex
 ```
 
-Esta instalación se realiza una sola vez. Corra en su terminal desde RStudio.
+Esta instalación se realiza una sola vez. Corra en su terminal desde RStudio. 
 
 # Lista de verificación
 
@@ -402,6 +409,7 @@ Esta instalación se realiza una sola vez. Corra en su terminal desde RStudio.
 - [ ] La figura tiene título, ejes y unidades apropiadas.
 - [ ] Los resultados están acompañados de interpretación.
 - [ ] El archivo PDF se generó correctamente.
+
 
 # Información de la sesión de R
 
