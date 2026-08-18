@@ -1,9 +1,51 @@
 ---
-title: "About"
+title: "Acerca del curso"
 ---
 
-About this site
+## Descripción del curso
 
-```{r}
-1 + 1
-```
+Este es un curso de nivel intermedio-avanzado que se enfocado en el análisis de datos biomédicos con `R`. Este curso se retomarán aspectos básicos de `R` relacionados con la en la exploración, limpieza, manipulación y manejo de bases de datos. Además, se revisarán y aplicarán métodos bioestadísticos avanzados, como regresión múltiple, regresión logística, datos longitudinales, análisis de supervivencia, medidas repetidas, agrupamiento de datos, técnicas de reducción dimensiones e imputación de datos. 
+
+El curso busca el desarrollo del pensamiento bioestadístico, el pensamiento crítico y las habilidades de programación necesarias para seleccionar, implementar, diagnosticar e interpretar modelos, así como para comunicar sus resultados y limitaciones de manera clara y reproducible. Los ejercicios y proyectos utilizarán datos biomédicos y podrán incorporar ejemplos de genética humana y biología molecular
+
+
+## Organización del sitio
+
+Este sitio reúne los materiales de apoyo de la asignatura **Bioestadística avanzada con R**. Su propósito es facilitar el acceso a las notas de clase, scripts, conjuntos de datos, ejercicios y otros recursos utilizados durante el curso.
+
+Los contenidos están organizados por tema. En cada sección se podrán encontrar, según corresponda:
+
+- Objetivos y contenidos de la sesión.
+- Notas y conceptos revisados en clase.
+- Scripts iniciales para seguir las demostraciones.
+- Scripts desarrollados o completados durante la clase.
+- Conjuntos de datos para realizar los análisis.
+- Ejercicios de práctica.
+- Soluciones comentadas, una vez que sean publicadas.
+- Lecturas y recursos complementarios.
+
+::: {.callout-note title="Importante"}
+Este sitio funciona únicamente como repositorio de materiales académicos. Los avisos oficiales, actividades, fechas de entrega, recepción de tareas, retroalimentación y calificaciones se gestionarán mediante **Google Classroom**.
+:::
+
+## Uso de los materiales
+
+Los documentos pueden consultarse directamente desde el navegador. Los scripts y conjuntos de datos también podrán descargarse para trabajar en RStudio.
+
+Los materiales se actualizarán progresivamente durante el semestre. Por ello, se recomienda consultar la página correspondiente antes y después de cada sesión.
+
+Cuando existan dos versiones de un script, se utilizarán los siguientes nombres:
+
+- **Script inicial:** archivo preparado para comenzar la actividad.
+- **Script de clase:** versión desarrollada o completada durante la sesión.
+- **Solución comentada:** propuesta de resolución publicada posteriormente.
+
+## Reproducibilidad
+
+Los ejemplos del curso se desarrollarán mediante R y Quarto. Siempre que sea posible, los análisis incluirán el código, los resultados y su interpretación para que puedan ser reproducidos y modificados por los estudiantes.
+
+Para la construccción de este sitio se empleó: R version 4.5.1 (2025-06-13) y RStudio 2026.08.0+187 (2026.08.0+187).
+
+## Responsabilidad del estudiante
+
+Los materiales del sitio complementan las explicaciones y actividades de clase, pero no sustituyen la participación en las sesiones ni la consulta de las instrucciones oficiales publicadas en Google Classroom.

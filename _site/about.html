@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>About – ioestadistica-avanzada</title>
+<title>Acerca del curso – Bioestadística avanzada</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -19,41 +19,6 @@ ul.task-list li input[type="checkbox"] {
   width: 0.8em;
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
-}
-/* CSS for syntax highlighting */
-html { -webkit-text-size-adjust: 100%; }
-pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
-pre > code.sourceCode > span:empty { height: 1.2em; }
-.sourceCode { overflow: visible; }
-code.sourceCode > span { color: inherit; text-decoration: inherit; }
-div.sourceCode { margin: 1em 0; }
-pre.sourceCode { margin: 0; }
-@media screen {
-div.sourceCode { overflow: auto; }
-}
-@media print {
-pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
-}
-pre.numberSource code
-  { counter-reset: source-line 0; }
-pre.numberSource code > span
-  { position: relative; left: -4em; counter-increment: source-line; }
-pre.numberSource code > span > a:first-child::before
-  { content: counter(source-line);
-    position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; display: inline-block;
-    -webkit-touch-callout: none; -webkit-user-select: none;
-    -khtml-user-select: none; -moz-user-select: none;
-    -ms-user-select: none; user-select: none;
-    padding: 0 4px; width: 4em;
-  }
-pre.numberSource { margin-left: 3em;  padding-left: 4px; }
-div.sourceCode
-  {   }
-@media screen {
-pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 </style>
 
@@ -75,7 +40,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="site_libs/quarto-html/quarto-syntax-highlighting-7b89279ff1a6dce999919e0e67d4d9ec.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-5b4ad623e5705c0698d39aec6f10cf02.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-a8976c3e89df70b272bdfba3d2fda974.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -118,7 +83,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <a href="./index.html" class="navbar-brand navbar-brand-logo">
     </a>
     <a class="navbar-brand" href="./index.html">
-    <span class="navbar-title">ioestadistica-avanzada</span>
+    <span class="navbar-title">Bioestadística avanzada</span>
     </a>
   </div>
             <div id="quarto-search" class="" title="Search"></div>
@@ -129,12 +94,23 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
     <a class="nav-link" href="./index.html"> 
-<span class="menu-text">Home</span></a>
+<span class="menu-text">Inicio</span></a>
   </li>  
   <li class="nav-item">
     <a class="nav-link active" href="./about.html" aria-current="page"> 
-<span class="menu-text">About</span></a>
+<span class="menu-text">Acerca del curso</span></a>
   </li>  
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-temas" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Temas</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-temas">    
+        <li>
+    <a class="dropdown-item" href="./temas/tema-01/index.html">
+ <span class="dropdown-text">Tema 1: Repaso de R y análisis reproducible</span></a>
+  </li>  
+    </ul>
+  </li>
 </ul>
           </div> <!-- /navcollapse -->
             <div class="quarto-navbar-tools">
@@ -146,15 +122,25 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
-        
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">En esta página</h2>
+   
+  <ul>
+  <li><a href="#descripción-del-curso" id="toc-descripción-del-curso" class="nav-link active" data-scroll-target="#descripción-del-curso">Descripción del curso</a></li>
+  <li><a href="#organización-del-sitio" id="toc-organización-del-sitio" class="nav-link" data-scroll-target="#organización-del-sitio">Organización del sitio</a></li>
+  <li><a href="#uso-de-los-materiales" id="toc-uso-de-los-materiales" class="nav-link" data-scroll-target="#uso-de-los-materiales">Uso de los materiales</a></li>
+  <li><a href="#reproducibilidad" id="toc-reproducibilidad" class="nav-link" data-scroll-target="#reproducibilidad">Reproducibilidad</a></li>
+  <li><a href="#responsabilidad-del-estudiante" id="toc-responsabilidad-del-estudiante" class="nav-link" data-scroll-target="#responsabilidad-del-estudiante">Responsabilidad del estudiante</a></li>
+  </ul>
+</nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">About</h1>
+<h1 class="title">Acerca del curso</h1>
 </div>
 
 
@@ -171,15 +157,61 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<p>About this site</p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="dv">1</span> <span class="sc">+</span> <span class="dv">1</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] 2</code></pre>
+<section id="descripción-del-curso" class="level2">
+<h2 class="anchored" data-anchor-id="descripción-del-curso">Descripción del curso</h2>
+<p>Este es un curso de nivel intermedio-avanzado que se enfocado en el análisis de datos biomédicos con <code>R</code>. Este curso se retomarán aspectos básicos de <code>R</code> relacionados con la en la exploración, limpieza, manipulación y manejo de bases de datos. Además, se revisarán y aplicarán métodos bioestadísticos avanzados, como regresión múltiple, regresión logística, datos longitudinales, análisis de supervivencia, medidas repetidas, agrupamiento de datos, técnicas de reducción dimensiones e imputación de datos.</p>
+<p>El curso busca el desarrollo del pensamiento bioestadístico, el pensamiento crítico y las habilidades de programación necesarias para seleccionar, implementar, diagnosticar e interpretar modelos, así como para comunicar sus resultados y limitaciones de manera clara y reproducible. Los ejercicios y proyectos utilizarán datos biomédicos y podrán incorporar ejemplos de genética humana y biología molecular</p>
+</section>
+<section id="organización-del-sitio" class="level2">
+<h2 class="anchored" data-anchor-id="organización-del-sitio">Organización del sitio</h2>
+<p>Este sitio reúne los materiales de apoyo de la asignatura <strong>Bioestadística avanzada con R</strong>. Su propósito es facilitar el acceso a las notas de clase, scripts, conjuntos de datos, ejercicios y otros recursos utilizados durante el curso.</p>
+<p>Los contenidos están organizados por tema. En cada sección se podrán encontrar, según corresponda:</p>
+<ul>
+<li>Objetivos y contenidos de la sesión.</li>
+<li>Notas y conceptos revisados en clase.</li>
+<li>Scripts iniciales para seguir las demostraciones.</li>
+<li>Scripts desarrollados o completados durante la clase.</li>
+<li>Conjuntos de datos para realizar los análisis.</li>
+<li>Ejercicios de práctica.</li>
+<li>Soluciones comentadas, una vez que sean publicadas.</li>
+<li>Lecturas y recursos complementarios.</li>
+</ul>
+<div class="callout callout-style-default callout-note callout-titled" title="Importante">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Importante
 </div>
 </div>
+<div class="callout-body-container callout-body">
+<p>Este sitio funciona únicamente como repositorio de materiales académicos. Los avisos oficiales, actividades, fechas de entrega, recepción de tareas, retroalimentación y calificaciones se gestionarán mediante <strong>Google Classroom</strong>.</p>
+</div>
+</div>
+</section>
+<section id="uso-de-los-materiales" class="level2">
+<h2 class="anchored" data-anchor-id="uso-de-los-materiales">Uso de los materiales</h2>
+<p>Los documentos pueden consultarse directamente desde el navegador. Los scripts y conjuntos de datos también podrán descargarse para trabajar en RStudio.</p>
+<p>Los materiales se actualizarán progresivamente durante el semestre. Por ello, se recomienda consultar la página correspondiente antes y después de cada sesión.</p>
+<p>Cuando existan dos versiones de un script, se utilizarán los siguientes nombres:</p>
+<ul>
+<li><strong>Script inicial:</strong> archivo preparado para comenzar la actividad.</li>
+<li><strong>Script de clase:</strong> versión desarrollada o completada durante la sesión.</li>
+<li><strong>Solución comentada:</strong> propuesta de resolución publicada posteriormente.</li>
+</ul>
+</section>
+<section id="reproducibilidad" class="level2">
+<h2 class="anchored" data-anchor-id="reproducibilidad">Reproducibilidad</h2>
+<p>Los ejemplos del curso se desarrollarán mediante R y Quarto. Siempre que sea posible, los análisis incluirán el código, los resultados y su interpretación para que puedan ser reproducidos y modificados por los estudiantes.</p>
+<p>Para la construccción de este sitio se empleó: R version 4.5.1 (2025-06-13) y RStudio 2026.08.0+187 (2026.08.0+187).</p>
+</section>
+<section id="responsabilidad-del-estudiante" class="level2">
+<h2 class="anchored" data-anchor-id="responsabilidad-del-estudiante">Responsabilidad del estudiante</h2>
+<p>Los materiales del sitio complementan las explicaciones y actividades de clase, pero no sustituyen la participación en las sesiones ni la consulta de las instrucciones oficiales publicadas en Google Classroom.</p>
 
 
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
@@ -583,6 +615,19 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   });
   </script>
 </div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+<p>© 2026 Edsaúl E. Pérez-Guerrero</p>
+</div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    </div>
+    <div class="nav-footer-right">
+<p>Construido con <a href="https://quarto.org/">Quarto</a>; R version 4.5.1</p>
+</div>
+  </div>
+</footer>
 
 
 

@@ -1,11 +1,13 @@
 ---
-title: "ioestadistica-avanzada"
+title: "Bioestadística avanzada con R"
+author:
+  - name: "Edsaúl E. Pérez-Guerrero"
+    affiliations:
+      - name: "Universidad de Guadalajara"
+        department: "Centro Universitario de Ciencias de la Salud"
+    email: "edsaul.perezg@academicos.udg.mx"
+date: last-modified
+date-format: "D [de] MMMM [de] YYYY"
 ---
 
-This is a Quarto website.
-
-To learn more about Quarto websites visit <https://quarto.org/docs/websites>.
-
-```{r}
-1 + 1
-```
+En este sitio contiene los recursos y materiales para el curso-taller de bioestadística avanzada del doctorado en genética humana.

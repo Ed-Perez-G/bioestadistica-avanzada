@@ -1,0 +1,459 @@
+---
+title: "Repaso de R y fundamentos de Quarto"
+subtitle: "Bioestadística avanzada con R · Semana 1"
+author: "Edsaúl Emilio Pérez Guerrero"
+date: today
+date-format: "D [de] MMMM [de] YYYY"
+lang: es
+format:
+  pdf:
+    toc: true
+    toc-title: "Contenido"
+    number-sections: true
+    colorlinks: true
+    pdf-engine: xelatex
+execute:
+  echo: true
+  warning: false
+  message: false
+editor: visual
+---
+
+# Presentación de la sesión
+
+En esta sesión repasaremos los fundamentos de R mientras construimos un reporte reproducible con Quarto. El propósito no es revisar exhaustivamente la sintaxis del lenguaje, sino recuperar las herramientas necesarias para organizar, analizar, interpretar y comunicar datos biomédicos.
+
+Trabajaremos en un solo documento que integrará texto, código, resultados, tablas y figuras. Al finalizar, este documento se convertirá en un archivo PDF que podrá compartirse sin necesidad de entregar por separado el código y la interpretación.
+
+## Objetivo de aprendizaje
+
+Al finalizar la sesión, el estudiante será capaz de crear y renderizar un documento Quarto que importe, explore, transforme y resuma una base de datos mediante R y `tidyverse`, incorporando código, resultados e interpretaciones en un reporte reproducible.
+
+## Productos de la sesión
+
+Al terminar la actividad, cada estudiante contará con:
+
+- un proyecto organizado de R;
+- un documento fuente en formato `.qmd`;
+- un análisis básico y reproducible de datos;
+- una tabla y una figura acompañadas de su interpretación;
+- un reporte final en formato PDF.
+
+## Organización sugerida de las dos horas
+
+|      Tiempo | Actividad                                                 |
+|------------:|-----------------------------------------------------------|
+|    0–15 min | Proyectos y análisis reproducible                         |
+|   15–35 min | Anatomía de un documento Quarto                           |
+|   35–60 min | Repaso selectivo de objetos y operaciones en R            |
+|   60–90 min | Importación, exploración y transformación con `tidyverse` |
+|  90–110 min | Construcción de tablas, figuras e interpretación          |
+| 110–120 min | Renderización a PDF, revisión y cierre                    |
+
+# ¿Qué significa que un análisis sea reproducible?
+
+Un análisis es reproducible cuando otra persona —o nosotros mismos en el futuro— puede reconstruir los resultados a partir de los datos y del código documentado. Esto requiere que la importación, la limpieza, las transformaciones, el análisis y la presentación de resultados formen parte de un flujo explícito.
+
+En un reporte reproducible:
+
+- los datos originales se conservan sin modificaciones manuales;
+- las transformaciones quedan registradas como código;
+- las tablas y figuras se generan automáticamente;
+- las decisiones analíticas se explican por escrito;
+- el documento puede volver a ejecutarse cuando cambian los datos.
+
+::: {.callout-note title="Idea central"}
+Un documento Quarto no es solamente un archivo de código. Es un reporte en el que conviven el razonamiento científico, el código, los resultados y su interpretación.
+:::
+
+# Organización del proyecto
+
+Para esta práctica se propone la siguiente estructura:
+
+``` text
+semana-01/
+├── reporte_semana01.qmd
+├── datos/
+│   └── pacientes.csv
+├── scripts/
+└── figuras/
+```
+
+El archivo `.qmd` se guarda en la carpeta principal. Los datos se colocan dentro de `datos/`. De esta forma podemos utilizar rutas relativas, por ejemplo:
+
+``` r
+readr::read_csv("datos/pacientes.csv")
+```
+
+Debe evitarse el uso de rutas absolutas como:
+
+``` r
+# No ejecutar: solamente es un ejemplo
+readr::read_csv("/Users/mi_nombre/Documentos/curso/pacientes.csv")
+```
+
+Las rutas absolutas dependen de una computadora y de un usuario específicos. Las rutas relativas parten de la carpeta del proyecto y facilitan que el análisis funcione en otros equipos.
+
+# Anatomía de un documento Quarto
+
+Un documento Quarto contiene tres elementos principales:
+
+1.  **Encabezado YAML:** define el título, autor, fecha y formato de salida.
+2.  **Texto en Markdown:** contiene explicaciones, preguntas e interpretaciones.
+3.  **Bloques de código:** ejecutan el análisis y producen resultados.
+
+El encabezado de este documento se encuentra entre dos líneas de guiones al inicio del archivo. Un bloque de código de R se escribe de la siguiente manera:
+
+```` markdown
+```{r}
+2 + 2
+```
+````
+
+Al renderizar el documento, Quarto ejecuta los bloques en orden e incorpora sus resultados al PDF.
+
+::: {.callout-tip title="Buena práctica"}
+El documento debe poder ejecutarse desde el inicio hasta el final en una sesión limpia de R. No debemos depender de objetos creados previamente en la consola.
+:::
+
+# Preparación del entorno
+
+Comenzamos cargando los paquetes que utilizaremos. El paquete `tidyverse` reúne herramientas para importar, transformar, resumir y visualizar datos.
+
+```{r}
+#| label: cargar-paquetes
+
+library(tidyverse)
+```
+
+Si el paquete no está instalado, se instala una sola vez desde la consola:
+
+``` r
+install.packages("tidyverse")
+```
+
+La instalación no debe incluirse como parte del análisis cotidiano, pues intentaría repetirse cada vez que se renderice el documento.
+
+# Repaso selectivo de R
+
+## R como calculadora
+
+R permite realizar operaciones aritméticas y utilizar funciones matemáticas.
+
+```{r}
+2 + 3
+10 / 4
+2^3
+sqrt(25)
+log(10)
+```
+
+## Objetos y asignación
+
+El operador `<-` asigna un valor a un objeto.
+
+```{r}
+edad <- 42
+peso_kg <- 71.5
+estatura_m <- 1.68
+
+imc <- peso_kg / estatura_m^2
+imc
+```
+
+Los nombres claros permiten entender el análisis sin depender de comentarios adicionales. Conviene evitar nombres ambiguos como `x`, `dato1` o `final_final`.
+
+## Vectores
+
+Un vector reúne varios valores del mismo tipo.
+
+```{r}
+edades <- c(34, 51, 46, 29, 63)
+
+length(edades)
+mean(edades)
+median(edades)
+sd(edades)
+range(edades)
+```
+
+## Valores faltantes
+
+R representa los valores faltantes mediante `NA`. Muchas funciones requieren indicar explícitamente cómo manejarlos.
+
+```{r}
+biomarcador <- c(12.1, 10.8, NA, 13.4, 11.7)
+
+is.na(biomarcador)
+sum(is.na(biomarcador))
+mean(biomarcador, na.rm = TRUE)
+```
+
+::: {.callout-important title="Interpretación"}
+Usar `na.rm = TRUE` elimina temporalmente los valores faltantes para realizar el cálculo; no constituye un método de imputación ni resuelve el mecanismo que produjo la ausencia de datos.
+:::
+
+## Clases de objetos
+
+La clase de una variable determina las operaciones que pueden realizarse con ella.
+
+```{r}
+class(42)
+class("control")
+class(TRUE)
+class(as.Date("2026-08-17"))
+```
+
+# Creación de los datos de práctica
+
+Para que este documento pueda ejecutarse desde el inicio, construiremos una pequeña base de datos simulada. En una práctica posterior sustituiremos este bloque por la importación de un archivo externo.
+
+```{r}
+#| label: crear-datos
+
+pacientes <- tibble(
+  id = 1:20,
+  grupo = rep(c("Control", "Tratamiento"), each = 10),
+  sexo = rep(c("Mujer", "Hombre"), times = 10),
+  edad = c(34, 51, 46, 29, 63, 42, 38, 55, 47, 60,
+           36, 49, 41, 32, 58, 45, 39, 53, 44, 57),
+  imc = c(23.1, 27.4, 25.8, 22.6, 30.2, 26.1, NA, 28.7, 24.9, 29.4,
+          22.8, 25.6, 24.2, 21.9, 27.5, 23.7, 24.5, NA, 23.9, 26.8),
+  biomarcador = c(12.4, 14.1, 13.2, 11.8, 15.7, 13.6, 12.9, 15.1, 13.5, 14.8,
+                  10.9, 12.3, 11.4, 10.7, 13.1, 11.6, 11.2, 12.8, 11.5, 12.4)
+)
+
+pacientes
+```
+
+Para practicar la importación desde un archivo, podemos guardar esta tabla como CSV. Esta instrucción se ejecuta una sola vez:
+
+``` r
+write_csv(pacientes, "datos/pacientes.csv", na = "")
+```
+
+Posteriormente, la importación se realiza así:
+
+``` r
+pacientes <- read_csv("datos/pacientes.csv", show_col_types = FALSE)
+```
+
+# Exploración inicial de los datos
+
+Antes de aplicar cualquier modelo debemos conocer la estructura y la calidad de los datos.
+
+```{r}
+#| label: explorar-datos
+
+glimpse(pacientes)
+head(pacientes)
+dim(pacientes)
+summary(pacientes)
+```
+
+La exploración inicial debe responder, al menos, las siguientes preguntas:
+
+- ¿Cuál es la unidad de observación?
+- ¿Cuántas observaciones y variables existen?
+- ¿Qué representa cada variable?
+- ¿Las clases de las variables son correctas?
+- ¿Existen valores faltantes o valores poco plausibles?
+- ¿Hay identificadores duplicados?
+
+```{r}
+#| label: revisar-calidad
+
+pacientes |>
+  summarise(
+    n = n(),
+    identificadores_unicos = n_distinct(id),
+    faltantes_imc = sum(is.na(imc)),
+    faltantes_biomarcador = sum(is.na(biomarcador))
+  )
+```
+
+## Pausa de interpretación
+
+Escriba dos o tres oraciones sobre la estructura y la calidad de la base. No se limite a copiar los resultados: explique qué implican para el análisis.
+
+> **Interpretación del estudiante:** Reemplace este texto con su interpretación.
+
+# Transformación con `tidyverse`
+
+## Seleccionar variables
+
+```{r}
+pacientes |>
+  select(id, grupo, edad, biomarcador)
+```
+
+## Filtrar observaciones
+
+```{r}
+pacientes |>
+  filter(edad >= 50)
+```
+
+## Crear o modificar variables
+
+```{r}
+pacientes <- pacientes |>
+  mutate(
+    grupo = factor(grupo, levels = c("Control", "Tratamiento")),
+    sexo = factor(sexo),
+    edad_centrada = edad - mean(edad, na.rm = TRUE),
+    imc_alto = if_else(imc >= 25, "Sí", "No", missing = NA_character_)
+  )
+
+glimpse(pacientes)
+```
+
+## Resumir por grupos
+
+```{r}
+#| label: resumen-grupos
+
+resumen_grupos <- pacientes |>
+  group_by(grupo) |>
+  summarise(
+    n = n(),
+    edad_media = mean(edad, na.rm = TRUE),
+    edad_de = sd(edad, na.rm = TRUE),
+    biomarcador_media = mean(biomarcador, na.rm = TRUE),
+    biomarcador_de = sd(biomarcador, na.rm = TRUE),
+    .groups = "drop"
+  )
+
+resumen_grupos
+```
+
+El operador `|>` se lee como “luego”. Permite expresar el flujo del análisis de izquierda a derecha: partimos de una base, la agrupamos y después calculamos los resúmenes.
+
+# Presentación de resultados
+
+## Tabla descriptiva
+
+```{r}
+#| label: tbl-descriptiva
+#| tbl-cap: "Resumen descriptivo por grupo de estudio."
+
+knitr::kable(
+  resumen_grupos,
+  digits = 2,
+  col.names = c(
+    "Grupo", "n", "Edad: media", "Edad: DE",
+    "Biomarcador: media", "Biomarcador: DE"
+  )
+)
+```
+
+Una tabla debe poder comprenderse sin inspeccionar el código. Necesita un título informativo, nombres claros, unidades cuando correspondan y un número razonable de decimales.
+
+## Visualización
+
+```{r}
+#| label: fig-biomarcador-grupo
+#| fig-cap: "Distribución del biomarcador según el grupo de estudio."
+#| fig-width: 7
+#| fig-height: 4.5
+
+ggplot(pacientes, aes(x = grupo, y = biomarcador, fill = grupo)) +
+  geom_boxplot(width = 0.55, alpha = 0.75, show.legend = FALSE) +
+  geom_jitter(width = 0.08, alpha = 0.65, show.legend = FALSE) +
+  labs(
+    x = "Grupo de estudio",
+    y = "Biomarcador (unidades)"
+  ) +
+  theme_minimal(base_size = 11)
+```
+
+## Interpretación de la figura
+
+Describa el patrón observado sin afirmar que existe una diferencia estadísticamente significativa. Considere la tendencia central, la dispersión, el posible solapamiento entre grupos y el tamaño de la muestra.
+
+> **Interpretación del estudiante:** Reemplace este texto con una interpretación de tres a cinco oraciones.
+
+# Actividad integradora
+
+A partir de la base `pacientes`, realice las siguientes tareas:
+
+1.  Compruebe si existen valores faltantes en cada variable.
+2.  Calcule la edad mediana y el rango intercuartílico por sexo.
+3.  Calcule la media y la desviación estándar del biomarcador por grupo y sexo.
+4.  Construya una figura que muestre la relación entre edad y biomarcador, diferenciando los grupos mediante color.
+5.  Añada títulos y etiquetas claras a la tabla y a la figura.
+6.  Escriba un párrafo breve que interprete los resultados y señale al menos una limitación.
+
+## Desarrollo
+
+Utilice los siguientes bloques como punto de partida. Modifique el código donde sea necesario.
+
+```{r}
+#| label: ejercicio-faltantes
+
+# Escriba aquí su código
+```
+
+```{r}
+#| label: ejercicio-tabla
+#| tbl-cap: "Edad y biomarcador según las variables de agrupación."
+
+# Escriba aquí su código
+```
+
+```{r}
+#| label: ejercicio-figura
+#| fig-cap: "Relación entre edad y biomarcador por grupo de estudio."
+
+# Escriba aquí su código
+```
+
+### Discusión
+
+> **Discusión del estudiante:** Presente los principales hallazgos, distinga la descripción de la inferencia y señale una limitación del análisis.
+
+# Renderización del reporte
+
+Antes de generar el PDF:
+
+1.  guarde el archivo `.qmd`;
+2.  reinicie la sesión de R si desea comprobar la reproducibilidad;
+3.  utilice el botón **Render**;
+4.  revise que no existan errores;
+5.  verifique títulos, tablas, figuras y saltos de página;
+6.  abra el PDF final y compruebe que sea legible.
+
+Para generar archivos PDF, Quarto necesita una distribución de LaTeX. Puede instalarse TinyTeX desde la terminal con:
+
+``` bash
+quarto install tinytex
+```
+
+Esta instalación se realiza una sola vez.
+
+# Lista de verificación
+
+- [ ] El documento se ejecuta desde el inicio hasta el final.
+- [ ] Todas las librerías necesarias se cargan en el documento.
+- [ ] Los datos se leen mediante una ruta relativa.
+- [ ] Las transformaciones están documentadas mediante código.
+- [ ] La tabla tiene un título y nombres comprensibles.
+- [ ] La figura tiene título, ejes y unidades apropiadas.
+- [ ] Los resultados están acompañados de interpretación.
+- [ ] El archivo PDF se generó correctamente.
+
+# Cierre
+
+En esta sesión utilizamos R y Quarto como componentes de un mismo flujo analítico. El objetivo no fue únicamente obtener resultados, sino construir un documento que permita comprender de dónde provienen, cómo se calcularon y qué significan.
+
+En la segunda sesión trabajaremos con un script deliberadamente desorganizado. Identificaremos problemas de rutas, nombres, repetición, transformaciones manuales y resultados sin interpretar; después lo convertiremos en un proyecto reproducible.
+
+# Información de la sesión de R
+
+Registrar las versiones del software y de los paquetes ayuda a documentar el entorno en el que se realizó el análisis.
+
+```{r}
+#| label: informacion-sesion
+
+sessionInfo()
+```
