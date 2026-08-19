@@ -6,6 +6,7 @@ date: today
 date-format: "D [de] MMMM [de] YYYY"
 lang: es
 format:
+  html: default 
   pdf:
     toc: true
     toc-title: "Contenido"
@@ -16,7 +17,7 @@ execute:
   echo: true
   warning: false
   message: false
-editor: visual
+editor: source
 ---
 
 # Presentación de la sesión
