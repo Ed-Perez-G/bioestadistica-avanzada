@@ -1,5 +1,187 @@
 [
   {
+    "objectID": "temas/tema-01/tema-01-repaso-r-quarto.html",
+    "href": "temas/tema-01/tema-01-repaso-r-quarto.html",
+    "title": "Repaso de R y fundamentos de Quarto",
+    "section": "",
+    "text": "En esta sesión repasaremos los fundamentos de R mientras construimos un reporte reproducible con Quarto. El propósito no es revisar exhaustivamente la sintaxis del lenguaje, sino recuperar las herramientas necesarias para organizar, analizar, interpretar y comunicar datos biomédicos.\nTrabajaremos en un solo documento que integrará texto, código, resultados, tablas y figuras, por ello vamos a utilizar Quarto como base, aunqe también son libres de utlizar markdown. Al finalizar, este documento se convertirá en un archivo PDF o htlm que podrá compartirse sin necesidad de entregar por separado el código y la interpretación.\nAdemás, trabajar con este tipo de documentos mejora mucho la logíca y presentación del código.\n\n\nAl finalizar la sesión, el estudiante será capaz de crear y renderizar un documento Quarto que importe, explore, transforme y resuma una base de datos mediante R y tidyverse, incorporando código, resultados e interpretaciones en un reporte reproducible. Nota: aquí solo veremos conceptos básico de tidyverse tendremos una clase específica para la manipulación de bases de datos con tidyverse.\n\n\n\nAl terminar la actividad, cada estudiante contará con:\n\nun proyecto organizado de R;\nun documento fuente en formato .qmd;\nun análisis básico y reproducible de datos;\nuna tabla y una figura acompañadas de su interpretación;\nun reporte final en formato PDF que deberá enviarse por Google Classroom."
+  },
+  {
+    "objectID": "temas/tema-01/tema-01-repaso-r-quarto.html#objetivo-de-aprendizaje",
+    "href": "temas/tema-01/tema-01-repaso-r-quarto.html#objetivo-de-aprendizaje",
+    "title": "Repaso de R y fundamentos de Quarto",
+    "section": "",
+    "text": "Al finalizar la sesión, el estudiante será capaz de crear y renderizar un documento Quarto que importe, explore, transforme y resuma una base de datos mediante R y tidyverse, incorporando código, resultados e interpretaciones en un reporte reproducible. Nota: aquí solo veremos conceptos básico de tidyverse tendremos una clase específica para la manipulación de bases de datos con tidyverse."
+  },
+  {
+    "objectID": "temas/tema-01/tema-01-repaso-r-quarto.html#productos-de-la-sesión",
+    "href": "temas/tema-01/tema-01-repaso-r-quarto.html#productos-de-la-sesión",
+    "title": "Repaso de R y fundamentos de Quarto",
+    "section": "",
+    "text": "Al terminar la actividad, cada estudiante contará con:\n\nun proyecto organizado de R;\nun documento fuente en formato .qmd;\nun análisis básico y reproducible de datos;\nuna tabla y una figura acompañadas de su interpretación;\nun reporte final en formato PDF que deberá enviarse por Google Classroom."
+  },
+  {
+    "objectID": "temas/tema-01/tema-01-repaso-r-quarto.html#r-como-calculadora",
+    "href": "temas/tema-01/tema-01-repaso-r-quarto.html#r-como-calculadora",
+    "title": "Repaso de R y fundamentos de Quarto",
+    "section": "R como calculadora",
+    "text": "R como calculadora\nR permite realizar operaciones aritméticas y utilizar funciones matemáticas.\n\n2 + 3\n\n[1] 5\n\n10 / 4\n\n[1] 2.5\n\n2^3\n\n[1] 8\n\nsqrt(25)\n\n[1] 5\n\nlog(10)\n\n[1] 2.302585"
+  },
+  {
+    "objectID": "temas/tema-01/tema-01-repaso-r-quarto.html#objetos-y-asignación",
+    "href": "temas/tema-01/tema-01-repaso-r-quarto.html#objetos-y-asignación",
+    "title": "Repaso de R y fundamentos de Quarto",
+    "section": "Objetos y asignación",
+    "text": "Objetos y asignación\nEl operador &lt;- asigna un valor a un objeto.\n\nedad &lt;- 42\npeso_kg &lt;- 71.5\nestatura_m &lt;- 1.68\n\nimc &lt;- peso_kg / estatura_m^2\nimc\n\n[1] 25.33305\n\n\nLos nombres claros permiten entender el análisis sin depender de comentarios adicionales. Conviene evitar nombres ambiguos como x, dato1 o final_final.\nUse siempre la misma estructura en nombres de los objetos."
+  },
+  {
+    "objectID": "temas/tema-01/tema-01-repaso-r-quarto.html#vectores",
+    "href": "temas/tema-01/tema-01-repaso-r-quarto.html#vectores",
+    "title": "Repaso de R y fundamentos de Quarto",
+    "section": "Vectores",
+    "text": "Vectores\nUn vector reúne varios valores del mismo tipo.\n\nedades &lt;- c(34, 51, 46, 29, 63)\n\nlength(edades)\n\n[1] 5\n\nmean(edades)\n\n[1] 44.6\n\nmedian(edades)\n\n[1] 46\n\nsd(edades)\n\n[1] 13.57571\n\nrange(edades)\n\n[1] 29 63"
+  },
+  {
+    "objectID": "temas/tema-01/tema-01-repaso-r-quarto.html#valores-faltantes",
+    "href": "temas/tema-01/tema-01-repaso-r-quarto.html#valores-faltantes",
+    "title": "Repaso de R y fundamentos de Quarto",
+    "section": "Valores faltantes",
+    "text": "Valores faltantes\nR representa los valores faltantes mediante NA. Muchas funciones requieren indicar explícitamente cómo manejarlos.\n\nbiomarcador &lt;- c(12.1, 10.8, NA, 13.4, 11.7)\n\nis.na(biomarcador)\n\n[1] FALSE FALSE  TRUE FALSE FALSE\n\nsum(is.na(biomarcador))\n\n[1] 1\n\nmean(biomarcador, na.rm = TRUE)\n\n[1] 12\n\n\n\n\n\n\n\n\nImportanteInterpretación\n\n\n\nUsar na.rm = TRUE elimina temporalmente los valores faltantes para realizar el cálculo; no constituye un método de imputación ni resuelve el mecanismo que produjo la ausencia de datos."
+  },
+  {
+    "objectID": "temas/tema-01/tema-01-repaso-r-quarto.html#clases-de-objetos",
+    "href": "temas/tema-01/tema-01-repaso-r-quarto.html#clases-de-objetos",
+    "title": "Repaso de R y fundamentos de Quarto",
+    "section": "Clases de objetos",
+    "text": "Clases de objetos\nLa clase de una variable determina las operaciones que pueden realizarse con ella.\n\nclass(42)\n\n[1] \"numeric\"\n\nclass(\"control\")\n\n[1] \"character\"\n\nclass(TRUE)\n\n[1] \"logical\"\n\nclass(as.Date(\"2026-08-17\"))\n\n[1] \"Date\""
+  },
+  {
+    "objectID": "temas/tema-01/tema-01-repaso-r-quarto.html#pausa-de-interpretación",
+    "href": "temas/tema-01/tema-01-repaso-r-quarto.html#pausa-de-interpretación",
+    "title": "Repaso de R y fundamentos de Quarto",
+    "section": "Pausa de interpretación",
+    "text": "Pausa de interpretación\nEscriba dos o tres oraciones sobre la estructura y la calidad de la base. No se limite a copiar los resultados: explique qué implican para el análisis.\n\nInterpretación del estudiante: Reemplace este texto con su interpretación."
+  },
+  {
+    "objectID": "temas/tema-01/tema-01-repaso-r-quarto.html#seleccionar-variables",
+    "href": "temas/tema-01/tema-01-repaso-r-quarto.html#seleccionar-variables",
+    "title": "Repaso de R y fundamentos de Quarto",
+    "section": "Seleccionar variables",
+    "text": "Seleccionar variables\n\npacientes |&gt;\n  select(id, grupo, edad, biomarcador)\n\n# A tibble: 20 × 4\n      id grupo        edad biomarcador\n   &lt;int&gt; &lt;chr&gt;       &lt;dbl&gt;       &lt;dbl&gt;\n 1     1 Control        34        12.4\n 2     2 Control        51        14.1\n 3     3 Control        46        13.2\n 4     4 Control        29        11.8\n 5     5 Control        63        15.7\n 6     6 Control        42        13.6\n 7     7 Control        38        12.9\n 8     8 Control        55        15.1\n 9     9 Control        47        13.5\n10    10 Control        60        14.8\n11    11 Tratamiento    36        10.9\n12    12 Tratamiento    49        12.3\n13    13 Tratamiento    41        11.4\n14    14 Tratamiento    32        10.7\n15    15 Tratamiento    58        13.1\n16    16 Tratamiento    45        11.6\n17    17 Tratamiento    39        11.2\n18    18 Tratamiento    53        12.8\n19    19 Tratamiento    44        11.5\n20    20 Tratamiento    57        12.4"
+  },
+  {
+    "objectID": "temas/tema-01/tema-01-repaso-r-quarto.html#filtrar-observaciones",
+    "href": "temas/tema-01/tema-01-repaso-r-quarto.html#filtrar-observaciones",
+    "title": "Repaso de R y fundamentos de Quarto",
+    "section": "Filtrar observaciones",
+    "text": "Filtrar observaciones\n\npacientes |&gt;\n  filter(edad &gt;= 50)\n\n# A tibble: 7 × 6\n     id grupo       sexo    edad   imc biomarcador\n  &lt;int&gt; &lt;chr&gt;       &lt;chr&gt;  &lt;dbl&gt; &lt;dbl&gt;       &lt;dbl&gt;\n1     2 Control     Hombre    51  27.4        14.1\n2     5 Control     Mujer     63  30.2        15.7\n3     8 Control     Hombre    55  28.7        15.1\n4    10 Control     Hombre    60  29.4        14.8\n5    15 Tratamiento Mujer     58  27.5        13.1\n6    18 Tratamiento Hombre    53  NA          12.8\n7    20 Tratamiento Hombre    57  26.8        12.4"
+  },
+  {
+    "objectID": "temas/tema-01/tema-01-repaso-r-quarto.html#crear-o-modificar-variables",
+    "href": "temas/tema-01/tema-01-repaso-r-quarto.html#crear-o-modificar-variables",
+    "title": "Repaso de R y fundamentos de Quarto",
+    "section": "Crear o modificar variables",
+    "text": "Crear o modificar variables\n\npacientes &lt;- pacientes |&gt;\n  mutate(\n    grupo = factor(grupo, levels = c(\"Control\", \"Tratamiento\")),\n    sexo = factor(sexo),\n    edad_centrada = edad - mean(edad, na.rm = TRUE),\n    imc_alto = if_else(imc &gt;= 25, \"Sí\", \"No\", missing = NA_character_)\n  )\n\nglimpse(pacientes)\n\nRows: 20\nColumns: 8\n$ id            &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 1…\n$ grupo         &lt;fct&gt; Control, Control, Control, Control, Control, Control, Co…\n$ sexo          &lt;fct&gt; Mujer, Hombre, Mujer, Hombre, Mujer, Hombre, Mujer, Homb…\n$ edad          &lt;dbl&gt; 34, 51, 46, 29, 63, 42, 38, 55, 47, 60, 36, 49, 41, 32, …\n$ imc           &lt;dbl&gt; 23.1, 27.4, 25.8, 22.6, 30.2, 26.1, NA, 28.7, 24.9, 29.4…\n$ biomarcador   &lt;dbl&gt; 12.4, 14.1, 13.2, 11.8, 15.7, 13.6, 12.9, 15.1, 13.5, 14…\n$ edad_centrada &lt;dbl&gt; -11.95, 5.05, 0.05, -16.95, 17.05, -3.95, -7.95, 9.05, 1…\n$ imc_alto      &lt;chr&gt; \"No\", \"Sí\", \"Sí\", \"No\", \"Sí\", \"Sí\", NA, \"Sí\", \"No\", \"Sí\"…"
+  },
+  {
+    "objectID": "temas/tema-01/tema-01-repaso-r-quarto.html#resumir-por-grupos",
+    "href": "temas/tema-01/tema-01-repaso-r-quarto.html#resumir-por-grupos",
+    "title": "Repaso de R y fundamentos de Quarto",
+    "section": "Resumir por grupos",
+    "text": "Resumir por grupos\n\nresumen_grupos &lt;- pacientes |&gt;\n  group_by(grupo) |&gt;\n  summarise(\n    n = n(),\n    edad_media = mean(edad, na.rm = TRUE),\n    edad_de = sd(edad, na.rm = TRUE),\n    biomarcador_media = mean(biomarcador, na.rm = TRUE),\n    biomarcador_de = sd(biomarcador, na.rm = TRUE),\n    .groups = \"drop\"\n  )\n\nresumen_grupos\n\n# A tibble: 2 × 6\n  grupo           n edad_media edad_de biomarcador_media biomarcador_de\n  &lt;fct&gt;       &lt;int&gt;      &lt;dbl&gt;   &lt;dbl&gt;             &lt;dbl&gt;          &lt;dbl&gt;\n1 Control        10       46.5   11.1               13.7          1.23 \n2 Tratamiento    10       45.4    8.78              11.8          0.814\n\n\nEl operador |&gt; se lee como “luego”. Permite expresar el flujo del análisis de izquierda a derecha: partimos de una base, la agrupamos y después calculamos los resúmenes."
+  },
+  {
+    "objectID": "temas/tema-01/tema-01-repaso-r-quarto.html#desarrollo",
+    "href": "temas/tema-01/tema-01-repaso-r-quarto.html#desarrollo",
+    "title": "Repaso de R y fundamentos de Quarto",
+    "section": "Desarrollo",
+    "text": "Desarrollo\nUtilice los siguientes bloques como punto de partida. Modifique el código donde sea necesario.\n\n# Escriba aquí su código\n\n\n# Escriba aquí su código\n\n\n# Escriba aquí su código\n\n\nDiscusión\n\nDiscusión del estudiante: Presente los principales hallazgos, distinga la descripción de la inferencia y señale una limitación del análisis."
+  },
+  {
+    "objectID": "temas/tema-01/tema-01-manipulacion-datos-dplyr-tidyr-parte-1.html",
+    "href": "temas/tema-01/tema-01-manipulacion-datos-dplyr-tidyr-parte-1.html",
+    "title": "Manipulación de datos con dplyr y tidyr",
+    "section": "",
+    "text": "La manipulación de datos es una parte central de cualquier análisis estadístico. Muchos análisis requieren que antes de comenzar se deba importar, revisar, seleccionar, transformar, reorganizar y combinar información proveniente de una o varias bases de datos\nEste es un documento introductorio de los paquetes dplyr y tidyr.\n\n\nAl finalizar la práctica, el estudiante será capaz de construir un flujo reproducible de manipulación de datos mediante dplyr y tidyr, incluyendo selección y filtrado de observaciones, creación y modificación de variables, resúmenes agrupados, transformación entre formatos ancho y largo, tratamiento explícito de valores faltantes y combinación de tablas mediante uniones.\n\n\n\nEsta es una tabla con la descripción de las funciones y su uso que se utilizarán aquí:\n\n\n\n\n\n\n\nPropósito\nFunciones\n\n\n\n\nInspeccionar\nglimpse(), count(), distinct()\n\n\nSeleccionar columnas\nselect(), relocate()\n\n\nRenombrar\nrename(), rename_with()\n\n\nFiltrar filas\nfilter(), slice_*()\n\n\nOrdenar\narrange()\n\n\nCrear o modificar variables\nmutate(), transmute(), case_when(), if_else()\n\n\nAgrupar y resumir\ngroup_by(), summarise(), across()\n\n\nReorganizar datos\npivot_longer(), pivot_wider()\n\n\nSeparar o unir columnas\nseparate_wider_delim(), unite()\n\n\nCombinar tablas\nleft_join(), inner_join(), full_join(), semi_join(), anti_join()\n\n\nTrabajar con faltantes\ndrop_na(), replace_na(), complete()"
+  },
+  {
+    "objectID": "temas/tema-01/tema-01-manipulacion-datos-dplyr-tidyr-parte-1.html#objetivo-de-aprendizaje",
+    "href": "temas/tema-01/tema-01-manipulacion-datos-dplyr-tidyr-parte-1.html#objetivo-de-aprendizaje",
+    "title": "Manipulación de datos con dplyr y tidyr",
+    "section": "",
+    "text": "Al finalizar la práctica, el estudiante será capaz de construir un flujo reproducible de manipulación de datos mediante dplyr y tidyr, incluyendo selección y filtrado de observaciones, creación y modificación de variables, resúmenes agrupados, transformación entre formatos ancho y largo, tratamiento explícito de valores faltantes y combinación de tablas mediante uniones."
+  },
+  {
+    "objectID": "temas/tema-01/tema-01-manipulacion-datos-dplyr-tidyr-parte-1.html#funciones-principales",
+    "href": "temas/tema-01/tema-01-manipulacion-datos-dplyr-tidyr-parte-1.html#funciones-principales",
+    "title": "Manipulación de datos con dplyr y tidyr",
+    "section": "",
+    "text": "Esta es una tabla con la descripción de las funciones y su uso que se utilizarán aquí:\n\n\n\n\n\n\n\nPropósito\nFunciones\n\n\n\n\nInspeccionar\nglimpse(), count(), distinct()\n\n\nSeleccionar columnas\nselect(), relocate()\n\n\nRenombrar\nrename(), rename_with()\n\n\nFiltrar filas\nfilter(), slice_*()\n\n\nOrdenar\narrange()\n\n\nCrear o modificar variables\nmutate(), transmute(), case_when(), if_else()\n\n\nAgrupar y resumir\ngroup_by(), summarise(), across()\n\n\nReorganizar datos\npivot_longer(), pivot_wider()\n\n\nSeparar o unir columnas\nseparate_wider_delim(), unite()\n\n\nCombinar tablas\nleft_join(), inner_join(), full_join(), semi_join(), anti_join()\n\n\nTrabajar con faltantes\ndrop_na(), replace_na(), complete()"
+  },
+  {
+    "objectID": "temas/tema-01/tema-01-manipulacion-datos-dplyr-tidyr-parte-1.html#contar-categorías",
+    "href": "temas/tema-01/tema-01-manipulacion-datos-dplyr-tidyr-parte-1.html#contar-categorías",
+    "title": "Manipulación de datos con dplyr y tidyr",
+    "section": "4.1 Contar categorías",
+    "text": "4.1 Contar categorías\nOtra forma de saber conocer una base de datos es contar categorias y hacer resumenes\n\nparticipantes |&gt;\n  count(centro, sort = TRUE)\n\n# A tibble: 3 × 2\n  centro     n\n  &lt;chr&gt;  &lt;int&gt;\n1 Centro     4\n2 Norte      4\n3 Sur        4\n\n\nPodemos contar combinaciones de categorías:\n\nparticipantes |&gt;\n  count(centro, sexo, name = \"n_participantes\")\n\n# A tibble: 6 × 3\n  centro sexo   n_participantes\n  &lt;chr&gt;  &lt;chr&gt;            &lt;int&gt;\n1 Centro Hombre               2\n2 Centro Mujer                2\n3 Norte  Hombre               2\n4 Norte  Mujer                2\n5 Sur    Hombre               2\n6 Sur    Mujer                2\n\n\nLa función count() equivale, de manera simplificada, a agrupar y resumir, este código produce el mismo resultado aunque utiliza diferentes funciones. Primero agrupa y luego resume:\n\nparticipantes |&gt;\n  group_by(centro, sexo) |&gt;\n  summarise(n_participantes = n(), .groups = \"drop\") #.groups = \"drop\" remueve las agrupaciones\n\n# A tibble: 6 × 3\n  centro sexo   n_participantes\n  &lt;chr&gt;  &lt;chr&gt;            &lt;int&gt;\n1 Centro Hombre               2\n2 Centro Mujer                2\n3 Norte  Hombre               2\n4 Norte  Mujer                2\n5 Sur    Hombre               2\n6 Sur    Mujer                2\n\n\nMás adelante vermos que hace la función group_by"
+  },
+  {
+    "objectID": "temas/tema-01/tema-01-manipulacion-datos-dplyr-tidyr-parte-1.html#valores-únicos-y-duplicados",
+    "href": "temas/tema-01/tema-01-manipulacion-datos-dplyr-tidyr-parte-1.html#valores-únicos-y-duplicados",
+    "title": "Manipulación de datos con dplyr y tidyr",
+    "section": "4.2 Valores únicos y duplicados",
+    "text": "4.2 Valores únicos y duplicados\n\nparticipantes |&gt;\n  distinct(centro)\n\n# A tibble: 3 × 1\n  centro\n  &lt;chr&gt; \n1 Norte \n2 Sur   \n3 Centro\n\nparticipantes |&gt;\n  count(id) |&gt; # cuenta cuantos id hay \n  filter(n &gt; 1) # filtra conteos mayores 1\n\n# A tibble: 0 × 2\n# ℹ 2 variables: id &lt;chr&gt;, n &lt;int&gt;\n\n\nQue un identificador se repita puede ser correcto o incorrecto dependiendo de la unidad de observación. Compare:\n\nparticipantes |&gt;\n  count(id) |&gt;\n  summarise(max_repeticiones = max(n))\n\n# A tibble: 1 × 1\n  max_repeticiones\n             &lt;int&gt;\n1                1\n\nvisitas |&gt;\n  count(id) |&gt;\n  summarise(max_repeticiones = max(n))\n\n# A tibble: 1 × 1\n  max_repeticiones\n             &lt;int&gt;\n1                3"
+  },
+  {
+    "objectID": "temas/tema-01/tema-01-manipulacion-datos-dplyr-tidyr-parte-1.html#select",
+    "href": "temas/tema-01/tema-01-manipulacion-datos-dplyr-tidyr-parte-1.html#select",
+    "title": "Manipulación de datos con dplyr y tidyr",
+    "section": "5.1 select()",
+    "text": "5.1 select()\nselect() conserva, elimina o reordena columnas.\n\nparticipantes |&gt;\n  select(id, centro, sexo)\n\n# A tibble: 12 × 3\n   id    centro sexo  \n   &lt;chr&gt; &lt;chr&gt;  &lt;chr&gt; \n 1 P001  Norte  Mujer \n 2 P002  Norte  Hombre\n 3 P003  Sur    Mujer \n 4 P004  Centro Mujer \n 5 P005  Centro Hombre\n 6 P006  Sur    Hombre\n 7 P007  Norte  Mujer \n 8 P008  Centro Hombre\n 9 P009  Sur    Mujer \n10 P010  Norte  Hombre\n11 P011  Centro Mujer \n12 P012  Sur    Hombre\n\n\nTambién acepta ayudantes de selección:\n\nvisitas |&gt;\n  select(id, visita, starts_with(\"presion\"))\n\n# A tibble: 36 × 3\n   id    visita presion_sistolica\n   &lt;chr&gt; &lt;chr&gt;              &lt;dbl&gt;\n 1 P001  basal                124\n 2 P001  mes_3                121\n 3 P001  mes_6                119\n 4 P002  basal                139\n 5 P002  mes_3                136\n 6 P002  mes_6                134\n 7 P003  basal                117\n 8 P003  mes_3                115\n 9 P003  mes_6                114\n10 P004  basal                146\n# ℹ 26 more rows\n\n# starts_with selecciona todas las variables que comiencen con presion\n\n\nlaboratorio |&gt;\n  select(id, ends_with(\"mg_dl\"))\n\n# A tibble: 12 × 3\n   id    glucosa_mg_dl colesterol_mg_dl\n   &lt;chr&gt;         &lt;dbl&gt;            &lt;dbl&gt;\n 1 P001             91              174\n 2 P002            108              215\n 3 P003             87              168\n 4 P004            103              201\n 5 P005            126              238\n 6 P006             99              190\n 7 P007             89              176\n 8 P008            116              224\n 9 P009             94              183\n10 P010            132              245\n11 P011             97              195\n12 P999            105              210\n\n# ends_with selecciona todas las variables que terminan con mg_dl\n\nPara eliminar columnas se utiliza el signo negativo:\n\nparticipantes |&gt;\n  select(-fecha_nacimiento)\n\n# A tibble: 12 × 5\n   id    centro sexo   estatura_cm fumador\n   &lt;chr&gt; &lt;chr&gt;  &lt;chr&gt;        &lt;dbl&gt; &lt;chr&gt;  \n 1 P001  Norte  Mujer          164 No     \n 2 P002  Norte  Hombre         178 Sí     \n 3 P003  Sur    Mujer          159 No     \n 4 P004  Centro Mujer          167 No     \n 5 P005  Centro Hombre         181 Sí     \n 6 P006  Sur    Hombre         174 No     \n 7 P007  Norte  Mujer          162 No     \n 8 P008  Centro Hombre         176 No     \n 9 P009  Sur    Mujer          160 &lt;NA&gt;   \n10 P010  Norte  Hombre         183 Sí     \n11 P011  Centro Mujer          165 No     \n12 P012  Sur    Hombre         172 No     \n\n\n\n# Puede concatenar varias variables. \n\nparticipantes |&gt;\n  select(-c(fecha_nacimiento, centro))\n\n# A tibble: 12 × 4\n   id    sexo   estatura_cm fumador\n   &lt;chr&gt; &lt;chr&gt;        &lt;dbl&gt; &lt;chr&gt;  \n 1 P001  Mujer          164 No     \n 2 P002  Hombre         178 Sí     \n 3 P003  Mujer          159 No     \n 4 P004  Mujer          167 No     \n 5 P005  Hombre         181 Sí     \n 6 P006  Hombre         174 No     \n 7 P007  Mujer          162 No     \n 8 P008  Hombre         176 No     \n 9 P009  Mujer          160 &lt;NA&gt;   \n10 P010  Hombre         183 Sí     \n11 P011  Mujer          165 No     \n12 P012  Hombre         172 No     \n\n\nAlgunos ayudantes útiles para select() son:\n\nstarts_with(\"texto\"); Inicia con\nends_with(\"texto\"); Termina con\ncontains(\"texto\"); Contiene\nmatches(\"expresión regular\"); Expresiones\nwhere(is.numeric); donde la variable es\nall_of(vector_de_nombres) todos las valores de un vector\n\n\nvariables_clinicas &lt;- c(\"peso_kg\", \"presion_sistolica\")\n\nvisitas |&gt;\n  select(id, visita, all_of(variables_clinicas))\n\n# A tibble: 36 × 4\n   id    visita peso_kg presion_sistolica\n   &lt;chr&gt; &lt;chr&gt;    &lt;dbl&gt;             &lt;dbl&gt;\n 1 P001  basal       68               124\n 2 P001  mes_3       67               121\n 3 P001  mes_6       66               119\n 4 P002  basal       84               139\n 5 P002  mes_3       83               136\n 6 P002  mes_6       82               134\n 7 P003  basal       61               117\n 8 P003  mes_3       60               115\n 9 P003  mes_6       59               114\n10 P004  basal       75               146\n# ℹ 26 more rows"
+  },
+  {
+    "objectID": "temas/tema-01/tema-01-manipulacion-datos-dplyr-tidyr-parte-1.html#relocate",
+    "href": "temas/tema-01/tema-01-manipulacion-datos-dplyr-tidyr-parte-1.html#relocate",
+    "title": "Manipulación de datos con dplyr y tidyr",
+    "section": "5.2 relocate()",
+    "text": "5.2 relocate()\nrelocate() cambia la posición de una columna sin eliminar las demás.\n\nparticipantes |&gt;\n  relocate(sexo, .after = fumador)\n\n# A tibble: 12 × 6\n   id    centro fecha_nacimiento estatura_cm fumador sexo  \n   &lt;chr&gt; &lt;chr&gt;  &lt;date&gt;                 &lt;dbl&gt; &lt;chr&gt;   &lt;chr&gt; \n 1 P001  Norte  1984-03-12               164 No      Mujer \n 2 P002  Norte  1971-07-08               178 Sí      Hombre\n 3 P003  Sur    1990-11-23               159 No      Mujer \n 4 P004  Centro 1968-05-19               167 No      Mujer \n 5 P005  Centro 1977-09-02               181 Sí      Hombre\n 6 P006  Sur    1988-01-15               174 No      Hombre\n 7 P007  Norte  1995-06-30               162 No      Mujer \n 8 P008  Centro 1981-12-04               176 No      Hombre\n 9 P009  Sur    1974-02-27               160 &lt;NA&gt;    Mujer \n10 P010  Norte  1992-10-11               183 Sí      Hombre\n11 P011  Centro 1986-08-16               165 No      Mujer \n12 P012  Sur    1965-04-21               172 No      Hombre\n\n\n\nparticipantes |&gt;\n  relocate(sexo, .before = fumador)\n\n# A tibble: 12 × 6\n   id    centro fecha_nacimiento estatura_cm sexo   fumador\n   &lt;chr&gt; &lt;chr&gt;  &lt;date&gt;                 &lt;dbl&gt; &lt;chr&gt;  &lt;chr&gt;  \n 1 P001  Norte  1984-03-12               164 Mujer  No     \n 2 P002  Norte  1971-07-08               178 Hombre Sí     \n 3 P003  Sur    1990-11-23               159 Mujer  No     \n 4 P004  Centro 1968-05-19               167 Mujer  No     \n 5 P005  Centro 1977-09-02               181 Hombre Sí     \n 6 P006  Sur    1988-01-15               174 Hombre No     \n 7 P007  Norte  1995-06-30               162 Mujer  No     \n 8 P008  Centro 1981-12-04               176 Hombre No     \n 9 P009  Sur    1974-02-27               160 Mujer  &lt;NA&gt;   \n10 P010  Norte  1992-10-11               183 Hombre Sí     \n11 P011  Centro 1986-08-16               165 Mujer  No     \n12 P012  Sur    1965-04-21               172 Hombre No"
+  },
+  {
+    "objectID": "temas/tema-01/tema-01-manipulacion-datos-dplyr-tidyr-parte-1.html#rename",
+    "href": "temas/tema-01/tema-01-manipulacion-datos-dplyr-tidyr-parte-1.html#rename",
+    "title": "Manipulación de datos con dplyr y tidyr",
+    "section": "6.1 rename()",
+    "text": "6.1 rename()\nLa sintaxis es nombre_nuevo = nombre_anterior.\n\nparticipantes |&gt;\n  rename(\n    identificador = id,\n    talla_cm = estatura_cm\n  )\n\n# A tibble: 12 × 6\n   identificador centro sexo   fecha_nacimiento talla_cm fumador\n   &lt;chr&gt;         &lt;chr&gt;  &lt;chr&gt;  &lt;date&gt;              &lt;dbl&gt; &lt;chr&gt;  \n 1 P001          Norte  Mujer  1984-03-12            164 No     \n 2 P002          Norte  Hombre 1971-07-08            178 Sí     \n 3 P003          Sur    Mujer  1990-11-23            159 No     \n 4 P004          Centro Mujer  1968-05-19            167 No     \n 5 P005          Centro Hombre 1977-09-02            181 Sí     \n 6 P006          Sur    Hombre 1988-01-15            174 No     \n 7 P007          Norte  Mujer  1995-06-30            162 No     \n 8 P008          Centro Hombre 1981-12-04            176 No     \n 9 P009          Sur    Mujer  1974-02-27            160 &lt;NA&gt;   \n10 P010          Norte  Hombre 1992-10-11            183 Sí     \n11 P011          Centro Mujer  1986-08-16            165 No     \n12 P012          Sur    Hombre 1965-04-21            172 No"
+  },
+  {
+    "objectID": "temas/tema-01/tema-01-manipulacion-datos-dplyr-tidyr-parte-1.html#rename_with",
+    "href": "temas/tema-01/tema-01-manipulacion-datos-dplyr-tidyr-parte-1.html#rename_with",
+    "title": "Manipulación de datos con dplyr y tidyr",
+    "section": "6.2 rename_with()",
+    "text": "6.2 rename_with()\nrename_with() aplica una función a varios nombres simultáneamente.\n\nparticipantes |&gt;\n  rename_with(stringr::str_to_upper) # cambia a mayusculas\n\n# A tibble: 12 × 6\n   ID    CENTRO SEXO   FECHA_NACIMIENTO ESTATURA_CM FUMADOR\n   &lt;chr&gt; &lt;chr&gt;  &lt;chr&gt;  &lt;date&gt;                 &lt;dbl&gt; &lt;chr&gt;  \n 1 P001  Norte  Mujer  1984-03-12               164 No     \n 2 P002  Norte  Hombre 1971-07-08               178 Sí     \n 3 P003  Sur    Mujer  1990-11-23               159 No     \n 4 P004  Centro Mujer  1968-05-19               167 No     \n 5 P005  Centro Hombre 1977-09-02               181 Sí     \n 6 P006  Sur    Hombre 1988-01-15               174 No     \n 7 P007  Norte  Mujer  1995-06-30               162 No     \n 8 P008  Centro Hombre 1981-12-04               176 No     \n 9 P009  Sur    Mujer  1974-02-27               160 &lt;NA&gt;   \n10 P010  Norte  Hombre 1992-10-11               183 Sí     \n11 P011  Centro Mujer  1986-08-16               165 No     \n12 P012  Sur    Hombre 1965-04-21               172 No     \n\n\n\n# Tomar el dataframe/tibble 'laboratorio'\nlaboratorio |&gt;\n  # Renombrar columnas aplicando una función\n  rename_with(\n    # Fórmula lambda que remueve el sufijo \"_mg_dl\" del nombre de cada columna\n    # .x representa el nombre de la columna actual\n    # str_remove() elimina la primera coincidencia del patrón\n    # \"_mg_dl$\" es regex: busca \"_mg_dl\" al final de la cadena ($ = final)\n    ~ str_remove(.x, \"_mg_dl$\"),\n    # Selector: aplica la transformación solo a columnas que terminan con \"mg_dl\"\n    ends_with(\"mg_dl\")\n  )\n\n# A tibble: 12 × 4\n   id    glucosa colesterol fecha_laboratorio\n   &lt;chr&gt;   &lt;dbl&gt;      &lt;dbl&gt; &lt;date&gt;           \n 1 P001       91        174 2026-08-01       \n 2 P002      108        215 2026-08-02       \n 3 P003       87        168 2026-08-01       \n 4 P004      103        201 2026-08-03       \n 5 P005      126        238 2026-08-03       \n 6 P006       99        190 2026-08-04       \n 7 P007       89        176 2026-08-04       \n 8 P008      116        224 2026-08-05       \n 9 P009       94        183 2026-08-05       \n10 P010      132        245 2026-08-06       \n11 P011       97        195 2026-08-06       \n12 P999      105        210 2026-08-07"
+  },
+  {
+    "objectID": "temas/tema-01/tema-01-manipulacion-datos-dplyr-tidyr-parte-1.html#operadores-frecuentes",
+    "href": "temas/tema-01/tema-01-manipulacion-datos-dplyr-tidyr-parte-1.html#operadores-frecuentes",
+    "title": "Manipulación de datos con dplyr y tidyr",
+    "section": "7.1 Operadores frecuentes",
+    "text": "7.1 Operadores frecuentes\n\n\n\nOperación\nSignificado\n\n\n\n\n==\nigual a\n\n\n!=\ndiferente de\n\n\n&gt; y &lt;\nmayor o menor que\n\n\n&gt;= y &lt;=\nmayor o igual; menor o igual\n\n\n%in%\npertenece a un conjunto\n\n\n&\ny\n\n\n|\no\n\n\n!\nnegación\n\n\nis.na()\nes un valor faltante\n\n\n\n\nparticipantes |&gt;\n  filter(centro == \"Norte\" & sexo == \"Mujer\")\n\n# A tibble: 2 × 6\n  id    centro sexo  fecha_nacimiento estatura_cm fumador\n  &lt;chr&gt; &lt;chr&gt;  &lt;chr&gt; &lt;date&gt;                 &lt;dbl&gt; &lt;chr&gt;  \n1 P001  Norte  Mujer 1984-03-12               164 No     \n2 P007  Norte  Mujer 1995-06-30               162 No     \n\n\n\nparticipantes |&gt;\n  filter(centro %in% c(\"Norte\", \"Sur\"))\n\n# A tibble: 8 × 6\n  id    centro sexo   fecha_nacimiento estatura_cm fumador\n  &lt;chr&gt; &lt;chr&gt;  &lt;chr&gt;  &lt;date&gt;                 &lt;dbl&gt; &lt;chr&gt;  \n1 P001  Norte  Mujer  1984-03-12               164 No     \n2 P002  Norte  Hombre 1971-07-08               178 Sí     \n3 P003  Sur    Mujer  1990-11-23               159 No     \n4 P006  Sur    Hombre 1988-01-15               174 No     \n5 P007  Norte  Mujer  1995-06-30               162 No     \n6 P009  Sur    Mujer  1974-02-27               160 &lt;NA&gt;   \n7 P010  Norte  Hombre 1992-10-11               183 Sí     \n8 P012  Sur    Hombre 1965-04-21               172 No     \n\n\n\nvisitas |&gt;\n  filter(visita == \"mes_6\", presion_sistolica &gt;= 130)\n\n# A tibble: 6 × 4\n  id    visita peso_kg presion_sistolica\n  &lt;chr&gt; &lt;chr&gt;    &lt;dbl&gt;             &lt;dbl&gt;\n1 P002  mes_6       82               134\n2 P004  mes_6       73               138\n3 P005  mes_6       88               144\n4 P008  mes_6       84               137\n5 P010  mes_6       93               147\n6 P012  mes_6       80               133"
+  },
+  {
+    "objectID": "temas/tema-01/tema-01-manipulacion-datos-dplyr-tidyr-parte-1.html#filtrar-valores-faltantes",
+    "href": "temas/tema-01/tema-01-manipulacion-datos-dplyr-tidyr-parte-1.html#filtrar-valores-faltantes",
+    "title": "Manipulación de datos con dplyr y tidyr",
+    "section": "7.2 Filtrar valores faltantes",
+    "text": "7.2 Filtrar valores faltantes\n\nparticipantes |&gt;\n  filter(is.na(fumador))\n\n# A tibble: 1 × 6\n  id    centro sexo  fecha_nacimiento estatura_cm fumador\n  &lt;chr&gt; &lt;chr&gt;  &lt;chr&gt; &lt;date&gt;                 &lt;dbl&gt; &lt;chr&gt;  \n1 P009  Sur    Mujer 1974-02-27               160 &lt;NA&gt;   \n\n\n\nvisitas |&gt;\n  filter(!is.na(peso_kg)) # selecciona los no NA\n\n# A tibble: 34 × 4\n   id    visita peso_kg presion_sistolica\n   &lt;chr&gt; &lt;chr&gt;    &lt;dbl&gt;             &lt;dbl&gt;\n 1 P001  basal       68               124\n 2 P001  mes_3       67               121\n 3 P001  mes_6       66               119\n 4 P002  basal       84               139\n 5 P002  mes_3       83               136\n 6 P002  mes_6       82               134\n 7 P003  basal       61               117\n 8 P003  mes_3       60               115\n 9 P003  mes_6       59               114\n10 P004  basal       75               146\n# ℹ 24 more rows\n\n\nNo debe escribirse variable == NA, porque un valor desconocido no puede compararse directamente. Se utilizan is.na() y !is.na()."
+  },
+  {
+    "objectID": "temas/tema-01/tema-01-manipulacion-datos-dplyr-tidyr-parte-1.html#selección-por-posición",
+    "href": "temas/tema-01/tema-01-manipulacion-datos-dplyr-tidyr-parte-1.html#selección-por-posición",
+    "title": "Manipulación de datos con dplyr y tidyr",
+    "section": "7.3 Selección por posición",
+    "text": "7.3 Selección por posición\n\nvisitas |&gt;\n  slice_head(n = 5) # primeros 5 datos\n\n# A tibble: 5 × 4\n  id    visita peso_kg presion_sistolica\n  &lt;chr&gt; &lt;chr&gt;    &lt;dbl&gt;             &lt;dbl&gt;\n1 P001  basal       68               124\n2 P001  mes_3       67               121\n3 P001  mes_6       66               119\n4 P002  basal       84               139\n5 P002  mes_3       83               136"
+  },
+  {
     "objectID": "index.html",
     "href": "index.html",
     "title": "Bioestadística avanzada con R",
@@ -74,6 +256,293 @@
     "href": "temas/tema-01/index.html#material-de-clase",
     "title": "Tema 1: Repaso de R y análisis reproducible",
     "section": "Material de clase",
-    "text": "Material de clase\nDescargar el documento editable de Quarto"
+    "text": "Material de clase\nDescargar el documento editable de Quarto\nDescargar documento intro tidyverse parte 1"
+  },
+  {
+    "objectID": "temas/tema-01/tema-01-manipulacion-datos-dplyr-tidyr.html",
+    "href": "temas/tema-01/tema-01-manipulacion-datos-dplyr-tidyr.html",
+    "title": "Manipulación de datos con dplyr y tidyr",
+    "section": "",
+    "text": "La manipulación de datos es una parte central de cualquier análisis estadístico. Muchos análisis requieren que antes de comenzar se deba importar, revisar, seleccionar, transformar, reorganizar y combinar información proveniente de una o varias bases de datos\nEste es un documento introductorio de los paquetes dplyr y tidyr.\n\n\nAl finalizar la práctica, el estudiante será capaz de construir un flujo reproducible de manipulación de datos mediante dplyr y tidyr, incluyendo selección y filtrado de observaciones, creación y modificación de variables, resúmenes agrupados, transformación entre formatos ancho y largo, tratamiento explícito de valores faltantes y combinación de tablas mediante uniones.\n\n\n\nEsta es una tabla con la descripción de las funciones y su uso que se utilizarán aquí:\n\n\n\n\n\n\n\nPropósito\nFunciones\n\n\n\n\nInspeccionar\nglimpse(), count(), distinct()\n\n\nSeleccionar columnas\nselect(), relocate()\n\n\nRenombrar\nrename(), rename_with()\n\n\nFiltrar filas\nfilter(), slice_*()\n\n\nOrdenar\narrange()\n\n\nCrear o modificar variables\nmutate(), transmute(), case_when(), if_else()\n\n\nAgrupar y resumir\ngroup_by(), summarise(), across()\n\n\nReorganizar datos\npivot_longer(), pivot_wider()\n\n\nSeparar o unir columnas\nseparate_wider_delim(), unite()\n\n\nCombinar tablas\nleft_join(), inner_join(), full_join(), semi_join(), anti_join()\n\n\nTrabajar con faltantes\ndrop_na(), replace_na(), complete()"
+  },
+  {
+    "objectID": "temas/tema-01/tema-01-manipulacion-datos-dplyr-tidyr.html#objetivo-de-aprendizaje",
+    "href": "temas/tema-01/tema-01-manipulacion-datos-dplyr-tidyr.html#objetivo-de-aprendizaje",
+    "title": "Manipulación de datos con dplyr y tidyr",
+    "section": "",
+    "text": "Al finalizar la práctica, el estudiante será capaz de construir un flujo reproducible de manipulación de datos mediante dplyr y tidyr, incluyendo selección y filtrado de observaciones, creación y modificación de variables, resúmenes agrupados, transformación entre formatos ancho y largo, tratamiento explícito de valores faltantes y combinación de tablas mediante uniones."
+  },
+  {
+    "objectID": "temas/tema-01/tema-01-manipulacion-datos-dplyr-tidyr.html#funciones-principales",
+    "href": "temas/tema-01/tema-01-manipulacion-datos-dplyr-tidyr.html#funciones-principales",
+    "title": "Manipulación de datos con dplyr y tidyr",
+    "section": "",
+    "text": "Esta es una tabla con la descripción de las funciones y su uso que se utilizarán aquí:\n\n\n\n\n\n\n\nPropósito\nFunciones\n\n\n\n\nInspeccionar\nglimpse(), count(), distinct()\n\n\nSeleccionar columnas\nselect(), relocate()\n\n\nRenombrar\nrename(), rename_with()\n\n\nFiltrar filas\nfilter(), slice_*()\n\n\nOrdenar\narrange()\n\n\nCrear o modificar variables\nmutate(), transmute(), case_when(), if_else()\n\n\nAgrupar y resumir\ngroup_by(), summarise(), across()\n\n\nReorganizar datos\npivot_longer(), pivot_wider()\n\n\nSeparar o unir columnas\nseparate_wider_delim(), unite()\n\n\nCombinar tablas\nleft_join(), inner_join(), full_join(), semi_join(), anti_join()\n\n\nTrabajar con faltantes\ndrop_na(), replace_na(), complete()"
+  },
+  {
+    "objectID": "temas/tema-01/tema-01-manipulacion-datos-dplyr-tidyr.html#contar-categorías",
+    "href": "temas/tema-01/tema-01-manipulacion-datos-dplyr-tidyr.html#contar-categorías",
+    "title": "Manipulación de datos con dplyr y tidyr",
+    "section": "4.1 Contar categorías",
+    "text": "4.1 Contar categorías\nOtra forma de saber conocer una base de datos es contar categorias y hacer resumenes\n\nparticipantes |&gt;\n  count(centro, sort = TRUE)\n\n# A tibble: 3 × 2\n  centro     n\n  &lt;chr&gt;  &lt;int&gt;\n1 Centro     4\n2 Norte      4\n3 Sur        4\n\n\nPodemos contar combinaciones de categorías:\n\nparticipantes |&gt;\n  count(centro, sexo, name = \"n_participantes\")\n\n# A tibble: 6 × 3\n  centro sexo   n_participantes\n  &lt;chr&gt;  &lt;chr&gt;            &lt;int&gt;\n1 Centro Hombre               2\n2 Centro Mujer                2\n3 Norte  Hombre               2\n4 Norte  Mujer                2\n5 Sur    Hombre               2\n6 Sur    Mujer                2\n\n\nLa función count() equivale, de manera simplificada, a agrupar y resumir, este código produce el mismo resultado aunque utiliza diferentes funciones. Primero agrupa y luego resume:\n\nparticipantes |&gt;\n  group_by(centro, sexo) |&gt;\n  summarise(n_participantes = n(), .groups = \"drop\") #.groups = \"drop\" remueve las agrupaciones\n\n# A tibble: 6 × 3\n  centro sexo   n_participantes\n  &lt;chr&gt;  &lt;chr&gt;            &lt;int&gt;\n1 Centro Hombre               2\n2 Centro Mujer                2\n3 Norte  Hombre               2\n4 Norte  Mujer                2\n5 Sur    Hombre               2\n6 Sur    Mujer                2\n\n\nMás adelante vermos que hace la función group_by"
+  },
+  {
+    "objectID": "temas/tema-01/tema-01-manipulacion-datos-dplyr-tidyr.html#valores-únicos-y-duplicados",
+    "href": "temas/tema-01/tema-01-manipulacion-datos-dplyr-tidyr.html#valores-únicos-y-duplicados",
+    "title": "Manipulación de datos con dplyr y tidyr",
+    "section": "4.2 Valores únicos y duplicados",
+    "text": "4.2 Valores únicos y duplicados\n\nparticipantes |&gt;\n  distinct(centro)\n\n# A tibble: 3 × 1\n  centro\n  &lt;chr&gt; \n1 Norte \n2 Sur   \n3 Centro\n\nparticipantes |&gt;\n  count(id) |&gt; # cuenta cuantos id hay \n  filter(n &gt; 1) # filtra conteos mayores 1\n\n# A tibble: 0 × 2\n# ℹ 2 variables: id &lt;chr&gt;, n &lt;int&gt;\n\n\nQue un identificador se repita puede ser correcto o incorrecto dependiendo de la unidad de observación. Compare:\n\nparticipantes |&gt;\n  count(id) |&gt;\n  summarise(max_repeticiones = max(n))\n\n# A tibble: 1 × 1\n  max_repeticiones\n             &lt;int&gt;\n1                1\n\nvisitas |&gt;\n  count(id) |&gt;\n  summarise(max_repeticiones = max(n))\n\n# A tibble: 1 × 1\n  max_repeticiones\n             &lt;int&gt;\n1                3"
+  },
+  {
+    "objectID": "temas/tema-01/tema-01-manipulacion-datos-dplyr-tidyr.html#select",
+    "href": "temas/tema-01/tema-01-manipulacion-datos-dplyr-tidyr.html#select",
+    "title": "Manipulación de datos con dplyr y tidyr",
+    "section": "5.1 select()",
+    "text": "5.1 select()\nselect() conserva, elimina o reordena columnas.\n\nparticipantes |&gt;\n  select(id, centro, sexo)\n\n# A tibble: 12 × 3\n   id    centro sexo  \n   &lt;chr&gt; &lt;chr&gt;  &lt;chr&gt; \n 1 P001  Norte  Mujer \n 2 P002  Norte  Hombre\n 3 P003  Sur    Mujer \n 4 P004  Centro Mujer \n 5 P005  Centro Hombre\n 6 P006  Sur    Hombre\n 7 P007  Norte  Mujer \n 8 P008  Centro Hombre\n 9 P009  Sur    Mujer \n10 P010  Norte  Hombre\n11 P011  Centro Mujer \n12 P012  Sur    Hombre\n\n\nTambién acepta ayudantes de selección:\n\nvisitas |&gt;\n  select(id, visita, starts_with(\"presion\"))\n\n# A tibble: 36 × 3\n   id    visita presion_sistolica\n   &lt;chr&gt; &lt;chr&gt;              &lt;dbl&gt;\n 1 P001  basal                124\n 2 P001  mes_3                121\n 3 P001  mes_6                119\n 4 P002  basal                139\n 5 P002  mes_3                136\n 6 P002  mes_6                134\n 7 P003  basal                117\n 8 P003  mes_3                115\n 9 P003  mes_6                114\n10 P004  basal                146\n# ℹ 26 more rows\n\n# starts_with selecciona todas las variables que comiencen con presion\n\n\nlaboratorio |&gt;\n  select(id, ends_with(\"mg_dl\"))\n\n# A tibble: 12 × 3\n   id    glucosa_mg_dl colesterol_mg_dl\n   &lt;chr&gt;         &lt;dbl&gt;            &lt;dbl&gt;\n 1 P001             91              174\n 2 P002            108              215\n 3 P003             87              168\n 4 P004            103              201\n 5 P005            126              238\n 6 P006             99              190\n 7 P007             89              176\n 8 P008            116              224\n 9 P009             94              183\n10 P010            132              245\n11 P011             97              195\n12 P999            105              210\n\n# ends_with selecciona todas las variables que terminan con mg_dl\n\nPara eliminar columnas se utiliza el signo negativo:\n\nparticipantes |&gt;\n  select(-fecha_nacimiento)\n\n# A tibble: 12 × 5\n   id    centro sexo   estatura_cm fumador\n   &lt;chr&gt; &lt;chr&gt;  &lt;chr&gt;        &lt;dbl&gt; &lt;chr&gt;  \n 1 P001  Norte  Mujer          164 No     \n 2 P002  Norte  Hombre         178 Sí     \n 3 P003  Sur    Mujer          159 No     \n 4 P004  Centro Mujer          167 No     \n 5 P005  Centro Hombre         181 Sí     \n 6 P006  Sur    Hombre         174 No     \n 7 P007  Norte  Mujer          162 No     \n 8 P008  Centro Hombre         176 No     \n 9 P009  Sur    Mujer          160 &lt;NA&gt;   \n10 P010  Norte  Hombre         183 Sí     \n11 P011  Centro Mujer          165 No     \n12 P012  Sur    Hombre         172 No     \n\n\n\n# Puede concatenar varias variables. \n\nparticipantes |&gt;\n  select(-c(fecha_nacimiento, centro))\n\n# A tibble: 12 × 4\n   id    sexo   estatura_cm fumador\n   &lt;chr&gt; &lt;chr&gt;        &lt;dbl&gt; &lt;chr&gt;  \n 1 P001  Mujer          164 No     \n 2 P002  Hombre         178 Sí     \n 3 P003  Mujer          159 No     \n 4 P004  Mujer          167 No     \n 5 P005  Hombre         181 Sí     \n 6 P006  Hombre         174 No     \n 7 P007  Mujer          162 No     \n 8 P008  Hombre         176 No     \n 9 P009  Mujer          160 &lt;NA&gt;   \n10 P010  Hombre         183 Sí     \n11 P011  Mujer          165 No     \n12 P012  Hombre         172 No     \n\n\nAlgunos ayudantes útiles para select() son:\n\nstarts_with(\"texto\"); Inicia con\nends_with(\"texto\"); Termina con\ncontains(\"texto\"); Contiene\nmatches(\"expresión regular\"); Expresiones\nwhere(is.numeric); donde la variable es\nall_of(vector_de_nombres) todos las valores de un vector\n\n\nvariables_clinicas &lt;- c(\"peso_kg\", \"presion_sistolica\")\n\nvisitas |&gt;\n  select(id, visita, all_of(variables_clinicas))\n\n# A tibble: 36 × 4\n   id    visita peso_kg presion_sistolica\n   &lt;chr&gt; &lt;chr&gt;    &lt;dbl&gt;             &lt;dbl&gt;\n 1 P001  basal       68               124\n 2 P001  mes_3       67               121\n 3 P001  mes_6       66               119\n 4 P002  basal       84               139\n 5 P002  mes_3       83               136\n 6 P002  mes_6       82               134\n 7 P003  basal       61               117\n 8 P003  mes_3       60               115\n 9 P003  mes_6       59               114\n10 P004  basal       75               146\n# ℹ 26 more rows"
+  },
+  {
+    "objectID": "temas/tema-01/tema-01-manipulacion-datos-dplyr-tidyr.html#relocate",
+    "href": "temas/tema-01/tema-01-manipulacion-datos-dplyr-tidyr.html#relocate",
+    "title": "Manipulación de datos con dplyr y tidyr",
+    "section": "5.2 relocate()",
+    "text": "5.2 relocate()\nrelocate() cambia la posición de una columna sin eliminar las demás.\n\nparticipantes |&gt;\n  relocate(sexo, .after = fumador)\n\n# A tibble: 12 × 6\n   id    centro fecha_nacimiento estatura_cm fumador sexo  \n   &lt;chr&gt; &lt;chr&gt;  &lt;date&gt;                 &lt;dbl&gt; &lt;chr&gt;   &lt;chr&gt; \n 1 P001  Norte  1984-03-12               164 No      Mujer \n 2 P002  Norte  1971-07-08               178 Sí      Hombre\n 3 P003  Sur    1990-11-23               159 No      Mujer \n 4 P004  Centro 1968-05-19               167 No      Mujer \n 5 P005  Centro 1977-09-02               181 Sí      Hombre\n 6 P006  Sur    1988-01-15               174 No      Hombre\n 7 P007  Norte  1995-06-30               162 No      Mujer \n 8 P008  Centro 1981-12-04               176 No      Hombre\n 9 P009  Sur    1974-02-27               160 &lt;NA&gt;    Mujer \n10 P010  Norte  1992-10-11               183 Sí      Hombre\n11 P011  Centro 1986-08-16               165 No      Mujer \n12 P012  Sur    1965-04-21               172 No      Hombre\n\n\n\nparticipantes |&gt;\n  relocate(sexo, .before = fumador)\n\n# A tibble: 12 × 6\n   id    centro fecha_nacimiento estatura_cm sexo   fumador\n   &lt;chr&gt; &lt;chr&gt;  &lt;date&gt;                 &lt;dbl&gt; &lt;chr&gt;  &lt;chr&gt;  \n 1 P001  Norte  1984-03-12               164 Mujer  No     \n 2 P002  Norte  1971-07-08               178 Hombre Sí     \n 3 P003  Sur    1990-11-23               159 Mujer  No     \n 4 P004  Centro 1968-05-19               167 Mujer  No     \n 5 P005  Centro 1977-09-02               181 Hombre Sí     \n 6 P006  Sur    1988-01-15               174 Hombre No     \n 7 P007  Norte  1995-06-30               162 Mujer  No     \n 8 P008  Centro 1981-12-04               176 Hombre No     \n 9 P009  Sur    1974-02-27               160 Mujer  &lt;NA&gt;   \n10 P010  Norte  1992-10-11               183 Hombre Sí     \n11 P011  Centro 1986-08-16               165 Mujer  No     \n12 P012  Sur    1965-04-21               172 Hombre No"
+  },
+  {
+    "objectID": "temas/tema-01/tema-01-manipulacion-datos-dplyr-tidyr.html#rename",
+    "href": "temas/tema-01/tema-01-manipulacion-datos-dplyr-tidyr.html#rename",
+    "title": "Manipulación de datos con dplyr y tidyr",
+    "section": "6.1 rename()",
+    "text": "6.1 rename()\nLa sintaxis es nombre_nuevo = nombre_anterior.\n\nparticipantes |&gt;\n  rename(\n    identificador = id,\n    talla_cm = estatura_cm\n  )\n\n# A tibble: 12 × 6\n   identificador centro sexo   fecha_nacimiento talla_cm fumador\n   &lt;chr&gt;         &lt;chr&gt;  &lt;chr&gt;  &lt;date&gt;              &lt;dbl&gt; &lt;chr&gt;  \n 1 P001          Norte  Mujer  1984-03-12            164 No     \n 2 P002          Norte  Hombre 1971-07-08            178 Sí     \n 3 P003          Sur    Mujer  1990-11-23            159 No     \n 4 P004          Centro Mujer  1968-05-19            167 No     \n 5 P005          Centro Hombre 1977-09-02            181 Sí     \n 6 P006          Sur    Hombre 1988-01-15            174 No     \n 7 P007          Norte  Mujer  1995-06-30            162 No     \n 8 P008          Centro Hombre 1981-12-04            176 No     \n 9 P009          Sur    Mujer  1974-02-27            160 &lt;NA&gt;   \n10 P010          Norte  Hombre 1992-10-11            183 Sí     \n11 P011          Centro Mujer  1986-08-16            165 No     \n12 P012          Sur    Hombre 1965-04-21            172 No"
+  },
+  {
+    "objectID": "temas/tema-01/tema-01-manipulacion-datos-dplyr-tidyr.html#rename_with",
+    "href": "temas/tema-01/tema-01-manipulacion-datos-dplyr-tidyr.html#rename_with",
+    "title": "Manipulación de datos con dplyr y tidyr",
+    "section": "6.2 rename_with()",
+    "text": "6.2 rename_with()\nrename_with() aplica una función a varios nombres simultáneamente.\n\nparticipantes |&gt;\n  rename_with(stringr::str_to_upper) # cambia a mayusculas\n\n# A tibble: 12 × 6\n   ID    CENTRO SEXO   FECHA_NACIMIENTO ESTATURA_CM FUMADOR\n   &lt;chr&gt; &lt;chr&gt;  &lt;chr&gt;  &lt;date&gt;                 &lt;dbl&gt; &lt;chr&gt;  \n 1 P001  Norte  Mujer  1984-03-12               164 No     \n 2 P002  Norte  Hombre 1971-07-08               178 Sí     \n 3 P003  Sur    Mujer  1990-11-23               159 No     \n 4 P004  Centro Mujer  1968-05-19               167 No     \n 5 P005  Centro Hombre 1977-09-02               181 Sí     \n 6 P006  Sur    Hombre 1988-01-15               174 No     \n 7 P007  Norte  Mujer  1995-06-30               162 No     \n 8 P008  Centro Hombre 1981-12-04               176 No     \n 9 P009  Sur    Mujer  1974-02-27               160 &lt;NA&gt;   \n10 P010  Norte  Hombre 1992-10-11               183 Sí     \n11 P011  Centro Mujer  1986-08-16               165 No     \n12 P012  Sur    Hombre 1965-04-21               172 No     \n\n\n\n# Tomar el dataframe/tibble 'laboratorio'\nlaboratorio |&gt;\n  # Renombrar columnas aplicando una función\n  rename_with(\n    # Fórmula lambda que remueve el sufijo \"_mg_dl\" del nombre de cada columna\n    # .x representa el nombre de la columna actual\n    # str_remove() elimina la primera coincidencia del patrón\n    # \"_mg_dl$\" es regex: busca \"_mg_dl\" al final de la cadena ($ = final)\n    ~ str_remove(.x, \"_mg_dl$\"),\n    # Selector: aplica la transformación solo a columnas que terminan con \"mg_dl\"\n    ends_with(\"mg_dl\")\n  )\n\n# A tibble: 12 × 4\n   id    glucosa colesterol fecha_laboratorio\n   &lt;chr&gt;   &lt;dbl&gt;      &lt;dbl&gt; &lt;date&gt;           \n 1 P001       91        174 2026-08-01       \n 2 P002      108        215 2026-08-02       \n 3 P003       87        168 2026-08-01       \n 4 P004      103        201 2026-08-03       \n 5 P005      126        238 2026-08-03       \n 6 P006       99        190 2026-08-04       \n 7 P007       89        176 2026-08-04       \n 8 P008      116        224 2026-08-05       \n 9 P009       94        183 2026-08-05       \n10 P010      132        245 2026-08-06       \n11 P011       97        195 2026-08-06       \n12 P999      105        210 2026-08-07"
+  },
+  {
+    "objectID": "temas/tema-01/tema-01-manipulacion-datos-dplyr-tidyr.html#operadores-frecuentes",
+    "href": "temas/tema-01/tema-01-manipulacion-datos-dplyr-tidyr.html#operadores-frecuentes",
+    "title": "Manipulación de datos con dplyr y tidyr",
+    "section": "7.1 Operadores frecuentes",
+    "text": "7.1 Operadores frecuentes\n\n\n\nOperación\nSignificado\n\n\n\n\n==\nigual a\n\n\n!=\ndiferente de\n\n\n&gt; y &lt;\nmayor o menor que\n\n\n&gt;= y &lt;=\nmayor o igual; menor o igual\n\n\n%in%\npertenece a un conjunto\n\n\n&\ny\n\n\n|\no\n\n\n!\nnegación\n\n\nis.na()\nes un valor faltante\n\n\n\n\nparticipantes |&gt;\n  filter(centro == \"Norte\" & sexo == \"Mujer\")\n\n# A tibble: 2 × 6\n  id    centro sexo  fecha_nacimiento estatura_cm fumador\n  &lt;chr&gt; &lt;chr&gt;  &lt;chr&gt; &lt;date&gt;                 &lt;dbl&gt; &lt;chr&gt;  \n1 P001  Norte  Mujer 1984-03-12               164 No     \n2 P007  Norte  Mujer 1995-06-30               162 No     \n\n\n\nparticipantes |&gt;\n  filter(centro %in% c(\"Norte\", \"Sur\"))\n\n# A tibble: 8 × 6\n  id    centro sexo   fecha_nacimiento estatura_cm fumador\n  &lt;chr&gt; &lt;chr&gt;  &lt;chr&gt;  &lt;date&gt;                 &lt;dbl&gt; &lt;chr&gt;  \n1 P001  Norte  Mujer  1984-03-12               164 No     \n2 P002  Norte  Hombre 1971-07-08               178 Sí     \n3 P003  Sur    Mujer  1990-11-23               159 No     \n4 P006  Sur    Hombre 1988-01-15               174 No     \n5 P007  Norte  Mujer  1995-06-30               162 No     \n6 P009  Sur    Mujer  1974-02-27               160 &lt;NA&gt;   \n7 P010  Norte  Hombre 1992-10-11               183 Sí     \n8 P012  Sur    Hombre 1965-04-21               172 No     \n\n\n\nvisitas |&gt;\n  filter(visita == \"mes_6\", presion_sistolica &gt;= 130)\n\n# A tibble: 6 × 4\n  id    visita peso_kg presion_sistolica\n  &lt;chr&gt; &lt;chr&gt;    &lt;dbl&gt;             &lt;dbl&gt;\n1 P002  mes_6       82               134\n2 P004  mes_6       73               138\n3 P005  mes_6       88               144\n4 P008  mes_6       84               137\n5 P010  mes_6       93               147\n6 P012  mes_6       80               133"
+  },
+  {
+    "objectID": "temas/tema-01/tema-01-manipulacion-datos-dplyr-tidyr.html#filtrar-valores-faltantes",
+    "href": "temas/tema-01/tema-01-manipulacion-datos-dplyr-tidyr.html#filtrar-valores-faltantes",
+    "title": "Manipulación de datos con dplyr y tidyr",
+    "section": "7.2 Filtrar valores faltantes",
+    "text": "7.2 Filtrar valores faltantes\n\nparticipantes |&gt;\n  filter(is.na(fumador))\n\n# A tibble: 1 × 6\n  id    centro sexo  fecha_nacimiento estatura_cm fumador\n  &lt;chr&gt; &lt;chr&gt;  &lt;chr&gt; &lt;date&gt;                 &lt;dbl&gt; &lt;chr&gt;  \n1 P009  Sur    Mujer 1974-02-27               160 &lt;NA&gt;   \n\n\n\nvisitas |&gt;\n  filter(!is.na(peso_kg)) # selecciona los no NA\n\n# A tibble: 34 × 4\n   id    visita peso_kg presion_sistolica\n   &lt;chr&gt; &lt;chr&gt;    &lt;dbl&gt;             &lt;dbl&gt;\n 1 P001  basal       68               124\n 2 P001  mes_3       67               121\n 3 P001  mes_6       66               119\n 4 P002  basal       84               139\n 5 P002  mes_3       83               136\n 6 P002  mes_6       82               134\n 7 P003  basal       61               117\n 8 P003  mes_3       60               115\n 9 P003  mes_6       59               114\n10 P004  basal       75               146\n# ℹ 24 more rows\n\n\nNo debe escribirse variable == NA, porque un valor desconocido no puede compararse directamente. Se utilizan is.na() y !is.na()."
+  },
+  {
+    "objectID": "temas/tema-01/tema-01-manipulacion-datos-dplyr-tidyr.html#selección-por-posición",
+    "href": "temas/tema-01/tema-01-manipulacion-datos-dplyr-tidyr.html#selección-por-posición",
+    "title": "Manipulación de datos con dplyr y tidyr",
+    "section": "7.3 Selección por posición",
+    "text": "7.3 Selección por posición\n\nvisitas |&gt;\n  slice_head(n = 5) # primeros 5 datos\n\n# A tibble: 5 × 4\n  id    visita peso_kg presion_sistolica\n  &lt;chr&gt; &lt;chr&gt;    &lt;dbl&gt;             &lt;dbl&gt;\n1 P001  basal       68               124\n2 P001  mes_3       67               121\n3 P001  mes_6       66               119\n4 P002  basal       84               139\n5 P002  mes_3       83               136"
+  },
+  {
+    "objectID": "temas/tema-01/tema-01-manipulacion-datos-dplyr-tidyr.html#mutate",
+    "href": "temas/tema-01/tema-01-manipulacion-datos-dplyr-tidyr.html#mutate",
+    "title": "Manipulación de datos con dplyr y tidyr",
+    "section": "9.1 mutate()",
+    "text": "9.1 mutate()\nmutate() crea variables nuevas o modifica variables existentes, conservando las demás columnas.\n\nparticipantes_derivados &lt;- participantes |&gt;\n  mutate(\n    estatura_m = estatura_cm / 100,\n    edad_aproximada = as.numeric(\n      difftime(as.Date(\"2026-08-01\"), fecha_nacimiento, units = \"days\")\n    ) / 365.25\n  )\n\nparticipantes_derivados |&gt;\n  select(id, fecha_nacimiento, edad_aproximada, estatura_m)\n\n# A tibble: 12 × 4\n   id    fecha_nacimiento edad_aproximada estatura_m\n   &lt;chr&gt; &lt;date&gt;                     &lt;dbl&gt;      &lt;dbl&gt;\n 1 P001  1984-03-12                  42.4       1.64\n 2 P002  1971-07-08                  55.1       1.78\n 3 P003  1990-11-23                  35.7       1.59\n 4 P004  1968-05-19                  58.2       1.67\n 5 P005  1977-09-02                  48.9       1.81\n 6 P006  1988-01-15                  38.5       1.74\n 7 P007  1995-06-30                  31.1       1.62\n 8 P008  1981-12-04                  44.7       1.76\n 9 P009  1974-02-27                  52.4       1.6 \n10 P010  1992-10-11                  33.8       1.83\n11 P011  1986-08-16                  40.0       1.65\n12 P012  1965-04-21                  61.3       1.72"
+  },
+  {
+    "objectID": "temas/tema-01/tema-01-manipulacion-datos-dplyr-tidyr.html#crear-variables-después-de-combinar-tablas",
+    "href": "temas/tema-01/tema-01-manipulacion-datos-dplyr-tidyr.html#crear-variables-después-de-combinar-tablas",
+    "title": "Manipulación de datos con dplyr y tidyr",
+    "section": "9.2 Crear variables después de combinar tablas",
+    "text": "9.2 Crear variables después de combinar tablas\nPara calcular el índice de masa corporal necesitamos el peso de la visita basal y la estatura de cada participante.\n\ndatos_basales &lt;- visitas |&gt;\n  filter(visita == \"basal\") |&gt;\n  left_join(\n    participantes |&gt; select(id, estatura_cm),\n    by = \"id\"\n  ) |&gt;\n  mutate(\n    estatura_m = estatura_cm / 100,\n    imc = peso_kg / estatura_m^2\n  )\n\ndatos_basales |&gt;\n  select(id, peso_kg, estatura_m, imc)\n\n# A tibble: 12 × 4\n   id    peso_kg estatura_m   imc\n   &lt;chr&gt;   &lt;dbl&gt;      &lt;dbl&gt; &lt;dbl&gt;\n 1 P001       68       1.64  25.3\n 2 P002       84       1.78  26.5\n 3 P003       61       1.59  24.1\n 4 P004       75       1.67  26.9\n 5 P005       91       1.81  27.8\n 6 P006       79       1.74  26.1\n 7 P007       65       1.62  24.8\n 8 P008       87       1.76  28.1\n 9 P009       70       1.6   27.3\n10 P010       96       1.83  28.7\n11 P011       72       1.65  26.4\n12 P012       81       1.72  27.4\n\n\nMás adelante examinaremos con detalle las uniones entre tablas."
+  },
+  {
+    "objectID": "temas/tema-01/tema-01-manipulacion-datos-dplyr-tidyr.html#if_else",
+    "href": "temas/tema-01/tema-01-manipulacion-datos-dplyr-tidyr.html#if_else",
+    "title": "Manipulación de datos con dplyr y tidyr",
+    "section": "9.3 if_else()",
+    "text": "9.3 if_else()\nif_else() es apropiada cuando solamente existen dos resultados posibles.\n\nlaboratorio |&gt;\n  mutate(\n    glucosa_elevada = if_else(\n      glucosa_mg_dl &gt;= 126,\n      \"Sí\",\n      \"No\"\n    )\n  )\n\n# A tibble: 12 × 5\n   id    glucosa_mg_dl colesterol_mg_dl fecha_laboratorio glucosa_elevada\n   &lt;chr&gt;         &lt;dbl&gt;            &lt;dbl&gt; &lt;date&gt;            &lt;chr&gt;          \n 1 P001             91              174 2026-08-01        No             \n 2 P002            108              215 2026-08-02        No             \n 3 P003             87              168 2026-08-01        No             \n 4 P004            103              201 2026-08-03        No             \n 5 P005            126              238 2026-08-03        Sí             \n 6 P006             99              190 2026-08-04        No             \n 7 P007             89              176 2026-08-04        No             \n 8 P008            116              224 2026-08-05        No             \n 9 P009             94              183 2026-08-05        No             \n10 P010            132              245 2026-08-06        Sí             \n11 P011             97              195 2026-08-06        No             \n12 P999            105              210 2026-08-07        No"
+  },
+  {
+    "objectID": "temas/tema-01/tema-01-manipulacion-datos-dplyr-tidyr.html#case_when",
+    "href": "temas/tema-01/tema-01-manipulacion-datos-dplyr-tidyr.html#case_when",
+    "title": "Manipulación de datos con dplyr y tidyr",
+    "section": "9.4 case_when()",
+    "text": "9.4 case_when()\ncase_when() permite definir más de dos categorías.\n\ndatos_basales &lt;- datos_basales |&gt;\n  mutate(\n    categoria_imc = case_when(\n      is.na(imc) ~ NA_character_,\n      imc &lt; 18.5 ~ \"Bajo peso\",\n      imc &lt; 25 ~ \"Adecuado\",\n      imc &lt; 30 ~ \"Sobrepeso\",\n      imc &gt;= 30 ~ \"Obesidad\"\n    )\n  )\n\ndatos_basales |&gt;\n  count(categoria_imc, .drop = FALSE)\n\n# A tibble: 2 × 2\n  categoria_imc     n\n  &lt;chr&gt;         &lt;int&gt;\n1 Adecuado          2\n2 Sobrepeso        10\n\n\nEl orden de las condiciones es importante: case_when() utiliza la primera condición verdadera."
+  },
+  {
+    "objectID": "temas/tema-01/tema-01-manipulacion-datos-dplyr-tidyr.html#transmute",
+    "href": "temas/tema-01/tema-01-manipulacion-datos-dplyr-tidyr.html#transmute",
+    "title": "Manipulación de datos con dplyr y tidyr",
+    "section": "9.5 transmute()",
+    "text": "9.5 transmute()\ntransmute() crea variables, pero conserva únicamente las variables especificadas y las recién creadas.\n\nparticipantes |&gt;\n  transmute(\n    id,\n    estatura_m = estatura_cm / 100\n  )\n\n# A tibble: 12 × 2\n   id    estatura_m\n   &lt;chr&gt;      &lt;dbl&gt;\n 1 P001        1.64\n 2 P002        1.78\n 3 P003        1.59\n 4 P004        1.67\n 5 P005        1.81\n 6 P006        1.74\n 7 P007        1.62\n 8 P008        1.76\n 9 P009        1.6 \n10 P010        1.83\n11 P011        1.65\n12 P012        1.72"
+  },
+  {
+    "objectID": "temas/tema-01/tema-01-manipulacion-datos-dplyr-tidyr.html#group_by-y-summarise",
+    "href": "temas/tema-01/tema-01-manipulacion-datos-dplyr-tidyr.html#group_by-y-summarise",
+    "title": "Manipulación de datos con dplyr y tidyr",
+    "section": "10.1 group_by() y summarise()",
+    "text": "10.1 group_by() y summarise()\n\nvisitas |&gt;\n  group_by(visita) |&gt;\n  summarise(\n    n = n(),\n    n_con_peso = sum(!is.na(peso_kg)),\n    peso_medio = mean(peso_kg, na.rm = TRUE),\n    peso_de = sd(peso_kg, na.rm = TRUE),\n    presion_mediana = median(presion_sistolica, na.rm = TRUE),\n    presion_q1 = quantile(presion_sistolica, 0.25, na.rm = TRUE),\n    presion_q3 = quantile(presion_sistolica, 0.75, na.rm = TRUE),\n    .groups = \"drop\"\n  )\n\n# A tibble: 3 × 8\n  visita     n n_con_peso peso_medio peso_de presion_mediana presion_q1\n  &lt;chr&gt;  &lt;int&gt;      &lt;int&gt;      &lt;dbl&gt;   &lt;dbl&gt;           &lt;dbl&gt;      &lt;dbl&gt;\n1 basal     12         12       77.4    10.8            134.       126.\n2 mes_3     12         11       76      11.1            130        122.\n3 mes_6     12         11       76      10.8            133        120.\n# ℹ 1 more variable: presion_q3 &lt;dbl&gt;\n\n\nEs importante distinguir:\n\nn() cuenta filas;\nsum(!is.na(variable)) cuenta valores observados;\nn_distinct(variable) cuenta valores únicos."
+  },
+  {
+    "objectID": "temas/tema-01/tema-01-manipulacion-datos-dplyr-tidyr.html#resumir-por-más-de-una-variable",
+    "href": "temas/tema-01/tema-01-manipulacion-datos-dplyr-tidyr.html#resumir-por-más-de-una-variable",
+    "title": "Manipulación de datos con dplyr y tidyr",
+    "section": "10.2 Resumir por más de una variable",
+    "text": "10.2 Resumir por más de una variable\n\nvisitas |&gt;\n  left_join(participantes |&gt; select(id, centro), by = \"id\") |&gt;\n  group_by(centro, visita) |&gt;\n  summarise(\n    n = sum(!is.na(presion_sistolica)),\n    presion_media = mean(presion_sistolica, na.rm = TRUE),\n    .groups = \"drop\"\n  )\n\n# A tibble: 9 × 4\n  centro visita     n presion_media\n  &lt;chr&gt;  &lt;chr&gt;  &lt;int&gt;         &lt;dbl&gt;\n1 Centro basal      4          142.\n2 Centro mes_3      4          138.\n3 Centro mes_6      4          135.\n4 Norte  basal      4          134.\n5 Norte  mes_3      4          131.\n6 Norte  mes_6      4          129 \n7 Sur    basal      4          128.\n8 Sur    mes_3      3          124.\n9 Sur    mes_6      3          125."
+  },
+  {
+    "objectID": "temas/tema-01/tema-01-manipulacion-datos-dplyr-tidyr.html#aplicar-una-operación-a-varias-columnas-con-across",
+    "href": "temas/tema-01/tema-01-manipulacion-datos-dplyr-tidyr.html#aplicar-una-operación-a-varias-columnas-con-across",
+    "title": "Manipulación de datos con dplyr y tidyr",
+    "section": "10.3 Aplicar una operación a varias columnas con across()",
+    "text": "10.3 Aplicar una operación a varias columnas con across()\n\nvisitas |&gt;\n  group_by(visita) |&gt;\n  summarise(\n    across(\n      c(peso_kg, presion_sistolica),\n      list(\n        media = ~ mean(.x, na.rm = TRUE),\n        de = ~ sd(.x, na.rm = TRUE)\n      ),\n      .names = \"{.col}_{.fn}\"\n    ),\n    .groups = \"drop\"\n  )\n\n# A tibble: 3 × 5\n  visita peso_kg_media peso_kg_de presion_sistolica_media presion_sistolica_de\n  &lt;chr&gt;          &lt;dbl&gt;      &lt;dbl&gt;                   &lt;dbl&gt;                &lt;dbl&gt;\n1 basal           77.4       10.8                    135.                 12.2\n2 mes_3           76         11.1                    132.                 12.1\n3 mes_6           76         10.8                    130.                 11.2"
+  },
+  {
+    "objectID": "temas/tema-01/tema-01-manipulacion-datos-dplyr-tidyr.html#identificar-faltantes",
+    "href": "temas/tema-01/tema-01-manipulacion-datos-dplyr-tidyr.html#identificar-faltantes",
+    "title": "Manipulación de datos con dplyr y tidyr",
+    "section": "11.1 Identificar faltantes",
+    "text": "11.1 Identificar faltantes\n\nvisitas |&gt;\n  summarise(\n    across(\n      everything(),\n      ~ sum(is.na(.x)),\n      .names = \"faltantes_{.col}\"\n    )\n  )\n\n# A tibble: 1 × 4\n  faltantes_id faltantes_visita faltantes_peso_kg faltantes_presion_sistolica\n         &lt;int&gt;            &lt;int&gt;             &lt;int&gt;                       &lt;int&gt;\n1            0                0                 2                           2"
+  },
+  {
+    "objectID": "temas/tema-01/tema-01-manipulacion-datos-dplyr-tidyr.html#eliminar-valores-faltantes-con-drop_na",
+    "href": "temas/tema-01/tema-01-manipulacion-datos-dplyr-tidyr.html#eliminar-valores-faltantes-con-drop_na",
+    "title": "Manipulación de datos con dplyr y tidyr",
+    "section": "11.2 Eliminar valores faltantes con drop_na()",
+    "text": "11.2 Eliminar valores faltantes con drop_na()\n\nvisitas |&gt;\n  drop_na(peso_kg, presion_sistolica)\n\n# A tibble: 34 × 4\n   id    visita peso_kg presion_sistolica\n   &lt;chr&gt; &lt;chr&gt;    &lt;dbl&gt;             &lt;dbl&gt;\n 1 P001  basal       68               124\n 2 P001  mes_3       67               121\n 3 P001  mes_6       66               119\n 4 P002  basal       84               139\n 5 P002  mes_3       83               136\n 6 P002  mes_6       82               134\n 7 P003  basal       61               117\n 8 P003  mes_3       60               115\n 9 P003  mes_6       59               114\n10 P004  basal       75               146\n# ℹ 24 more rows\n\n\ndrop_na() elimina filas y, por lo tanto, puede cambiar el tamaño y la composición de la muestra. Su uso debe justificarse; no es una solución automática para los datos faltantes."
+  },
+  {
+    "objectID": "temas/tema-01/tema-01-manipulacion-datos-dplyr-tidyr.html#reemplazar-valores-con-replace_na",
+    "href": "temas/tema-01/tema-01-manipulacion-datos-dplyr-tidyr.html#reemplazar-valores-con-replace_na",
+    "title": "Manipulación de datos con dplyr y tidyr",
+    "section": "11.3 Reemplazar valores con replace_na()",
+    "text": "11.3 Reemplazar valores con replace_na()\nEn variables descriptivas, en ocasiones puede ser útil hacer explícita la categoría desconocida:\n\nparticipantes |&gt;\n  mutate(\n    fumador = replace_na(fumador, \"No registrado\")\n  ) |&gt;\n  count(fumador)\n\n# A tibble: 3 × 2\n  fumador           n\n  &lt;chr&gt;         &lt;int&gt;\n1 No                8\n2 No registrado     1\n3 Sí                3\n\n\n\n\n\n\n\n\nImportanteNo confundir con imputación\n\n\n\nReemplazar una categoría faltante por “No registrado” conserva explícita la ausencia de información. Sustituir una medición numérica faltante por cero, la media o la mediana modifica el dato y constituye una forma simple de imputación que puede sesgar los análisis."
+  },
+  {
+    "objectID": "temas/tema-01/tema-01-manipulacion-datos-dplyr-tidyr.html#formato-largo",
+    "href": "temas/tema-01/tema-01-manipulacion-datos-dplyr-tidyr.html#formato-largo",
+    "title": "Manipulación de datos con dplyr y tidyr",
+    "section": "12.1 Formato largo",
+    "text": "12.1 Formato largo\nEn formato largo, cada fila representa una combinación de individuo, momento y variable medida. Este formato suele ser conveniente para visualización y modelos longitudinales.\n\nvisitas_largas &lt;- visitas |&gt;\n  pivot_longer(\n    cols = c(peso_kg, presion_sistolica),\n    names_to = \"variable\",\n    values_to = \"valor\"\n  )\n\nvisitas_largas\n\n# A tibble: 72 × 4\n   id    visita variable          valor\n   &lt;chr&gt; &lt;chr&gt;  &lt;chr&gt;             &lt;dbl&gt;\n 1 P001  basal  peso_kg              68\n 2 P001  basal  presion_sistolica   124\n 3 P001  mes_3  peso_kg              67\n 4 P001  mes_3  presion_sistolica   121\n 5 P001  mes_6  peso_kg              66\n 6 P001  mes_6  presion_sistolica   119\n 7 P002  basal  peso_kg              84\n 8 P002  basal  presion_sistolica   139\n 9 P002  mes_3  peso_kg              83\n10 P002  mes_3  presion_sistolica   136\n# ℹ 62 more rows\n\n\nPodemos obtener nombres más informativos durante la transformación:\n\nvisitas_largas &lt;- visitas |&gt;\n  pivot_longer(\n    cols = c(peso_kg, presion_sistolica),\n    names_to = \"variable\",\n    values_to = \"valor\"\n  ) |&gt;\n  mutate(\n    variable = recode(\n      variable,\n      peso_kg = \"Peso (kg)\",\n      presion_sistolica = \"Presión sistólica (mmHg)\"\n    )\n  )\n\nvisitas_largas\n\n# A tibble: 72 × 4\n   id    visita variable                 valor\n   &lt;chr&gt; &lt;chr&gt;  &lt;chr&gt;                    &lt;dbl&gt;\n 1 P001  basal  Peso (kg)                   68\n 2 P001  basal  Presión sistólica (mmHg)   124\n 3 P001  mes_3  Peso (kg)                   67\n 4 P001  mes_3  Presión sistólica (mmHg)   121\n 5 P001  mes_6  Peso (kg)                   66\n 6 P001  mes_6  Presión sistólica (mmHg)   119\n 7 P002  basal  Peso (kg)                   84\n 8 P002  basal  Presión sistólica (mmHg)   139\n 9 P002  mes_3  Peso (kg)                   83\n10 P002  mes_3  Presión sistólica (mmHg)   136\n# ℹ 62 more rows"
+  },
+  {
+    "objectID": "temas/tema-01/tema-01-manipulacion-datos-dplyr-tidyr.html#formato-ancho",
+    "href": "temas/tema-01/tema-01-manipulacion-datos-dplyr-tidyr.html#formato-ancho",
+    "title": "Manipulación de datos con dplyr y tidyr",
+    "section": "12.2 Formato ancho",
+    "text": "12.2 Formato ancho\nEn formato ancho, las mediciones de distintos momentos pueden ocupar columnas diferentes.\n\npeso_ancho &lt;- visitas |&gt;\n  select(id, visita, peso_kg) |&gt;\n  pivot_wider(\n    names_from = visita,\n    values_from = peso_kg,\n    names_prefix = \"peso_\"\n  )\n\npeso_ancho\n\n# A tibble: 12 × 4\n   id    peso_basal peso_mes_3 peso_mes_6\n   &lt;chr&gt;      &lt;dbl&gt;      &lt;dbl&gt;      &lt;dbl&gt;\n 1 P001          68         67         66\n 2 P002          84         83         82\n 3 P003          61         60         59\n 4 P004          75         74         73\n 5 P005          91         90         88\n 6 P006          79         78         78\n 7 P007          65         64         63\n 8 P008          87         86         84\n 9 P009          70         69         NA\n10 P010          96         94         93\n11 P011          72         71         70\n12 P012          81         NA         80\n\n\nAhora podemos calcular el cambio individual entre la visita basal y el mes 6:\n\npeso_ancho |&gt;\n  mutate(\n    cambio_peso_6m = peso_mes_6 - peso_basal\n  ) |&gt;\n  select(id, peso_basal, peso_mes_6, cambio_peso_6m)\n\n# A tibble: 12 × 4\n   id    peso_basal peso_mes_6 cambio_peso_6m\n   &lt;chr&gt;      &lt;dbl&gt;      &lt;dbl&gt;          &lt;dbl&gt;\n 1 P001          68         66             -2\n 2 P002          84         82             -2\n 3 P003          61         59             -2\n 4 P004          75         73             -2\n 5 P005          91         88             -3\n 6 P006          79         78             -1\n 7 P007          65         63             -2\n 8 P008          87         84             -3\n 9 P009          70         NA             NA\n10 P010          96         93             -3\n11 P011          72         70             -2\n12 P012          81         80             -1"
+  },
+  {
+    "objectID": "temas/tema-01/tema-01-manipulacion-datos-dplyr-tidyr.html#varios-componentes-en-los-nombres-de-columnas",
+    "href": "temas/tema-01/tema-01-manipulacion-datos-dplyr-tidyr.html#varios-componentes-en-los-nombres-de-columnas",
+    "title": "Manipulación de datos con dplyr y tidyr",
+    "section": "12.3 Varios componentes en los nombres de columnas",
+    "text": "12.3 Varios componentes en los nombres de columnas\nEn algunos archivos, el nombre de una columna contiene más de una pieza de información.\n\nmediciones_anchas &lt;- tibble(\n  id = c(\"P001\", \"P002\", \"P003\"),\n  peso_basal = c(68, 84, 61),\n  peso_mes6 = c(66, 82, 59),\n  presion_basal = c(124, 139, 117),\n  presion_mes6 = c(119, 134, 114)\n)\n\nmediciones_anchas |&gt;\n  pivot_longer(\n    cols = -id,\n    names_to = c(\"variable\", \"momento\"),\n    names_sep = \"_\",\n    values_to = \"valor\"\n  )\n\n# A tibble: 12 × 4\n   id    variable momento valor\n   &lt;chr&gt; &lt;chr&gt;    &lt;chr&gt;   &lt;dbl&gt;\n 1 P001  peso     basal      68\n 2 P001  peso     mes6       66\n 3 P001  presion  basal     124\n 4 P001  presion  mes6      119\n 5 P002  peso     basal      84\n 6 P002  peso     mes6       82\n 7 P002  presion  basal     139\n 8 P002  presion  mes6      134\n 9 P003  peso     basal      61\n10 P003  peso     mes6       59\n11 P003  presion  basal     117\n12 P003  presion  mes6      114"
+  },
+  {
+    "objectID": "temas/tema-01/tema-01-manipulacion-datos-dplyr-tidyr.html#separar-una-columna",
+    "href": "temas/tema-01/tema-01-manipulacion-datos-dplyr-tidyr.html#separar-una-columna",
+    "title": "Manipulación de datos con dplyr y tidyr",
+    "section": "13.1 Separar una columna",
+    "text": "13.1 Separar una columna\n\ncodigos &lt;- tibble(\n  codigo = c(\"Norte-P001\", \"Sur-P002\", \"Centro-P003\")\n)\n\ncodigos |&gt;\n  separate_wider_delim(\n    codigo,\n    delim = \"-\",\n    names = c(\"centro\", \"id\")\n  )\n\n# A tibble: 3 × 2\n  centro id   \n  &lt;chr&gt;  &lt;chr&gt;\n1 Norte  P001 \n2 Sur    P002 \n3 Centro P003"
+  },
+  {
+    "objectID": "temas/tema-01/tema-01-manipulacion-datos-dplyr-tidyr.html#unir-columnas",
+    "href": "temas/tema-01/tema-01-manipulacion-datos-dplyr-tidyr.html#unir-columnas",
+    "title": "Manipulación de datos con dplyr y tidyr",
+    "section": "13.2 Unir columnas",
+    "text": "13.2 Unir columnas\n\nparticipantes |&gt;\n  unite(\n    \"centro_id\",\n    centro,\n    id,\n    sep = \"-\",\n    remove = FALSE\n  ) |&gt;\n  select(centro_id, centro, id)\n\n# A tibble: 12 × 3\n   centro_id   centro id   \n   &lt;chr&gt;       &lt;chr&gt;  &lt;chr&gt;\n 1 Norte-P001  Norte  P001 \n 2 Norte-P002  Norte  P002 \n 3 Sur-P003    Sur    P003 \n 4 Centro-P004 Centro P004 \n 5 Centro-P005 Centro P005 \n 6 Sur-P006    Sur    P006 \n 7 Norte-P007  Norte  P007 \n 8 Centro-P008 Centro P008 \n 9 Sur-P009    Sur    P009 \n10 Norte-P010  Norte  P010 \n11 Centro-P011 Centro P011 \n12 Sur-P012    Sur    P012"
+  },
+  {
+    "objectID": "temas/tema-01/tema-01-manipulacion-datos-dplyr-tidyr.html#revisar-las-llaves",
+    "href": "temas/tema-01/tema-01-manipulacion-datos-dplyr-tidyr.html#revisar-las-llaves",
+    "title": "Manipulación de datos con dplyr y tidyr",
+    "section": "14.1 Revisar las llaves",
+    "text": "14.1 Revisar las llaves\n\nparticipantes |&gt;\n  count(id) |&gt;\n  filter(n &gt; 1)\n\n# A tibble: 0 × 2\n# ℹ 2 variables: id &lt;chr&gt;, n &lt;int&gt;\n\nlaboratorio |&gt;\n  count(id) |&gt;\n  filter(n &gt; 1)\n\n# A tibble: 0 × 2\n# ℹ 2 variables: id &lt;chr&gt;, n &lt;int&gt;"
+  },
+  {
+    "objectID": "temas/tema-01/tema-01-manipulacion-datos-dplyr-tidyr.html#left_join",
+    "href": "temas/tema-01/tema-01-manipulacion-datos-dplyr-tidyr.html#left_join",
+    "title": "Manipulación de datos con dplyr y tidyr",
+    "section": "14.2 left_join()",
+    "text": "14.2 left_join()\nConserva todas las filas de la tabla de la izquierda y agrega las columnas coincidentes de la derecha.\n\nparticipantes_laboratorio &lt;- participantes |&gt;\n  left_join(laboratorio, by = \"id\")\n\nparticipantes_laboratorio |&gt;\n  select(id, centro, glucosa_mg_dl, colesterol_mg_dl)\n\n# A tibble: 12 × 4\n   id    centro glucosa_mg_dl colesterol_mg_dl\n   &lt;chr&gt; &lt;chr&gt;          &lt;dbl&gt;            &lt;dbl&gt;\n 1 P001  Norte             91              174\n 2 P002  Norte            108              215\n 3 P003  Sur               87              168\n 4 P004  Centro           103              201\n 5 P005  Centro           126              238\n 6 P006  Sur               99              190\n 7 P007  Norte             89              176\n 8 P008  Centro           116              224\n 9 P009  Sur               94              183\n10 P010  Norte            132              245\n11 P011  Centro            97              195\n12 P012  Sur               NA               NA\n\n\nLa persona P012 permanece en el resultado, aunque no tiene datos de laboratorio. El registro P999 no aparece porque no existe en la tabla izquierda."
+  },
+  {
+    "objectID": "temas/tema-01/tema-01-manipulacion-datos-dplyr-tidyr.html#inner_join",
+    "href": "temas/tema-01/tema-01-manipulacion-datos-dplyr-tidyr.html#inner_join",
+    "title": "Manipulación de datos con dplyr y tidyr",
+    "section": "14.3 inner_join()",
+    "text": "14.3 inner_join()\nConserva únicamente las filas con coincidencia en ambas tablas.\n\nparticipantes |&gt;\n  inner_join(laboratorio, by = \"id\") |&gt;\n  select(id, centro, glucosa_mg_dl)\n\n# A tibble: 11 × 3\n   id    centro glucosa_mg_dl\n   &lt;chr&gt; &lt;chr&gt;          &lt;dbl&gt;\n 1 P001  Norte             91\n 2 P002  Norte            108\n 3 P003  Sur               87\n 4 P004  Centro           103\n 5 P005  Centro           126\n 6 P006  Sur               99\n 7 P007  Norte             89\n 8 P008  Centro           116\n 9 P009  Sur               94\n10 P010  Norte            132\n11 P011  Centro            97"
+  },
+  {
+    "objectID": "temas/tema-01/tema-01-manipulacion-datos-dplyr-tidyr.html#full_join",
+    "href": "temas/tema-01/tema-01-manipulacion-datos-dplyr-tidyr.html#full_join",
+    "title": "Manipulación de datos con dplyr y tidyr",
+    "section": "14.4 full_join()",
+    "text": "14.4 full_join()\nConserva todas las filas de ambas tablas.\n\nparticipantes |&gt;\n  full_join(laboratorio, by = \"id\") |&gt;\n  select(id, centro, glucosa_mg_dl)\n\n# A tibble: 13 × 3\n   id    centro glucosa_mg_dl\n   &lt;chr&gt; &lt;chr&gt;          &lt;dbl&gt;\n 1 P001  Norte             91\n 2 P002  Norte            108\n 3 P003  Sur               87\n 4 P004  Centro           103\n 5 P005  Centro           126\n 6 P006  Sur               99\n 7 P007  Norte             89\n 8 P008  Centro           116\n 9 P009  Sur               94\n10 P010  Norte            132\n11 P011  Centro            97\n12 P012  Sur               NA\n13 P999  &lt;NA&gt;             105"
+  },
+  {
+    "objectID": "temas/tema-01/tema-01-manipulacion-datos-dplyr-tidyr.html#semi_join",
+    "href": "temas/tema-01/tema-01-manipulacion-datos-dplyr-tidyr.html#semi_join",
+    "title": "Manipulación de datos con dplyr y tidyr",
+    "section": "14.5 semi_join()",
+    "text": "14.5 semi_join()\nConserva las filas de la tabla izquierda que tienen una coincidencia en la tabla derecha, sin agregar columnas nuevas.\n\nparticipantes |&gt;\n  semi_join(laboratorio, by = \"id\")\n\n# A tibble: 11 × 6\n   id    centro sexo   fecha_nacimiento estatura_cm fumador\n   &lt;chr&gt; &lt;chr&gt;  &lt;chr&gt;  &lt;date&gt;                 &lt;dbl&gt; &lt;chr&gt;  \n 1 P001  Norte  Mujer  1984-03-12               164 No     \n 2 P002  Norte  Hombre 1971-07-08               178 Sí     \n 3 P003  Sur    Mujer  1990-11-23               159 No     \n 4 P004  Centro Mujer  1968-05-19               167 No     \n 5 P005  Centro Hombre 1977-09-02               181 Sí     \n 6 P006  Sur    Hombre 1988-01-15               174 No     \n 7 P007  Norte  Mujer  1995-06-30               162 No     \n 8 P008  Centro Hombre 1981-12-04               176 No     \n 9 P009  Sur    Mujer  1974-02-27               160 &lt;NA&gt;   \n10 P010  Norte  Hombre 1992-10-11               183 Sí     \n11 P011  Centro Mujer  1986-08-16               165 No"
+  },
+  {
+    "objectID": "temas/tema-01/tema-01-manipulacion-datos-dplyr-tidyr.html#anti_join",
+    "href": "temas/tema-01/tema-01-manipulacion-datos-dplyr-tidyr.html#anti_join",
+    "title": "Manipulación de datos con dplyr y tidyr",
+    "section": "14.6 anti_join()",
+    "text": "14.6 anti_join()\nIdentifica las filas de la tabla izquierda que no tienen coincidencia en la tabla derecha. Es especialmente útil como control de calidad.\n\nparticipantes |&gt;\n  anti_join(laboratorio, by = \"id\")\n\n# A tibble: 1 × 6\n  id    centro sexo   fecha_nacimiento estatura_cm fumador\n  &lt;chr&gt; &lt;chr&gt;  &lt;chr&gt;  &lt;date&gt;                 &lt;dbl&gt; &lt;chr&gt;  \n1 P012  Sur    Hombre 1965-04-21               172 No     \n\n\nPara revisar registros de laboratorio sin participante correspondiente, invertimos las tablas:\n\nlaboratorio |&gt;\n  anti_join(participantes, by = \"id\")\n\n# A tibble: 1 × 4\n  id    glucosa_mg_dl colesterol_mg_dl fecha_laboratorio\n  &lt;chr&gt;         &lt;dbl&gt;            &lt;dbl&gt; &lt;date&gt;           \n1 P999            105              210 2026-08-07"
+  },
+  {
+    "objectID": "temas/tema-01/tema-01-manipulacion-datos-dplyr-tidyr.html#diferentes-nombres-para-la-llave",
+    "href": "temas/tema-01/tema-01-manipulacion-datos-dplyr-tidyr.html#diferentes-nombres-para-la-llave",
+    "title": "Manipulación de datos con dplyr y tidyr",
+    "section": "14.7 Diferentes nombres para la llave",
+    "text": "14.7 Diferentes nombres para la llave\nCuando la llave tiene nombres distintos, se especifica la correspondencia:\n\nlaboratorio_alterno &lt;- laboratorio |&gt;\n  rename(codigo_participante = id)\n\nparticipantes |&gt;\n  left_join(\n    laboratorio_alterno,\n    by = join_by(id == codigo_participante)\n  )\n\n# A tibble: 12 × 9\n   id    centro sexo   fecha_nacimiento estatura_cm fumador glucosa_mg_dl\n   &lt;chr&gt; &lt;chr&gt;  &lt;chr&gt;  &lt;date&gt;                 &lt;dbl&gt; &lt;chr&gt;           &lt;dbl&gt;\n 1 P001  Norte  Mujer  1984-03-12               164 No                 91\n 2 P002  Norte  Hombre 1971-07-08               178 Sí                108\n 3 P003  Sur    Mujer  1990-11-23               159 No                 87\n 4 P004  Centro Mujer  1968-05-19               167 No                103\n 5 P005  Centro Hombre 1977-09-02               181 Sí                126\n 6 P006  Sur    Hombre 1988-01-15               174 No                 99\n 7 P007  Norte  Mujer  1995-06-30               162 No                 89\n 8 P008  Centro Hombre 1981-12-04               176 No                116\n 9 P009  Sur    Mujer  1974-02-27               160 &lt;NA&gt;               94\n10 P010  Norte  Hombre 1992-10-11               183 Sí                132\n11 P011  Centro Mujer  1986-08-16               165 No                 97\n12 P012  Sur    Hombre 1965-04-21               172 No                 NA\n# ℹ 2 more variables: colesterol_mg_dl &lt;dbl&gt;, fecha_laboratorio &lt;date&gt;"
+  },
+  {
+    "objectID": "temas/tema-01/tema-01-manipulacion-datos-dplyr-tidyr.html#riesgo-de-multiplicar-filas",
+    "href": "temas/tema-01/tema-01-manipulacion-datos-dplyr-tidyr.html#riesgo-de-multiplicar-filas",
+    "title": "Manipulación de datos con dplyr y tidyr",
+    "section": "14.8 Riesgo de multiplicar filas",
+    "text": "14.8 Riesgo de multiplicar filas\nSi una persona tiene varias filas en ambas tablas, una unión puede generar todas las combinaciones posibles.\n\ntabla_a &lt;- tibble(\n  id = c(\"P001\", \"P001\"),\n  visita = c(\"basal\", \"mes_6\")\n)\n\ntabla_b &lt;- tibble(\n  id = c(\"P001\", \"P001\"),\n  prueba = c(\"Glucosa\", \"Colesterol\")\n)\n\nUnir solamente por id produciría cuatro filas para P001. Esto puede ser correcto si se desean todas las combinaciones, pero con frecuencia indica que la llave está incompleta. Antes y después de cada unión conviene comparar el número de filas y revisar la unicidad de las llaves."
+  },
+  {
+    "objectID": "temas/tema-01/tema-01-manipulacion-datos-dplyr-tidyr.html#paso-1-transformar-las-visitas",
+    "href": "temas/tema-01/tema-01-manipulacion-datos-dplyr-tidyr.html#paso-1-transformar-las-visitas",
+    "title": "Manipulación de datos con dplyr y tidyr",
+    "section": "17.1 Paso 1: transformar las visitas",
+    "text": "17.1 Paso 1: transformar las visitas\n\n# Sugerencia: seleccione las variables necesarias y utilice pivot_wider()."
+  },
+  {
+    "objectID": "temas/tema-01/tema-01-manipulacion-datos-dplyr-tidyr.html#paso-2-combinar-las-tablas",
+    "href": "temas/tema-01/tema-01-manipulacion-datos-dplyr-tidyr.html#paso-2-combinar-las-tablas",
+    "title": "Manipulación de datos con dplyr y tidyr",
+    "section": "17.2 Paso 2: combinar las tablas",
+    "text": "17.2 Paso 2: combinar las tablas\n\n# Sugerencia: utilice left_join() y revise las no coincidencias con anti_join()."
+  },
+  {
+    "objectID": "temas/tema-01/tema-01-manipulacion-datos-dplyr-tidyr.html#paso-3-crear-variables-derivadas",
+    "href": "temas/tema-01/tema-01-manipulacion-datos-dplyr-tidyr.html#paso-3-crear-variables-derivadas",
+    "title": "Manipulación de datos con dplyr y tidyr",
+    "section": "17.3 Paso 3: crear variables derivadas",
+    "text": "17.3 Paso 3: crear variables derivadas\n\n# Sugerencia: calcule el cambio de peso y clasifique la glucosa."
+  },
+  {
+    "objectID": "temas/tema-01/tema-01-manipulacion-datos-dplyr-tidyr.html#paso-4-resumir",
+    "href": "temas/tema-01/tema-01-manipulacion-datos-dplyr-tidyr.html#paso-4-resumir",
+    "title": "Manipulación de datos con dplyr y tidyr",
+    "section": "17.4 Paso 4: resumir",
+    "text": "17.4 Paso 4: resumir\n\n# Sugerencia: agrupe por centro y reporte n, media y desviación estándar."
+  },
+  {
+    "objectID": "temas/tema-01/tema-01-manipulacion-datos-dplyr-tidyr.html#interpretación",
+    "href": "temas/tema-01/tema-01-manipulacion-datos-dplyr-tidyr.html#interpretación",
+    "title": "Manipulación de datos con dplyr y tidyr",
+    "section": "17.5 Interpretación",
+    "text": "17.5 Interpretación\n\nRespuesta del estudiante: describa el resultado principal, la cantidad de información disponible y al menos una limitación de los datos."
   }
 ]
