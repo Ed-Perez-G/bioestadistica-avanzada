@@ -1,0 +1,129 @@
+---
+title: "Untitled"
+author: "Sustituir"
+format: # Opciones de format
+  html:
+    toc: true # Tabla de contenidos
+    toc-depth: 2 # Profundidad de la tabla de contenidos
+    code-fold: false # Código visible, si es true el codigo se despliega con un boton
+    code-tools: true # Muestra botones de herramientos
+    embed-resources: true # Genera un solo de archivo de los contrario se crean carpetas
+execute:
+  warning: false      # ✅ Oculta warnings de R (amarillos)
+  message: false      # ✅ Oculta mensajes de R (azules)
+  echo: true          # ✅ Muestra el código (default)
+  eval: true          # ✅ Ejecuta el código (default)
+editor: source # También puede ser visual
+---
+
+
+# Introducción 
+
+Esta es un plantilla para la aplicación de algunas de las funciones de `dplyr` y `tdyr` sobre la base de datos **NHANES** (National Health and Nutrition Examination Survey).
+
+## Descripción de la base de datos
+
+"This is survey data collected by the US National Center for Health Statistics (NCHS) which has conducted a series of health and nutrition surveys since the early 1960's. Since 1999 approximately 5,000 individuals of all ages are interviewed in their homes every year and complete the health examination component of the survey. The health examination is conducted in a mobile examination centre (MEC)."
+
+## Objetivo
+
+Nuestro objetivo aquí es crear nuevas variables, transformar y cambiar las ya existentes utilizando `dplyr` y `tdyr`.
+
+# Cargar y conocer la base de datos
+
+En este apartado deberá de tener todo el código necesario para cargar y familiarizarse con la base de datos. 
+
+Para instalar utilice el siguiente código: 
+
+```{r eval=FALSE}
+install.packages("NHANES")
+```
+
+Recuerde que la instalción de librerías no se realiza en el documento de Quarto. 
+
+Para llamar la base de datos puede utilizar el siguiente código:
+
+```{r}
+library(NHANES)
+data("NHANES")
+df <- NHANES
+# df es un nombe común utilizado para las bases de datos es la abreviatura de df
+```
+
+# Ejercicios
+
+## Renombrar variables
+
+Utlice: `rename()`
+
+- Los nombres de las columnas son muy técnicos. ¿Cómo les damos nombres más descriptivos para nuestro reporte clínico?
+
+- **Instrucciones**: cambie el nombre de Age por "edad", "BPSysAve" por "presion_sistolica", "BPDiaAve" por "presion_diastolica" y "BMI" por "IMC"
+
+- ¿Por qué es importante ajustar los nombres y qué características consideran deberían de tener?
+
+
+## Filtrar variables
+
+utilice: `filter()`, tome en cuenta que necesita una condición que cumplir
+
+*¿Cuántos pacientes en nuestro estudio tienen hipertensión (presión sistólica \> 140 mmHg)?*
+
+
+*¿Qué tal si queremos pacientes mayores de 50 años que sean diabéticos?*
+
+*¿O pacientes que sean hipertensos O diabéticos (cualquiera de los dos)?*
+
+Explique que hace este código y cuales son diferencias. Cambie el nombre de las variables y/o base de datos si es necesario
+
+```{r eval=FALSE}
+filter(datos, Age = 65)
+filter(datos, Age == 65)
+filter(datos, Age > 65)
+```
+
+
+- *Aplique estos dos filtros y explique sus diferencias: *
+
+```{r eval=FALSE}
+resultado_A <- filter(
+  df,
+    edad < 18 & Age >= 65
+)
+
+resultado_B <- filter(
+  df,
+  Age < 18 | Age >= 65
+)
+```
+
+Este código es lo mismo que: 
+
+```{r eval=FALSE}
+df |> 
+  filter(Age < 18 | Age >= 65)->resultado_A
+```
+
+- *Ahora seleccione pacientes con edad entre 20 y 29 años*
+
+- *Indentifique si la columa BMI tiene valores faltantes (NA) y luego filtre los pacientes sin valores faltantes.*
+
+
+Una investigadora quiere saber cuantos hombres y cuantas mujeres hay que cumplan todas estas condiciones:
+- Tienen 40 años o más.
+- Tienen menos de 65 años.
+- Su BMI es 30 o más.
+- Su presión sistólica promedio está disponible.
+- Su presión sistólica promedio es 140 o más.
+
+
+
+
+## slice_head y arrange
+
+- Seleccione una muestra de los primero 50 pacientes y guardelos en una base de datos nueva
+- Seleccione los 20 pacientes con el IMC mas bajo.
+- Seleccione los 20 pacientes con el IMC mas alto. 
+- Seleccione a los hombres mayores de 40 años y luego identifique cuales son los 10 pacientes con el IMC más bajo. 
+
+

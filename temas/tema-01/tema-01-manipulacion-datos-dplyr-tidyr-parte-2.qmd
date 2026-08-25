@@ -1,0 +1,422 @@
+---
+title: "Manipulación de datos con dplyr y tidyr. Parte 2"
+subtitle: "Bioestadística avanzada con R · Tema 1"
+author: "Edsaúl Emilio Pérez Guerrero"
+date: today
+date-format: "D [de] MMMM [de] YYYY"
+lang: es
+format:
+  html:
+    toc: true
+    toc-title: "Contenido"
+    number-sections: true
+    code-copy: true
+    code-fold: false
+execute:
+  echo: true
+  warning: false
+  message: false
+editor: source
+---
+
+# Presentación
+
+La manipulación de datos es una parte central de cualquier análisis estadístico. Muchos análisis requieren que antes de comenzar se deba importar, revisar, seleccionar, transformar, reorganizar y combinar información proveniente de una o varias bases de datos
+
+Este es la segunda parte sobre `dplyr` y `tidyr`.
+
+
+
+## Objetivo de aprendizaje
+
+Al finalizar la práctica, el estudiante será capaz de construir un flujo reproducible de manipulación de datos mediante `dplyr` y `tidyr`, incluyendo selección y filtrado de observaciones, creación y modificación de variables, resúmenes agrupados, transformación entre formatos ancho y largo, tratamiento explícito de valores faltantes y combinación de tablas mediante uniones.
+
+## Funciones principales
+
+Esta es una tabla con la descripción de las funciones y su uso que se utilizarán aquí:
+
+| Propósito | Funciones |
+|------------------------------------|------------------------------------|
+| Inspeccionar | `glimpse()`, `count()`, `distinct()` |
+| Seleccionar columnas | `select()`, `relocate()` |
+| Renombrar | `rename()`, `rename_with()` |
+| Filtrar filas | `filter()`, `slice_*()` |
+| Ordenar | `arrange()` |
+| Crear o modificar variables | `mutate()`, `transmute()`, `case_when()`, `if_else()` |
+| Agrupar y resumir | `group_by()`, `summarise()`, `across()` |
+| Reorganizar datos | `pivot_longer()`, `pivot_wider()` |
+| Separar o unir columnas | `separate_wider_delim()`, `unite()` |
+| Combinar tablas | `left_join()`, `inner_join()`, `full_join()`, `semi_join()`, `anti_join()` |
+| Trabajar con faltantes | `drop_na()`, `replace_na()`, `complete()` |
+
+# Preparación
+
+```{r}
+#| label: cargar-paquetes
+
+library(tidyverse)
+```
+
+El paquete `tidyverse` carga, entre otros, `dplyr`, `tidyr`, `readr`, `stringr`, `forcats` y `ggplot2`.
+
+# Bases de datos para la práctica
+
+Trabajaremos con tres bases de datos simuladas con la siguiente información:
+
+- `participantes`: información general de cada persona;
+- `visitas`: mediciones longitudinales en tres momentos;
+- `laboratorio`: resultados de laboratorio recibidos desde otra fuente.
+
+La simulación permite que el documento sea completamente reproducible y pueda ejecutarse sin descargar archivos adicionales. 
+
+```{r}
+#| label: crear-datos
+
+participantes <- tibble(
+  id = sprintf("P%03d", 1:12),
+  centro = c("Norte", "Norte", "Sur", "Centro", "Centro", "Sur",
+             "Norte", "Centro", "Sur", "Norte", "Centro", "Sur"),
+  sexo = c("Mujer", "Hombre", "Mujer", "Mujer", "Hombre", "Hombre",
+           "Mujer", "Hombre", "Mujer", "Hombre", "Mujer", "Hombre"),
+  fecha_nacimiento = as.Date(c(
+    "1984-03-12", "1971-07-08", "1990-11-23", "1968-05-19",
+    "1977-09-02", "1988-01-15", "1995-06-30", "1981-12-04",
+    "1974-02-27", "1992-10-11", "1986-08-16", "1965-04-21"
+  )),
+  estatura_cm = c(164, 178, 159, 167, 181, 174, 162, 176, 160, 183, 165, 172),
+  fumador = c("No", "Sí", "No", "No", "Sí", "No", "No", "No", NA,
+             "Sí", "No", "No")
+)
+
+visitas <- crossing(
+  id = participantes$id,
+  visita = c("basal", "mes_3", "mes_6")
+) |>
+  arrange(id, factor(visita, levels = c("basal", "mes_3", "mes_6"))) |>
+  mutate(
+    peso_kg = c(
+      68, 67, 66, 84, 83, 82, 61, 60, 59, 75, 74, 73,
+      91, 90, 88, 79, 78, 78, 65, 64, 63, 87, 86, 84,
+      70, 69, NA, 96, 94, 93, 72, 71, 70, 81, NA, 80
+    ),
+    presion_sistolica = c(
+      124, 121, 119, 139, 136, 134, 117, 115, 114, 146, 142, 138,
+      151, 148, 144, 132, 130, 129, 120, 118, 116, 143, 140, 137,
+      128, 126, NA, 154, 150, 147, 126, 124, 122, 137, NA, 133
+    )
+  )
+
+laboratorio <- tibble(
+  id = c(sprintf("P%03d", 1:11), "P999"),
+  glucosa_mg_dl = c(91, 108, 87, 103, 126, 99, 89, 116, 94, 132, 97, 105),
+  colesterol_mg_dl = c(174, 215, 168, 201, 238, 190, 176, 224, 183, 245, 195, 210),
+  fecha_laboratorio = as.Date(c(
+    "2026-08-01", "2026-08-02", "2026-08-01", "2026-08-03",
+    "2026-08-03", "2026-08-04", "2026-08-04", "2026-08-05",
+    "2026-08-05", "2026-08-06", "2026-08-06", "2026-08-07"
+  ))
+)
+```
+
+# Renombrar variables
+
+## `rename()`
+
+La sintaxis es `nombre_nuevo = nombre_anterior`.
+
+```{r}
+participantes |>
+  rename(
+    identificador = id,
+    talla_cm = estatura_cm
+  )
+```
+
+## `rename_with()`
+
+`rename_with()` aplica una función a varios nombres simultáneamente.
+
+```{r}
+participantes |>
+  rename_with(stringr::str_to_upper) # cambia a mayusculas
+```
+
+```{r}
+# Tomar el dataframe/tibble 'laboratorio'
+laboratorio |>
+  # Renombrar columnas aplicando una función
+  rename_with(
+    # Fórmula lambda que remueve el sufijo "_mg_dl" del nombre de cada columna
+    # .x representa el nombre de la columna actual
+    # str_remove() elimina la primera coincidencia del patrón
+    # "_mg_dl$" es regex: busca "_mg_dl" al final de la cadena ($ = final)
+    ~ str_remove(.x, "_mg_dl$"),
+    # Selector: aplica la transformación solo a columnas que terminan con "mg_dl"
+    ends_with("mg_dl")
+  )
+```
+
+
+# Filtrar observaciones
+
+`filter()` conserva las filas que cumplen una o varias condiciones.
+
+```{r}
+participantes |>
+  filter(centro == "Norte")
+```
+
+## Operadores frecuentes
+
+| Operación   | Significado                  |
+|-------------|------------------------------|
+| `==`        | igual a                      |
+| `!=`        | diferente de                 |
+| `>` y `<`   | mayor o menor que            |
+| `>=` y `<=` | mayor o igual; menor o igual |
+| `%in%`      | pertenece a un conjunto      |
+| `&`         | y                            |
+| `|`         | o                            |
+| `!`         | negación                     |
+| `is.na()`   | es un valor faltante         |
+
+```{r}
+participantes |>
+  filter(centro == "Norte" & sexo == "Mujer")
+```
+
+```{r}
+participantes |>
+  filter(centro %in% c("Norte", "Sur"))
+```
+
+```{r}
+visitas |>
+  filter(visita == "mes_6", presion_sistolica >= 130)
+```
+
+## Filtrar valores faltantes
+
+```{r}
+participantes |>
+  filter(is.na(fumador))
+
+
+```
+
+```{r}
+visitas |>
+  filter(!is.na(peso_kg)) # selecciona los no NA
+```
+
+No debe escribirse `variable == NA`, porque un valor desconocido no puede compararse directamente. Se utilizan `is.na()` y `!is.na()`.
+
+## Selección por posición
+
+```{r}
+visitas |>
+  slice_head(n = 5) # primeros 5 datos
+```
+
+
+# Ordenar filas
+
+```{r}
+participantes |>
+  arrange(centro, fecha_nacimiento)
+```
+
+Para ordenar de mayor a menor se utiliza `desc()`:
+
+```{r}
+laboratorio |>
+  arrange(desc(glucosa_mg_dl))
+```
+
+# Crear y transformar variables
+
+## `mutate()`
+
+`mutate()` crea variables nuevas o modifica variables existentes, conservando las demás columnas.
+
+```{r}
+participantes_derivados <- participantes |>
+  mutate(
+    estatura_m = estatura_cm / 100,
+    edad_aproximada = as.numeric(
+      difftime(as.Date("2026-08-01"), fecha_nacimiento, units = "days")
+    ) / 365.25
+  )
+
+participantes_derivados |>
+  select(id, fecha_nacimiento, edad_aproximada, estatura_m)
+```
+
+## Crear variables después de combinar tablas
+
+Para calcular el índice de masa corporal necesitamos el peso de la visita basal y la estatura de cada participante.
+
+```{r}
+datos_basales <- visitas |>
+  filter(visita == "basal") |>
+  left_join(
+    participantes |> select(id, estatura_cm),
+    by = "id"
+  ) |>
+  mutate(
+    estatura_m = estatura_cm / 100,
+    imc = peso_kg / estatura_m^2
+  )
+
+datos_basales |>
+  select(id, peso_kg, estatura_m, imc)
+```
+
+Más adelante examinaremos con detalle las uniones entre tablas.
+
+## `if_else()`
+
+`if_else()` es apropiada cuando solamente existen dos resultados posibles.
+
+```{r}
+laboratorio |>
+  mutate(
+    glucosa_elevada = if_else(
+      glucosa_mg_dl >= 126,
+      "Sí",
+      "No"
+    )
+  )
+```
+
+## `case_when()`
+
+`case_when()` permite definir más de dos categorías.
+
+```{r}
+datos_basales <- datos_basales |>
+  mutate(
+    categoria_imc = case_when(
+      is.na(imc) ~ NA_character_,
+      imc < 18.5 ~ "Bajo peso",
+      imc < 25 ~ "Adecuado",
+      imc < 30 ~ "Sobrepeso",
+      imc >= 30 ~ "Obesidad"
+    )
+  )
+
+datos_basales |>
+  count(categoria_imc, .drop = FALSE)
+```
+
+El orden de las condiciones es importante: `case_when()` utiliza la primera condición verdadera.
+
+## `transmute()`
+
+`transmute()` crea variables, pero conserva únicamente las variables especificadas y las recién creadas.
+
+```{r}
+participantes |>
+  transmute(
+    id,
+    estatura_m = estatura_cm / 100
+  )
+```
+
+# Agrupar y resumir
+
+## `group_by()` y `summarise()`
+
+```{r}
+visitas |>
+  group_by(visita) |>
+  summarise(
+    n = n(),
+    n_con_peso = sum(!is.na(peso_kg)),
+    peso_medio = mean(peso_kg, na.rm = TRUE),
+    peso_de = sd(peso_kg, na.rm = TRUE),
+    presion_mediana = median(presion_sistolica, na.rm = TRUE),
+    presion_q1 = quantile(presion_sistolica, 0.25, na.rm = TRUE),
+    presion_q3 = quantile(presion_sistolica, 0.75, na.rm = TRUE),
+    .groups = "drop"
+  )
+```
+
+Es importante distinguir:
+
+- `n()` cuenta filas;
+- `sum(!is.na(variable))` cuenta valores observados;
+- `n_distinct(variable)` cuenta valores únicos.
+
+## Resumir por más de una variable
+
+```{r}
+visitas |>
+  left_join(participantes |> select(id, centro), by = "id") |>
+  group_by(centro, visita) |>
+  summarise(
+    n = sum(!is.na(presion_sistolica)),
+    presion_media = mean(presion_sistolica, na.rm = TRUE),
+    .groups = "drop"
+  )
+```
+
+## Aplicar una operación a varias columnas con `across()`
+
+```{r}
+visitas |>
+  group_by(visita) |>
+  summarise(
+    across(
+      c(peso_kg, presion_sistolica),
+      list(
+        media = ~ mean(.x, na.rm = TRUE),
+        de = ~ sd(.x, na.rm = TRUE)
+      ),
+      .names = "{.col}_{.fn}"
+    ),
+    .groups = "drop"
+  )
+```
+
+# Trabajar con valores faltantes
+
+## Identificar faltantes
+
+```{r}
+visitas |>
+  summarise(
+    across(
+      everything(),
+      ~ sum(is.na(.x)),
+      .names = "faltantes_{.col}"
+    )
+  )
+```
+
+## Eliminar valores faltantes con `drop_na()`
+
+```{r}
+visitas |>
+  drop_na(peso_kg, presion_sistolica)
+```
+
+`drop_na()` elimina filas y, por lo tanto, puede cambiar el tamaño y la composición de la muestra. Su uso debe justificarse; no es una solución automática para los datos faltantes.
+
+## Reemplazar valores con `replace_na()`
+
+En variables descriptivas, en ocasiones puede ser útil hacer explícita la categoría desconocida:
+
+```{r}
+participantes |>
+  mutate(
+    fumador = replace_na(fumador, "No registrado")
+  ) |>
+  count(fumador)
+```
+
+::: {.callout-important title="No confundir con imputación"}
+Reemplazar una categoría faltante por “No registrado” conserva explícita la ausencia de información. Sustituir una medición numérica faltante por cero, la media o la mediana modifica el dato y constituye una forma simple de imputación que puede sesgar los análisis.
+:::
+
+
