@@ -21,3 +21,5 @@ Organizar y documentar un flujo completo de análisis utilizando R, tidyverse y 
 [Descargar documento intro tidyverse parte 1](../../descargas/tema-01-manipulacion-datos-dplyr-tidyr-parte-1.qmd){download="tema-01-manipulacion-datos-dplyr-tidyr-parte-1.qmd"}
 
 [Descargar documento intro tidyverse parte 2](../../descargas/tema-01-manipulacion-datos-dplyr-tidyr-parte-2.qmd){download="tema-01-manipulacion-datos-dplyr-tidyr-parte-2.qmd"}
+
+[Descargar ejercicios tidyverse parte 2](../../descargas/tema-01-ejercicios-dplyr-tidyr-parte-2.qmd){download="tema-01-ejercicios-dplyr-tidyr-parte-2.qmd"}
