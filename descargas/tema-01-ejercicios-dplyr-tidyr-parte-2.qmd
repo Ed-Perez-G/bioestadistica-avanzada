@@ -1,0 +1,441 @@
+---
+title: "Untitled"
+author: "Sustituir"
+format: # Opciones de format
+  html:
+    toc: true # Tabla de contenidos
+    toc-depth: 2 # Profundidad de la tabla de contenidos
+    code-fold: false # Código visible, si es true el codigo se despliega con un boton
+    code-tools: true # Muestra botones de herramientos
+    embed-resources: true # Genera un solo de archivo de los contrario se crean carpetas
+execute:
+  warning: false      # ✅ Oculta warnings de R (amarillos)
+  message: false      # ✅ Oculta mensajes de R (azules)
+  echo: true          # ✅ Muestra el código (default)
+  eval: true          # ✅ Ejecuta el código (default)
+editor: source # También puede ser visual
+---
+
+
+# Introducción 
+
+Esta es un plantilla para la aplicación de algunas de las funciones de `dplyr` y `tdyr` sobre la base de datos **NHANES** (National Health and Nutrition Examination Survey).
+
+## Descripción de la base de datos
+
+"This is survey data collected by the US National Center for Health Statistics (NCHS) which has conducted a series of health and nutrition surveys since the early 1960's. Since 1999 approximately 5,000 individuals of all ages are interviewed in their homes every year and complete the health examination component of the survey. The health examination is conducted in a mobile examination centre (MEC)."
+
+## Objetivo
+
+Nuestro objetivo aquí es crear nuevas variables, transformar y cambiar las ya existentes utilizando `dplyr` y `tdyr`.
+
+# Cargar y conocer la base de datos
+
+En este apartado deberá de tener todo el código necesario para cargar y familiarizarse con la base de datos. 
+
+Para instalar utilice el siguiente código: 
+
+```{r eval=FALSE}
+install.packages("NHANES")
+```
+
+Recuerde que la instalción de librerías no se realiza en el documento de Quarto. 
+
+Para llamar la base de datos puede utilizar el siguiente código:
+
+```{r}
+library(NHANES)
+data("NHANES")
+df <- NHANES
+# df es un nombe común utilizado para las bases de datos es la abreviatura de df
+```
+
+# Ejercicios
+
+```{r}
+library(tidyverse)
+```
+
+
+## Renombrar variables
+
+Utlice: `rename()`
+
+- Los nombres de las columnas son muy técnicos. ¿Cómo les damos nombres más descriptivos para nuestro reporte clínico?
+
+- **Instrucciones**: cambie el nombre de Age por "edad", "BPSysAve" por "presion_sistolica", "BPDiaAve" por "presion_diastolica" y "BMI" por "IMC"
+
+- ¿Por qué es importante ajustar los nombres y qué características consideran deberían de tener?
+
+
+## `filter()`
+
+`filter()`, filtra variables dada una condición, si se cumple da un restultado.
+
+- ¿Cuántos pacientes en nuestro estudio tienen hipertensión (presión sistólica \> 140 mmHg)?
+
+
+-¿Qué tal si queremos pacientes mayores de 50 años que sean diabéticos?*
+
+-¿Cuantos  pacientes que sean hipertensos O diabéticos (cualquiera de los dos) hay en la base?
+
+Explique que hace este código y cuales son diferencias. Cambie el nombre de las variables y/o base de datos si es necesario
+
+```{r eval=FALSE}
+filter(datos, Age = 65)
+filter(datos, Age == 65)
+filter(datos, Age > 65)
+```
+
+
+- *Aplique estos dos filtros y explique sus diferencias: *
+
+```{r eval=FALSE}
+resultado_A <- filter(
+  df,
+    edad < 18 & Age >= 65
+)
+
+resultado_B <- filter(
+  df,
+  Age < 18 | Age >= 65
+)
+```
+
+Este código es lo mismo que: 
+
+```{r eval=FALSE}
+df |> 
+  filter(Age < 18 | Age >= 65)->resultado_A
+```
+
+- *Ahora seleccione pacientes con edad entre 20 y 29 años*
+
+- *Indentifique si la columa BMI tiene valores faltantes (NA) y luego filtre los pacientes sin valores faltantes.*
+
+
+Una investigadora quiere saber cuantos hombres y cuantas mujeres hay que cumplan todas estas condiciones:
+- Tienen 40 años o más.
+- Tienen menos de 65 años.
+- Su BMI es 30 o más.
+- Su presión sistólica promedio está disponible.
+- Su presión sistólica promedio es 140 o más.
+
+
+
+
+## slice_head y arrange
+
+slice_head() permite seleccionar los primeros casos de una base de datos.
+
+
+- Seleccione una muestra de los primeros 50 pacientes y guardelos en una base de datos nueva
+- Seleccione los 20 pacientes con el IMC mas bajo.
+- Seleccione los 20 pacientes con el IMC mas alto. 
+- Seleccione a los hombres mayores de 40 años y luego identifique cuales son los 10 pacientes con el IMC más bajo. 
+
+
+## mutate()
+
+"mutate() creates new columns that are functions of existing variables. It can also modify (if the name is the same as an existing column) and delete columns (by setting their value to NULL)." https://dplyr.tidyverse.org/reference/mutate.html
+
+Tiene la siguient estructura:
+
+```{r eval=FALSE}
+df |> 
+  mutate(
+    varible_creada = operación, # por ejemplo mean(x)-sd(x)
+  )
+```
+
+
+- Necesita investigar cuantos adultos mayores (edad >= 65) hay en la base de datos. Esta variable es indispensable para futuros análisis. Llame a su varialbe "AdultoMayor"
+- ¿Cuántos de ellos son hombres y cuantos son mujeres?
+- Cree una variable para resumir la edad de los participantes en meses. Llame esta variable como "EdadMeses". 
+- Indentifique cuantos hombres y cuantas mujeres hay con el BMI>=30. Llame a su variable como "BMI30omas". 
+- ¿Qué resultado tendrá alguien con BMI = 30?
+- ¿Qué resultado tendrá alguien con BMI = 29.9?
+- ¿Qué resultado tendrá alguien con BMI = NA?
+
+
+## if_else
+
+"if_else() is a vectorized if-else. Compared to the base R equivalent, ifelse(), this function allows you to handle missing values in the condition with missing and always takes true, false, and missing into account when determining what the output type should be." https://dplyr.tidyverse.org/reference/if_else.html
+
+```{r eval=FALSE}
+if_else(
+  condition,
+  true,
+  false,
+  missing = NULL,
+  ...,
+  ptype = NULL,
+  size = deprecated()
+)
+```
+
+- Necesita crear una variable para investigar cuantos pacientes tienen una edad>=18. Llame su variable como "GrupoEdad". 
+- Los pacientes que son mujeres y que tienen una edad menor 25 años deben de ubicarse en el grupo A, mientras que las mujeres mayores a 25 en el grupo B. ¿Por qué el codigo siguiente no clasifca correctamente?
+
+```{r eval=FALSE}
+df <-  df |> 
+  mutate(NuevoGrupo =
+  ifelse(
+    Gender == "female" & Age >25, 
+    "Grupo A", 
+    "Grupo B"
+  )) 
+```
+
+## case_when()
+
+"case_when() and replace_when() are two forms of vectorized if_else(). They work by evaluating each case sequentially and using the first match for each element to determine the corresponding value in the output vector." https://dplyr.tidyverse.org/reference/case-and-replace-when.html
+
+Se podría deceir que con case_when puede crear y trabajar con más condiciones no solo con dos, como el caso de if_else
+
+- Los pacientes que son mujeres y que tienen una edad menor 25 años deben de ubicarse en el grupo A, mientras que las mujeres mayores a 25 en el grupo B. A los hombres incluyálos en un grupo B. 
+- Cambie la varible BMI o IMC a las siguientes categorías: 
+  + BMI < 18.5 ~ "Bajo peso",
+  + BMI < 25 ~ "Peso esperado",
+  + BMI < 30 ~ "Sobrepeso",
+  + BMI >= 30 ~ "Obesidad"
+  + na= "Sin medición" 
+
+### Orden en case_when()
+
+Compare los resultados de:
+
+```{r eval=FALSE}
+df |>
+  mutate(
+    GrupoEdad = case_when(
+      Age < 65 ~ "Menor de 65",
+      Age < 18 ~ "Menor de 18",
+      Age >= 65 ~ "65 o más"
+    )
+  ) |> 
+  count(GrupoEdad)
+```
+
+y de:
+
+```{r}
+df |>
+  mutate(
+    GrupoEdad = case_when(
+      Age < 18 ~ "Menor de 18",
+      Age < 65 ~ "18 a 64",
+      Age >= 65 ~ "65 o más"
+    )
+  )|> 
+  count(GrupoEdad)
+```
+
+- Explique que es lo que pasa con los resultados. 
+
+
+**Regla de oro: Cuando las condiciones se traslapan, debes poner primero la más restrictiva/específica.**
+
+También puede evitar problemas siendo más explícito: 
+
+```{r eval=FALSE}
+case_when(
+  Age < 18 ~ "Menor de 18",
+  Age >= 18 & Age < 65 ~ "18 a 64",
+  Age >= 65 ~ "65 o más"
+)
+```
+
+
+
+## transmute()
+
+Con transmute() puede crear nuevas variables pero cambiando las variables existentes. 
+
+Vamos retomar el codigo del ejemplo anterior: 
+
+```{r}
+df <- df |> 
+  mutate(
+    GrupoEdad = case_when(
+      Age < 18 ~ "Menor de 18",
+      Age < 65 ~ "18 a 64",
+      Age >= 65 ~ "65 o más"
+    )
+  )
+```
+
+
+Ahora, compare los resultados con el codigo anterior
+
+```{r}
+df_transmute <- df |> 
+  transmute(
+    GrupoEdad = case_when(
+      Age < 18 ~ "Menor de 18",
+      Age < 65 ~ "18 a 64",
+      Age >= 65 ~ "65 o más"
+    )
+  )
+```
+
+Si quiere conservar la varible edad utilice:
+
+```{r}
+df_transmute <- df |> 
+  transmute(
+    GrupoEdad = case_when(
+      Age < 18 ~ "Menor de 18",
+      Age < 65 ~ "18 a 64",
+      Age >= 65 ~ "65 o más"
+    )
+  )
+```
+
+
+### Problema 1 transmute
+Utlice transmute() para lo siguiente: 
+
+Para este análisis únicamente necesitamos conocer:
+
+* La edad (Age)
+* El sexo (Sex)
+* El índice de masa corporal (BMI)
+
+Además, queremos crear dos nuevas variables:
+
+* Grupo de edad: menor de 18 años, 18–64 años y 65 años o más.
+* Obesidad: definir como obesidad a los participantes con BMI ≥ 30 kg/m².
+
+Como NHANES contiene muchas otras variables que no necesitamos para este análisis, queremos crear un nuevo objeto llamado df_obesidad que contenga únicamente las variables necesarias y las nuevas variables que acabamos de definir.
+
+```{r}
+
+```
+
+¿Por qué utilizar transmute() en lugar de mutate()?
+
+
+### Problema 2 transmute
+
+Estamos trabajando con la base de datos NHANES y queremos preparar una base de datos para explorar la presión arterial en adultos.
+
+Para nuestro análisis necesitamos la edad (Age), la variable `Gender` y las mediciones de presión arterial sistólica y diastólica (BPSysAve y BPDiaAve).
+
+Sin embargo, queremos generar dos variables nuevas:
+
+1. La presión arterial media (PAM), calculada mediante:
+
+$$PAM = \frac{PAS + 2(PAD)}{3}$$
+
+2. Una variable denominada Hipertension, donde clasificaremos a los participantes como:
+
+* "Sí" si presentan presión sistólica ≥140 o presión diastólica ≥90 mmHg.
+* "No" si no cumplen ninguno de estos criterios.
+
+Finalmente, queremos crear una nueva base llamada df_presion que contenga únicamente las variables necesarias para este análisis.
+
+
+## group_by() y summarise()
+
+- "Most data operations are done on groups defined by variables. group_by() takes an existing tbl and converts it into a grouped tbl where operations are performed "by group". ungroup() removes grouping". https://dplyr.tidyverse.org/reference/group_by.html
+
+- "summarise() creates a new data frame. It returns one row for each combination of grouping variables; if there are no grouping variables, the output will have a single row summarising all observations in the input. It will contain one column for each grouping variable and one column for each of the summary statistics that you have specified." https://dplyr.tidyverse.org/reference/summarise.html
+
+
+Resuelva los siguiente:
+
+- Queremos saber si el índice de masa corporal promedio es diferente entre hombres y mujeres en NHANES.
+
+- Queremos conocer cuántos participantes hay en cada grupo de edad y cuál es su edad promedio. Utilice GrupoEdad, la misma variable que creo anteriormente. Puede utilizar n() para hacer los conteos. "In the R programming language, n() is a context-dependent function from the dplyr package used to count the total number of observations (rows) in the current group".
+
+
+### Problema 1 group_by
+
+Estamos trabajando con la base de datos NHANES y queremos explorar si existen diferencias en algunos indicadores de salud de acuerdo con la variable `Gender` y el grupo de edad de los participantes.
+
+Primero, clasifique a los participantes en tres grupos de edad:
+
+* Menores de 18 años.
+* De 18 a 64 años.
+* 65 años o más.
+
+Posteriormente, considere que un participante presenta obesidad cuando su índice de masa corporal (BMI) es igual o mayor a 30 kg/m².
+
+Agrupe a los participantes de acuerdo con su genero y su grupo de edad. Para cada combinación de estas dos variables, obtenga la siguiente información:
+
+* Número total de participantes.
+* Promedio del BMI.
+* Mediana del BMI.
+* Promedio de la presión arterial sistólica (BPSysAve).
+* Porcentaje de participantes con obesidad.
+
+El objetivo es obtener una tabla que permita comparar el perfil antropométrico y cardiovascular entre hombres y mujeres de diferentes grupos de edad.
+
+
+### Problema 2 group_by
+
+Se desea investigar si el tabaquismo y los niveles de colesterol total presentan diferencias entre distintos grupos de edad en los participantes de NHANES.
+
+Clasifique a los participantes en tres grupos:
+
+* Menores de 18 años.
+* Adultos de 18 a 64 años.
+* Adultos de 65 años o más.
+
+Posteriormente, agrupe a los participantes según su grupo de edad y calcule para cada grupo:
+
+* Número de participantes.
+* Promedio de colesterol total (TotChol).
+* Desviación estándar del colesterol total.
+* Número de participantes que reportan ser fumadores (SmokeNow == "Yes").
+* Porcentaje de fumadores dentro de cada grupo.
+
+El objetivo es obtener una tabla que permita comparar el perfil de tabaquismo y colesterol entre los diferentes grupos de edad.
+
+## across()
+
+"across() makes it easy to apply the same transformation to multiple columns, allowing you to use select() semantics inside in "data-masking" functions like summarise() and mutate(). See vignette("colwise") for more details" https://dplyr.tidyverse.org/reference/across.html
+
+
+- Estime la media de edad, BMI, colesterol y presion arterial. Cree una tabla con ello mediante summarise
+- Ahora utilice across() para estimar estas medias
+
+```{r eval=FALSE}
+df |> 
+  summarise(
+    across(lista de varibles separadas por coma), 
+          ~ funcion(.x) #.x indica que se utilizara la funcion que este pasando por across.
+  )
+```
+
+
+- Agrupe utilizando la vairable gender y obtenga las mismas medias. 
+
+- Agrupe utilizando la vairable gender y obtenga las mismas medias además de las desviaciones estandar de cada una de las variables. 
+
+### Problema 1 across
+
+Utilizando la base de datos NHANES, se desea comparar algunos indicadores cardiometabólicos entre diferentes grupos de edad y sexo.
+
+Primero, clasifique a los participantes de acuerdo con su edad (Age) en las siguientes categorías:
+
+* Menores de 18 años.
+* De 18 a 64 años.
+* 65 años o más.
+
+Posteriormente, agrupe a los participantes de acuerdo con sexo (Gender) y grupo de edad.
+
+Para cada grupo:
+
+1. Determine el número de participantes.
+2. Calcule la media y desviación estándar de:
+    * índice de masa corporal (BMI);
+    * colesterol total (TotChol);
+    * presión arterial sistólica (BPSysAve);
+    * presión arterial diastólica (BPDiaAve).
+3. Calcule el número de participantes que presentan obesidad, considerando obesidad como BMI ≥ 30 kg/m².
+4. Calcule el porcentaje de participantes con obesidad en cada grupo.
+
+El resultado deberá ser una tabla que permita comparar el perfil cardiometabólico de los participantes según su sexo y grupo de edad.
+
