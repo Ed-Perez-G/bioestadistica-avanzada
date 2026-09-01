@@ -24,6 +24,8 @@ website:
         menu:
           - href: temas/tema-01/index.qmd
             text: "Tema 1: Repaso de R y análisis reproducible"
+          - href: temas/tema-02/index.qmd
+            text: "Tema 2: Visualización de datos con ggplot2"
 
   page-footer:
     left: "© 2026 Edsaúl E. Pérez-Guerrero"

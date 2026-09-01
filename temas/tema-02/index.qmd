@@ -1,0 +1,17 @@
+---
+title: "Tema 2: Visualización de datos con ggplot2"
+---
+
+## Objetivo
+
+Construir gráficas con `ggplot2` partiendo de una versión mínima y agregando capas (color, facetas, etiquetas, tema) hasta llegar a una gráfica lista para un reporte, usando como base lo ya aprendido con `dplyr` y `tidyr`.
+
+## Contenidos
+
+- La gramática de gráficos de `ggplot2`.
+- Progresión básico → pulido en dispersión, histograma, boxplot y barras.
+- Uso de un tema consistente (`theme_set()`) y guardado de gráficas (`ggsave()`).
+
+## Material de clase
+
+[Ver la presentación](tema-02-ggplot2-basico.qmd)

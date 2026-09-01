@@ -1,0 +1,293 @@
+---
+title: "Visualización de datos con ggplot2"
+subtitle: "Bioestadística avanzada con R · Tema 2"
+author: "Edsaúl Emilio Pérez Guerrero"
+date: today
+date-format: "D [de] MMMM [de] YYYY"
+lang: es
+format:
+  revealjs:
+    theme: [simple]
+    slide-number: true
+    transition: fade
+    incremental: false
+    chalkboard: false
+    code-line-numbers: false
+execute:
+  echo: true
+  warning: false
+  message: false
+editor: source
+---
+
+## Objetivo de la sesión {.smaller}
+
+Al finalizar esta sesión podrás construir gráficas con `ggplot2`, partiendo de una versión mínima y agregando capas hasta llegar a una gráfica lista para un reporte.
+
+- Ya sabes preparar datos con `dplyr` y `tidyr`.
+- Hoy usamos esa base para **visualizar**.
+- Trabajaremos con `Pima.tr2` (paquete `MASS`): variables clínicas de mujeres Pima y diagnóstico de diabetes.
+
+## La gramática de gráficos {.smaller}
+
+`ggplot2` construye una gráfica por capas, agregadas con `+`:
+
+1. **`data`** — la tabla de datos
+2. **`aes()`** — qué variable va en qué eje / color / forma
+3. **`geom_*()`** — el tipo de gráfica (puntos, barras, cajas...)
+4. **`facet_*()`** — paneles por grupo
+5. **`labs()` / `scale_*()`** — títulos, ejes, colores
+6. **`theme_*()`** — apariencia general
+
+## Cargando y preparando los datos
+
+```{r}
+#| echo: true
+#| output-location: column
+
+library(tidyverse)
+
+data(Pima.tr2, package = "MASS")
+
+pima <- as_tibble(Pima.tr2) %>%
+  drop_na()
+
+glimpse(pima)
+```
+
+## Dispersión — paso 1: lo mínimo
+
+```{r}
+#| echo: true
+#| output-location: column
+#| fig-width: 5
+#| fig-height: 5
+
+ggplot(pima, aes(x = bmi, y = glu)) +
+  geom_point()
+```
+
+- `aes()` conecta variables con la gráfica.
+- `geom_point()` dibuja cada fila como un punto.
+
+## Dispersión — paso 2: agregando color
+
+```{r}
+#| echo: true
+#| output-location: column
+#| fig-width: 5
+#| fig-height: 5
+
+ggplot(pima, aes(x = bmi, y = glu, color = type)) +
+  geom_point()
+```
+
+- Una variable categórica más → un nuevo `aes()`.
+- `ggplot2` asigna colores y agrega la leyenda automáticamente.
+
+## Dispersión — paso 3: lista para un reporte
+
+```{r}
+#| echo: true
+#| output-location: column
+#| fig-width: 5
+#| fig-height: 5
+
+ggplot(pima, aes(x = bmi, y = glu, color = type)) +
+  geom_point(size = 2, alpha = 0.7) +
+  labs(
+    title = "Glucosa vs. índice de masa corporal",
+    subtitle = "Mujeres Pima, según diagnóstico de diabetes",
+    x = "IMC (kg/m²)",
+    y = "Glucosa plasmática (mg/dL)",
+    color = "Diabetes"
+  ) +
+  theme_minimal(base_size = 13)
+```
+
+- `labs()` reemplaza los nombres de columnas por texto legible.
+- `theme_minimal()` quita el fondo gris por defecto.
+
+## Histograma — paso 1: lo mínimo
+
+```{r}
+#| echo: true
+#| output-location: column
+#| fig-width: 5
+#| fig-height: 5
+
+ggplot(pima, aes(x = glu)) +
+  geom_histogram()
+```
+
+- Una sola variable continua.
+- `ggplot2` avisa cuántos `bins` usó por defecto (30).
+
+## Histograma — paso 2: comparando grupos
+
+```{r}
+#| echo: true
+#| output-location: column
+#| fig-width: 5
+#| fig-height: 5
+
+ggplot(pima, aes(x = glu, fill = type)) +
+  geom_histogram(binwidth = 10, alpha = 0.8) +
+  facet_wrap(~ type, ncol = 1) +
+  labs(
+    title = "Distribución de glucosa según diabetes",
+    x = "Glucosa plasmática (mg/dL)", y = "Frecuencia"
+  ) +
+  theme_minimal(base_size = 13) +
+  theme(legend.position = "none")
+```
+
+- `binwidth` controla el ancho de cada barra (mejor que dejarlo por defecto).
+- `facet_wrap()` separa un panel por grupo.
+
+## Boxplot — paso 1: lo mínimo
+
+```{r}
+#| echo: true
+#| output-location: column
+#| fig-width: 5
+#| fig-height: 5
+
+ggplot(pima, aes(x = type, y = bmi)) +
+  geom_boxplot()
+```
+
+- Una variable categórica en `x`, una continua en `y`.
+
+## Boxplot — paso 2: mostrando los datos
+
+```{r}
+#| echo: true
+#| output-location: column
+#| fig-width: 5
+#| fig-height: 5
+
+ggplot(pima, aes(x = type, y = bmi, fill = type)) +
+  geom_boxplot(alpha = 0.5, outlier.shape = NA) +
+  geom_jitter(width = 0.15, alpha = 0.4) +
+  labs(
+    title = "IMC según diagnóstico de diabetes",
+    x = "Diabetes", y = "IMC (kg/m²)"
+  ) +
+  theme_minimal(base_size = 13) +
+  theme(legend.position = "none")
+```
+
+- `outlier.shape = NA` evita puntos duplicados: los atípicos ya se ven con `geom_jitter()`.
+- Combinar dos `geom_*()` en una misma gráfica es algo común.
+
+## Barras — paso 1: un conteo
+
+```{r}
+#| echo: true
+#| output-location: column
+#| fig-width: 5
+#| fig-height: 5
+
+ggplot(pima, aes(x = type)) +
+  geom_bar()
+```
+
+- `geom_bar()` cuenta filas por categoría — no necesitas `dplyr::count()` antes.
+
+## Barras — paso 2: con `dplyr`, lista para reporte
+
+```{r}
+#| echo: true
+#| output-location: column
+#| fig-width: 5
+#| fig-height: 5
+
+pima %>%
+  count(type) %>%
+  mutate(prop = n / sum(n)) %>%
+  ggplot(aes(x = type, y = prop, fill = type)) +
+  geom_col() +
+  geom_text(aes(label = scales::percent(prop, accuracy = 1)),
+            vjust = -0.5) +
+  scale_y_continuous(labels = scales::percent, limits = c(0, 1)) +
+  labs(title = "Proporción de diabetes en la muestra",
+       x = "Diabetes", y = NULL) +
+  theme_minimal(base_size = 13) +
+  theme(legend.position = "none")
+```
+
+- Aquí usamos `dplyr` primero (`count()`, `mutate()`) y el resultado se manda directo a `ggplot()`.
+- `geom_col()` grafica un valor que tú ya calculaste; `geom_bar()` cuenta por ti.
+
+## Un tema consistente para todas tus gráficas
+
+```{r}
+#| echo: true
+#| output-location: column
+#| fig-width: 5
+#| fig-height: 5
+
+tema_clase <- theme_minimal(base_size = 13) +
+  theme(
+    legend.position = "top",
+    plot.title = element_text(face = "bold")
+  )
+
+theme_set(tema_clase)
+
+ggplot(pima, aes(x = bmi, y = glu, color = type)) +
+  geom_point(size = 2, alpha = 0.7) +
+  geom_smooth(method = "lm", se = FALSE) +
+  labs(title = "Glucosa vs. IMC", x = "IMC", y = "Glucosa",
+       color = "Diabetes")
+```
+
+- `theme_set()` aplica un tema a **todas** las gráficas del documento, sin repetirlo.
+- `geom_smooth()` agrega una línea de tendencia.
+
+## Guardando tu gráfica
+
+```{r}
+#| echo: true
+#| eval: false
+
+grafica_final <- ggplot(pima, aes(x = bmi, y = glu, color = type)) +
+  geom_point(size = 2, alpha = 0.7) +
+  geom_smooth(method = "lm", se = FALSE) +
+  labs(title = "Glucosa vs. IMC", x = "IMC", y = "Glucosa",
+       color = "Diabetes")
+
+ggsave("glucosa_vs_imc.png", grafica_final,
+       width = 7, height = 5, dpi = 300)
+```
+
+- Guarda el objeto de `ggplot2` en una variable **antes** de graficarlo, para poder reutilizarlo.
+- `dpi = 300` es resolución de calidad de reporte/publicación.
+
+## Resumen: las capas que usamos hoy {.smaller}
+
+| Capa | Función | Qué agrega |
+|---|---|---|
+| Datos | `ggplot(pima, aes(...))` | variables → ejes/color |
+| Geometría | `geom_point()`, `geom_histogram()`, `geom_boxplot()`, `geom_col()` | tipo de gráfica |
+| Paneles | `facet_wrap()` | un panel por grupo |
+| Etiquetas | `labs()` | títulos y nombres de eje |
+| Escalas | `scale_*()` | formato de colores/ejes |
+| Tema | `theme_minimal()`, `theme_set()` | apariencia general |
+
+## Ejercicio
+
+Usando `pima`, construye tu propia progresión básico → pulido para **`ped`** (función de pedigrí de diabetes) vs. **`age`**:
+
+1. Gráfica de dispersión mínima.
+2. Agrega color por `type`.
+3. Agrega título, nombres de ejes y un tema.
+4. Guarda tu gráfica final con `ggsave()`.
+
+## Recursos
+- Bioestadística en R para ciencias de la salud. Capítulo 10. Visualización de datos. <https://www.cucs.udg.mx/libros/lectura_cucs.php?libro=Bioestadistica_enR_digital#book/144>
+- Wickham, Navarro & Pedersen, *ggplot2: Elegant Graphics for Data Analysis* — <https://ggplot2-book.org/>
+- Wickham, Çetinkaya-Rundel & Grolemund, *R for Data Science*, capítulo de visualización — <https://r4ds.hadley.nz/>
+- Hoja de referencia de `ggplot2` (Posit) — <https://posit.co/resources/cheatsheets/>
+- `?Pima.tr2` en R, para la documentación del conjunto de datos
