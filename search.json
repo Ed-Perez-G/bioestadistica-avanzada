@@ -1,5 +1,124 @@
 [
   {
+    "objectID": "temas/tema-02/tema-02-ggplot2-basico.html#objetivo-de-la-sesión",
+    "href": "temas/tema-02/tema-02-ggplot2-basico.html#objetivo-de-la-sesión",
+    "title": "Visualización de datos con ggplot2",
+    "section": "Objetivo de la sesión",
+    "text": "Objetivo de la sesión\nAl finalizar esta sesión podrás construir gráficas con ggplot2, partiendo de una versión mínima y agregando capas hasta llegar a una gráfica lista para un reporte.\n\nYa sabes preparar datos con dplyr y tidyr.\nHoy usamos esa base para visualizar.\nTrabajaremos con Pima.tr2 (paquete MASS): variables clínicas de mujeres Pima y diagnóstico de diabetes."
+  },
+  {
+    "objectID": "temas/tema-02/tema-02-ggplot2-basico.html#la-gramática-de-gráficos",
+    "href": "temas/tema-02/tema-02-ggplot2-basico.html#la-gramática-de-gráficos",
+    "title": "Visualización de datos con ggplot2",
+    "section": "La gramática de gráficos",
+    "text": "La gramática de gráficos\nggplot2 construye una gráfica por capas, agregadas con +:\n\ndata — la tabla de datos\naes() — qué variable va en qué eje / color / forma\ngeom_*() — el tipo de gráfica (puntos, barras, cajas…)\nfacet_*() — paneles por grupo\nlabs() / scale_*() — títulos, ejes, colores\ntheme_*() — apariencia general"
+  },
+  {
+    "objectID": "temas/tema-02/tema-02-ggplot2-basico.html#cargando-y-preparando-los-datos",
+    "href": "temas/tema-02/tema-02-ggplot2-basico.html#cargando-y-preparando-los-datos",
+    "title": "Visualización de datos con ggplot2",
+    "section": "Cargando y preparando los datos",
+    "text": "Cargando y preparando los datos\n\n\nlibrary(tidyverse)\n\ndata(Pima.tr2, package = \"MASS\")\n\npima &lt;- as_tibble(Pima.tr2) %&gt;%\n  drop_na()\n\nglimpse(pima)\n\n\nRows: 200\nColumns: 8\n$ npreg &lt;int&gt; 5, 7, 5, 0, 0, 5, 3, 1, 3, 2, 0, 9, 1, 12, 1, 4, 1, 11, 1, 0, 2,…\n$ glu   &lt;int&gt; 86, 195, 77, 165, 107, 97, 83, 193, 142, 128, 137, 154, 189, 92,…\n$ bp    &lt;int&gt; 68, 70, 82, 76, 60, 76, 58, 50, 80, 78, 40, 78, 60, 62, 66, 76, …\n$ skin  &lt;int&gt; 28, 33, 41, 43, 25, 27, 31, 16, 15, 37, 35, 30, 23, 7, 52, 15, 8…\n$ bmi   &lt;dbl&gt; 30.2, 25.1, 35.8, 47.9, 26.4, 35.6, 34.3, 25.9, 32.4, 43.3, 43.1…\n$ ped   &lt;dbl&gt; 0.364, 0.163, 0.156, 0.259, 0.133, 0.378, 0.336, 0.655, 0.200, 1…\n$ age   &lt;int&gt; 24, 55, 35, 26, 23, 52, 25, 24, 63, 31, 33, 45, 59, 44, 29, 21, …\n$ type  &lt;fct&gt; No, Yes, No, No, No, Yes, No, No, No, Yes, Yes, No, Yes, Yes, No…"
+  },
+  {
+    "objectID": "temas/tema-02/tema-02-ggplot2-basico.html#dispersión-paso-1-lo-mínimo",
+    "href": "temas/tema-02/tema-02-ggplot2-basico.html#dispersión-paso-1-lo-mínimo",
+    "title": "Visualización de datos con ggplot2",
+    "section": "Dispersión — paso 1: lo mínimo",
+    "text": "Dispersión — paso 1: lo mínimo\n\n\nggplot(pima, aes(x = bmi, y = glu)) +\n  geom_point()\n\n\n\n\n\n\n\n\n\n\naes() conecta variables con la gráfica.\ngeom_point() dibuja cada fila como un punto."
+  },
+  {
+    "objectID": "temas/tema-02/tema-02-ggplot2-basico.html#dispersión-paso-2-agregando-color",
+    "href": "temas/tema-02/tema-02-ggplot2-basico.html#dispersión-paso-2-agregando-color",
+    "title": "Visualización de datos con ggplot2",
+    "section": "Dispersión — paso 2: agregando color",
+    "text": "Dispersión — paso 2: agregando color\n\n\nggplot(pima, aes(x = bmi, y = glu, color = type)) +\n  geom_point()\n\n\n\n\n\n\n\n\n\n\nUna variable categórica más → un nuevo aes().\nggplot2 asigna colores y agrega la leyenda automáticamente."
+  },
+  {
+    "objectID": "temas/tema-02/tema-02-ggplot2-basico.html#dispersión-paso-3-lista-para-un-reporte",
+    "href": "temas/tema-02/tema-02-ggplot2-basico.html#dispersión-paso-3-lista-para-un-reporte",
+    "title": "Visualización de datos con ggplot2",
+    "section": "Dispersión — paso 3: lista para un reporte",
+    "text": "Dispersión — paso 3: lista para un reporte\n\n\nggplot(pima, aes(x = bmi, y = glu, color = type)) +\n  geom_point(size = 2, alpha = 0.7) +\n  labs(\n    title = \"Glucosa vs. índice de masa corporal\",\n    subtitle = \"Mujeres Pima, según diagnóstico de diabetes\",\n    x = \"IMC (kg/m²)\",\n    y = \"Glucosa plasmática (mg/dL)\",\n    color = \"Diabetes\"\n  ) +\n  theme_minimal(base_size = 13)\n\n\n\n\n\n\n\n\n\n\nlabs() reemplaza los nombres de columnas por texto legible.\ntheme_minimal() quita el fondo gris por defecto."
+  },
+  {
+    "objectID": "temas/tema-02/tema-02-ggplot2-basico.html#histograma-paso-1-lo-mínimo",
+    "href": "temas/tema-02/tema-02-ggplot2-basico.html#histograma-paso-1-lo-mínimo",
+    "title": "Visualización de datos con ggplot2",
+    "section": "Histograma — paso 1: lo mínimo",
+    "text": "Histograma — paso 1: lo mínimo\n\n\nggplot(pima, aes(x = glu)) +\n  geom_histogram()\n\n\n\n\n\n\n\n\n\n\nUna sola variable continua.\nggplot2 avisa cuántos bins usó por defecto (30)."
+  },
+  {
+    "objectID": "temas/tema-02/tema-02-ggplot2-basico.html#histograma-paso-2-comparando-grupos",
+    "href": "temas/tema-02/tema-02-ggplot2-basico.html#histograma-paso-2-comparando-grupos",
+    "title": "Visualización de datos con ggplot2",
+    "section": "Histograma — paso 2: comparando grupos",
+    "text": "Histograma — paso 2: comparando grupos\n\n\nggplot(pima, aes(x = glu, fill = type)) +\n  geom_histogram(binwidth = 10, alpha = 0.8) +\n  facet_wrap(~ type, ncol = 1) +\n  labs(\n    title = \"Distribución de glucosa según diabetes\",\n    x = \"Glucosa plasmática (mg/dL)\", y = \"Frecuencia\"\n  ) +\n  theme_minimal(base_size = 13) +\n  theme(legend.position = \"none\")\n\n\n\n\n\n\n\n\n\n\nbinwidth controla el ancho de cada barra (mejor que dejarlo por defecto).\nfacet_wrap() separa un panel por grupo."
+  },
+  {
+    "objectID": "temas/tema-02/tema-02-ggplot2-basico.html#boxplot-paso-1-lo-mínimo",
+    "href": "temas/tema-02/tema-02-ggplot2-basico.html#boxplot-paso-1-lo-mínimo",
+    "title": "Visualización de datos con ggplot2",
+    "section": "Boxplot — paso 1: lo mínimo",
+    "text": "Boxplot — paso 1: lo mínimo\n\n\nggplot(pima, aes(x = type, y = bmi)) +\n  geom_boxplot()\n\n\n\n\n\n\n\n\n\n\nUna variable categórica en x, una continua en y."
+  },
+  {
+    "objectID": "temas/tema-02/tema-02-ggplot2-basico.html#boxplot-paso-2-mostrando-los-datos",
+    "href": "temas/tema-02/tema-02-ggplot2-basico.html#boxplot-paso-2-mostrando-los-datos",
+    "title": "Visualización de datos con ggplot2",
+    "section": "Boxplot — paso 2: mostrando los datos",
+    "text": "Boxplot — paso 2: mostrando los datos\n\n\nggplot(pima, aes(x = type, y = bmi, fill = type)) +\n  geom_boxplot(alpha = 0.5, outlier.shape = NA) +\n  geom_jitter(width = 0.15, alpha = 0.4) +\n  labs(\n    title = \"IMC según diagnóstico de diabetes\",\n    x = \"Diabetes\", y = \"IMC (kg/m²)\"\n  ) +\n  theme_minimal(base_size = 13) +\n  theme(legend.position = \"none\")\n\n\n\n\n\n\n\n\n\n\noutlier.shape = NA evita puntos duplicados: los atípicos ya se ven con geom_jitter().\nCombinar dos geom_*() en una misma gráfica es algo común."
+  },
+  {
+    "objectID": "temas/tema-02/tema-02-ggplot2-basico.html#barras-paso-1-un-conteo",
+    "href": "temas/tema-02/tema-02-ggplot2-basico.html#barras-paso-1-un-conteo",
+    "title": "Visualización de datos con ggplot2",
+    "section": "Barras — paso 1: un conteo",
+    "text": "Barras — paso 1: un conteo\n\n\nggplot(pima, aes(x = type)) +\n  geom_bar()\n\n\n\n\n\n\n\n\n\n\ngeom_bar() cuenta filas por categoría — no necesitas dplyr::count() antes."
+  },
+  {
+    "objectID": "temas/tema-02/tema-02-ggplot2-basico.html#barras-paso-2-con-dplyr-lista-para-reporte",
+    "href": "temas/tema-02/tema-02-ggplot2-basico.html#barras-paso-2-con-dplyr-lista-para-reporte",
+    "title": "Visualización de datos con ggplot2",
+    "section": "Barras — paso 2: con dplyr, lista para reporte",
+    "text": "Barras — paso 2: con dplyr, lista para reporte\n\n\npima %&gt;%\n  count(type) %&gt;%\n  mutate(prop = n / sum(n)) %&gt;%\n  ggplot(aes(x = type, y = prop, fill = type)) +\n  geom_col() +\n  geom_text(aes(label = scales::percent(prop, accuracy = 1)),\n            vjust = -0.5) +\n  scale_y_continuous(labels = scales::percent, limits = c(0, 1)) +\n  labs(title = \"Proporción de diabetes en la muestra\",\n       x = \"Diabetes\", y = NULL) +\n  theme_minimal(base_size = 13) +\n  theme(legend.position = \"none\")\n\n\n\n\n\n\n\n\n\n\nAquí usamos dplyr primero (count(), mutate()) y el resultado se manda directo a ggplot().\ngeom_col() grafica un valor que tú ya calculaste; geom_bar() cuenta por ti."
+  },
+  {
+    "objectID": "temas/tema-02/tema-02-ggplot2-basico.html#un-tema-consistente-para-todas-tus-gráficas",
+    "href": "temas/tema-02/tema-02-ggplot2-basico.html#un-tema-consistente-para-todas-tus-gráficas",
+    "title": "Visualización de datos con ggplot2",
+    "section": "Un tema consistente para todas tus gráficas",
+    "text": "Un tema consistente para todas tus gráficas\n\n\ntema_clase &lt;- theme_minimal(base_size = 13) +\n  theme(\n    legend.position = \"top\",\n    plot.title = element_text(face = \"bold\")\n  )\n\ntheme_set(tema_clase)\n\nggplot(pima, aes(x = bmi, y = glu, color = type)) +\n  geom_point(size = 2, alpha = 0.7) +\n  geom_smooth(method = \"lm\", se = FALSE) +\n  labs(title = \"Glucosa vs. IMC\", x = \"IMC\", y = \"Glucosa\",\n       color = \"Diabetes\")\n\n\n\n\n\n\n\n\n\n\ntheme_set() aplica un tema a todas las gráficas del documento, sin repetirlo.\ngeom_smooth() agrega una línea de tendencia."
+  },
+  {
+    "objectID": "temas/tema-02/tema-02-ggplot2-basico.html#guardando-tu-gráfica",
+    "href": "temas/tema-02/tema-02-ggplot2-basico.html#guardando-tu-gráfica",
+    "title": "Visualización de datos con ggplot2",
+    "section": "Guardando tu gráfica",
+    "text": "Guardando tu gráfica\n\ngrafica_final &lt;- ggplot(pima, aes(x = bmi, y = glu, color = type)) +\n  geom_point(size = 2, alpha = 0.7) +\n  geom_smooth(method = \"lm\", se = FALSE) +\n  labs(title = \"Glucosa vs. IMC\", x = \"IMC\", y = \"Glucosa\",\n       color = \"Diabetes\")\n\nggsave(\"glucosa_vs_imc.png\", grafica_final,\n       width = 7, height = 5, dpi = 300)\n\n\nGuarda el objeto de ggplot2 en una variable antes de graficarlo, para poder reutilizarlo.\ndpi = 300 es resolución de calidad de reporte/publicación."
+  },
+  {
+    "objectID": "temas/tema-02/tema-02-ggplot2-basico.html#resumen-las-capas-que-usamos-hoy",
+    "href": "temas/tema-02/tema-02-ggplot2-basico.html#resumen-las-capas-que-usamos-hoy",
+    "title": "Visualización de datos con ggplot2",
+    "section": "Resumen: las capas que usamos hoy",
+    "text": "Resumen: las capas que usamos hoy\n\n\n\n\n\n\n\n\nCapa\nFunción\nQué agrega\n\n\n\n\nDatos\nggplot(pima, aes(...))\nvariables → ejes/color\n\n\nGeometría\ngeom_point(), geom_histogram(), geom_boxplot(), geom_col()\ntipo de gráfica\n\n\nPaneles\nfacet_wrap()\nun panel por grupo\n\n\nEtiquetas\nlabs()\ntítulos y nombres de eje\n\n\nEscalas\nscale_*()\nformato de colores/ejes\n\n\nTema\ntheme_minimal(), theme_set()\napariencia general"
+  },
+  {
+    "objectID": "temas/tema-02/tema-02-ggplot2-basico.html#ejercicio",
+    "href": "temas/tema-02/tema-02-ggplot2-basico.html#ejercicio",
+    "title": "Visualización de datos con ggplot2",
+    "section": "Ejercicio",
+    "text": "Ejercicio\nUsando pima, construye tu propia progresión básico → pulido para ped (función de pedigrí de diabetes) vs. age:\n\nGráfica de dispersión mínima.\nAgrega color por type.\nAgrega título, nombres de ejes y un tema.\nGuarda tu gráfica final con ggsave()."
+  },
+  {
+    "objectID": "temas/tema-02/tema-02-ggplot2-basico.html#recursos",
+    "href": "temas/tema-02/tema-02-ggplot2-basico.html#recursos",
+    "title": "Visualización de datos con ggplot2",
+    "section": "Recursos",
+    "text": "Recursos\n\nBioestadística en R para ciencias de la salud. Capítulo 10. Visualización de datos. https://www.cucs.udg.mx/libros/lectura_cucs.php?libro=Bioestadistica_enR_digital#book/144\nWickham, Navarro & Pedersen, ggplot2: Elegant Graphics for Data Analysis — https://ggplot2-book.org/\nWickham, Çetinkaya-Rundel & Grolemund, R for Data Science, capítulo de visualización — https://r4ds.hadley.nz/\nHoja de referencia de ggplot2 (Posit) — https://posit.co/resources/cheatsheets/\n?Pima.tr2 en R, para la documentación del conjunto de datos"
+  },
+  {
     "objectID": "temas/tema-01/tema-01-repaso-r-quarto.html",
     "href": "temas/tema-01/tema-01-repaso-r-quarto.html",
     "title": "Repaso de R y fundamentos de Quarto",
@@ -761,5 +880,33 @@
     "title": "Manipulación de datos con dplyr y tidyr",
     "section": "17.5 Interpretación",
     "text": "17.5 Interpretación\n\nRespuesta del estudiante: describa el resultado principal, la cantidad de información disponible y al menos una limitación de los datos."
+  },
+  {
+    "objectID": "temas/tema-02/index.html",
+    "href": "temas/tema-02/index.html",
+    "title": "Tema 2: Visualización de datos con ggplot2",
+    "section": "",
+    "text": "Construir gráficas con ggplot2 partiendo de una versión mínima y agregando capas (color, facetas, etiquetas, tema) hasta llegar a una gráfica lista para un reporte, usando como base lo ya aprendido con dplyr y tidyr."
+  },
+  {
+    "objectID": "temas/tema-02/index.html#objetivo",
+    "href": "temas/tema-02/index.html#objetivo",
+    "title": "Tema 2: Visualización de datos con ggplot2",
+    "section": "",
+    "text": "Construir gráficas con ggplot2 partiendo de una versión mínima y agregando capas (color, facetas, etiquetas, tema) hasta llegar a una gráfica lista para un reporte, usando como base lo ya aprendido con dplyr y tidyr."
+  },
+  {
+    "objectID": "temas/tema-02/index.html#contenidos",
+    "href": "temas/tema-02/index.html#contenidos",
+    "title": "Tema 2: Visualización de datos con ggplot2",
+    "section": "Contenidos",
+    "text": "Contenidos\n\nLa gramática de gráficos de ggplot2.\nProgresión básico → pulido en dispersión, histograma, boxplot y barras.\nUso de un tema consistente (theme_set()) y guardado de gráficas (ggsave())."
+  },
+  {
+    "objectID": "temas/tema-02/index.html#material-de-clase",
+    "href": "temas/tema-02/index.html#material-de-clase",
+    "title": "Tema 2: Visualización de datos con ggplot2",
+    "section": "Material de clase",
+    "text": "Material de clase\nVer la presentación"
   }
 ]
