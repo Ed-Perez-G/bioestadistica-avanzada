@@ -1,0 +1,1071 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="es" xml:lang="es"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.8.25">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Edsaúl Emilio Pérez-Guerrero">
+
+<title>Análisis exploratorio de datos (EDA). Generalidades – Bioestadística avanzada</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../site_libs/quarto-html/axe/axe-check.js" type="module"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-7b89279ff1a6dce999919e0e67d4d9ec.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap-a8976c3e89df70b272bdfba3d2fda974.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No se han encontrado resultados",
+    "search-matching-documents-text": "documentos encontrados",
+    "search-copy-link-title": "Copiar el enlace en la búsqueda",
+    "search-hide-matches-text": "Ocultar resultados adicionales",
+    "search-more-match-text": "resultado adicional en este documento",
+    "search-more-matches-text": "resultados adicionales en este documento",
+    "search-clear-button-title": "Borrar",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancelar",
+    "search-submit-button-title": "Enviar",
+    "search-label": "Buscar"
+  }
+}</script>
+
+
+<link rel="stylesheet" href="../../styles.css">
+</head>
+
+<body class="nav-fixed quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a href="../../index.html" class="navbar-brand navbar-brand-logo">
+    </a>
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">Bioestadística avanzada</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Buscar"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Navegación de palanca" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../index.html"> 
+<span class="menu-text">Inicio</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../about.html"> 
+<span class="menu-text">Acerca del curso</span></a>
+  </li>  
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-temas" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Temas</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-temas">    
+        <li>
+    <a class="dropdown-item" href="../../temas/tema-01/index.html">
+ <span class="dropdown-text">Tema 1: Repaso de R y análisis reproducible</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../temas/tema-02/index.html">
+ <span class="dropdown-text">Tema 2: EDA, calidad y datos faltantes I</span></a>
+  </li>  
+    </ul>
+  </li>
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">En esta página</h2>
+   
+  <ul>
+  <li><a href="#objetivo-de-la-sesión" id="toc-objetivo-de-la-sesión" class="nav-link active" data-scroll-target="#objetivo-de-la-sesión">Objetivo de la sesión</a></li>
+  <li><a href="#etapas-del-análisis-estadístico" id="toc-etapas-del-análisis-estadístico" class="nav-link" data-scroll-target="#etapas-del-análisis-estadístico">Etapas del análisis estadístico</a></li>
+  <li><a href="#etapas-enfocándonos-en-exploración-de-datos" id="toc-etapas-enfocándonos-en-exploración-de-datos" class="nav-link" data-scroll-target="#etapas-enfocándonos-en-exploración-de-datos">Etapas: enfocándonos en “Exploración de datos”</a></li>
+  <li><a href="#qué-es-un-eda" id="toc-qué-es-un-eda" class="nav-link" data-scroll-target="#qué-es-un-eda">¿Qué es un EDA?</a></li>
+  <li><a href="#objetivos-del-eda" id="toc-objetivos-del-eda" class="nav-link" data-scroll-target="#objetivos-del-eda">Objetivos del EDA</a></li>
+  <li><a href="#por-qué-es-importante-en-datos-biomédicos" id="toc-por-qué-es-importante-en-datos-biomédicos" class="nav-link" data-scroll-target="#por-qué-es-importante-en-datos-biomédicos">¿Por qué es importante en datos biomédicos?</a></li>
+  <li><a href="#ejemplo-de-un-eda" id="toc-ejemplo-de-un-eda" class="nav-link" data-scroll-target="#ejemplo-de-un-eda">Ejemplo de un EDA</a>
+  <ul class="collapse">
+  <li><a href="#pima.tr2-y-melanoma" id="toc-pima.tr2-y-melanoma" class="nav-link" data-scroll-target="#pima.tr2-y-melanoma">pima.tr2 y melanoma</a></li>
+  </ul></li>
+  <li><a href="#ejemplo-de-un-eda-1" id="toc-ejemplo-de-un-eda-1" class="nav-link" data-scroll-target="#ejemplo-de-un-eda-1">Ejemplo de un EDA</a>
+  <ul class="collapse">
+  <li><a href="#pima.tr2-y-melanoma-1" id="toc-pima.tr2-y-melanoma-1" class="nav-link" data-scroll-target="#pima.tr2-y-melanoma-1">pima.tr2 y melanoma</a></li>
+  </ul></li>
+  <li><a href="#técnicas-no-gráficas-describir-y-detectar-atípicos" id="toc-técnicas-no-gráficas-describir-y-detectar-atípicos" class="nav-link" data-scroll-target="#técnicas-no-gráficas-describir-y-detectar-atípicos">Técnicas no gráficas: describir y detectar atípicos</a></li>
+  <li><a href="#técnicas-no-gráficas-describir-y-detectar-atípicos-1" id="toc-técnicas-no-gráficas-describir-y-detectar-atípicos-1" class="nav-link" data-scroll-target="#técnicas-no-gráficas-describir-y-detectar-atípicos-1">Técnicas no gráficas: describir y detectar atípicos</a></li>
+  <li><a href="#técnicas-gráficas-histograma-la-distribución-de-una-variable" id="toc-técnicas-gráficas-histograma-la-distribución-de-una-variable" class="nav-link" data-scroll-target="#técnicas-gráficas-histograma-la-distribución-de-una-variable">Técnicas gráficas Histograma: la distribución de una variable</a></li>
+  <li><a href="#técnicas-gráficas-histograma-la-distribución-de-una-variable-1" id="toc-técnicas-gráficas-histograma-la-distribución-de-una-variable-1" class="nav-link" data-scroll-target="#técnicas-gráficas-histograma-la-distribución-de-una-variable-1">Técnicas gráficas Histograma: la distribución de una variable</a></li>
+  <li><a href="#técnicas-gráficas-boxplot-comparar-grupos-y-ver-atípicos" id="toc-técnicas-gráficas-boxplot-comparar-grupos-y-ver-atípicos" class="nav-link" data-scroll-target="#técnicas-gráficas-boxplot-comparar-grupos-y-ver-atípicos">Técnicas gráficas Boxplot: comparar grupos y ver atípicos</a></li>
+  <li><a href="#técnicas-gráficas-boxplot-comparar-grupos-y-ver-atípicos-1" id="toc-técnicas-gráficas-boxplot-comparar-grupos-y-ver-atípicos-1" class="nav-link" data-scroll-target="#técnicas-gráficas-boxplot-comparar-grupos-y-ver-atípicos-1">Técnicas gráficas Boxplot: comparar grupos y ver atípicos</a></li>
+  <li><a href="#técnicas-gráficas-dispersión-relación-entre-dos-variables-continuas" id="toc-técnicas-gráficas-dispersión-relación-entre-dos-variables-continuas" class="nav-link" data-scroll-target="#técnicas-gráficas-dispersión-relación-entre-dos-variables-continuas">Técnicas gráficas Dispersión: relación entre dos variables continuas</a></li>
+  <li><a href="#técnicas-gráficas-dispersión-relación-entre-dos-variables-continuas-1" id="toc-técnicas-gráficas-dispersión-relación-entre-dos-variables-continuas-1" class="nav-link" data-scroll-target="#técnicas-gráficas-dispersión-relación-entre-dos-variables-continuas-1">Técnicas gráficas Dispersión: relación entre dos variables continuas</a></li>
+  <li><a href="#transformación-de-datos-por-qué-transformar" id="toc-transformación-de-datos-por-qué-transformar" class="nav-link" data-scroll-target="#transformación-de-datos-por-qué-transformar">Transformación de datos: ¿por qué transformar?</a></li>
+  <li><a href="#transformación-aplicada-grosor-tumoral-en-melanoma" id="toc-transformación-aplicada-grosor-tumoral-en-melanoma" class="nav-link" data-scroll-target="#transformación-aplicada-grosor-tumoral-en-melanoma">Transformación aplicada: grosor tumoral en <code>Melanoma</code></a></li>
+  <li><a href="#transformación-aplicada-grosor-tumoral-en-melanoma-1" id="toc-transformación-aplicada-grosor-tumoral-en-melanoma-1" class="nav-link" data-scroll-target="#transformación-aplicada-grosor-tumoral-en-melanoma-1">Transformación aplicada: grosor tumoral en <code>Melanoma</code></a></li>
+  <li><a href="#transformación-aplicada-grosor-tumoral-en-melanoma-2" id="toc-transformación-aplicada-grosor-tumoral-en-melanoma-2" class="nav-link" data-scroll-target="#transformación-aplicada-grosor-tumoral-en-melanoma-2">Transformación aplicada: grosor tumoral en <code>Melanoma</code></a></li>
+  <li><a href="#transformación-aplicada-grosor-tumoral-en-melanoma-3" id="toc-transformación-aplicada-grosor-tumoral-en-melanoma-3" class="nav-link" data-scroll-target="#transformación-aplicada-grosor-tumoral-en-melanoma-3">Transformación aplicada: grosor tumoral en <code>Melanoma</code></a></li>
+  <li><a href="#explorando-melanoma-ulceración-y-estatus" id="toc-explorando-melanoma-ulceración-y-estatus" class="nav-link" data-scroll-target="#explorando-melanoma-ulceración-y-estatus">Explorando <code>Melanoma</code>: ulceración y estatus</a></li>
+  <li><a href="#explorando-melanoma-ulceración-y-estatus-1" id="toc-explorando-melanoma-ulceración-y-estatus-1" class="nav-link" data-scroll-target="#explorando-melanoma-ulceración-y-estatus-1">Explorando <code>Melanoma</code>: ulceración y estatus</a></li>
+  <li><a href="#explorando-melanoma-ulceración-y-estatus-2" id="toc-explorando-melanoma-ulceración-y-estatus-2" class="nav-link" data-scroll-target="#explorando-melanoma-ulceración-y-estatus-2">Explorando <code>Melanoma</code>: ulceración y estatus</a></li>
+  <li><a href="#formulación-de-hipótesis-a-partir-del-eda" id="toc-formulación-de-hipótesis-a-partir-del-eda" class="nav-link" data-scroll-target="#formulación-de-hipótesis-a-partir-del-eda">Formulación de hipótesis a partir del EDA</a></li>
+  <li><a href="#lo-que-sigue-calidad-de-datos-y-datos-faltantes" id="toc-lo-que-sigue-calidad-de-datos-y-datos-faltantes" class="nav-link" data-scroll-target="#lo-que-sigue-calidad-de-datos-y-datos-faltantes">Lo que sigue: calidad de datos y datos faltantes</a></li>
+  <li><a href="#resumen-técnicas-de-eda-usadas-hoy" id="toc-resumen-técnicas-de-eda-usadas-hoy" class="nav-link" data-scroll-target="#resumen-técnicas-de-eda-usadas-hoy">Resumen: técnicas de EDA usadas hoy</a></li>
+  <li><a href="#ejercicio" id="toc-ejercicio" class="nav-link" data-scroll-target="#ejercicio">Ejercicio</a></li>
+  <li><a href="#recursos" id="toc-recursos" class="nav-link" data-scroll-target="#recursos">Recursos</a></li>
+  </ul>
+<div class="quarto-alternate-formats"><h2>Otros formatos</h2><ul><li><a href="tema-02-eda-datos-biomedicos.html"><i class="bi bi-file-slides"></i>RevealJS</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Análisis exploratorio de datos (EDA). Generalidades</h1>
+<p class="subtitle lead">Bioestadística avanzada con R · Tema 2 · EDA, calidad y datos faltantes I</p>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Autor/a</div>
+    <div class="quarto-title-meta-contents">
+             <p>Edsaúl Emilio Pérez-Guerrero </p>
+          </div>
+  </div>
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="objetivo-de-la-sesión" class="level2 smaller">
+<h2 class="smaller anchored" data-anchor-id="objetivo-de-la-sesión">Objetivo de la sesión</h2>
+<p>Al finalizar esta sesión podrás explorar un conjunto de datos biomédico de forma sistemática, describirlo con estadística descriptiva y gráficas, y formular hipótesis que después se pondrán a prueba formalmente.</p>
+</section>
+<section id="etapas-del-análisis-estadístico" class="level2 smaller">
+<h2 class="smaller anchored" data-anchor-id="etapas-del-análisis-estadístico">Etapas del análisis estadístico</h2>
+<p>Un análisis estadístico completo pasa por varias etapas, no solo por las pruebas de hipótesis:</p>
+<ol type="1">
+<li>Definición de los objetivos — ¿qué pregunta busco responder?</li>
+<li>Diseño del estudio — transversal, cohorte, ensayo clínico…</li>
+<li>Recolección de datos</li>
+<li><strong>Exploración de datos</strong> ← estamos aquí</li>
+<li>Estadística inferencial — pruebas de hipótesis, intervalos de confianza</li>
+<li>Interpretación de resultados</li>
+<li>Conclusiones</li>
+</ol>
+<blockquote class="blockquote">
+<p>El diseño del estudio, la recolección y el análisis no se pueden separar: cada etapa condiciona a la siguiente.</p>
+</blockquote>
+</section>
+<section id="etapas-enfocándonos-en-exploración-de-datos" class="level2 smaller">
+<h2 class="smaller anchored" data-anchor-id="etapas-enfocándonos-en-exploración-de-datos">Etapas: enfocándonos en “Exploración de datos”</h2>
+<p>La exploración de datos ocurre <strong>después</strong> de recolectar los datos y <strong>antes</strong> de las pruebas de hipótesis. Incluye cuatro tareas:</p>
+<ul>
+<li><strong>Visualización de datos</strong> — es más fácil ver un patrón en una gráfica que leerlo en una tabla.</li>
+<li><strong>Estadística descriptiva</strong> — resume y presenta la información contenida en los datos.</li>
+<li><strong>Identificar datos atípicos y errores</strong> — ¿la edad de un paciente es 150 años?</li>
+<li><strong>Formulación de hipótesis</strong> — entender los datos permite generar hipótesis nuevas, además de la pregunta original.</li>
+</ul>
+<blockquote class="blockquote">
+<p>“El objetivo principal del análisis exploratorio de datos es conocer mis datos. No puede hacer un análisis estadístico sin conocer sus datos.”</p>
+</blockquote>
+</section>
+<section id="qué-es-un-eda" class="level2 smaller">
+<h2 class="smaller anchored" data-anchor-id="qué-es-un-eda">¿Qué es un EDA?</h2>
+<p><strong>Exploratory Data Analysis (EDA)</strong>: examinar los datos para conocer su distribución, detectar atípicos y anomalías, y así dirigir las pruebas de hipótesis específicas.</p>
+<ul>
+<li>Propuesto por <strong>John Tukey (1977)</strong>, se ha vuelto una metodología estándar para analizar un conjunto de datos.</li>
+<li>Según Howard Seltman (Carnegie Mellon University):</li>
+</ul>
+<blockquote class="blockquote">
+<p>“Cualquier método de observar los datos que no incluya modelamiento estadístico formal ni inferencia cae bajo el término análisis exploratorio de datos.”</p>
+</blockquote>
+<ul>
+<li>Es un paso temprano, posterior a la recolección y el preprocesamiento de datos: se visualiza, grafica y manipula la información <strong>sin hacer supuestos</strong> todavía.</li>
+<li>La mayoría de las técnicas de EDA son gráficas — por naturaleza, explorar es más fácil visualizando.</li>
+</ul>
+</section>
+<section id="objetivos-del-eda" class="level2 smaller">
+<h2 class="smaller anchored" data-anchor-id="objetivos-del-eda">Objetivos del EDA</h2>
+<ol type="1">
+<li>Maximizar el entendimiento de la base de datos y su estructura.</li>
+<li>Visualizar relaciones potenciales (dirección y magnitud) entre variables de exposición y de desenlace.</li>
+<li>Detectar valores atípicos y anomalías.</li>
+<li>Desarrollar modelos parsimoniosos (con las menos variables posibles) o preseleccionar variables apropiadas.</li>
+<li>Extraer y crear variables clínicamente relevantes.</li>
+</ol>
+<p>Las técnicas de EDA se pueden clasificar en:</p>
+<ul>
+<li><strong>Gráficas</strong> o <strong>no gráficas</strong>.</li>
+<li><strong>Univariadas</strong> (una sola variable) o <strong>multivariadas</strong> (varias variables, con o sin desenlace).</li>
+</ul>
+</section>
+<section id="por-qué-es-importante-en-datos-biomédicos" class="level2 smaller">
+<h2 class="smaller anchored" data-anchor-id="por-qué-es-importante-en-datos-biomédicos">¿Por qué es importante en datos biomédicos?</h2>
+<ul>
+<li>Los datos clínicos y de investigación <strong>rara vez llegan limpios</strong>: capturas erróneas, unidades inconsistentes, valores imposibles.</li>
+<li>Ejemplo: identificar que la edad de un paciente con diabetes mellitus es de <strong>150 años</strong>.</li>
+<li><strong>En relación a modelos</strong>: No explorar antes de modelar, se corre el riesgo de:
+<ul>
+<li>Ajustar un modelo con datos erróneos (“garbage in, garbage out”).</li>
+<li>Aplicar una prueba que asume normalidad a una variable muy asimétrica.</li>
+<li>Pasar por alto una relación importante entre variables.</li>
+</ul></li>
+<li>El EDA <strong>no reemplaza</strong> la inferencia estadística: la precede y la orienta.</li>
+</ul>
+</section>
+<section id="ejemplo-de-un-eda" class="level2">
+<h2 class="anchored" data-anchor-id="ejemplo-de-un-eda">Ejemplo de un EDA</h2>
+<section id="pima.tr2-y-melanoma" class="level3">
+<h3 class="anchored" data-anchor-id="pima.tr2-y-melanoma">pima.tr2 y melanoma</h3>
+<p>Bases de data de la librería MASS:</p>
+<ul>
+<li>pima.tr2: “A population of women who were at least 21 years old, of Pima Indian heritage and living near Phoenix, Arizona, was tested for diabetes according to World Health Organization criteria. The data were collected by the US National Institute of Diabetes and Digestive and Kidney Diseases. We used the 532 complete records after dropping the (mainly missing) data on serum insulin.”
+<ul>
+<li><code>pima</code>: 200 mujeres Pima; <code>type</code> indica diagnóstico de diabetes (WHO).</li>
+</ul></li>
+<li>Melanoma: “The Melanoma data frame has data on 205 patients in Denmark with malignant melanoma”
+<ul>
+<li><code>melanoma</code>: 205 pacientes con melanoma maligno; <code>thickness</code> es el grosor tumoral (mm).</li>
+</ul></li>
+</ul>
+</section>
+</section>
+<section id="ejemplo-de-un-eda-1" class="level2">
+<h2 class="anchored" data-anchor-id="ejemplo-de-un-eda-1">Ejemplo de un EDA</h2>
+<section id="pima.tr2-y-melanoma-1" class="level3">
+<h3 class="anchored" data-anchor-id="pima.tr2-y-melanoma-1">pima.tr2 y melanoma</h3>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggrain)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(Pima.tr, <span class="at">package =</span> <span class="st">"MASS"</span>)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(Melanoma, <span class="at">package =</span> <span class="st">"MASS"</span>)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>pima <span class="ot">&lt;-</span> <span class="fu">as_tibble</span>(Pima.tr)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>melanoma <span class="ot">&lt;-</span> <span class="fu">as_tibble</span>(Melanoma) <span class="sc">%&gt;%</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">ulcer_f  =</span> <span class="fu">factor</span>(ulcer, <span class="at">levels =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>), <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"No"</span>, <span class="st">"Sí"</span>)),</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">status_f =</span> <span class="fu">factor</span>(status, <span class="at">levels =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>),</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>                       <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"Murió de melanoma"</span>, <span class="st">"Vivo"</span>, <span class="st">"Murió otra causa"</span>))</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+</section>
+<section id="técnicas-no-gráficas-describir-y-detectar-atípicos" class="level2 smaller">
+<h2 class="smaller anchored" data-anchor-id="técnicas-no-gráficas-describir-y-detectar-atípicos">Técnicas no gráficas: describir y detectar atípicos</h2>
+<ul>
+<li><strong>Tendencia central</strong>: media, mediana, moda. <strong>Dispersión</strong>: varianza, desviación estándar (<code>sd</code>), rango intercuartílico (<code>IQR</code>).</li>
+<li><strong>Regla práctica</strong>: distribución simétrica y N &gt; 30 → reporta media ± DE. Distribución asimétrica, N &lt; 30 o evidencia de atípicos → reporta mediana ± RIC (más robustas).</li>
+<li>Un valor fuera de 1.5 × RIC por encima de Q3 o por debajo de Q1 se considera un <strong>atípico</strong> (regla de Tukey).</li>
+<li>Para variables categóricas: <strong>tabulación</strong> — conteo y frecuencia por categoría.</li>
+</ul>
+</section>
+<section id="técnicas-no-gráficas-describir-y-detectar-atípicos-1" class="level2 smaller">
+<h2 class="smaller anchored" data-anchor-id="técnicas-no-gráficas-describir-y-detectar-atípicos-1">Técnicas no gráficas: describir y detectar atípicos</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(pima)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     npreg            glu              bp              skin      
+ Min.   : 0.00   Min.   : 56.0   Min.   : 38.00   Min.   : 7.00  
+ 1st Qu.: 1.00   1st Qu.:100.0   1st Qu.: 64.00   1st Qu.:20.75  
+ Median : 2.00   Median :120.5   Median : 70.00   Median :29.00  
+ Mean   : 3.57   Mean   :124.0   Mean   : 71.26   Mean   :29.21  
+ 3rd Qu.: 6.00   3rd Qu.:144.0   3rd Qu.: 78.00   3rd Qu.:36.00  
+ Max.   :14.00   Max.   :199.0   Max.   :110.00   Max.   :99.00  
+      bmi             ped              age         type    
+ Min.   :18.20   Min.   :0.0850   Min.   :21.00   No :132  
+ 1st Qu.:27.57   1st Qu.:0.2535   1st Qu.:23.00   Yes: 68  
+ Median :32.80   Median :0.3725   Median :28.00            
+ Mean   :32.31   Mean   :0.4608   Mean   :32.11            
+ 3rd Qu.:36.50   3rd Qu.:0.6160   3rd Qu.:39.25            
+ Max.   :47.90   Max.   :2.2880   Max.   :63.00            </code></pre>
+</div>
+</div>
+</section>
+<section id="técnicas-gráficas-histograma-la-distribución-de-una-variable" class="level2">
+<h2 class="anchored" data-anchor-id="técnicas-gráficas-histograma-la-distribución-de-una-variable">Técnicas gráficas Histograma: la distribución de una variable</h2>
+<ul>
+<li>El histograma revela forma, modalidad, simetría y posibles atípicos.</li>
+<li><strong>Hipótesis:</strong> la distribución de glucosa difiere entre mujeres con y sin diabetes.</li>
+</ul>
+</section>
+<section id="técnicas-gráficas-histograma-la-distribución-de-una-variable-1" class="level2">
+<h2 class="anchored" data-anchor-id="técnicas-gráficas-histograma-la-distribución-de-una-variable-1">Técnicas gráficas Histograma: la distribución de una variable</h2>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="tema-02-eda-datos-biomedicos_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="técnicas-gráficas-boxplot-comparar-grupos-y-ver-atípicos" class="level2">
+<h2 class="anchored" data-anchor-id="técnicas-gráficas-boxplot-comparar-grupos-y-ver-atípicos">Técnicas gráficas Boxplot: comparar grupos y ver atípicos</h2>
+<ul>
+<li>La caja muestra Q1, mediana y Q3; los bigotes llegan hasta 1.5 × RIC; los puntos rojos son atípicos.</li>
+<li><strong>Hipótesis:</strong> el IMC medio (o mediano) es mayor en mujeres con diabetes.</li>
+</ul>
+</section>
+<section id="técnicas-gráficas-boxplot-comparar-grupos-y-ver-atípicos-1" class="level2">
+<h2 class="anchored" data-anchor-id="técnicas-gráficas-boxplot-comparar-grupos-y-ver-atípicos-1">Técnicas gráficas Boxplot: comparar grupos y ver atípicos</h2>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="tema-02-eda-datos-biomedicos_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="técnicas-gráficas-dispersión-relación-entre-dos-variables-continuas" class="level2">
+<h2 class="anchored" data-anchor-id="técnicas-gráficas-dispersión-relación-entre-dos-variables-continuas">Técnicas gráficas Dispersión: relación entre dos variables continuas</h2>
+<ul>
+<li>Un scatterplot muestra dirección, forma y fuerza de una relación entre dos variables.</li>
+<li><strong>Hipótesis:</strong> a mayor IMC, mayor glucosa plasmática, en ambos grupos.</li>
+</ul>
+</section>
+<section id="técnicas-gráficas-dispersión-relación-entre-dos-variables-continuas-1" class="level2">
+<h2 class="anchored" data-anchor-id="técnicas-gráficas-dispersión-relación-entre-dos-variables-continuas-1">Técnicas gráficas Dispersión: relación entre dos variables continuas</h2>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="tema-02-eda-datos-biomedicos_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="transformación-de-datos-por-qué-transformar" class="level2 smaller">
+<h2 class="smaller anchored" data-anchor-id="transformación-de-datos-por-qué-transformar">Transformación de datos: ¿por qué transformar?</h2>
+<p>Muchas variables biomédicas (concentraciones, tiempos, tamaños de tumor) son <strong>asimétricas positivas</strong>, típicas de procesos multiplicativos.</p>
+<ul>
+<li><strong>Transformación logarítmica</strong> (<code>log()</code>, <code>log2()</code>): comprime valores grandes, hace más simétrica una distribución sesgada.</li>
+<li><strong>Estandarización</strong> (<code>z = (x - media) / DE</code>): expresa cada valor en desviaciones estándar respecto a la media; permite comparar variables en escalas distintas.</li>
+<li><strong>Discretización</strong> (<code>cut()</code>): convierte una variable continua en categorías (ej. grupos de edad).</li>
+</ul>
+<p>¿Cuándo transformar? Cuando se tiene evidencia de un sesgo marcado, o cuando un método (pruebas paramétricas, regresión) asume normalidad. En la transformación se trata de preservar información.</p>
+</section>
+<section id="transformación-aplicada-grosor-tumoral-en-melanoma" class="level2">
+<h2 class="anchored" data-anchor-id="transformación-aplicada-grosor-tumoral-en-melanoma">Transformación aplicada: grosor tumoral en <code>Melanoma</code></h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>melanoma <span class="sc">|&gt;</span> </span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  ggplot2<span class="sc">::</span><span class="fu">ggplot</span>(<span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">x =</span><span class="dv">1</span>, <span class="at">y =</span> thickness)) <span class="sc">+</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_rain</span>(<span class="at">alpha =</span><span class="fl">0.6</span>, <span class="at">color=</span> <span class="st">"cyan4"</span>, <span class="at">fill =</span> <span class="st">"cyan4"</span>)<span class="sc">+</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_linedraw</span>()<span class="sc">+</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">y =</span> <span class="st">"Tamaño del tumor no transformado"</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="tema-02-eda-datos-biomedicos_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="transformación-aplicada-grosor-tumoral-en-melanoma-1" class="level2">
+<h2 class="anchored" data-anchor-id="transformación-aplicada-grosor-tumoral-en-melanoma-1">Transformación aplicada: grosor tumoral en <code>Melanoma</code></h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>melanoma <span class="sc">|&gt;</span> </span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">thickness =</span> <span class="fu">log</span>(thickness)) <span class="sc">|&gt;</span> </span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  ggplot2<span class="sc">::</span><span class="fu">ggplot</span>(<span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">x =</span><span class="dv">1</span>, <span class="at">y =</span> thickness)) <span class="sc">+</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_rain</span>(<span class="at">alpha =</span><span class="fl">0.6</span>, <span class="at">color=</span> <span class="st">"cyan4"</span>, <span class="at">fill =</span> <span class="st">"cyan4"</span>)<span class="sc">+</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_linedraw</span>()<span class="sc">+</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">y =</span> <span class="st">"Tamaño del tumor con transformación log"</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="tema-02-eda-datos-biomedicos_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="transformación-aplicada-grosor-tumoral-en-melanoma-2" class="level2">
+<h2 class="anchored" data-anchor-id="transformación-aplicada-grosor-tumoral-en-melanoma-2">Transformación aplicada: grosor tumoral en <code>Melanoma</code></h2>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="tema-02-eda-datos-biomedicos_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="864"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="transformación-aplicada-grosor-tumoral-en-melanoma-3" class="level2">
+<h2 class="anchored" data-anchor-id="transformación-aplicada-grosor-tumoral-en-melanoma-3">Transformación aplicada: grosor tumoral en <code>Melanoma</code></h2>
+<ul>
+<li><code>thickness</code> está sesgada a la derecha; el log la vuelve más simétrica.</li>
+<li><strong>Hipótesis:</strong> el grosor tumoral (<code>thickness</code>) no sigue una distribución normal y conviene analizarlo en escala logarítmica.</li>
+</ul>
+</section>
+<section id="explorando-melanoma-ulceración-y-estatus" class="level2">
+<h2 class="anchored" data-anchor-id="explorando-melanoma-ulceración-y-estatus">Explorando <code>Melanoma</code>: ulceración y estatus</h2>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="tema-02-eda-datos-biomedicos_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="864"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="explorando-melanoma-ulceración-y-estatus-1" class="level2">
+<h2 class="anchored" data-anchor-id="explorando-melanoma-ulceración-y-estatus-1">Explorando <code>Melanoma</code>: ulceración y estatus</h2>
+<ul>
+<li><strong>Hipótesis:</strong> los tumores ulcerados son más gruesos, y la mortalidad por melanoma es más frecuente cuando hay ulceración.</li>
+</ul>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>melanoma <span class="sc">%&gt;%</span> <span class="fu">count</span>(ulcer_f, status_f)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 3
+  ulcer_f status_f              n
+  &lt;fct&gt;   &lt;fct&gt;             &lt;int&gt;
+1 No      Murió de melanoma    16
+2 No      Vivo                 92
+3 No      Murió otra causa      7
+4 Sí      Murió de melanoma    41
+5 Sí      Vivo                 42
+6 Sí      Murió otra causa      7</code></pre>
+</div>
+</div>
+</section>
+<section id="explorando-melanoma-ulceración-y-estatus-2" class="level2">
+<h2 class="anchored" data-anchor-id="explorando-melanoma-ulceración-y-estatus-2">Explorando <code>Melanoma</code>: ulceración y estatus</h2>
+<div class="columns">
+<div class="column" style="width:50%;">
+<ul>
+<li><strong>Hipótesis:</strong> los tumores ulcerados son más gruesos, y la mortalidad por melanoma es más frecuente cuando hay ulceración.</li>
+</ul>
+</div><div class="column" style="width:50%;">
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="tema-02-eda-datos-biomedicos_files/figure-html/unnamed-chunk-11-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="480"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="formulación-de-hipótesis-a-partir-del-eda" class="level2 smaller">
+<h2 class="smaller anchored" data-anchor-id="formulación-de-hipótesis-a-partir-del-eda">Formulación de hipótesis a partir del EDA</h2>
+<p>El EDA de hoy sugiere varias hipótesis, que <strong>confirmaremos formalmente</strong> con pruebas de hipótesis en las próximas sesiones:</p>
+<ol type="1">
+<li>La distribución de glucosa difiere entre mujeres con y sin diabetes (<code>Pima.tr</code>).</li>
+<li>El IMC es mayor, en promedio o mediana, en mujeres con diabetes.</li>
+<li>La glucosa plasmática se asocia positivamente con el IMC.</li>
+<li>El grosor tumoral (<code>thickness</code>) es asimétrico y requiere transformación logarítmica para su análisis.</li>
+<li>El grosor tumoral es mayor en pacientes con ulceración presente.</li>
+<li>La mortalidad por melanoma se asocia con la presencia de ulceración.</li>
+</ol>
+<p><em>(Nota: la exploración genera hipótesis; no las confirma, para eso sirve la estadística inferencial.)</em></p>
+</section>
+<section id="lo-que-sigue-calidad-de-datos-y-datos-faltantes" class="level2 smaller">
+<h2 class="smaller anchored" data-anchor-id="lo-que-sigue-calidad-de-datos-y-datos-faltantes">Lo que sigue: calidad de datos y datos faltantes</h2>
+<p>El EDA también sirve para <strong>auditar la calidad</strong> de una base antes de analizarla:</p>
+<ul>
+<li>Rangos imposibles, unidades inconsistentes, duplicados.</li>
+<li>Detección de valores faltantes (<code>NA</code>) y su patrón de ausencia.</li>
+<li>La siguiente sesion veremos la primera parte relacionada los datos faltantes.</li>
+</ul>
+</section>
+<section id="resumen-técnicas-de-eda-usadas-hoy" class="level2 smaller">
+<h2 class="smaller anchored" data-anchor-id="resumen-técnicas-de-eda-usadas-hoy">Resumen: técnicas de EDA usadas hoy</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Técnica</th>
+<th>Función en R</th>
+<th>Qué revela</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Estadística descriptiva</td>
+<td><code>summary()</code>, <code>mean()</code>, <code>median()</code>, <code>sd()</code>, <code>IQR()</code></td>
+<td>Tendencia central y dispersión</td>
+</tr>
+<tr class="even">
+<td>Tabulación</td>
+<td><code>count()</code>, <code>table()</code></td>
+<td>Frecuencias de categorías</td>
+</tr>
+<tr class="odd">
+<td>Histograma</td>
+<td><code>geom_histogram()</code></td>
+<td>Distribución, forma, modalidad</td>
+</tr>
+<tr class="even">
+<td>Boxplot</td>
+<td><code>geom_boxplot()</code></td>
+<td>Mediana, RIC, atípicos</td>
+</tr>
+<tr class="odd">
+<td>Dispersión</td>
+<td><code>geom_point()</code> + <code>geom_smooth()</code></td>
+<td>Relación entre dos variables</td>
+</tr>
+<tr class="even">
+<td>Transformación</td>
+<td><code>log()</code>, estandarización, <code>cut()</code></td>
+<td>Corrige asimetría, hace comparables las escalas</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="ejercicio" class="level2">
+<h2 class="anchored" data-anchor-id="ejercicio">Ejercicio</h2>
+<p>Usando <code>Pima.tr</code>:</p>
+<ol type="1">
+<li>Describe <code>age</code> con estadística descriptiva (media/mediana, DE/RIC). ¿Qué regla aplica?</li>
+<li>Construye un histograma de <code>age</code> y decide si conviene una transformación.</li>
+<li>Construye un boxplot de <code>age</code> según <code>type</code>.</li>
+<li>Formula una hipótesis a partir de lo que observaste, para poner a prueba más adelante.</li>
+</ol>
+</section>
+<section id="recursos" class="level2">
+<h2 class="anchored" data-anchor-id="recursos">Recursos</h2>
+<ul>
+<li>Bioestadística en R para ciencias de la salud. <a href="https://www.cucs.udg.mx/libros/lectura_cucs.php?libro=Bioestadistica_enR_digital" class="uri">https://www.cucs.udg.mx/libros/lectura_cucs.php?libro=Bioestadistica_enR_digital</a></li>
+<li>Komorowski M, Marshall DC, Salciccioli JD, Crutain Y. <em>Exploratory Data Analysis</em>, cap. 15, en: <em>Secondary Analysis of Electronic Health Records</em> (MIT Critical Data), 2016. <a href="https://doi.org/10.1007/978-3-319-43742-2_15" class="uri">https://doi.org/10.1007/978-3-319-43742-2_15</a></li>
+<li>Wickham H, Grolemund G. <em>R for Data Science</em> — Exploratory Data Analysis. <a href="https://r4ds.had.co.nz/exploratory-data-analysis.html" class="uri">https://r4ds.had.co.nz/exploratory-data-analysis.html</a></li>
+<li>Bravo HC. <em>Data transformations</em>, IntroDataSci notes. <a href="https://www.hcbravo.org/IntroDataSci/bookdown-notes/eda-data-transformations.html" class="uri">https://www.hcbravo.org/IntroDataSci/bookdown-notes/eda-data-transformations.html</a></li>
+<li><a href="../../temas/tema-02/tema-02-ggplot2-basico.html">Tema 2, parte 1: Visualización de datos con ggplot2</a></li>
+<li><code>?Pima.tr</code> y <code>?Melanoma</code> en R, para la documentación de los conjuntos de datos</li>
+</ul>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copiado");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copiado");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+<p>© 2026 Edsaúl E. Pérez-Guerrero</p>
+</div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    </div>
+    <div class="nav-footer-right">
+<p>Construido con <a href="https://quarto.org/">Quarto</a>; R version 4.5.1</p>
+</div>
+  </div>
+</footer>
+
+
+
+
+</body></html>

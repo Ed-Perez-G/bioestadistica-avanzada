@@ -1,0 +1,306 @@
+---
+title: "Análisis exploratorio de datos (EDA) en datos biomédicos"
+subtitle: "Bioestadística avanzada con R · Tema 2 · EDA, calidad y datos faltantes I"
+author: "Edsaúl Emilio Pérez Guerrero"
+date: today
+date-format: "D [de] MMMM [de] YYYY"
+lang: es
+format:
+  revealjs:
+    theme: [simple]
+    slide-number: true
+    transition: fade
+    incremental: false
+    chalkboard: false
+    code-line-numbers: false
+execute:
+  echo: true
+  warning: false
+  message: false
+editor: source
+---
+
+## Objetivo de la sesión {.smaller}
+
+Al finalizar esta sesión podrás explorar un conjunto de datos biomédico de forma sistemática, describirlo con estadística descriptiva y gráficas, y formular hipótesis que después se pondrán a prueba formalmente.
+
+- Ya sabes construir gráficas con `ggplot2` (Tema 2, parte 1).
+- Hoy usamos esas herramientas con un **propósito**: conocer los datos antes de modelarlos.
+- Trabajaremos con `Pima.tr` (diabetes en mujeres Pima) y `Melanoma` (supervivencia, paquete `MASS`).
+
+## Etapas del análisis estadístico {.smaller}
+
+Un análisis estadístico completo pasa por varias etapas, no solo por las pruebas de hipótesis:
+
+1. Definición de los objetivos — ¿qué pregunta busco responder?
+2. Diseño del estudio — transversal, cohorte, ensayo clínico...
+3. Recolección de datos
+4. **Exploración de datos** ← estamos aquí
+5. Estadística inferencial — pruebas de hipótesis, intervalos de confianza
+6. Interpretación de resultados
+7. Conclusiones
+
+> El diseño del estudio, la recolección y el análisis no se pueden separar: cada etapa condiciona a la siguiente.
+
+## Etapas: enfocándonos en "Exploración de datos" {.smaller}
+
+La exploración de datos ocurre **después** de recolectar los datos y **antes** de las pruebas de hipótesis. Incluye cuatro tareas:
+
+- **Visualización de datos** — es más fácil ver un patrón en una gráfica que leerlo en una tabla.
+- **Estadística descriptiva** — resume y presenta la información contenida en los datos.
+- **Identificar datos atípicos y errores** — ¿la edad de un paciente es 150 años?
+- **Formulación de hipótesis** — entender los datos permite generar hipótesis nuevas, además de la pregunta original.
+
+> "El objetivo principal del análisis exploratorio de datos es conocer mis datos. No puede hacer un análisis estadístico sin conocer sus datos."
+
+## ¿Qué es un EDA? {.smaller}
+
+**Exploratory Data Analysis (EDA)**: examinar los datos para conocer su distribución, detectar atípicos y anomalías, y así dirigir las pruebas de hipótesis específicas.
+
+- Popularizado por **John Tukey (1977)**, se ha vuelto una metodología estándar para analizar un conjunto de datos.
+- Según Howard Seltman (Carnegie Mellon University):
+
+> "Cualquier método de observar los datos que no incluya modelamiento estadístico formal ni inferencia cae bajo el término análisis exploratorio de datos."
+
+- Es un paso temprano, posterior a la recolección y el preprocesamiento de datos: se visualiza, grafica y manipula la información **sin hacer supuestos** todavía.
+- La mayoría de las técnicas de EDA son gráficas — por naturaleza, explorar es más fácil visualizando.
+
+## Objetivos del EDA {.smaller}
+
+1. Maximizar el entendimiento de la base de datos y su estructura.
+2. Visualizar relaciones potenciales (dirección y magnitud) entre variables de exposición y de desenlace.
+3. Detectar valores atípicos y anomalías.
+4. Desarrollar modelos parsimoniosos (con las menos variables posibles) o preseleccionar variables apropiadas.
+5. Extraer y crear variables clínicamente relevantes.
+
+Las técnicas de EDA se pueden clasificar en:
+
+- **Gráficas** o **no gráficas**.
+- **Univariadas** (una sola variable) o **multivariadas** (varias variables, con o sin desenlace).
+
+## ¿Por qué es importante en datos biomédicos? {.smaller}
+
+- Los registros clínicos y de investigación **rara vez llegan limpios**: capturas erróneas, unidades inconsistentes, valores imposibles.
+- Ejemplo real: identificar que la edad de un paciente con diabetes mellitus es de **150 años**.
+- Sin explorar antes de modelar, se corre el riesgo de:
+  - Ajustar un modelo con datos erróneos ("garbage in, garbage out").
+  - Aplicar una prueba que asume normalidad a una variable muy asimétrica.
+  - Pasar por alto una relación importante entre variables.
+- El EDA **no reemplaza** la inferencia estadística: la precede y la orienta.
+
+## Cargando nuestros datos
+
+Trabajaremos con dos conjuntos de datos del paquete `MASS`:
+
+```{r}
+#| echo: true
+
+library(tidyverse)
+
+data(Pima.tr, package = "MASS")
+data(Melanoma, package = "MASS")
+
+pima <- as_tibble(Pima.tr)
+
+melanoma <- as_tibble(Melanoma) %>%
+  mutate(
+    ulcer_f  = factor(ulcer, levels = c(0, 1), labels = c("No", "Sí")),
+    status_f = factor(status, levels = c(1, 2, 3),
+                       labels = c("Murió de melanoma", "Vivo", "Murió otra causa"))
+  )
+
+glimpse(pima)
+```
+
+- `pima`: 200 mujeres Pima; `type` indica diagnóstico de diabetes (WHO).
+- `melanoma`: 205 pacientes con melanoma maligno; `thickness` es el grosor tumoral (mm).
+
+## Técnicas no gráficas: describir y detectar atípicos {.smaller}
+
+```{r}
+#| echo: true
+
+summary(pima)
+```
+
+- **Tendencia central**: media, mediana, moda. **Dispersión**: varianza, desviación estándar (`sd`), rango intercuartílico (`IQR`).
+- **Regla práctica**: distribución simétrica y N > 30 → reporta media ± DE. Distribución asimétrica, N < 30 o evidencia de atípicos → reporta mediana ± RIC (más robustas).
+- Un valor fuera de 1.5 × RIC por encima de Q3 o por debajo de Q1 se considera un **atípico** (regla de Tukey).
+- Para variables categóricas: **tabulación** — conteo y frecuencia por categoría.
+
+## Histograma: la distribución de una variable
+
+```{r}
+#| echo: true
+#| output-location: column
+#| fig-width: 5
+#| fig-height: 5
+
+ggplot(pima, aes(x = glu, fill = type)) +
+  geom_histogram(binwidth = 10, alpha = 0.8) +
+  facet_wrap(~ type, ncol = 1) +
+  labs(
+    title = "Glucosa plasmática según diabetes",
+    x = "Glucosa (mg/dL)", y = "Frecuencia", fill = "Diabetes"
+  ) +
+  theme_minimal(base_size = 13)
+```
+
+- El histograma revela forma, modalidad, simetría y posibles atípicos.
+- **Hipótesis:** la distribución de glucosa difiere entre mujeres con y sin diabetes.
+
+## Boxplot: comparar grupos y ver atípicos
+
+```{r}
+#| echo: true
+#| output-location: column
+#| fig-width: 5
+#| fig-height: 5
+
+ggplot(pima, aes(x = type, y = bmi, fill = type)) +
+  geom_boxplot(alpha = 0.5, outlier.color = "firebrick") +
+  labs(
+    title = "IMC según diagnóstico de diabetes",
+    x = "Diabetes", y = "IMC (kg/m²)"
+  ) +
+  theme_minimal(base_size = 13) +
+  theme(legend.position = "none")
+```
+
+- La caja muestra Q1, mediana y Q3; los bigotes llegan hasta 1.5 × RIC; los puntos rojos son atípicos.
+- **Hipótesis:** el IMC medio (o mediano) es mayor en mujeres con diabetes.
+
+## Dispersión: relación entre dos variables continuas
+
+```{r}
+#| echo: true
+#| output-location: column
+#| fig-width: 5
+#| fig-height: 5
+
+ggplot(pima, aes(x = bmi, y = glu, color = type)) +
+  geom_point(size = 2, alpha = 0.7) +
+  geom_smooth(method = "lm", se = FALSE) +
+  labs(
+    title = "Glucosa vs. IMC",
+    x = "IMC (kg/m²)", y = "Glucosa (mg/dL)", color = "Diabetes"
+  ) +
+  theme_minimal(base_size = 13)
+```
+
+- Un scatterplot muestra dirección, forma y fuerza de una relación entre dos variables.
+- **Hipótesis:** a mayor IMC, mayor glucosa plasmática, en ambos grupos.
+
+## Transformación de datos: ¿por qué transformar? {.smaller}
+
+Muchas variables biomédicas (concentraciones, tiempos, tamaños de tumor) son **asimétricas positivas**, típicas de procesos multiplicativos.
+
+- **Transformación logarítmica** (`log()`, `log2()`): comprime valores grandes, hace más simétrica una distribución sesgada.
+- **Estandarización** (`z = (x - media) / DE`): expresa cada valor en desviaciones estándar respecto a la media; permite comparar variables en escalas distintas.
+- **Discretización** (`cut()`): convierte una variable continua en categorías (ej. grupos de edad).
+
+¿Cuándo transformar? Cuando un histograma muestra sesgo marcado, o cuando un método (pruebas paramétricas, regresión) asume normalidad.
+
+## Transformación aplicada: grosor tumoral en `Melanoma`
+
+```{r}
+#| echo: true
+#| output-location: column
+#| fig-width: 5
+#| fig-height: 6
+
+melanoma %>%
+  mutate(log_thickness = log(thickness)) %>%
+  pivot_longer(c(thickness, log_thickness),
+               names_to = "escala", values_to = "valor") %>%
+  mutate(escala = factor(escala,
+           levels = c("thickness", "log_thickness"),
+           labels = c("Original (mm)", "Log-transformada"))) %>%
+  ggplot(aes(x = valor)) +
+  geom_histogram(bins = 20, fill = "steelblue") +
+  facet_wrap(~ escala, ncol = 1, scales = "free") +
+  labs(title = "Grosor tumoral: original vs. log",
+       x = NULL, y = "Frecuencia") +
+  theme_minimal(base_size = 13)
+```
+
+- `thickness` está sesgada a la derecha; el log la vuelve más simétrica.
+- **Hipótesis:** el grosor tumoral (`thickness`) no sigue una distribución normal y conviene analizarlo en escala logarítmica.
+
+## Explorando `Melanoma`: ulceración y estatus
+
+```{r}
+#| echo: true
+#| output-location: column
+#| fig-width: 5
+#| fig-height: 5
+
+ggplot(melanoma, aes(x = ulcer_f, y = thickness, fill = ulcer_f)) +
+  geom_boxplot(alpha = 0.5, outlier.color = "firebrick") +
+  labs(title = "Grosor tumoral según ulceración",
+       x = "Ulceración", y = "Grosor (mm)") +
+  theme_minimal(base_size = 13) +
+  theme(legend.position = "none")
+```
+
+```{r}
+#| echo: true
+
+melanoma %>% count(ulcer_f, status_f)
+```
+
+- **Hipótesis:** los tumores ulcerados son más gruesos, y la mortalidad por melanoma es más frecuente cuando hay ulceración.
+
+## Formulación de hipótesis a partir del EDA {.smaller}
+
+El EDA de hoy sugiere varias hipótesis, que **confirmaremos formalmente** con pruebas de hipótesis en las próximas sesiones:
+
+1. La distribución de glucosa difiere entre mujeres con y sin diabetes (`Pima.tr`).
+2. El IMC es mayor, en promedio o mediana, en mujeres con diabetes.
+3. La glucosa plasmática se asocia positivamente con el IMC.
+4. El grosor tumoral (`thickness`) es asimétrico y requiere transformación logarítmica para su análisis.
+5. El grosor tumoral es mayor en pacientes con ulceración presente.
+6. La mortalidad por melanoma se asocia con la presencia de ulceración.
+
+*(Nota: la exploración genera hipótesis; no las confirma — para eso sirve la estadística inferencial.)*
+
+## Lo que sigue: calidad de datos y datos faltantes {.smaller}
+
+El EDA también sirve para **auditar la calidad** de una base antes de analizarla:
+
+- Rangos imposibles, unidades inconsistentes, duplicados.
+- Detección de valores faltantes (`NA`) y su patrón de ausencia.
+
+En la próxima sesión de este tema (*EDA, calidad y datos faltantes I*) veremos:
+
+- Cómo visualizar patrones de datos faltantes.
+- La clasificación MCAR, MAR y MNAR.
+- Cuándo la ausencia es "estructural" y no aleatoria.
+
+## Resumen: técnicas de EDA usadas hoy {.smaller}
+
+| Técnica | Función en R | Qué revela |
+|---|---|---|
+| Estadística descriptiva | `summary()`, `mean()`, `median()`, `sd()`, `IQR()` | Tendencia central y dispersión |
+| Tabulación | `count()`, `table()` | Frecuencias de categorías |
+| Histograma | `geom_histogram()` | Distribución, forma, modalidad |
+| Boxplot | `geom_boxplot()` | Mediana, RIC, atípicos |
+| Dispersión | `geom_point()` + `geom_smooth()` | Relación entre dos variables |
+| Transformación | `log()`, estandarización, `cut()` | Corrige asimetría, hace comparables las escalas |
+
+## Ejercicio
+
+Usando `Pima.tr`:
+
+1. Describe `age` con estadística descriptiva (media/mediana, DE/RIC). ¿Qué regla aplica?
+2. Construye un histograma de `age` y decide si conviene una transformación.
+3. Construye un boxplot de `age` según `type`.
+4. Formula una hipótesis a partir de lo que observaste, para poner a prueba más adelante.
+
+## Recursos
+
+- Komorowski M, Marshall DC, Salciccioli JD, Crutain Y. *Exploratory Data Analysis*, cap. 15, en: *Secondary Analysis of Electronic Health Records* (MIT Critical Data), 2016. <https://doi.org/10.1007/978-3-319-43742-2_15>
+- Wickham H, Grolemund G. *R for Data Science* — Exploratory Data Analysis. <https://r4ds.had.co.nz/exploratory-data-analysis.html>
+- Bravo HC. *Data transformations*, IntroDataSci notes. <https://www.hcbravo.org/IntroDataSci/bookdown-notes/eda-data-transformations.html>
+- [Tema 2, parte 1: Visualización de datos con ggplot2](tema-02-ggplot2-basico.qmd)
+- `?Pima.tr` y `?Melanoma` en R, para la documentación de los conjuntos de datos

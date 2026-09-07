@@ -1,0 +1,355 @@
+---
+title: "EDA: GGally, ggcorrplot y DataExplorer"
+subtitle: "Tres librerías de R para el Análisis Exploratorio de Datos"
+lang: es
+author: "Material de curso — Bioestadística con R"
+date: today
+format:
+  html:
+    toc: true
+    toc-depth: 3
+    toc-location: left
+    number-sections: true
+    code-fold: false
+    code-tools: true
+    theme: cosmo
+    df-print: paged
+execute:
+  warning: false
+  message: false
+---
+
+## Introducción
+
+Los conceptos teóricos sobre el EDA se revisaron en la [presentación EDA](tema-02)
+
+En este documento revisaremos tres librerías de R sumamente útiles para realizar un EDA:
+
+1. **GGally**: extiende `ggplot2` para construir matrices de gráficos (pares de variables) en una sola llamada.
+2. **ggcorrplot**: visualiza matrices de correlación como mapas de calor, incorporando significancia estadística.
+3. **DataExplorer**: automatiza un primer reporte exploratorio completo (estructura, faltantes, distribuciones, correlaciones).
+
+### Conjunto de datos `pbc`
+
+Para ejemplificar el uso básico de esta librería utilizaremos la base de datos `pbc`. Este conjunto de datos que **ya viene incluido** en el paquete `survival` (sino lo tiene descárgelo). `pbc` proviene del ensayo clínico de la Clínica Mayo sobre cirrosis biliar primaria (*Primary Biliary Cirrhosis*) realizado entre 1974 y 1984, con 418 pacientes y variables como bilirrubina, albúmina, colesterol, cobre en orina, plaquetas y tiempo de protrombina.
+
+```{r}
+#| label: setup
+
+# Paquetes necesarios (ejecutar una sola vez si no están instalados):
+# install.packages(c("GGally", "ggcorrplot", "DataExplorer"))
+
+library(dplyr)          # manipulación de datos
+library(GGally)         # matrices de gráficos exploratorios
+library(ggcorrplot)     # mapas de calor de correlación
+library(DataExplorer)   # EDA automatizado
+library(survival)       # contiene el dataset pbc
+
+data(pbc)               # llamar los datos
+glimpse(pbc)            # Un vistaso
+```
+
+Trabajaremos principalmente con un subconjunto de variables clínicas numéricas y dos variables categóricas: 
+
+```{r}
+#| label: variables
+
+vars_num <- c("age", "bili", "chol", "albumin", "copper",
+              "alk.phos", "ast", "trig", "platelet", "protime") # Lista de variables para seleccionar y filtrar
+
+pbc_cat <- pbc %>%
+  mutate(
+    trt   = factor(trt, labels = c("D-penicilamina", "Placebo")),
+    stage = factor(stage),
+    sex   = factor(sex, labels = c("Hombre", "Mujer")),
+    estado = factor(status, labels = c("Censurado", "Trasplante", "Fallecido"))
+  )
+```
+
+> `age` = edad; `bili` = bilirrubina sérica (mg/dL); `chol` = colesterol (mg/dL); `albumin` = albúmina (g/dL); `copper` = cobre en orina (µg/día); `alk.phos` = fosfatasa alcalina (U/L); `ast` = aspartato aminotransferasa (U/mL); `trig` = triglicéridos (mg/dL); `platelet` = plaquetas (por mm³/1000); `protime` = tiempo de protrombina estandarizado (segundos).
+
+## GGally
+
+### ¿Qué problema resuelve GGally?
+
+::: {.callout-note}
+En la cohorte de cirrosis biliar primaria, ¿cómo se relacionan simultáneamente la edad, la bilirrubina, la albúmina, las plaquetas y el tiempo de protrombina? ¿esa relación cambia entre hombres y mujeres? 
+Revisar esto variable por variable, con un `plot()` a la vez, es lento e impide ver el panorama completo.
+:::
+
+`GGally` extiende `ggplot2` para construir, en una sola instrucción, una **matriz de gráficos** que combina dispersión, densidad, boxplots y coeficientes de correlación entre múltiples variables a la vez. Es la herramienta natural para el primer vistazo multivariado de un conjunto de datos clínico.
+
+### Funcionamiento básico
+
+Las dos funciones que más usarás son:
+
+- **`ggpairs()`**: construye una matriz $n \times n$ para un conjunto de columnas. Por defecto, la diagonal muestra la distribución de cada variable, el triángulo inferior muestra dispersión (o boxplots si hay una variable categórica) y el triángulo superior muestra el coeficiente de correlación.
+  - `columns`: qué columnas incluir.
+  - `mapping = aes(colour = ..., alpha = ...)`: para colorear por un grupo (p. ej. sexo o desenlace clínico).
+  - `upper`, `lower`, `diag`: listas para personalizar qué tipo de gráfico va en cada panel (`"points"`, `"smooth"`, `"cor"`, `"density"`, `"box"`, etc.).
+- **`ggcorr()`**: una versión más ligera y rápida, enfocada únicamente en mostrar la matriz de correlación como un mapa de calor (similar en espíritu a `ggcorrplot`, que veremos después, pero integrada al ecosistema de GGally).
+
+Otras funciones útiles que vale la pena conocer: `ggduo()` (para comparar dos conjuntos de variables distintos, por ejemplo predictores vs. desenlaces) y `ggscatmat()` (una versión más rápida de `ggpairs()` quer solo variables continuas).
+
+### Ejemplos para el uso de GGally
+
+Uso general de `ggpairs`
+
+```{r eval=FALSE}
+#| label: ggally-use
+ggpairs(
+  data, # Datos
+  mapping = NULL,
+  columns = 1:ncol(data),
+  title = NULL,
+  upper = list(continuous = "cor", combo = "box_no_facet", discrete = "count", na = "na"),
+  lower = list(continuous = "points", combo = "facethist", discrete = "facetbar", na =
+    "na"),
+  diag = list(continuous = "densityDiag", discrete = "barDiag", na = "naDiag"),
+  params = deprecated(),
+  ...,
+  xlab = NULL,
+  ylab = NULL,
+  axisLabels = c("show", "internal", "none"),
+  columnLabels = colnames(data[columns]),
+  labeller = "label_value",
+  switch = NULL,
+  showStrips = NULL,
+  legend = NULL,
+  cardinality_threshold = 15,
+  progress = NULL,
+  proportions = NULL,
+  legends = deprecated()
+)
+```
+
+
+```{r}
+#| label: ggally-pairs-1
+#| fig-width: 9
+#| fig-height: 8
+
+ggpairs(
+  pbc_cat,
+  columns = c("age", "bili", "albumin", "platelet", "protime"),
+  title = "Relaciones entre variables clínicas de la cohorte PBC, por sexo"
+) +
+  theme_bw(base_size = 9)
+```
+
+
+```{r}
+#| label: ggally-pairs-2
+#| fig-width: 9
+#| fig-height: 8
+
+ggpairs(
+  pbc_cat, #
+  columns = c("age", "bili", "albumin", "platelet", "protime"),
+  mapping = aes(colour = sex, alpha = 0.6), # Agrupación
+  columnLabels = c("Edad", "Bilirrubina", "Albúmina", "Plaquetas", "Protrombina"), # Nombres de columnas, debe coincidir
+  title = "Relaciones entre variables clínicas de la cohorte PBC, por sexo"
+) +
+  theme_bw(base_size = 9)
+```
+
+En una sola figura observamos: la distribución de cada variable por sexo (diagonal), la forma de la relación entre pares de variables, por ejemplo, si la bilirrubina alta se asocia con albúmina baja, y el coeficiente de correlación de cada par, separado por sexo (triángulo superior).
+
+También podemos usar `ggcorr()` para una vista más compacta, solo de correlaciones, sobre el bloque completo de variables numéricas:
+
+```{r}
+#| label: ggally-corr
+#| fig-width: 7
+#| fig-height: 6
+
+ggcorr(
+  pbc[, vars_num], # Todas las variables numericas
+  label = TRUE,
+  label_round = 2,
+  label_size = 3,
+  hjust = 0.8,
+  layout.exp = 2
+) +
+  labs(title = "ggcorr(): correlación entre marcadores clínicos (PBC)")
+```
+
+### ¿Cómo apoya el EDA?
+
+`GGally` resuelve el problema de la exploración **multivariada simultánea**: en vez de generar decenas de gráficos individuales, se obtiene en una sola llamada una vista que permite (1) comparar distribuciones entre grupos clínicos, (2) detectar relaciones no lineales u outliers en los diagramas de dispersión, y (3) tener una primera estimación de qué variables están correlacionadas.
+
+## ggcorrplot
+
+### ¿Qué problema resuelve?
+
+::: {.callout-note}
+## Pregunta clínica motivadora
+Con diez variables clínicas numéricas, la matriz de correlación tiene 45 pares posibles. ¿Cuáles correlaciones son lo bastante fuertes *y* estadísticamente significativas como para preocuparnos por colinealidad antes de ajustar un modelo de regresión sobre el desenlace del paciente?
+:::
+
+Mientras que `ggcorr()` (de GGally) da una vista rápida, `ggcorrplot` está diseñado específicamente para producir mapas de calor de correlación de calidad de publicación, con la opción de **superponer significancia estadística** y de **reordenar las variables por clustering jerárquico**, lo que agrupa visualmente a los marcadores que se comportan de forma similar.
+
+### Funcionamiento básico
+
+El flujo típico son tres pasos:
+
+1. Calcular la matriz de correlación con `cor()` (usando `use = "pairwise.complete.obs"` cuando hay datos faltantes, como en nuestro caso).
+2. Calcular la matriz de p-valores con `cor_pmat()`, la función propia de `ggcorrplot` para pruebas de significancia por pares.
+3. Graficar con `ggcorrplot()`, cuyos argumentos principales son:
+   - `type`: `"full"`, `"lower"` o `"upper"` (mostrar la matriz completa o solo un triángulo, ya que es simétrica).
+   - `hc.order = TRUE`: reordena las variables agrupando las más correlacionadas entre sí (clustering jerárquico).
+   - `lab = TRUE`: imprime el valor de correlación dentro de cada celda.
+   - `p.mat` e `insig`: permiten ocultar (`insig = "blank"`) o marcar con una `x` (`insig = "pch"`) las correlaciones que no son estadísticamente significativas.
+
+### Ejemplo ggcorrplot
+
+```{r}
+#| label: ggcorrplot-ejemplo
+#| fig-width: 7
+#| fig-height: 6.5
+
+datos_num <- pbc[, vars_num] # solo datos numéricos
+
+corr_mat <- round(cor(datos_num, use = "pairwise.complete.obs"), 2) # Obtener correlaciones solo datos completos. 
+
+# use: an optional character string giving a method for computing covariances in the presence of missing values. This must be (an abbreviation of) one of the strings "everything", "all.obs", "complete.obs", "na.or.complete", or "pairwise.complete.obs".
+
+
+p_mat    <- cor_pmat(datos_num) # Obtener los valores de p para el plot
+
+ggcorrplot(
+  corr_mat,
+  hc.order = TRUE, # Ordena los correlaciones por herarquia. Hace un clúster jerárquico
+  type = "lower", # solo la parte de abajo de la gráfica
+  lab = TRUE, # Equitas
+  lab_size = 2.8, # tamaño de los labels
+  p.mat = p_mat, # Matriz de con los valores de p
+  insig = "blank", # los valores de p no sinficitatvos no se muestran 
+  colors = c("#B2182B", "white", "#2166AC"), # Puede cambiar los colores. 
+  title = "Correlación entre marcadores clínicos en cirrosis biliar primaria",
+  legend.title = "r de Pearson"
+) +
+  theme(plot.title = element_text(size = 11))
+```
+
+El reordenamiento (`hc.order = TRUE`) agrupa visualmente, por ejemplo, a los marcadores de daño/colestasis hepática (bilirrubina, fosfatasa alcalina, cobre) cerca unos de otros si comparten un patrón de correlación similar, y las celdas en blanco señalan qué asociaciones **no** alcanzan significancia estadística — evitando interpretar como relevante una correlación débil que podría deberse al azar.
+
+### ¿Cómo apoya el EDA?
+
+`ggcorrplot` resuelve específicamente el problema de **priorizar y comunicar** relaciones entre variables numéricas: ayuda a detectar colinealidad antes de un modelo de regresión (dos predictores muy correlacionados aportan información redundante), y el ordenamiento jerárquico sugiere agrupaciones biológicas de variables que pueden guiar un análisis de componentes principales o de clústeres posterior.
+
+Experimente y cambie algunos de los argumentos de la gráfica.
+
+## DataExplorer
+
+### ¿Qué problema resuelve?
+
+::: {.callout-note}
+## Pregunta clínica motivadora
+Antes de decidir si imputar o excluir observaciones, ¿qué proporción de cada variable clínica está incompleta en esta cohorte, y esas ausencias están concentradas en subgrupos específicos de pacientes (por ejemplo, quienes no participaron en el ensayo aleatorizado)?
+:::
+
+`DataExplorer` automatiza la primera pasada de EDA: en lugar de escribir manualmente un `summary()`, un conteo de `NA` por columna y varios histogramas, genera ese diagnóstico completo con una o dos líneas de código — algo especialmente valioso cuando se reciben datos clínicos nuevos y se necesita un diagnóstico de calidad de datos rápido y sistemático.
+
+### Funcionamiento básico
+
+Las funciones más usadas se dividen en dos familias:
+
+- **Diagnóstico de estructura y calidad**: `introduce()` (tabla resumen: número de filas, columnas, variables continuas/discretas, observaciones y celdas faltantes, memoria usada) y su versión gráfica `plot_intro()`; `plot_missing()` (proporción de valores faltantes por variable, con un semáforo de severidad).
+- **Distribuciones y relaciones**: `plot_histogram()` y `plot_density()` para variables continuas, `plot_bar()` para variables categóricas/discretas, y `plot_correlation()` para una matriz de correlación automática (incluye variables categóricas mediante codificación).
+- **Reporte completo**: `create_report()` genera un documento HTML con todo lo anterior en un solo llamado — el punto de partida ideal para cualquier dataset nuevo.
+
+### Ejemplo `introduce`
+
+```{r}
+#| label: dataexplorer-intro
+
+introduce(pbc)
+```
+
+
+
+### Ejemplo `plot_intro`
+
+```{r}
+#| label: dataexplorer-plot-intro
+#| fig-width: 7
+#| fig-height: 5
+
+plot_intro(pbc, title = "Panorama general del dataset PBC")
+```
+
+
+### Ejemplo data explorer otras funciones
+
+```{r}
+#| label: dataexplorer-missing
+#| fig-width: 7
+#| fig-height: 5
+
+plot_missing(pbc, title = "Valores faltantes por variable clínica (PBC)")
+```
+
+`plot_missing()` muestra de inmediato que variables como `chol`, `copper`, `trig` y `trt` tienen una proporción notable de datos faltantes (`trt` es NA precisamente en los pacientes que no fueron parte del ensayo aleatorizado, sino de un registro observacional adicional).
+
+```{r}
+#| label: dataexplorer-histogramas
+#| fig-width: 8
+#| fig-height: 6
+
+plot_histogram(pbc[, vars_num], title = "Distribución de marcadores clínicos continuos")
+```
+
+```{r}
+#| label: dataexplorer-barras
+#| fig-width: 7
+#| fig-height: 4
+
+plot_bar(pbc_cat[, c("sex", "trt", "stage")], title = "Variables categóricas de la cohorte PBC")
+```
+
+```{r}
+#| label: dataexplorer-correlacion
+#| fig-width: 7
+#| fig-height: 6
+
+plot_correlation(pbc[, vars_num], type = "continuous",
+                  title = "Correlación automática (DataExplorer)")
+```
+
+Finalmente, para un diagnóstico completo en un solo paso (no se ejecuta aquí para no generar un archivo adicional, pero es la función que normalmente usarías primero al recibir un dataset nuevo):
+
+```{r}
+#| label: dataexplorer-reporte
+#| eval: false
+
+create_report(pbc, output_file = "reporte_eda_pbc.html")
+```
+
+### ¿Cómo apoya el EDA?
+
+`DataExplorer` resuelve el problema de la **cobertura y velocidad**: garantiza que ninguna variable se quede sin revisar (algo fácil de omitir cuando se explora "a mano"), y en particular hace visible de inmediato el patrón de datos faltantes — información indispensable en investigación clínica, donde decidir entre imputar, excluir o analizar los faltantes como su propia categoría puede cambiar las conclusiones del estudio.
+
+## ¿Cómo se complementan las tres librerías?
+
+| Librería | Pregunta que responde mejor | Momento típico de uso |
+|---|---|---|
+| `GGally` | ¿Cómo se relacionan varias variables entre sí y entre grupos clínicos, a la vez? | Exploración multivariada dirigida, tras tener hipótesis de qué variables comparar |
+| `ggcorrplot` | ¿Qué correlaciones son fuertes *y* significativas, y qué variables se agrupan? | Antes de modelar, para evaluar colinealidad y priorizar variables |
+| `DataExplorer` | ¿Está completo y es confiable el dataset? ¿Cómo se ve cada variable, en general? | Primer contacto con un dataset nuevo, diagnóstico de calidad de datos |
+
+En la práctica, un flujo de trabajo razonable es exactamente el orden en que las presentamos aquí: usar `DataExplorer` para un diagnóstico inicial de calidad y estructura, `ggcorrplot` para decidir qué variables numéricas son redundantes o interesantes, y `GGally` para profundizar visualmente en las relaciones entre el subconjunto de variables que resultó más relevante.
+
+## Preguntas para practicar
+
+1. Usando `ggpairs()`, compara las variables `bili`, `chol` y `albumin`, coloreando por la variable `estado` (censurado / trasplante / fallecido). ¿El patrón de bilirrubina y albúmina difiere entre pacientes que fallecieron y los censurados?
+2. Repite la matriz de correlación de `ggcorrplot` pero solo con los pacientes que sí tienen `trt` registrado (es decir, los del ensayo aleatorizado). ¿Cambian las correlaciones respecto a usar la cohorte completa?
+3. Con `plot_bar()` de `DataExplorer`, examina la distribución de `stage` (estadio histológico). ¿Hay algún estadio con muy pocos pacientes que podría ser problemático para un análisis por subgrupos?
+4. Genera el reporte completo con `create_report(pbc)` y localiza, dentro del reporte HTML, la sección de valores faltantes. ¿Coincide con lo que observaste en `plot_missing()`?
+
+## Referencias
+
+- Fleming TR, Harrington DP. *Counting Processes and Survival Analysis*. Wiley, 1991 (fuente original del dataset `pbc`).
+- Therneau T, Grambsch P. *Modeling Survival Data: Extending the Cox Model*. Springer, 2000.
+- Schloerke B, et al. [GGally: Extension to 'ggplot2'](https://ggobi.github.io/ggally/). CRAN.
+- Kassambara A. [ggcorrplot: Visualization of a Correlation Matrix using 'ggplot2'](https://cran.r-project.org/package=ggcorrplot). CRAN.
+- Cui B. [DataExplorer: Automate Data Exploration and Treatment](https://boxuancui.github.io/DataExplorer/). CRAN.

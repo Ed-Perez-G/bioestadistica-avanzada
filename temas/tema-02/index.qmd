@@ -1,17 +1,21 @@
 ---
-title: "Tema 2: Visualización de datos con ggplot2"
+title: "Tema 2: EDA, calidad y datos faltantes I"
 ---
 
 ## Objetivo
 
-Construir gráficas con `ggplot2` partiendo de una versión mínima y agregando capas (color, facetas, etiquetas, tema) hasta llegar a una gráfica lista para un reporte, usando como base lo ya aprendido con `dplyr` y `tidyr`.
+Evaluar la calidad de una base de datos e identificar distribuciones, valores atípicos y patrones de datos faltantes.
 
 ## Contenidos
 
-- La gramática de gráficos de `ggplot2`.
-- Progresión básico → pulido en dispersión, histograma, boxplot y barras.
-- Uso de un tema consistente (`theme_set()`) y guardado de gráficas (`ggsave()`).
+- Parte 1 — Visualización de datos con `ggplot2`: la gramática de gráficos, progresión básico → pulido.
+- Parte 2 — Análisis exploratorio de datos (EDA): etapas del análisis estadístico, qué es un EDA, objetivos e importancia, técnicas gráficas y no gráficas, transformación de datos y formulación de hipótesis.
+- Próximamente — Auditoría de calidad y datos faltantes: patrones de ausencia, introducción a MCAR, MAR y MNAR.
 
 ## Material de clase
 
-[Ver la presentación](tema-02-ggplot2-basico.qmd)
+[Parte 1 — Ver la presentación: ggplot2](tema-02-ggplot2-basico.qmd)
+
+[Parte 2 — Ver la presentación: Generalidades EDA](tema-02-eda-datos-biomedicos.qmd)
+
+[Parte 3 — Ver documento: EDA con GGally, ggcorrplot y DataExplorer](tema-02-eda_ggally_ggcorrplot_dataexplorer.qmd)

@@ -309,3 +309,85 @@ df |>
   )
 
 ########### across() ########### 
+
+df |>
+  summarise(
+    Edad_promedio = mean(Age, na.rm = TRUE),
+    BMI_promedio = mean(BMI, na.rm = TRUE),
+    Colesterol_promedio = mean(TotChol, na.rm = TRUE),
+    PAS_promedio = mean(BPSysAve, na.rm = TRUE)
+  )
+
+
+df |> 
+  group_by(Gender) |> 
+  summarise(
+    across(c(Age, BMI, TotChol, BPSysAve), ~mean(.x, na.rm = T))
+  )
+
+
+df |>
+  group_by(Gender) |>
+  summarise(
+    across(
+      c(Age, BMI, TotChol, BPSysAve), # lista de variables
+      list( # creamos una lista con lo queremos hacer y le ponesmo nombre a la variable
+        Media = ~ mean(.x, na.rm = TRUE), # media
+        DE = ~ sd(.x, na.rm = TRUE) # 
+      )
+    )
+  )
+
+across(
+  c(variables),
+  list(
+    función1 = ~ función1(.x),
+    función2 = ~ función2(.x)
+  )
+)
+### Problema
+
+df |> 
+  mutate(GrupoEdad = 
+           case_when(Age < 18 ~ "Menor a 18",
+                     Age < 65~ "Entre 18 y 64",
+                     TRUE ~ "65 o mas"),
+         obesidad = if_else(BMI >30, "Obesidad", "No obesidad")) |> 
+  group_by(Gender, GrupoEdad) |> 
+  summarise(
+    across(c(BMI, TotChol, BPSysAve, BPDiaAve),
+      list(media = ~mean(.x, na.rm = T),
+           DE = ~sd(.x, na.rm = T)),
+    "Porcentaje obesidad" = sum(obesidad == "Obesidad")/
+      sum(!is.na(obesidad)) * 100,
+    .groups = 'drop'
+  ))
+
+
+df |> 
+  mutate(
+    GrupoEdad = case_when(
+      Age < 18 ~ "Menor a 18",
+      Age < 65 ~ "Entre 18 y 64",
+      TRUE ~ "65 o mas"
+    ),
+    obesidad = if_else(
+      BMI >= 30,
+      "Obesidad",
+      "No obesidad"
+    )
+  ) |> 
+  group_by(Gender, GrupoEdad) |> 
+  summarise(
+    across(
+      c(BMI, TotChol, BPSysAve, BPDiaAve),
+      list(
+        media = ~ mean(.x, na.rm = TRUE),
+        DE = ~ sd(.x, na.rm = TRUE)
+      )
+    ),
+    "Porcentaje obesidad" = 
+      sum(obesidad == "Obesidad", na.rm = TRUE) /
+      sum(!is.na(obesidad)) * 100,
+    .groups = "drop"
+  )
