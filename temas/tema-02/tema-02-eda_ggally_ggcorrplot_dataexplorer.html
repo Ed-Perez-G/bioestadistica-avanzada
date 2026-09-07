@@ -1,0 +1,1528 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="es" xml:lang="es"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.8.25">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Material de curso — Bioestadística con R">
+
+<title>EDA: GGally, ggcorrplot y DataExplorer – Bioestadística avanzada</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../site_libs/quarto-html/axe/axe-check.js" type="module"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-7b89279ff1a6dce999919e0e67d4d9ec.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap-a8976c3e89df70b272bdfba3d2fda974.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No se han encontrado resultados",
+    "search-matching-documents-text": "documentos encontrados",
+    "search-copy-link-title": "Copiar el enlace en la búsqueda",
+    "search-hide-matches-text": "Ocultar resultados adicionales",
+    "search-more-match-text": "resultado adicional en este documento",
+    "search-more-matches-text": "resultados adicionales en este documento",
+    "search-clear-button-title": "Borrar",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancelar",
+    "search-submit-button-title": "Enviar",
+    "search-label": "Buscar"
+  }
+}</script>
+<link href="../../site_libs/pagedtable-1.1/css/pagedtable.css" rel="stylesheet">
+<script src="../../site_libs/pagedtable-1.1/js/pagedtable.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="../../styles.css">
+</head>
+
+<body class="floating nav-fixed quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a href="../../index.html" class="navbar-brand navbar-brand-logo">
+    </a>
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">Bioestadística avanzada</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Buscar"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Navegación de palanca" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../index.html"> 
+<span class="menu-text">Inicio</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../about.html"> 
+<span class="menu-text">Acerca del curso</span></a>
+  </li>  
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-temas" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Temas</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-temas">    
+        <li>
+    <a class="dropdown-item" href="../../temas/tema-01/index.html">
+ <span class="dropdown-text">Tema 1: Repaso de R y análisis reproducible</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../temas/tema-02/index.html">
+ <span class="dropdown-text">Tema 2: EDA, calidad y datos faltantes I</span></a>
+  </li>  
+    </ul>
+  </li>
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">En esta página</h2>
+   
+  <ul>
+  <li><a href="#introducción" id="toc-introducción" class="nav-link active" data-scroll-target="#introducción"><span class="header-section-number">1</span> Introducción</a>
+  <ul class="collapse">
+  <li><a href="#conjunto-de-datos-pbc" id="toc-conjunto-de-datos-pbc" class="nav-link" data-scroll-target="#conjunto-de-datos-pbc"><span class="header-section-number">1.1</span> Conjunto de datos <code>pbc</code></a></li>
+  </ul></li>
+  <li><a href="#ggally" id="toc-ggally" class="nav-link" data-scroll-target="#ggally"><span class="header-section-number">2</span> GGally</a>
+  <ul class="collapse">
+  <li><a href="#qué-problema-resuelve-ggally" id="toc-qué-problema-resuelve-ggally" class="nav-link" data-scroll-target="#qué-problema-resuelve-ggally"><span class="header-section-number">2.1</span> ¿Qué problema resuelve GGally?</a></li>
+  <li><a href="#funcionamiento-básico" id="toc-funcionamiento-básico" class="nav-link" data-scroll-target="#funcionamiento-básico"><span class="header-section-number">2.2</span> Funcionamiento básico</a></li>
+  <li><a href="#ejemplos-para-el-uso-de-ggally" id="toc-ejemplos-para-el-uso-de-ggally" class="nav-link" data-scroll-target="#ejemplos-para-el-uso-de-ggally"><span class="header-section-number">2.3</span> Ejemplos para el uso de GGally</a></li>
+  <li><a href="#cómo-apoya-el-eda" id="toc-cómo-apoya-el-eda" class="nav-link" data-scroll-target="#cómo-apoya-el-eda"><span class="header-section-number">2.4</span> ¿Cómo apoya el EDA?</a></li>
+  </ul></li>
+  <li><a href="#ggcorrplot" id="toc-ggcorrplot" class="nav-link" data-scroll-target="#ggcorrplot"><span class="header-section-number">3</span> ggcorrplot</a>
+  <ul class="collapse">
+  <li><a href="#qué-problema-resuelve" id="toc-qué-problema-resuelve" class="nav-link" data-scroll-target="#qué-problema-resuelve"><span class="header-section-number">3.1</span> ¿Qué problema resuelve?</a></li>
+  <li><a href="#funcionamiento-básico-1" id="toc-funcionamiento-básico-1" class="nav-link" data-scroll-target="#funcionamiento-básico-1"><span class="header-section-number">3.2</span> Funcionamiento básico</a></li>
+  <li><a href="#ejemplo-ggcorrplot" id="toc-ejemplo-ggcorrplot" class="nav-link" data-scroll-target="#ejemplo-ggcorrplot"><span class="header-section-number">3.3</span> Ejemplo ggcorrplot</a></li>
+  <li><a href="#cómo-apoya-el-eda-1" id="toc-cómo-apoya-el-eda-1" class="nav-link" data-scroll-target="#cómo-apoya-el-eda-1"><span class="header-section-number">3.4</span> ¿Cómo apoya el EDA?</a></li>
+  </ul></li>
+  <li><a href="#dataexplorer" id="toc-dataexplorer" class="nav-link" data-scroll-target="#dataexplorer"><span class="header-section-number">4</span> DataExplorer</a>
+  <ul class="collapse">
+  <li><a href="#qué-problema-resuelve-1" id="toc-qué-problema-resuelve-1" class="nav-link" data-scroll-target="#qué-problema-resuelve-1"><span class="header-section-number">4.1</span> ¿Qué problema resuelve?</a></li>
+  <li><a href="#funcionamiento-básico-2" id="toc-funcionamiento-básico-2" class="nav-link" data-scroll-target="#funcionamiento-básico-2"><span class="header-section-number">4.2</span> Funcionamiento básico</a></li>
+  <li><a href="#ejemplo-introduce" id="toc-ejemplo-introduce" class="nav-link" data-scroll-target="#ejemplo-introduce"><span class="header-section-number">4.3</span> Ejemplo <code>introduce</code></a></li>
+  <li><a href="#ejemplo-plot_intro" id="toc-ejemplo-plot_intro" class="nav-link" data-scroll-target="#ejemplo-plot_intro"><span class="header-section-number">4.4</span> Ejemplo <code>plot_intro</code></a></li>
+  <li><a href="#ejemplo-data-explorer-otras-funciones" id="toc-ejemplo-data-explorer-otras-funciones" class="nav-link" data-scroll-target="#ejemplo-data-explorer-otras-funciones"><span class="header-section-number">4.5</span> Ejemplo data explorer otras funciones</a></li>
+  <li><a href="#cómo-apoya-el-eda-2" id="toc-cómo-apoya-el-eda-2" class="nav-link" data-scroll-target="#cómo-apoya-el-eda-2"><span class="header-section-number">4.6</span> ¿Cómo apoya el EDA?</a></li>
+  </ul></li>
+  <li><a href="#cómo-se-complementan-las-tres-librerías" id="toc-cómo-se-complementan-las-tres-librerías" class="nav-link" data-scroll-target="#cómo-se-complementan-las-tres-librerías"><span class="header-section-number">5</span> ¿Cómo se complementan las tres librerías?</a></li>
+  <li><a href="#preguntas-para-practicar" id="toc-preguntas-para-practicar" class="nav-link" data-scroll-target="#preguntas-para-practicar"><span class="header-section-number">6</span> Preguntas para practicar</a></li>
+  <li><a href="#referencias" id="toc-referencias" class="nav-link" data-scroll-target="#referencias"><span class="header-section-number">7</span> Referencias</a></li>
+  </ul>
+</nav>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<div class="quarto-title-block"><div><h1 class="title">EDA: GGally, ggcorrplot y DataExplorer</h1><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Código</button></div></div>
+<p class="subtitle lead">Tres librerías de R para el Análisis Exploratorio de Datos</p>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Autor/a</div>
+    <div class="quarto-title-meta-contents">
+             <p>Material de curso — Bioestadística con R </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Fecha de publicación</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">7 de septiembre de 2026</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="introducción" class="level2" data-number="1">
+<h2 data-number="1" class="anchored" data-anchor-id="introducción"><span class="header-section-number">1</span> Introducción</h2>
+<p>Los conceptos teóricos sobre el EDA se revisaron en la <a href="tema-02">presentación EDA</a></p>
+<p>En este documento revisaremos tres librerías de R sumamente útiles para realizar un EDA:</p>
+<ol type="1">
+<li><strong>GGally</strong>: extiende <code>ggplot2</code> para construir matrices de gráficos (pares de variables) en una sola llamada.</li>
+<li><strong>ggcorrplot</strong>: visualiza matrices de correlación como mapas de calor, incorporando significancia estadística.</li>
+<li><strong>DataExplorer</strong>: automatiza un primer reporte exploratorio completo (estructura, faltantes, distribuciones, correlaciones).</li>
+</ol>
+<section id="conjunto-de-datos-pbc" class="level3" data-number="1.1">
+<h3 data-number="1.1" class="anchored" data-anchor-id="conjunto-de-datos-pbc"><span class="header-section-number">1.1</span> Conjunto de datos <code>pbc</code></h3>
+<p>Para ejemplificar el uso básico de esta librería utilizaremos la base de datos <code>pbc</code>. Este conjunto de datos que <strong>ya viene incluido</strong> en el paquete <code>survival</code> (sino lo tiene descárgelo). <code>pbc</code> proviene del ensayo clínico de la Clínica Mayo sobre cirrosis biliar primaria (<em>Primary Biliary Cirrhosis</em>) realizado entre 1974 y 1984, con 418 pacientes y variables como bilirrubina, albúmina, colesterol, cobre en orina, plaquetas y tiempo de protrombina.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Paquetes necesarios (ejecutar una sola vez si no están instalados):</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="co"># install.packages(c("GGally", "ggcorrplot", "DataExplorer"))</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)          <span class="co"># manipulación de datos</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(GGally)         <span class="co"># matrices de gráficos exploratorios</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggcorrplot)     <span class="co"># mapas de calor de correlación</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(DataExplorer)   <span class="co"># EDA automatizado</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(survival)       <span class="co"># contiene el dataset pbc</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(pbc)               <span class="co"># llamar los datos</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(pbc)            <span class="co"># Un vistaso</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Rows: 418
+Columns: 20
+$ id       &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18…
+$ time     &lt;int&gt; 400, 4500, 1012, 1925, 1504, 2503, 1832, 2466, 2400, 51, 3762…
+$ status   &lt;int&gt; 2, 0, 2, 2, 1, 2, 0, 2, 2, 2, 2, 2, 0, 2, 2, 0, 2, 2, 0, 2, 0…
+$ trt      &lt;int&gt; 1, 1, 1, 1, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 1, 2, 2, 1, 1, 2, 2…
+$ age      &lt;dbl&gt; 58.76523, 56.44627, 70.07255, 54.74059, 38.10541, 66.25873, 5…
+$ sex      &lt;fct&gt; f, f, m, f, f, f, f, f, f, f, f, f, f, m, f, f, f, f, f, f, m…
+$ ascites  &lt;int&gt; 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0…
+$ hepato   &lt;int&gt; 1, 1, 0, 1, 1, 1, 1, 0, 0, 0, 1, 0, 0, 1, 0, 0, 1, 1, 1, 1, 1…
+$ spiders  &lt;int&gt; 1, 1, 0, 1, 1, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1…
+$ edema    &lt;dbl&gt; 1.0, 0.0, 0.5, 0.5, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0…
+$ bili     &lt;dbl&gt; 14.5, 1.1, 1.4, 1.8, 3.4, 0.8, 1.0, 0.3, 3.2, 12.6, 1.4, 3.6,…
+$ chol     &lt;int&gt; 261, 302, 176, 244, 279, 248, 322, 280, 562, 200, 259, 236, 2…
+$ albumin  &lt;dbl&gt; 2.60, 4.14, 3.48, 2.54, 3.53, 3.98, 4.09, 4.00, 3.08, 2.74, 4…
+$ copper   &lt;int&gt; 156, 54, 210, 64, 143, 50, 52, 52, 79, 140, 46, 94, 40, 43, 1…
+$ alk.phos &lt;dbl&gt; 1718.0, 7394.8, 516.0, 6121.8, 671.0, 944.0, 824.0, 4651.2, 2…
+$ ast      &lt;dbl&gt; 137.95, 113.52, 96.10, 60.63, 113.15, 93.00, 60.45, 28.38, 14…
+$ trig     &lt;int&gt; 172, 88, 55, 92, 72, 63, 213, 189, 88, 143, 79, 95, 130, NA, …
+$ platelet &lt;int&gt; 190, 221, 151, 183, 136, NA, 204, 373, 251, 302, 258, 71, 244…
+$ protime  &lt;dbl&gt; 12.2, 10.6, 12.0, 10.3, 10.9, 11.0, 9.7, 11.0, 11.0, 11.5, 12…
+$ stage    &lt;int&gt; 4, 3, 4, 4, 3, 3, 3, 3, 2, 4, 4, 4, 3, 4, 3, 3, 4, 4, 3, 4, 4…</code></pre>
+</div>
+</div>
+<p>Trabajaremos principalmente con un subconjunto de variables clínicas numéricas y dos variables categóricas:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>vars_num <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"age"</span>, <span class="st">"bili"</span>, <span class="st">"chol"</span>, <span class="st">"albumin"</span>, <span class="st">"copper"</span>,</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>              <span class="st">"alk.phos"</span>, <span class="st">"ast"</span>, <span class="st">"trig"</span>, <span class="st">"platelet"</span>, <span class="st">"protime"</span>) <span class="co"># Lista de variables para seleccionar y filtrar</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>pbc_cat <span class="ot">&lt;-</span> pbc <span class="sc">%&gt;%</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">trt   =</span> <span class="fu">factor</span>(trt, <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"D-penicilamina"</span>, <span class="st">"Placebo"</span>)),</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">stage =</span> <span class="fu">factor</span>(stage),</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">sex   =</span> <span class="fu">factor</span>(sex, <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"Hombre"</span>, <span class="st">"Mujer"</span>)),</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">estado =</span> <span class="fu">factor</span>(status, <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"Censurado"</span>, <span class="st">"Trasplante"</span>, <span class="st">"Fallecido"</span>))</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<blockquote class="blockquote">
+<p><code>age</code> = edad; <code>bili</code> = bilirrubina sérica (mg/dL); <code>chol</code> = colesterol (mg/dL); <code>albumin</code> = albúmina (g/dL); <code>copper</code> = cobre en orina (µg/día); <code>alk.phos</code> = fosfatasa alcalina (U/L); <code>ast</code> = aspartato aminotransferasa (U/mL); <code>trig</code> = triglicéridos (mg/dL); <code>platelet</code> = plaquetas (por mm³/1000); <code>protime</code> = tiempo de protrombina estandarizado (segundos).</p>
+</blockquote>
+</section>
+</section>
+<section id="ggally" class="level2" data-number="2">
+<h2 data-number="2" class="anchored" data-anchor-id="ggally"><span class="header-section-number">2</span> GGally</h2>
+<section id="qué-problema-resuelve-ggally" class="level3" data-number="2.1">
+<h3 data-number="2.1" class="anchored" data-anchor-id="qué-problema-resuelve-ggally"><span class="header-section-number">2.1</span> ¿Qué problema resuelve GGally?</h3>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Nota
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>En la cohorte de cirrosis biliar primaria, ¿cómo se relacionan simultáneamente la edad, la bilirrubina, la albúmina, las plaquetas y el tiempo de protrombina? ¿esa relación cambia entre hombres y mujeres? Revisar esto variable por variable, con un <code>plot()</code> a la vez, es lento e impide ver el panorama completo.</p>
+</div>
+</div>
+<p><code>GGally</code> extiende <code>ggplot2</code> para construir, en una sola instrucción, una <strong>matriz de gráficos</strong> que combina dispersión, densidad, boxplots y coeficientes de correlación entre múltiples variables a la vez. Es la herramienta natural para el primer vistazo multivariado de un conjunto de datos clínico.</p>
+</section>
+<section id="funcionamiento-básico" class="level3" data-number="2.2">
+<h3 data-number="2.2" class="anchored" data-anchor-id="funcionamiento-básico"><span class="header-section-number">2.2</span> Funcionamiento básico</h3>
+<p>Las dos funciones que más usarás son:</p>
+<ul>
+<li><strong><code>ggpairs()</code></strong>: construye una matriz <span class="math inline">\(n \times n\)</span> para un conjunto de columnas. Por defecto, la diagonal muestra la distribución de cada variable, el triángulo inferior muestra dispersión (o boxplots si hay una variable categórica) y el triángulo superior muestra el coeficiente de correlación.
+<ul>
+<li><code>columns</code>: qué columnas incluir.</li>
+<li><code>mapping = aes(colour = ..., alpha = ...)</code>: para colorear por un grupo (p.&nbsp;ej. sexo o desenlace clínico).</li>
+<li><code>upper</code>, <code>lower</code>, <code>diag</code>: listas para personalizar qué tipo de gráfico va en cada panel (<code>"points"</code>, <code>"smooth"</code>, <code>"cor"</code>, <code>"density"</code>, <code>"box"</code>, etc.).</li>
+</ul></li>
+<li><strong><code>ggcorr()</code></strong>: una versión más ligera y rápida, enfocada únicamente en mostrar la matriz de correlación como un mapa de calor (similar en espíritu a <code>ggcorrplot</code>, que veremos después, pero integrada al ecosistema de GGally).</li>
+</ul>
+<p>Otras funciones útiles que vale la pena conocer: <code>ggduo()</code> (para comparar dos conjuntos de variables distintos, por ejemplo predictores vs.&nbsp;desenlaces) y <code>ggscatmat()</code> (una versión más rápida de <code>ggpairs()</code> quer solo variables continuas).</p>
+</section>
+<section id="ejemplos-para-el-uso-de-ggally" class="level3" data-number="2.3">
+<h3 data-number="2.3" class="anchored" data-anchor-id="ejemplos-para-el-uso-de-ggally"><span class="header-section-number">2.3</span> Ejemplos para el uso de GGally</h3>
+<p>Uso general de <code>ggpairs</code></p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggpairs</span>(</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  data, <span class="co"># Datos</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">mapping =</span> <span class="cn">NULL</span>,</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">columns =</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">ncol</span>(data),</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">title =</span> <span class="cn">NULL</span>,</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">upper =</span> <span class="fu">list</span>(<span class="at">continuous =</span> <span class="st">"cor"</span>, <span class="at">combo =</span> <span class="st">"box_no_facet"</span>, <span class="at">discrete =</span> <span class="st">"count"</span>, <span class="at">na =</span> <span class="st">"na"</span>),</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">lower =</span> <span class="fu">list</span>(<span class="at">continuous =</span> <span class="st">"points"</span>, <span class="at">combo =</span> <span class="st">"facethist"</span>, <span class="at">discrete =</span> <span class="st">"facetbar"</span>, <span class="at">na =</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>    <span class="st">"na"</span>),</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">diag =</span> <span class="fu">list</span>(<span class="at">continuous =</span> <span class="st">"densityDiag"</span>, <span class="at">discrete =</span> <span class="st">"barDiag"</span>, <span class="at">na =</span> <span class="st">"naDiag"</span>),</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">params =</span> <span class="fu">deprecated</span>(),</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>  ...,</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">xlab =</span> <span class="cn">NULL</span>,</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">ylab =</span> <span class="cn">NULL</span>,</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">axisLabels =</span> <span class="fu">c</span>(<span class="st">"show"</span>, <span class="st">"internal"</span>, <span class="st">"none"</span>),</span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">columnLabels =</span> <span class="fu">colnames</span>(data[columns]),</span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>  <span class="at">labeller =</span> <span class="st">"label_value"</span>,</span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>  <span class="at">switch =</span> <span class="cn">NULL</span>,</span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>  <span class="at">showStrips =</span> <span class="cn">NULL</span>,</span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>  <span class="at">legend =</span> <span class="cn">NULL</span>,</span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>  <span class="at">cardinality_threshold =</span> <span class="dv">15</span>,</span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>  <span class="at">progress =</span> <span class="cn">NULL</span>,</span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>  <span class="at">proportions =</span> <span class="cn">NULL</span>,</span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>  <span class="at">legends =</span> <span class="fu">deprecated</span>()</span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggpairs</span>(</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  pbc_cat,</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">columns =</span> <span class="fu">c</span>(<span class="st">"age"</span>, <span class="st">"bili"</span>, <span class="st">"albumin"</span>, <span class="st">"platelet"</span>, <span class="st">"protime"</span>),</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">title =</span> <span class="st">"Relaciones entre variables clínicas de la cohorte PBC, por sexo"</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>) <span class="sc">+</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>(<span class="at">base_size =</span> <span class="dv">9</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="tema-02-eda_ggally_ggcorrplot_dataexplorer_files/figure-html/ggally-pairs-1-1.png" class="img-fluid figure-img" width="864"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggpairs</span>(</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  pbc_cat, <span class="co">#</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">columns =</span> <span class="fu">c</span>(<span class="st">"age"</span>, <span class="st">"bili"</span>, <span class="st">"albumin"</span>, <span class="st">"platelet"</span>, <span class="st">"protime"</span>),</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">colour =</span> sex, <span class="at">alpha =</span> <span class="fl">0.6</span>), <span class="co"># Agrupación</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">columnLabels =</span> <span class="fu">c</span>(<span class="st">"Edad"</span>, <span class="st">"Bilirrubina"</span>, <span class="st">"Albúmina"</span>, <span class="st">"Plaquetas"</span>, <span class="st">"Protrombina"</span>), <span class="co"># Nombres de columnas, debe coincidir</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">title =</span> <span class="st">"Relaciones entre variables clínicas de la cohorte PBC, por sexo"</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>) <span class="sc">+</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>(<span class="at">base_size =</span> <span class="dv">9</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="tema-02-eda_ggally_ggcorrplot_dataexplorer_files/figure-html/ggally-pairs-2-1.png" class="img-fluid figure-img" width="864"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>En una sola figura observamos: la distribución de cada variable por sexo (diagonal), la forma de la relación entre pares de variables, por ejemplo, si la bilirrubina alta se asocia con albúmina baja, y el coeficiente de correlación de cada par, separado por sexo (triángulo superior).</p>
+<p>También podemos usar <code>ggcorr()</code> para una vista más compacta, solo de correlaciones, sobre el bloque completo de variables numéricas:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggcorr</span>(</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  pbc[, vars_num], <span class="co"># Todas las variables numericas</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">label =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">label_round =</span> <span class="dv">2</span>,</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">label_size =</span> <span class="dv">3</span>,</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">hjust =</span> <span class="fl">0.8</span>,</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">layout.exp =</span> <span class="dv">2</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>) <span class="sc">+</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"ggcorr(): correlación entre marcadores clínicos (PBC)"</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="tema-02-eda_ggally_ggcorrplot_dataexplorer_files/figure-html/ggally-corr-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="cómo-apoya-el-eda" class="level3" data-number="2.4">
+<h3 data-number="2.4" class="anchored" data-anchor-id="cómo-apoya-el-eda"><span class="header-section-number">2.4</span> ¿Cómo apoya el EDA?</h3>
+<p><code>GGally</code> resuelve el problema de la exploración <strong>multivariada simultánea</strong>: en vez de generar decenas de gráficos individuales, se obtiene en una sola llamada una vista que permite (1) comparar distribuciones entre grupos clínicos, (2) detectar relaciones no lineales u outliers en los diagramas de dispersión, y (3) tener una primera estimación de qué variables están correlacionadas.</p>
+</section>
+</section>
+<section id="ggcorrplot" class="level2" data-number="3">
+<h2 data-number="3" class="anchored" data-anchor-id="ggcorrplot"><span class="header-section-number">3</span> ggcorrplot</h2>
+<section id="qué-problema-resuelve" class="level3" data-number="3.1">
+<h3 data-number="3.1" class="anchored" data-anchor-id="qué-problema-resuelve"><span class="header-section-number">3.1</span> ¿Qué problema resuelve?</h3>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Nota</span>Pregunta clínica motivadora
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Con diez variables clínicas numéricas, la matriz de correlación tiene 45 pares posibles. ¿Cuáles correlaciones son lo bastante fuertes <em>y</em> estadísticamente significativas como para preocuparnos por colinealidad antes de ajustar un modelo de regresión sobre el desenlace del paciente?</p>
+</div>
+</div>
+<p>Mientras que <code>ggcorr()</code> (de GGally) da una vista rápida, <code>ggcorrplot</code> está diseñado específicamente para producir mapas de calor de correlación de calidad de publicación, con la opción de <strong>superponer significancia estadística</strong> y de <strong>reordenar las variables por clustering jerárquico</strong>, lo que agrupa visualmente a los marcadores que se comportan de forma similar.</p>
+</section>
+<section id="funcionamiento-básico-1" class="level3" data-number="3.2">
+<h3 data-number="3.2" class="anchored" data-anchor-id="funcionamiento-básico-1"><span class="header-section-number">3.2</span> Funcionamiento básico</h3>
+<p>El flujo típico son tres pasos:</p>
+<ol type="1">
+<li>Calcular la matriz de correlación con <code>cor()</code> (usando <code>use = "pairwise.complete.obs"</code> cuando hay datos faltantes, como en nuestro caso).</li>
+<li>Calcular la matriz de p-valores con <code>cor_pmat()</code>, la función propia de <code>ggcorrplot</code> para pruebas de significancia por pares.</li>
+<li>Graficar con <code>ggcorrplot()</code>, cuyos argumentos principales son:
+<ul>
+<li><code>type</code>: <code>"full"</code>, <code>"lower"</code> o <code>"upper"</code> (mostrar la matriz completa o solo un triángulo, ya que es simétrica).</li>
+<li><code>hc.order = TRUE</code>: reordena las variables agrupando las más correlacionadas entre sí (clustering jerárquico).</li>
+<li><code>lab = TRUE</code>: imprime el valor de correlación dentro de cada celda.</li>
+<li><code>p.mat</code> e <code>insig</code>: permiten ocultar (<code>insig = "blank"</code>) o marcar con una <code>x</code> (<code>insig = "pch"</code>) las correlaciones que no son estadísticamente significativas.</li>
+</ul></li>
+</ol>
+</section>
+<section id="ejemplo-ggcorrplot" class="level3" data-number="3.3">
+<h3 data-number="3.3" class="anchored" data-anchor-id="ejemplo-ggcorrplot"><span class="header-section-number">3.3</span> Ejemplo ggcorrplot</h3>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>datos_num <span class="ot">&lt;-</span> pbc[, vars_num] <span class="co"># solo datos numéricos</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>corr_mat <span class="ot">&lt;-</span> <span class="fu">round</span>(<span class="fu">cor</span>(datos_num, <span class="at">use =</span> <span class="st">"pairwise.complete.obs"</span>), <span class="dv">2</span>) <span class="co"># Obtener correlaciones solo datos completos. </span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="co"># use: an optional character string giving a method for computing covariances in the presence of missing values. This must be (an abbreviation of) one of the strings "everything", "all.obs", "complete.obs", "na.or.complete", or "pairwise.complete.obs".</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>p_mat    <span class="ot">&lt;-</span> <span class="fu">cor_pmat</span>(datos_num) <span class="co"># Obtener los valores de p para el plot</span></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a><span class="fu">ggcorrplot</span>(</span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>  corr_mat,</span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">hc.order =</span> <span class="cn">TRUE</span>, <span class="co"># Ordena los correlaciones por herarquia. Hace un clúster jerárquico</span></span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">type =</span> <span class="st">"lower"</span>, <span class="co"># solo la parte de abajo de la gráfica</span></span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">lab =</span> <span class="cn">TRUE</span>, <span class="co"># Equitas</span></span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">lab_size =</span> <span class="fl">2.8</span>, <span class="co"># tamaño de los labels</span></span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>  <span class="at">p.mat =</span> p_mat, <span class="co"># Matriz de con los valores de p</span></span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>  <span class="at">insig =</span> <span class="st">"blank"</span>, <span class="co"># los valores de p no sinficitatvos no se muestran </span></span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>  <span class="at">colors =</span> <span class="fu">c</span>(<span class="st">"#B2182B"</span>, <span class="st">"white"</span>, <span class="st">"#2166AC"</span>), <span class="co"># Puede cambiar los colores. </span></span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>  <span class="at">title =</span> <span class="st">"Correlación entre marcadores clínicos en cirrosis biliar primaria"</span>,</span>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a>  <span class="at">legend.title =</span> <span class="st">"r de Pearson"</span></span>
+<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a>) <span class="sc">+</span></span>
+<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">11</span>))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="tema-02-eda_ggally_ggcorrplot_dataexplorer_files/figure-html/ggcorrplot-ejemplo-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>El reordenamiento (<code>hc.order = TRUE</code>) agrupa visualmente, por ejemplo, a los marcadores de daño/colestasis hepática (bilirrubina, fosfatasa alcalina, cobre) cerca unos de otros si comparten un patrón de correlación similar, y las celdas en blanco señalan qué asociaciones <strong>no</strong> alcanzan significancia estadística — evitando interpretar como relevante una correlación débil que podría deberse al azar.</p>
+</section>
+<section id="cómo-apoya-el-eda-1" class="level3" data-number="3.4">
+<h3 data-number="3.4" class="anchored" data-anchor-id="cómo-apoya-el-eda-1"><span class="header-section-number">3.4</span> ¿Cómo apoya el EDA?</h3>
+<p><code>ggcorrplot</code> resuelve específicamente el problema de <strong>priorizar y comunicar</strong> relaciones entre variables numéricas: ayuda a detectar colinealidad antes de un modelo de regresión (dos predictores muy correlacionados aportan información redundante), y el ordenamiento jerárquico sugiere agrupaciones biológicas de variables que pueden guiar un análisis de componentes principales o de clústeres posterior.</p>
+<p>Experimente y cambie algunos de los argumentos de la gráfica.</p>
+</section>
+</section>
+<section id="dataexplorer" class="level2" data-number="4">
+<h2 data-number="4" class="anchored" data-anchor-id="dataexplorer"><span class="header-section-number">4</span> DataExplorer</h2>
+<section id="qué-problema-resuelve-1" class="level3" data-number="4.1">
+<h3 data-number="4.1" class="anchored" data-anchor-id="qué-problema-resuelve-1"><span class="header-section-number">4.1</span> ¿Qué problema resuelve?</h3>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Nota</span>Pregunta clínica motivadora
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Antes de decidir si imputar o excluir observaciones, ¿qué proporción de cada variable clínica está incompleta en esta cohorte, y esas ausencias están concentradas en subgrupos específicos de pacientes (por ejemplo, quienes no participaron en el ensayo aleatorizado)?</p>
+</div>
+</div>
+<p><code>DataExplorer</code> automatiza la primera pasada de EDA: en lugar de escribir manualmente un <code>summary()</code>, un conteo de <code>NA</code> por columna y varios histogramas, genera ese diagnóstico completo con una o dos líneas de código — algo especialmente valioso cuando se reciben datos clínicos nuevos y se necesita un diagnóstico de calidad de datos rápido y sistemático.</p>
+</section>
+<section id="funcionamiento-básico-2" class="level3" data-number="4.2">
+<h3 data-number="4.2" class="anchored" data-anchor-id="funcionamiento-básico-2"><span class="header-section-number">4.2</span> Funcionamiento básico</h3>
+<p>Las funciones más usadas se dividen en dos familias:</p>
+<ul>
+<li><strong>Diagnóstico de estructura y calidad</strong>: <code>introduce()</code> (tabla resumen: número de filas, columnas, variables continuas/discretas, observaciones y celdas faltantes, memoria usada) y su versión gráfica <code>plot_intro()</code>; <code>plot_missing()</code> (proporción de valores faltantes por variable, con un semáforo de severidad).</li>
+<li><strong>Distribuciones y relaciones</strong>: <code>plot_histogram()</code> y <code>plot_density()</code> para variables continuas, <code>plot_bar()</code> para variables categóricas/discretas, y <code>plot_correlation()</code> para una matriz de correlación automática (incluye variables categóricas mediante codificación).</li>
+<li><strong>Reporte completo</strong>: <code>create_report()</code> genera un documento HTML con todo lo anterior en un solo llamado — el punto de partida ideal para cualquier dataset nuevo.</li>
+</ul>
+</section>
+<section id="ejemplo-introduce" class="level3" data-number="4.3">
+<h3 data-number="4.3" class="anchored" data-anchor-id="ejemplo-introduce"><span class="header-section-number">4.3</span> Ejemplo <code>introduce</code></h3>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">introduce</span>(pbc)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div data-pagedtable="false">
+  <script data-pagedtable-source="" type="application/json">
+{"columns":[{"label":["rows"],"name":[1],"type":["int"],"align":["right"]},{"label":["columns"],"name":[2],"type":["int"],"align":["right"]},{"label":["discrete_columns"],"name":[3],"type":["int"],"align":["right"]},{"label":["continuous_columns"],"name":[4],"type":["int"],"align":["right"]},{"label":["all_missing_columns"],"name":[5],"type":["int"],"align":["right"]},{"label":["total_missing_values"],"name":[6],"type":["int"],"align":["right"]},{"label":["complete_rows"],"name":[7],"type":["int"],"align":["right"]},{"label":["total_observations"],"name":[8],"type":["int"],"align":["right"]},{"label":["memory_usage"],"name":[9],"type":["dbl"],"align":["right"]}],"data":[{"1":"418","2":"20","3":"1","4":"19","5":"0","6":"1033","7":"276","8":"8360","9":"50336"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+</div>
+</div>
+</section>
+<section id="ejemplo-plot_intro" class="level3" data-number="4.4">
+<h3 data-number="4.4" class="anchored" data-anchor-id="ejemplo-plot_intro"><span class="header-section-number">4.4</span> Ejemplo <code>plot_intro</code></h3>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_intro</span>(pbc, <span class="at">title =</span> <span class="st">"Panorama general del dataset PBC"</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="tema-02-eda_ggally_ggcorrplot_dataexplorer_files/figure-html/dataexplorer-plot-intro-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="ejemplo-data-explorer-otras-funciones" class="level3" data-number="4.5">
+<h3 data-number="4.5" class="anchored" data-anchor-id="ejemplo-data-explorer-otras-funciones"><span class="header-section-number">4.5</span> Ejemplo data explorer otras funciones</h3>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_missing</span>(pbc, <span class="at">title =</span> <span class="st">"Valores faltantes por variable clínica (PBC)"</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="tema-02-eda_ggally_ggcorrplot_dataexplorer_files/figure-html/dataexplorer-missing-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p><code>plot_missing()</code> muestra de inmediato que variables como <code>chol</code>, <code>copper</code>, <code>trig</code> y <code>trt</code> tienen una proporción notable de datos faltantes (<code>trt</code> es NA precisamente en los pacientes que no fueron parte del ensayo aleatorizado, sino de un registro observacional adicional).</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_histogram</span>(pbc[, vars_num], <span class="at">title =</span> <span class="st">"Distribución de marcadores clínicos continuos"</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="tema-02-eda_ggally_ggcorrplot_dataexplorer_files/figure-html/dataexplorer-histogramas-1.png" class="img-fluid figure-img" width="768"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_bar</span>(pbc_cat[, <span class="fu">c</span>(<span class="st">"sex"</span>, <span class="st">"trt"</span>, <span class="st">"stage"</span>)], <span class="at">title =</span> <span class="st">"Variables categóricas de la cohorte PBC"</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="tema-02-eda_ggally_ggcorrplot_dataexplorer_files/figure-html/dataexplorer-barras-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_correlation</span>(pbc[, vars_num], <span class="at">type =</span> <span class="st">"continuous"</span>,</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>                  <span class="at">title =</span> <span class="st">"Correlación automática (DataExplorer)"</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="tema-02-eda_ggally_ggcorrplot_dataexplorer_files/figure-html/dataexplorer-correlacion-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Finalmente, para un diagnóstico completo en un solo paso (no se ejecuta aquí para no generar un archivo adicional, pero es la función que normalmente usarías primero al recibir un dataset nuevo):</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">create_report</span>(pbc, <span class="at">output_file =</span> <span class="st">"reporte_eda_pbc.html"</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="cómo-apoya-el-eda-2" class="level3" data-number="4.6">
+<h3 data-number="4.6" class="anchored" data-anchor-id="cómo-apoya-el-eda-2"><span class="header-section-number">4.6</span> ¿Cómo apoya el EDA?</h3>
+<p><code>DataExplorer</code> resuelve el problema de la <strong>cobertura y velocidad</strong>: garantiza que ninguna variable se quede sin revisar (algo fácil de omitir cuando se explora “a mano”), y en particular hace visible de inmediato el patrón de datos faltantes — información indispensable en investigación clínica, donde decidir entre imputar, excluir o analizar los faltantes como su propia categoría puede cambiar las conclusiones del estudio.</p>
+</section>
+</section>
+<section id="cómo-se-complementan-las-tres-librerías" class="level2" data-number="5">
+<h2 data-number="5" class="anchored" data-anchor-id="cómo-se-complementan-las-tres-librerías"><span class="header-section-number">5</span> ¿Cómo se complementan las tres librerías?</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Librería</th>
+<th>Pregunta que responde mejor</th>
+<th>Momento típico de uso</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>GGally</code></td>
+<td>¿Cómo se relacionan varias variables entre sí y entre grupos clínicos, a la vez?</td>
+<td>Exploración multivariada dirigida, tras tener hipótesis de qué variables comparar</td>
+</tr>
+<tr class="even">
+<td><code>ggcorrplot</code></td>
+<td>¿Qué correlaciones son fuertes <em>y</em> significativas, y qué variables se agrupan?</td>
+<td>Antes de modelar, para evaluar colinealidad y priorizar variables</td>
+</tr>
+<tr class="odd">
+<td><code>DataExplorer</code></td>
+<td>¿Está completo y es confiable el dataset? ¿Cómo se ve cada variable, en general?</td>
+<td>Primer contacto con un dataset nuevo, diagnóstico de calidad de datos</td>
+</tr>
+</tbody>
+</table>
+<p>En la práctica, un flujo de trabajo razonable es exactamente el orden en que las presentamos aquí: usar <code>DataExplorer</code> para un diagnóstico inicial de calidad y estructura, <code>ggcorrplot</code> para decidir qué variables numéricas son redundantes o interesantes, y <code>GGally</code> para profundizar visualmente en las relaciones entre el subconjunto de variables que resultó más relevante.</p>
+</section>
+<section id="preguntas-para-practicar" class="level2" data-number="6">
+<h2 data-number="6" class="anchored" data-anchor-id="preguntas-para-practicar"><span class="header-section-number">6</span> Preguntas para practicar</h2>
+<ol type="1">
+<li>Usando <code>ggpairs()</code>, compara las variables <code>bili</code>, <code>chol</code> y <code>albumin</code>, coloreando por la variable <code>estado</code> (censurado / trasplante / fallecido). ¿El patrón de bilirrubina y albúmina difiere entre pacientes que fallecieron y los censurados?</li>
+<li>Repite la matriz de correlación de <code>ggcorrplot</code> pero solo con los pacientes que sí tienen <code>trt</code> registrado (es decir, los del ensayo aleatorizado). ¿Cambian las correlaciones respecto a usar la cohorte completa?</li>
+<li>Con <code>plot_bar()</code> de <code>DataExplorer</code>, examina la distribución de <code>stage</code> (estadio histológico). ¿Hay algún estadio con muy pocos pacientes que podría ser problemático para un análisis por subgrupos?</li>
+<li>Genera el reporte completo con <code>create_report(pbc)</code> y localiza, dentro del reporte HTML, la sección de valores faltantes. ¿Coincide con lo que observaste en <code>plot_missing()</code>?</li>
+</ol>
+</section>
+<section id="referencias" class="level2" data-number="7">
+<h2 data-number="7" class="anchored" data-anchor-id="referencias"><span class="header-section-number">7</span> Referencias</h2>
+<ul>
+<li>Fleming TR, Harrington DP. <em>Counting Processes and Survival Analysis</em>. Wiley, 1991 (fuente original del dataset <code>pbc</code>).</li>
+<li>Therneau T, Grambsch P. <em>Modeling Survival Data: Extending the Cox Model</em>. Springer, 2000.</li>
+<li>Schloerke B, et al.&nbsp;<a href="https://ggobi.github.io/ggally/">GGally: Extension to ‘ggplot2’</a>. CRAN.</li>
+<li>Kassambara A. <a href="https://cran.r-project.org/package=ggcorrplot">ggcorrplot: Visualization of a Correlation Matrix using ‘ggplot2’</a>. CRAN.</li>
+<li>Cui B. <a href="https://boxuancui.github.io/DataExplorer/">DataExplorer: Automate Data Exploration and Treatment</a>. CRAN.</li>
+</ul>
+
+
+<!-- -->
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copiado");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copiado");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+    const viewSource = window.document.getElementById('quarto-view-source') ||
+                       window.document.getElementById('quarto-code-tools-source');
+    if (viewSource) {
+      const sourceUrl = viewSource.getAttribute("data-quarto-source-url");
+      viewSource.addEventListener("click", function(e) {
+        if (sourceUrl) {
+          // rstudio viewer pane
+          if (/\bcapabilities=\b/.test(window.location)) {
+            window.open(sourceUrl);
+          } else {
+            window.location.href = sourceUrl;
+          }
+        } else {
+          const modal = new bootstrap.Modal(document.getElementById('quarto-embedded-source-code-modal'));
+          modal.show();
+        }
+        return false;
+      });
+    }
+    function toggleCodeHandler(show) {
+      return function(e) {
+        const detailsSrc = window.document.querySelectorAll(".cell > details > .sourceCode");
+        for (let i=0; i<detailsSrc.length; i++) {
+          const details = detailsSrc[i].parentElement;
+          if (show) {
+            details.open = true;
+          } else {
+            details.removeAttribute("open");
+          }
+        }
+        const cellCodeDivs = window.document.querySelectorAll(".cell > .sourceCode");
+        const fromCls = show ? "hidden" : "unhidden";
+        const toCls = show ? "unhidden" : "hidden";
+        for (let i=0; i<cellCodeDivs.length; i++) {
+          const codeDiv = cellCodeDivs[i];
+          if (codeDiv.classList.contains(fromCls)) {
+            codeDiv.classList.remove(fromCls);
+            codeDiv.classList.add(toCls);
+          } 
+        }
+        return false;
+      }
+    }
+    const hideAllCode = window.document.getElementById("quarto-hide-all-code");
+    if (hideAllCode) {
+      hideAllCode.addEventListener("click", toggleCodeHandler(false));
+    }
+    const showAllCode = window.document.getElementById("quarto-show-all-code");
+    if (showAllCode) {
+      showAllCode.addEventListener("click", toggleCodeHandler(true));
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/Ed-Perez-G\.github\.io\/bioestadistica-avanzada\/");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Ejecutar el código</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb16" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "EDA: GGally, ggcorrplot y DataExplorer"</span></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="an">subtitle:</span><span class="co"> "Tres librerías de R para el Análisis Exploratorio de Datos"</span></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a><span class="an">lang:</span><span class="co"> es</span></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a><span class="an">author:</span><span class="co"> "Material de curso — Bioestadística con R"</span></span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a><span class="an">date:</span><span class="co"> today</span></span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a><span class="an">format:</span></span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a><span class="co">  html:</span></span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a><span class="co">    toc: true</span></span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a><span class="co">    toc-depth: 3</span></span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a><span class="co">    toc-location: left</span></span>
+<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a><span class="co">    number-sections: true</span></span>
+<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a><span class="co">    code-fold: false</span></span>
+<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a><span class="co">    code-tools: true</span></span>
+<span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a><span class="co">    theme: cosmo</span></span>
+<span id="cb16-16"><a href="#cb16-16" aria-hidden="true" tabindex="-1"></a><span class="co">    df-print: paged</span></span>
+<span id="cb16-17"><a href="#cb16-17" aria-hidden="true" tabindex="-1"></a><span class="an">execute:</span></span>
+<span id="cb16-18"><a href="#cb16-18" aria-hidden="true" tabindex="-1"></a><span class="co">  warning: false</span></span>
+<span id="cb16-19"><a href="#cb16-19" aria-hidden="true" tabindex="-1"></a><span class="co">  message: false</span></span>
+<span id="cb16-20"><a href="#cb16-20" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb16-21"><a href="#cb16-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-22"><a href="#cb16-22" aria-hidden="true" tabindex="-1"></a><span class="fu">## Introducción</span></span>
+<span id="cb16-23"><a href="#cb16-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-24"><a href="#cb16-24" aria-hidden="true" tabindex="-1"></a>Los conceptos teóricos sobre el EDA se revisaron en la <span class="co">[</span><span class="ot">presentación EDA</span><span class="co">](tema-02)</span></span>
+<span id="cb16-25"><a href="#cb16-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-26"><a href="#cb16-26" aria-hidden="true" tabindex="-1"></a>En este documento revisaremos tres librerías de R sumamente útiles para realizar un EDA:</span>
+<span id="cb16-27"><a href="#cb16-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-28"><a href="#cb16-28" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>**GGally**: extiende <span class="in">`ggplot2`</span> para construir matrices de gráficos (pares de variables) en una sola llamada.</span>
+<span id="cb16-29"><a href="#cb16-29" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>**ggcorrplot**: visualiza matrices de correlación como mapas de calor, incorporando significancia estadística.</span>
+<span id="cb16-30"><a href="#cb16-30" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>**DataExplorer**: automatiza un primer reporte exploratorio completo (estructura, faltantes, distribuciones, correlaciones).</span>
+<span id="cb16-31"><a href="#cb16-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-32"><a href="#cb16-32" aria-hidden="true" tabindex="-1"></a><span class="fu">### Conjunto de datos `pbc`</span></span>
+<span id="cb16-33"><a href="#cb16-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-34"><a href="#cb16-34" aria-hidden="true" tabindex="-1"></a>Para ejemplificar el uso básico de esta librería utilizaremos la base de datos <span class="in">`pbc`</span>. Este conjunto de datos que **ya viene incluido** en el paquete <span class="in">`survival`</span> (sino lo tiene descárgelo). <span class="in">`pbc`</span> proviene del ensayo clínico de la Clínica Mayo sobre cirrosis biliar primaria (*Primary Biliary Cirrhosis*) realizado entre 1974 y 1984, con 418 pacientes y variables como bilirrubina, albúmina, colesterol, cobre en orina, plaquetas y tiempo de protrombina.</span>
+<span id="cb16-35"><a href="#cb16-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-38"><a href="#cb16-38" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb16-39"><a href="#cb16-39" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: setup</span></span>
+<span id="cb16-40"><a href="#cb16-40" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-41"><a href="#cb16-41" aria-hidden="true" tabindex="-1"></a><span class="co"># Paquetes necesarios (ejecutar una sola vez si no están instalados):</span></span>
+<span id="cb16-42"><a href="#cb16-42" aria-hidden="true" tabindex="-1"></a><span class="co"># install.packages(c("GGally", "ggcorrplot", "DataExplorer"))</span></span>
+<span id="cb16-43"><a href="#cb16-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-44"><a href="#cb16-44" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)          <span class="co"># manipulación de datos</span></span>
+<span id="cb16-45"><a href="#cb16-45" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(GGally)         <span class="co"># matrices de gráficos exploratorios</span></span>
+<span id="cb16-46"><a href="#cb16-46" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggcorrplot)     <span class="co"># mapas de calor de correlación</span></span>
+<span id="cb16-47"><a href="#cb16-47" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(DataExplorer)   <span class="co"># EDA automatizado</span></span>
+<span id="cb16-48"><a href="#cb16-48" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(survival)       <span class="co"># contiene el dataset pbc</span></span>
+<span id="cb16-49"><a href="#cb16-49" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-50"><a href="#cb16-50" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(pbc)               <span class="co"># llamar los datos</span></span>
+<span id="cb16-51"><a href="#cb16-51" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(pbc)            <span class="co"># Un vistaso</span></span>
+<span id="cb16-52"><a href="#cb16-52" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb16-53"><a href="#cb16-53" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-54"><a href="#cb16-54" aria-hidden="true" tabindex="-1"></a>Trabajaremos principalmente con un subconjunto de variables clínicas numéricas y dos variables categóricas: </span>
+<span id="cb16-55"><a href="#cb16-55" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-58"><a href="#cb16-58" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb16-59"><a href="#cb16-59" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: variables</span></span>
+<span id="cb16-60"><a href="#cb16-60" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-61"><a href="#cb16-61" aria-hidden="true" tabindex="-1"></a>vars_num <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"age"</span>, <span class="st">"bili"</span>, <span class="st">"chol"</span>, <span class="st">"albumin"</span>, <span class="st">"copper"</span>,</span>
+<span id="cb16-62"><a href="#cb16-62" aria-hidden="true" tabindex="-1"></a>              <span class="st">"alk.phos"</span>, <span class="st">"ast"</span>, <span class="st">"trig"</span>, <span class="st">"platelet"</span>, <span class="st">"protime"</span>) <span class="co"># Lista de variables para seleccionar y filtrar</span></span>
+<span id="cb16-63"><a href="#cb16-63" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-64"><a href="#cb16-64" aria-hidden="true" tabindex="-1"></a>pbc_cat <span class="ot">&lt;-</span> pbc <span class="sc">%&gt;%</span></span>
+<span id="cb16-65"><a href="#cb16-65" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb16-66"><a href="#cb16-66" aria-hidden="true" tabindex="-1"></a>    <span class="at">trt   =</span> <span class="fu">factor</span>(trt, <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"D-penicilamina"</span>, <span class="st">"Placebo"</span>)),</span>
+<span id="cb16-67"><a href="#cb16-67" aria-hidden="true" tabindex="-1"></a>    <span class="at">stage =</span> <span class="fu">factor</span>(stage),</span>
+<span id="cb16-68"><a href="#cb16-68" aria-hidden="true" tabindex="-1"></a>    <span class="at">sex   =</span> <span class="fu">factor</span>(sex, <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"Hombre"</span>, <span class="st">"Mujer"</span>)),</span>
+<span id="cb16-69"><a href="#cb16-69" aria-hidden="true" tabindex="-1"></a>    <span class="at">estado =</span> <span class="fu">factor</span>(status, <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"Censurado"</span>, <span class="st">"Trasplante"</span>, <span class="st">"Fallecido"</span>))</span>
+<span id="cb16-70"><a href="#cb16-70" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb16-71"><a href="#cb16-71" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb16-72"><a href="#cb16-72" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-73"><a href="#cb16-73" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; </span><span class="in">`age`</span><span class="at"> = edad; </span><span class="in">`bili`</span><span class="at"> = bilirrubina sérica (mg/dL); </span><span class="in">`chol`</span><span class="at"> = colesterol (mg/dL); </span><span class="in">`albumin`</span><span class="at"> = albúmina (g/dL); </span><span class="in">`copper`</span><span class="at"> = cobre en orina (µg/día); </span><span class="in">`alk.phos`</span><span class="at"> = fosfatasa alcalina (U/L); </span><span class="in">`ast`</span><span class="at"> = aspartato aminotransferasa (U/mL); </span><span class="in">`trig`</span><span class="at"> = triglicéridos (mg/dL); </span><span class="in">`platelet`</span><span class="at"> = plaquetas (por mm³/1000); </span><span class="in">`protime`</span><span class="at"> = tiempo de protrombina estandarizado (segundos).</span></span>
+<span id="cb16-74"><a href="#cb16-74" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-75"><a href="#cb16-75" aria-hidden="true" tabindex="-1"></a><span class="fu">## GGally</span></span>
+<span id="cb16-76"><a href="#cb16-76" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-77"><a href="#cb16-77" aria-hidden="true" tabindex="-1"></a><span class="fu">### ¿Qué problema resuelve GGally?</span></span>
+<span id="cb16-78"><a href="#cb16-78" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-79"><a href="#cb16-79" aria-hidden="true" tabindex="-1"></a>::: {.callout-note}</span>
+<span id="cb16-80"><a href="#cb16-80" aria-hidden="true" tabindex="-1"></a>En la cohorte de cirrosis biliar primaria, ¿cómo se relacionan simultáneamente la edad, la bilirrubina, la albúmina, las plaquetas y el tiempo de protrombina? ¿esa relación cambia entre hombres y mujeres? </span>
+<span id="cb16-81"><a href="#cb16-81" aria-hidden="true" tabindex="-1"></a>Revisar esto variable por variable, con un <span class="in">`plot()`</span> a la vez, es lento e impide ver el panorama completo.</span>
+<span id="cb16-82"><a href="#cb16-82" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb16-83"><a href="#cb16-83" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-84"><a href="#cb16-84" aria-hidden="true" tabindex="-1"></a><span class="in">`GGally`</span> extiende <span class="in">`ggplot2`</span> para construir, en una sola instrucción, una **matriz de gráficos** que combina dispersión, densidad, boxplots y coeficientes de correlación entre múltiples variables a la vez. Es la herramienta natural para el primer vistazo multivariado de un conjunto de datos clínico.</span>
+<span id="cb16-85"><a href="#cb16-85" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-86"><a href="#cb16-86" aria-hidden="true" tabindex="-1"></a><span class="fu">### Funcionamiento básico</span></span>
+<span id="cb16-87"><a href="#cb16-87" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-88"><a href="#cb16-88" aria-hidden="true" tabindex="-1"></a>Las dos funciones que más usarás son:</span>
+<span id="cb16-89"><a href="#cb16-89" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-90"><a href="#cb16-90" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**`ggpairs()`**: construye una matriz $n \times n$ para un conjunto de columnas. Por defecto, la diagonal muestra la distribución de cada variable, el triángulo inferior muestra dispersión (o boxplots si hay una variable categórica) y el triángulo superior muestra el coeficiente de correlación.</span>
+<span id="cb16-91"><a href="#cb16-91" aria-hidden="true" tabindex="-1"></a><span class="ss">  - </span><span class="in">`columns`</span>: qué columnas incluir.</span>
+<span id="cb16-92"><a href="#cb16-92" aria-hidden="true" tabindex="-1"></a><span class="ss">  - </span><span class="in">`mapping = aes(colour = ..., alpha = ...)`</span>: para colorear por un grupo (p. ej. sexo o desenlace clínico).</span>
+<span id="cb16-93"><a href="#cb16-93" aria-hidden="true" tabindex="-1"></a><span class="ss">  - </span><span class="in">`upper`</span>, <span class="in">`lower`</span>, <span class="in">`diag`</span>: listas para personalizar qué tipo de gráfico va en cada panel (<span class="in">`"points"`</span>, <span class="in">`"smooth"`</span>, <span class="in">`"cor"`</span>, <span class="in">`"density"`</span>, <span class="in">`"box"`</span>, etc.).</span>
+<span id="cb16-94"><a href="#cb16-94" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**`ggcorr()`**: una versión más ligera y rápida, enfocada únicamente en mostrar la matriz de correlación como un mapa de calor (similar en espíritu a <span class="in">`ggcorrplot`</span>, que veremos después, pero integrada al ecosistema de GGally).</span>
+<span id="cb16-95"><a href="#cb16-95" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-96"><a href="#cb16-96" aria-hidden="true" tabindex="-1"></a>Otras funciones útiles que vale la pena conocer: <span class="in">`ggduo()`</span> (para comparar dos conjuntos de variables distintos, por ejemplo predictores vs. desenlaces) y <span class="in">`ggscatmat()`</span> (una versión más rápida de <span class="in">`ggpairs()`</span> quer solo variables continuas).</span>
+<span id="cb16-97"><a href="#cb16-97" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-98"><a href="#cb16-98" aria-hidden="true" tabindex="-1"></a><span class="fu">### Ejemplos para el uso de GGally</span></span>
+<span id="cb16-99"><a href="#cb16-99" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-100"><a href="#cb16-100" aria-hidden="true" tabindex="-1"></a>Uso general de <span class="in">`ggpairs`</span></span>
+<span id="cb16-101"><a href="#cb16-101" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-102"><a href="#cb16-102" aria-hidden="true" tabindex="-1"></a><span class="in">```{r eval=FALSE}</span></span>
+<span id="cb16-103"><a href="#cb16-103" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: ggally-use</span></span>
+<span id="cb16-104"><a href="#cb16-104" aria-hidden="true" tabindex="-1"></a><span class="fu">ggpairs</span>(</span>
+<span id="cb16-105"><a href="#cb16-105" aria-hidden="true" tabindex="-1"></a>  data, <span class="co"># Datos</span></span>
+<span id="cb16-106"><a href="#cb16-106" aria-hidden="true" tabindex="-1"></a>  <span class="at">mapping =</span> <span class="cn">NULL</span>,</span>
+<span id="cb16-107"><a href="#cb16-107" aria-hidden="true" tabindex="-1"></a>  <span class="at">columns =</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">ncol</span>(data),</span>
+<span id="cb16-108"><a href="#cb16-108" aria-hidden="true" tabindex="-1"></a>  <span class="at">title =</span> <span class="cn">NULL</span>,</span>
+<span id="cb16-109"><a href="#cb16-109" aria-hidden="true" tabindex="-1"></a>  <span class="at">upper =</span> <span class="fu">list</span>(<span class="at">continuous =</span> <span class="st">"cor"</span>, <span class="at">combo =</span> <span class="st">"box_no_facet"</span>, <span class="at">discrete =</span> <span class="st">"count"</span>, <span class="at">na =</span> <span class="st">"na"</span>),</span>
+<span id="cb16-110"><a href="#cb16-110" aria-hidden="true" tabindex="-1"></a>  <span class="at">lower =</span> <span class="fu">list</span>(<span class="at">continuous =</span> <span class="st">"points"</span>, <span class="at">combo =</span> <span class="st">"facethist"</span>, <span class="at">discrete =</span> <span class="st">"facetbar"</span>, <span class="at">na =</span></span>
+<span id="cb16-111"><a href="#cb16-111" aria-hidden="true" tabindex="-1"></a>    <span class="st">"na"</span>),</span>
+<span id="cb16-112"><a href="#cb16-112" aria-hidden="true" tabindex="-1"></a>  <span class="at">diag =</span> <span class="fu">list</span>(<span class="at">continuous =</span> <span class="st">"densityDiag"</span>, <span class="at">discrete =</span> <span class="st">"barDiag"</span>, <span class="at">na =</span> <span class="st">"naDiag"</span>),</span>
+<span id="cb16-113"><a href="#cb16-113" aria-hidden="true" tabindex="-1"></a>  <span class="at">params =</span> <span class="fu">deprecated</span>(),</span>
+<span id="cb16-114"><a href="#cb16-114" aria-hidden="true" tabindex="-1"></a>  ...,</span>
+<span id="cb16-115"><a href="#cb16-115" aria-hidden="true" tabindex="-1"></a>  <span class="at">xlab =</span> <span class="cn">NULL</span>,</span>
+<span id="cb16-116"><a href="#cb16-116" aria-hidden="true" tabindex="-1"></a>  <span class="at">ylab =</span> <span class="cn">NULL</span>,</span>
+<span id="cb16-117"><a href="#cb16-117" aria-hidden="true" tabindex="-1"></a>  <span class="at">axisLabels =</span> <span class="fu">c</span>(<span class="st">"show"</span>, <span class="st">"internal"</span>, <span class="st">"none"</span>),</span>
+<span id="cb16-118"><a href="#cb16-118" aria-hidden="true" tabindex="-1"></a>  <span class="at">columnLabels =</span> <span class="fu">colnames</span>(data[columns]),</span>
+<span id="cb16-119"><a href="#cb16-119" aria-hidden="true" tabindex="-1"></a>  <span class="at">labeller =</span> <span class="st">"label_value"</span>,</span>
+<span id="cb16-120"><a href="#cb16-120" aria-hidden="true" tabindex="-1"></a>  <span class="at">switch =</span> <span class="cn">NULL</span>,</span>
+<span id="cb16-121"><a href="#cb16-121" aria-hidden="true" tabindex="-1"></a>  <span class="at">showStrips =</span> <span class="cn">NULL</span>,</span>
+<span id="cb16-122"><a href="#cb16-122" aria-hidden="true" tabindex="-1"></a>  <span class="at">legend =</span> <span class="cn">NULL</span>,</span>
+<span id="cb16-123"><a href="#cb16-123" aria-hidden="true" tabindex="-1"></a>  <span class="at">cardinality_threshold =</span> <span class="dv">15</span>,</span>
+<span id="cb16-124"><a href="#cb16-124" aria-hidden="true" tabindex="-1"></a>  <span class="at">progress =</span> <span class="cn">NULL</span>,</span>
+<span id="cb16-125"><a href="#cb16-125" aria-hidden="true" tabindex="-1"></a>  <span class="at">proportions =</span> <span class="cn">NULL</span>,</span>
+<span id="cb16-126"><a href="#cb16-126" aria-hidden="true" tabindex="-1"></a>  <span class="at">legends =</span> <span class="fu">deprecated</span>()</span>
+<span id="cb16-127"><a href="#cb16-127" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb16-128"><a href="#cb16-128" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb16-129"><a href="#cb16-129" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-130"><a href="#cb16-130" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-133"><a href="#cb16-133" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb16-134"><a href="#cb16-134" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: ggally-pairs-1</span></span>
+<span id="cb16-135"><a href="#cb16-135" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-width: 9</span></span>
+<span id="cb16-136"><a href="#cb16-136" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-height: 8</span></span>
+<span id="cb16-137"><a href="#cb16-137" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-138"><a href="#cb16-138" aria-hidden="true" tabindex="-1"></a><span class="fu">ggpairs</span>(</span>
+<span id="cb16-139"><a href="#cb16-139" aria-hidden="true" tabindex="-1"></a>  pbc_cat,</span>
+<span id="cb16-140"><a href="#cb16-140" aria-hidden="true" tabindex="-1"></a>  <span class="at">columns =</span> <span class="fu">c</span>(<span class="st">"age"</span>, <span class="st">"bili"</span>, <span class="st">"albumin"</span>, <span class="st">"platelet"</span>, <span class="st">"protime"</span>),</span>
+<span id="cb16-141"><a href="#cb16-141" aria-hidden="true" tabindex="-1"></a>  <span class="at">title =</span> <span class="st">"Relaciones entre variables clínicas de la cohorte PBC, por sexo"</span></span>
+<span id="cb16-142"><a href="#cb16-142" aria-hidden="true" tabindex="-1"></a>) <span class="sc">+</span></span>
+<span id="cb16-143"><a href="#cb16-143" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>(<span class="at">base_size =</span> <span class="dv">9</span>)</span>
+<span id="cb16-144"><a href="#cb16-144" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb16-145"><a href="#cb16-145" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-146"><a href="#cb16-146" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-149"><a href="#cb16-149" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb16-150"><a href="#cb16-150" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: ggally-pairs-2</span></span>
+<span id="cb16-151"><a href="#cb16-151" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-width: 9</span></span>
+<span id="cb16-152"><a href="#cb16-152" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-height: 8</span></span>
+<span id="cb16-153"><a href="#cb16-153" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-154"><a href="#cb16-154" aria-hidden="true" tabindex="-1"></a><span class="fu">ggpairs</span>(</span>
+<span id="cb16-155"><a href="#cb16-155" aria-hidden="true" tabindex="-1"></a>  pbc_cat, <span class="co">#</span></span>
+<span id="cb16-156"><a href="#cb16-156" aria-hidden="true" tabindex="-1"></a>  <span class="at">columns =</span> <span class="fu">c</span>(<span class="st">"age"</span>, <span class="st">"bili"</span>, <span class="st">"albumin"</span>, <span class="st">"platelet"</span>, <span class="st">"protime"</span>),</span>
+<span id="cb16-157"><a href="#cb16-157" aria-hidden="true" tabindex="-1"></a>  <span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">colour =</span> sex, <span class="at">alpha =</span> <span class="fl">0.6</span>), <span class="co"># Agrupación</span></span>
+<span id="cb16-158"><a href="#cb16-158" aria-hidden="true" tabindex="-1"></a>  <span class="at">columnLabels =</span> <span class="fu">c</span>(<span class="st">"Edad"</span>, <span class="st">"Bilirrubina"</span>, <span class="st">"Albúmina"</span>, <span class="st">"Plaquetas"</span>, <span class="st">"Protrombina"</span>), <span class="co"># Nombres de columnas, debe coincidir</span></span>
+<span id="cb16-159"><a href="#cb16-159" aria-hidden="true" tabindex="-1"></a>  <span class="at">title =</span> <span class="st">"Relaciones entre variables clínicas de la cohorte PBC, por sexo"</span></span>
+<span id="cb16-160"><a href="#cb16-160" aria-hidden="true" tabindex="-1"></a>) <span class="sc">+</span></span>
+<span id="cb16-161"><a href="#cb16-161" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>(<span class="at">base_size =</span> <span class="dv">9</span>)</span>
+<span id="cb16-162"><a href="#cb16-162" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb16-163"><a href="#cb16-163" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-164"><a href="#cb16-164" aria-hidden="true" tabindex="-1"></a>En una sola figura observamos: la distribución de cada variable por sexo (diagonal), la forma de la relación entre pares de variables, por ejemplo, si la bilirrubina alta se asocia con albúmina baja, y el coeficiente de correlación de cada par, separado por sexo (triángulo superior).</span>
+<span id="cb16-165"><a href="#cb16-165" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-166"><a href="#cb16-166" aria-hidden="true" tabindex="-1"></a>También podemos usar <span class="in">`ggcorr()`</span> para una vista más compacta, solo de correlaciones, sobre el bloque completo de variables numéricas:</span>
+<span id="cb16-167"><a href="#cb16-167" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-170"><a href="#cb16-170" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb16-171"><a href="#cb16-171" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: ggally-corr</span></span>
+<span id="cb16-172"><a href="#cb16-172" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-width: 7</span></span>
+<span id="cb16-173"><a href="#cb16-173" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-height: 6</span></span>
+<span id="cb16-174"><a href="#cb16-174" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-175"><a href="#cb16-175" aria-hidden="true" tabindex="-1"></a><span class="fu">ggcorr</span>(</span>
+<span id="cb16-176"><a href="#cb16-176" aria-hidden="true" tabindex="-1"></a>  pbc[, vars_num], <span class="co"># Todas las variables numericas</span></span>
+<span id="cb16-177"><a href="#cb16-177" aria-hidden="true" tabindex="-1"></a>  <span class="at">label =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb16-178"><a href="#cb16-178" aria-hidden="true" tabindex="-1"></a>  <span class="at">label_round =</span> <span class="dv">2</span>,</span>
+<span id="cb16-179"><a href="#cb16-179" aria-hidden="true" tabindex="-1"></a>  <span class="at">label_size =</span> <span class="dv">3</span>,</span>
+<span id="cb16-180"><a href="#cb16-180" aria-hidden="true" tabindex="-1"></a>  <span class="at">hjust =</span> <span class="fl">0.8</span>,</span>
+<span id="cb16-181"><a href="#cb16-181" aria-hidden="true" tabindex="-1"></a>  <span class="at">layout.exp =</span> <span class="dv">2</span></span>
+<span id="cb16-182"><a href="#cb16-182" aria-hidden="true" tabindex="-1"></a>) <span class="sc">+</span></span>
+<span id="cb16-183"><a href="#cb16-183" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"ggcorr(): correlación entre marcadores clínicos (PBC)"</span>)</span>
+<span id="cb16-184"><a href="#cb16-184" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb16-185"><a href="#cb16-185" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-186"><a href="#cb16-186" aria-hidden="true" tabindex="-1"></a><span class="fu">### ¿Cómo apoya el EDA?</span></span>
+<span id="cb16-187"><a href="#cb16-187" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-188"><a href="#cb16-188" aria-hidden="true" tabindex="-1"></a><span class="in">`GGally`</span> resuelve el problema de la exploración **multivariada simultánea**: en vez de generar decenas de gráficos individuales, se obtiene en una sola llamada una vista que permite (1) comparar distribuciones entre grupos clínicos, (2) detectar relaciones no lineales u outliers en los diagramas de dispersión, y (3) tener una primera estimación de qué variables están correlacionadas.</span>
+<span id="cb16-189"><a href="#cb16-189" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-190"><a href="#cb16-190" aria-hidden="true" tabindex="-1"></a><span class="fu">## ggcorrplot</span></span>
+<span id="cb16-191"><a href="#cb16-191" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-192"><a href="#cb16-192" aria-hidden="true" tabindex="-1"></a><span class="fu">### ¿Qué problema resuelve?</span></span>
+<span id="cb16-193"><a href="#cb16-193" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-194"><a href="#cb16-194" aria-hidden="true" tabindex="-1"></a>::: {.callout-note}</span>
+<span id="cb16-195"><a href="#cb16-195" aria-hidden="true" tabindex="-1"></a><span class="fu">## Pregunta clínica motivadora</span></span>
+<span id="cb16-196"><a href="#cb16-196" aria-hidden="true" tabindex="-1"></a>Con diez variables clínicas numéricas, la matriz de correlación tiene 45 pares posibles. ¿Cuáles correlaciones son lo bastante fuertes *y* estadísticamente significativas como para preocuparnos por colinealidad antes de ajustar un modelo de regresión sobre el desenlace del paciente?</span>
+<span id="cb16-197"><a href="#cb16-197" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb16-198"><a href="#cb16-198" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-199"><a href="#cb16-199" aria-hidden="true" tabindex="-1"></a>Mientras que <span class="in">`ggcorr()`</span> (de GGally) da una vista rápida, <span class="in">`ggcorrplot`</span> está diseñado específicamente para producir mapas de calor de correlación de calidad de publicación, con la opción de **superponer significancia estadística** y de **reordenar las variables por clustering jerárquico**, lo que agrupa visualmente a los marcadores que se comportan de forma similar.</span>
+<span id="cb16-200"><a href="#cb16-200" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-201"><a href="#cb16-201" aria-hidden="true" tabindex="-1"></a><span class="fu">### Funcionamiento básico</span></span>
+<span id="cb16-202"><a href="#cb16-202" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-203"><a href="#cb16-203" aria-hidden="true" tabindex="-1"></a>El flujo típico son tres pasos:</span>
+<span id="cb16-204"><a href="#cb16-204" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-205"><a href="#cb16-205" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>Calcular la matriz de correlación con <span class="in">`cor()`</span> (usando <span class="in">`use = "pairwise.complete.obs"`</span> cuando hay datos faltantes, como en nuestro caso).</span>
+<span id="cb16-206"><a href="#cb16-206" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>Calcular la matriz de p-valores con <span class="in">`cor_pmat()`</span>, la función propia de <span class="in">`ggcorrplot`</span> para pruebas de significancia por pares.</span>
+<span id="cb16-207"><a href="#cb16-207" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>Graficar con <span class="in">`ggcorrplot()`</span>, cuyos argumentos principales son:</span>
+<span id="cb16-208"><a href="#cb16-208" aria-hidden="true" tabindex="-1"></a><span class="ss">   - </span><span class="in">`type`</span>: <span class="in">`"full"`</span>, <span class="in">`"lower"`</span> o <span class="in">`"upper"`</span> (mostrar la matriz completa o solo un triángulo, ya que es simétrica).</span>
+<span id="cb16-209"><a href="#cb16-209" aria-hidden="true" tabindex="-1"></a><span class="ss">   - </span><span class="in">`hc.order = TRUE`</span>: reordena las variables agrupando las más correlacionadas entre sí (clustering jerárquico).</span>
+<span id="cb16-210"><a href="#cb16-210" aria-hidden="true" tabindex="-1"></a><span class="ss">   - </span><span class="in">`lab = TRUE`</span>: imprime el valor de correlación dentro de cada celda.</span>
+<span id="cb16-211"><a href="#cb16-211" aria-hidden="true" tabindex="-1"></a><span class="ss">   - </span><span class="in">`p.mat`</span> e <span class="in">`insig`</span>: permiten ocultar (<span class="in">`insig = "blank"`</span>) o marcar con una <span class="in">`x`</span> (<span class="in">`insig = "pch"`</span>) las correlaciones que no son estadísticamente significativas.</span>
+<span id="cb16-212"><a href="#cb16-212" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-213"><a href="#cb16-213" aria-hidden="true" tabindex="-1"></a><span class="fu">### Ejemplo ggcorrplot</span></span>
+<span id="cb16-214"><a href="#cb16-214" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-217"><a href="#cb16-217" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb16-218"><a href="#cb16-218" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: ggcorrplot-ejemplo</span></span>
+<span id="cb16-219"><a href="#cb16-219" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-width: 7</span></span>
+<span id="cb16-220"><a href="#cb16-220" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-height: 6.5</span></span>
+<span id="cb16-221"><a href="#cb16-221" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-222"><a href="#cb16-222" aria-hidden="true" tabindex="-1"></a>datos_num <span class="ot">&lt;-</span> pbc[, vars_num] <span class="co"># solo datos numéricos</span></span>
+<span id="cb16-223"><a href="#cb16-223" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-224"><a href="#cb16-224" aria-hidden="true" tabindex="-1"></a>corr_mat <span class="ot">&lt;-</span> <span class="fu">round</span>(<span class="fu">cor</span>(datos_num, <span class="at">use =</span> <span class="st">"pairwise.complete.obs"</span>), <span class="dv">2</span>) <span class="co"># Obtener correlaciones solo datos completos. </span></span>
+<span id="cb16-225"><a href="#cb16-225" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-226"><a href="#cb16-226" aria-hidden="true" tabindex="-1"></a><span class="co"># use: an optional character string giving a method for computing covariances in the presence of missing values. This must be (an abbreviation of) one of the strings "everything", "all.obs", "complete.obs", "na.or.complete", or "pairwise.complete.obs".</span></span>
+<span id="cb16-227"><a href="#cb16-227" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-228"><a href="#cb16-228" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-229"><a href="#cb16-229" aria-hidden="true" tabindex="-1"></a>p_mat    <span class="ot">&lt;-</span> <span class="fu">cor_pmat</span>(datos_num) <span class="co"># Obtener los valores de p para el plot</span></span>
+<span id="cb16-230"><a href="#cb16-230" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-231"><a href="#cb16-231" aria-hidden="true" tabindex="-1"></a><span class="fu">ggcorrplot</span>(</span>
+<span id="cb16-232"><a href="#cb16-232" aria-hidden="true" tabindex="-1"></a>  corr_mat,</span>
+<span id="cb16-233"><a href="#cb16-233" aria-hidden="true" tabindex="-1"></a>  <span class="at">hc.order =</span> <span class="cn">TRUE</span>, <span class="co"># Ordena los correlaciones por herarquia. Hace un clúster jerárquico</span></span>
+<span id="cb16-234"><a href="#cb16-234" aria-hidden="true" tabindex="-1"></a>  <span class="at">type =</span> <span class="st">"lower"</span>, <span class="co"># solo la parte de abajo de la gráfica</span></span>
+<span id="cb16-235"><a href="#cb16-235" aria-hidden="true" tabindex="-1"></a>  <span class="at">lab =</span> <span class="cn">TRUE</span>, <span class="co"># Equitas</span></span>
+<span id="cb16-236"><a href="#cb16-236" aria-hidden="true" tabindex="-1"></a>  <span class="at">lab_size =</span> <span class="fl">2.8</span>, <span class="co"># tamaño de los labels</span></span>
+<span id="cb16-237"><a href="#cb16-237" aria-hidden="true" tabindex="-1"></a>  <span class="at">p.mat =</span> p_mat, <span class="co"># Matriz de con los valores de p</span></span>
+<span id="cb16-238"><a href="#cb16-238" aria-hidden="true" tabindex="-1"></a>  <span class="at">insig =</span> <span class="st">"blank"</span>, <span class="co"># los valores de p no sinficitatvos no se muestran </span></span>
+<span id="cb16-239"><a href="#cb16-239" aria-hidden="true" tabindex="-1"></a>  <span class="at">colors =</span> <span class="fu">c</span>(<span class="st">"#B2182B"</span>, <span class="st">"white"</span>, <span class="st">"#2166AC"</span>), <span class="co"># Puede cambiar los colores. </span></span>
+<span id="cb16-240"><a href="#cb16-240" aria-hidden="true" tabindex="-1"></a>  <span class="at">title =</span> <span class="st">"Correlación entre marcadores clínicos en cirrosis biliar primaria"</span>,</span>
+<span id="cb16-241"><a href="#cb16-241" aria-hidden="true" tabindex="-1"></a>  <span class="at">legend.title =</span> <span class="st">"r de Pearson"</span></span>
+<span id="cb16-242"><a href="#cb16-242" aria-hidden="true" tabindex="-1"></a>) <span class="sc">+</span></span>
+<span id="cb16-243"><a href="#cb16-243" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">11</span>))</span>
+<span id="cb16-244"><a href="#cb16-244" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb16-245"><a href="#cb16-245" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-246"><a href="#cb16-246" aria-hidden="true" tabindex="-1"></a>El reordenamiento (<span class="in">`hc.order = TRUE`</span>) agrupa visualmente, por ejemplo, a los marcadores de daño/colestasis hepática (bilirrubina, fosfatasa alcalina, cobre) cerca unos de otros si comparten un patrón de correlación similar, y las celdas en blanco señalan qué asociaciones **no** alcanzan significancia estadística — evitando interpretar como relevante una correlación débil que podría deberse al azar.</span>
+<span id="cb16-247"><a href="#cb16-247" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-248"><a href="#cb16-248" aria-hidden="true" tabindex="-1"></a><span class="fu">### ¿Cómo apoya el EDA?</span></span>
+<span id="cb16-249"><a href="#cb16-249" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-250"><a href="#cb16-250" aria-hidden="true" tabindex="-1"></a><span class="in">`ggcorrplot`</span> resuelve específicamente el problema de **priorizar y comunicar** relaciones entre variables numéricas: ayuda a detectar colinealidad antes de un modelo de regresión (dos predictores muy correlacionados aportan información redundante), y el ordenamiento jerárquico sugiere agrupaciones biológicas de variables que pueden guiar un análisis de componentes principales o de clústeres posterior.</span>
+<span id="cb16-251"><a href="#cb16-251" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-252"><a href="#cb16-252" aria-hidden="true" tabindex="-1"></a>Experimente y cambie algunos de los argumentos de la gráfica.</span>
+<span id="cb16-253"><a href="#cb16-253" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-254"><a href="#cb16-254" aria-hidden="true" tabindex="-1"></a><span class="fu">## DataExplorer</span></span>
+<span id="cb16-255"><a href="#cb16-255" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-256"><a href="#cb16-256" aria-hidden="true" tabindex="-1"></a><span class="fu">### ¿Qué problema resuelve?</span></span>
+<span id="cb16-257"><a href="#cb16-257" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-258"><a href="#cb16-258" aria-hidden="true" tabindex="-1"></a>::: {.callout-note}</span>
+<span id="cb16-259"><a href="#cb16-259" aria-hidden="true" tabindex="-1"></a><span class="fu">## Pregunta clínica motivadora</span></span>
+<span id="cb16-260"><a href="#cb16-260" aria-hidden="true" tabindex="-1"></a>Antes de decidir si imputar o excluir observaciones, ¿qué proporción de cada variable clínica está incompleta en esta cohorte, y esas ausencias están concentradas en subgrupos específicos de pacientes (por ejemplo, quienes no participaron en el ensayo aleatorizado)?</span>
+<span id="cb16-261"><a href="#cb16-261" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb16-262"><a href="#cb16-262" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-263"><a href="#cb16-263" aria-hidden="true" tabindex="-1"></a><span class="in">`DataExplorer`</span> automatiza la primera pasada de EDA: en lugar de escribir manualmente un <span class="in">`summary()`</span>, un conteo de <span class="in">`NA`</span> por columna y varios histogramas, genera ese diagnóstico completo con una o dos líneas de código — algo especialmente valioso cuando se reciben datos clínicos nuevos y se necesita un diagnóstico de calidad de datos rápido y sistemático.</span>
+<span id="cb16-264"><a href="#cb16-264" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-265"><a href="#cb16-265" aria-hidden="true" tabindex="-1"></a><span class="fu">### Funcionamiento básico</span></span>
+<span id="cb16-266"><a href="#cb16-266" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-267"><a href="#cb16-267" aria-hidden="true" tabindex="-1"></a>Las funciones más usadas se dividen en dos familias:</span>
+<span id="cb16-268"><a href="#cb16-268" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-269"><a href="#cb16-269" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Diagnóstico de estructura y calidad**: <span class="in">`introduce()`</span> (tabla resumen: número de filas, columnas, variables continuas/discretas, observaciones y celdas faltantes, memoria usada) y su versión gráfica <span class="in">`plot_intro()`</span>; <span class="in">`plot_missing()`</span> (proporción de valores faltantes por variable, con un semáforo de severidad).</span>
+<span id="cb16-270"><a href="#cb16-270" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Distribuciones y relaciones**: <span class="in">`plot_histogram()`</span> y <span class="in">`plot_density()`</span> para variables continuas, <span class="in">`plot_bar()`</span> para variables categóricas/discretas, y <span class="in">`plot_correlation()`</span> para una matriz de correlación automática (incluye variables categóricas mediante codificación).</span>
+<span id="cb16-271"><a href="#cb16-271" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Reporte completo**: <span class="in">`create_report()`</span> genera un documento HTML con todo lo anterior en un solo llamado — el punto de partida ideal para cualquier dataset nuevo.</span>
+<span id="cb16-272"><a href="#cb16-272" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-273"><a href="#cb16-273" aria-hidden="true" tabindex="-1"></a><span class="fu">### Ejemplo `introduce`</span></span>
+<span id="cb16-274"><a href="#cb16-274" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-277"><a href="#cb16-277" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb16-278"><a href="#cb16-278" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: dataexplorer-intro</span></span>
+<span id="cb16-279"><a href="#cb16-279" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-280"><a href="#cb16-280" aria-hidden="true" tabindex="-1"></a><span class="fu">introduce</span>(pbc)</span>
+<span id="cb16-281"><a href="#cb16-281" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb16-282"><a href="#cb16-282" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-283"><a href="#cb16-283" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-284"><a href="#cb16-284" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-285"><a href="#cb16-285" aria-hidden="true" tabindex="-1"></a><span class="fu">### Ejemplo `plot_intro`</span></span>
+<span id="cb16-286"><a href="#cb16-286" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-289"><a href="#cb16-289" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb16-290"><a href="#cb16-290" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: dataexplorer-plot-intro</span></span>
+<span id="cb16-291"><a href="#cb16-291" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-width: 7</span></span>
+<span id="cb16-292"><a href="#cb16-292" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-height: 5</span></span>
+<span id="cb16-293"><a href="#cb16-293" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-294"><a href="#cb16-294" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_intro</span>(pbc, <span class="at">title =</span> <span class="st">"Panorama general del dataset PBC"</span>)</span>
+<span id="cb16-295"><a href="#cb16-295" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb16-296"><a href="#cb16-296" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-297"><a href="#cb16-297" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-298"><a href="#cb16-298" aria-hidden="true" tabindex="-1"></a><span class="fu">### Ejemplo data explorer otras funciones</span></span>
+<span id="cb16-299"><a href="#cb16-299" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-302"><a href="#cb16-302" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb16-303"><a href="#cb16-303" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: dataexplorer-missing</span></span>
+<span id="cb16-304"><a href="#cb16-304" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-width: 7</span></span>
+<span id="cb16-305"><a href="#cb16-305" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-height: 5</span></span>
+<span id="cb16-306"><a href="#cb16-306" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-307"><a href="#cb16-307" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_missing</span>(pbc, <span class="at">title =</span> <span class="st">"Valores faltantes por variable clínica (PBC)"</span>)</span>
+<span id="cb16-308"><a href="#cb16-308" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb16-309"><a href="#cb16-309" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-310"><a href="#cb16-310" aria-hidden="true" tabindex="-1"></a><span class="in">`plot_missing()`</span> muestra de inmediato que variables como <span class="in">`chol`</span>, <span class="in">`copper`</span>, <span class="in">`trig`</span> y <span class="in">`trt`</span> tienen una proporción notable de datos faltantes (<span class="in">`trt`</span> es NA precisamente en los pacientes que no fueron parte del ensayo aleatorizado, sino de un registro observacional adicional).</span>
+<span id="cb16-311"><a href="#cb16-311" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-314"><a href="#cb16-314" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb16-315"><a href="#cb16-315" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: dataexplorer-histogramas</span></span>
+<span id="cb16-316"><a href="#cb16-316" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-width: 8</span></span>
+<span id="cb16-317"><a href="#cb16-317" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-height: 6</span></span>
+<span id="cb16-318"><a href="#cb16-318" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-319"><a href="#cb16-319" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_histogram</span>(pbc[, vars_num], <span class="at">title =</span> <span class="st">"Distribución de marcadores clínicos continuos"</span>)</span>
+<span id="cb16-320"><a href="#cb16-320" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb16-321"><a href="#cb16-321" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-324"><a href="#cb16-324" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb16-325"><a href="#cb16-325" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: dataexplorer-barras</span></span>
+<span id="cb16-326"><a href="#cb16-326" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-width: 7</span></span>
+<span id="cb16-327"><a href="#cb16-327" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-height: 4</span></span>
+<span id="cb16-328"><a href="#cb16-328" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-329"><a href="#cb16-329" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_bar</span>(pbc_cat[, <span class="fu">c</span>(<span class="st">"sex"</span>, <span class="st">"trt"</span>, <span class="st">"stage"</span>)], <span class="at">title =</span> <span class="st">"Variables categóricas de la cohorte PBC"</span>)</span>
+<span id="cb16-330"><a href="#cb16-330" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb16-331"><a href="#cb16-331" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-334"><a href="#cb16-334" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb16-335"><a href="#cb16-335" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: dataexplorer-correlacion</span></span>
+<span id="cb16-336"><a href="#cb16-336" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-width: 7</span></span>
+<span id="cb16-337"><a href="#cb16-337" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-height: 6</span></span>
+<span id="cb16-338"><a href="#cb16-338" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-339"><a href="#cb16-339" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_correlation</span>(pbc[, vars_num], <span class="at">type =</span> <span class="st">"continuous"</span>,</span>
+<span id="cb16-340"><a href="#cb16-340" aria-hidden="true" tabindex="-1"></a>                  <span class="at">title =</span> <span class="st">"Correlación automática (DataExplorer)"</span>)</span>
+<span id="cb16-341"><a href="#cb16-341" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb16-342"><a href="#cb16-342" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-343"><a href="#cb16-343" aria-hidden="true" tabindex="-1"></a>Finalmente, para un diagnóstico completo en un solo paso (no se ejecuta aquí para no generar un archivo adicional, pero es la función que normalmente usarías primero al recibir un dataset nuevo):</span>
+<span id="cb16-344"><a href="#cb16-344" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-347"><a href="#cb16-347" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb16-348"><a href="#cb16-348" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: dataexplorer-reporte</span></span>
+<span id="cb16-349"><a href="#cb16-349" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
+<span id="cb16-350"><a href="#cb16-350" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-351"><a href="#cb16-351" aria-hidden="true" tabindex="-1"></a><span class="fu">create_report</span>(pbc, <span class="at">output_file =</span> <span class="st">"reporte_eda_pbc.html"</span>)</span>
+<span id="cb16-352"><a href="#cb16-352" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb16-353"><a href="#cb16-353" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-354"><a href="#cb16-354" aria-hidden="true" tabindex="-1"></a><span class="fu">### ¿Cómo apoya el EDA?</span></span>
+<span id="cb16-355"><a href="#cb16-355" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-356"><a href="#cb16-356" aria-hidden="true" tabindex="-1"></a><span class="in">`DataExplorer`</span> resuelve el problema de la **cobertura y velocidad**: garantiza que ninguna variable se quede sin revisar (algo fácil de omitir cuando se explora "a mano"), y en particular hace visible de inmediato el patrón de datos faltantes — información indispensable en investigación clínica, donde decidir entre imputar, excluir o analizar los faltantes como su propia categoría puede cambiar las conclusiones del estudio.</span>
+<span id="cb16-357"><a href="#cb16-357" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-358"><a href="#cb16-358" aria-hidden="true" tabindex="-1"></a><span class="fu">## ¿Cómo se complementan las tres librerías?</span></span>
+<span id="cb16-359"><a href="#cb16-359" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-360"><a href="#cb16-360" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Librería <span class="pp">|</span> Pregunta que responde mejor <span class="pp">|</span> Momento típico de uso <span class="pp">|</span></span>
+<span id="cb16-361"><a href="#cb16-361" aria-hidden="true" tabindex="-1"></a><span class="pp">|---|---|---|</span></span>
+<span id="cb16-362"><a href="#cb16-362" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`GGally`</span> <span class="pp">|</span> ¿Cómo se relacionan varias variables entre sí y entre grupos clínicos, a la vez? <span class="pp">|</span> Exploración multivariada dirigida, tras tener hipótesis de qué variables comparar <span class="pp">|</span></span>
+<span id="cb16-363"><a href="#cb16-363" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`ggcorrplot`</span> <span class="pp">|</span> ¿Qué correlaciones son fuertes *y* significativas, y qué variables se agrupan? <span class="pp">|</span> Antes de modelar, para evaluar colinealidad y priorizar variables <span class="pp">|</span></span>
+<span id="cb16-364"><a href="#cb16-364" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`DataExplorer`</span> <span class="pp">|</span> ¿Está completo y es confiable el dataset? ¿Cómo se ve cada variable, en general? <span class="pp">|</span> Primer contacto con un dataset nuevo, diagnóstico de calidad de datos <span class="pp">|</span></span>
+<span id="cb16-365"><a href="#cb16-365" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-366"><a href="#cb16-366" aria-hidden="true" tabindex="-1"></a>En la práctica, un flujo de trabajo razonable es exactamente el orden en que las presentamos aquí: usar <span class="in">`DataExplorer`</span> para un diagnóstico inicial de calidad y estructura, <span class="in">`ggcorrplot`</span> para decidir qué variables numéricas son redundantes o interesantes, y <span class="in">`GGally`</span> para profundizar visualmente en las relaciones entre el subconjunto de variables que resultó más relevante.</span>
+<span id="cb16-367"><a href="#cb16-367" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-368"><a href="#cb16-368" aria-hidden="true" tabindex="-1"></a><span class="fu">## Preguntas para practicar</span></span>
+<span id="cb16-369"><a href="#cb16-369" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-370"><a href="#cb16-370" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>Usando <span class="in">`ggpairs()`</span>, compara las variables <span class="in">`bili`</span>, <span class="in">`chol`</span> y <span class="in">`albumin`</span>, coloreando por la variable <span class="in">`estado`</span> (censurado / trasplante / fallecido). ¿El patrón de bilirrubina y albúmina difiere entre pacientes que fallecieron y los censurados?</span>
+<span id="cb16-371"><a href="#cb16-371" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>Repite la matriz de correlación de <span class="in">`ggcorrplot`</span> pero solo con los pacientes que sí tienen <span class="in">`trt`</span> registrado (es decir, los del ensayo aleatorizado). ¿Cambian las correlaciones respecto a usar la cohorte completa?</span>
+<span id="cb16-372"><a href="#cb16-372" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>Con <span class="in">`plot_bar()`</span> de <span class="in">`DataExplorer`</span>, examina la distribución de <span class="in">`stage`</span> (estadio histológico). ¿Hay algún estadio con muy pocos pacientes que podría ser problemático para un análisis por subgrupos?</span>
+<span id="cb16-373"><a href="#cb16-373" aria-hidden="true" tabindex="-1"></a><span class="ss">4. </span>Genera el reporte completo con <span class="in">`create_report(pbc)`</span> y localiza, dentro del reporte HTML, la sección de valores faltantes. ¿Coincide con lo que observaste en <span class="in">`plot_missing()`</span>?</span>
+<span id="cb16-374"><a href="#cb16-374" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-375"><a href="#cb16-375" aria-hidden="true" tabindex="-1"></a><span class="fu">## Referencias</span></span>
+<span id="cb16-376"><a href="#cb16-376" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-377"><a href="#cb16-377" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Fleming TR, Harrington DP. *Counting Processes and Survival Analysis*. Wiley, 1991 (fuente original del dataset <span class="in">`pbc`</span>).</span>
+<span id="cb16-378"><a href="#cb16-378" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Therneau T, Grambsch P. *Modeling Survival Data: Extending the Cox Model*. Springer, 2000.</span>
+<span id="cb16-379"><a href="#cb16-379" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Schloerke B, et al. <span class="co">[</span><span class="ot">GGally: Extension to 'ggplot2'</span><span class="co">](https://ggobi.github.io/ggally/)</span>. CRAN.</span>
+<span id="cb16-380"><a href="#cb16-380" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Kassambara A. <span class="co">[</span><span class="ot">ggcorrplot: Visualization of a Correlation Matrix using 'ggplot2'</span><span class="co">](https://cran.r-project.org/package=ggcorrplot)</span>. CRAN.</span>
+<span id="cb16-381"><a href="#cb16-381" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Cui B. <span class="co">[</span><span class="ot">DataExplorer: Automate Data Exploration and Treatment</span><span class="co">](https://boxuancui.github.io/DataExplorer/)</span>. CRAN.</span>
+</code></pre></div><button title="Copiar al portapapeles" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
+</div></div></div></div></div>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+<p>© 2026 Edsaúl E. Pérez-Guerrero</p>
+</div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    </div>
+    <div class="nav-footer-right">
+<p>Construido con <a href="https://quarto.org/">Quarto</a>; R version 4.5.1</p>
+</div>
+  </div>
+</footer>
+
+
+
+
+</body></html>

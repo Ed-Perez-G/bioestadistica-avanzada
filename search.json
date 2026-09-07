@@ -119,6 +119,209 @@
     "text": "Recursos\n\nBioestadística en R para ciencias de la salud. Capítulo 10. Visualización de datos. https://www.cucs.udg.mx/libros/lectura_cucs.php?libro=Bioestadistica_enR_digital#book/144\nWickham, Navarro & Pedersen, ggplot2: Elegant Graphics for Data Analysis — https://ggplot2-book.org/\nWickham, Çetinkaya-Rundel & Grolemund, R for Data Science, capítulo de visualización — https://r4ds.hadley.nz/\nHoja de referencia de ggplot2 (Posit) — https://posit.co/resources/cheatsheets/\n?Pima.tr2 en R, para la documentación del conjunto de datos"
   },
   {
+    "objectID": "temas/tema-02/tema-02-eda-datos-biomedicos.html#objetivo-de-la-sesión",
+    "href": "temas/tema-02/tema-02-eda-datos-biomedicos.html#objetivo-de-la-sesión",
+    "title": "Análisis exploratorio de datos (EDA). Generalidades",
+    "section": "Objetivo de la sesión",
+    "text": "Objetivo de la sesión\nAl finalizar esta sesión podrás explorar un conjunto de datos biomédico de forma sistemática, describirlo con estadística descriptiva y gráficas, y formular hipótesis que después se pondrán a prueba formalmente."
+  },
+  {
+    "objectID": "temas/tema-02/tema-02-eda-datos-biomedicos.html#etapas-del-análisis-estadístico",
+    "href": "temas/tema-02/tema-02-eda-datos-biomedicos.html#etapas-del-análisis-estadístico",
+    "title": "Análisis exploratorio de datos (EDA). Generalidades",
+    "section": "Etapas del análisis estadístico",
+    "text": "Etapas del análisis estadístico\nUn análisis estadístico completo pasa por varias etapas, no solo por las pruebas de hipótesis:\n\nDefinición de los objetivos — ¿qué pregunta busco responder?\nDiseño del estudio — transversal, cohorte, ensayo clínico…\nRecolección de datos\nExploración de datos ← estamos aquí\nEstadística inferencial — pruebas de hipótesis, intervalos de confianza\nInterpretación de resultados\nConclusiones\n\n\nEl diseño del estudio, la recolección y el análisis no se pueden separar: cada etapa condiciona a la siguiente."
+  },
+  {
+    "objectID": "temas/tema-02/tema-02-eda-datos-biomedicos.html#etapas-enfocándonos-en-exploración-de-datos",
+    "href": "temas/tema-02/tema-02-eda-datos-biomedicos.html#etapas-enfocándonos-en-exploración-de-datos",
+    "title": "Análisis exploratorio de datos (EDA). Generalidades",
+    "section": "Etapas: enfocándonos en “Exploración de datos”",
+    "text": "Etapas: enfocándonos en “Exploración de datos”\nLa exploración de datos ocurre después de recolectar los datos y antes de las pruebas de hipótesis. Incluye cuatro tareas:\n\nVisualización de datos — es más fácil ver un patrón en una gráfica que leerlo en una tabla.\nEstadística descriptiva — resume y presenta la información contenida en los datos.\nIdentificar datos atípicos y errores — ¿la edad de un paciente es 150 años?\nFormulación de hipótesis — entender los datos permite generar hipótesis nuevas, además de la pregunta original.\n\n\n“El objetivo principal del análisis exploratorio de datos es conocer mis datos. No puede hacer un análisis estadístico sin conocer sus datos.”"
+  },
+  {
+    "objectID": "temas/tema-02/tema-02-eda-datos-biomedicos.html#qué-es-un-eda",
+    "href": "temas/tema-02/tema-02-eda-datos-biomedicos.html#qué-es-un-eda",
+    "title": "Análisis exploratorio de datos (EDA). Generalidades",
+    "section": "¿Qué es un EDA?",
+    "text": "¿Qué es un EDA?\nExploratory Data Analysis (EDA): examinar los datos para conocer su distribución, detectar atípicos y anomalías, y así dirigir las pruebas de hipótesis específicas.\n\nPropuesto por John Tukey (1977), se ha vuelto una metodología estándar para analizar un conjunto de datos.\nSegún Howard Seltman (Carnegie Mellon University):\n\n\n“Cualquier método de observar los datos que no incluya modelamiento estadístico formal ni inferencia cae bajo el término análisis exploratorio de datos.”\n\n\nEs un paso temprano, posterior a la recolección y el preprocesamiento de datos: se visualiza, grafica y manipula la información sin hacer supuestos todavía.\nLa mayoría de las técnicas de EDA son gráficas — por naturaleza, explorar es más fácil visualizando."
+  },
+  {
+    "objectID": "temas/tema-02/tema-02-eda-datos-biomedicos.html#objetivos-del-eda",
+    "href": "temas/tema-02/tema-02-eda-datos-biomedicos.html#objetivos-del-eda",
+    "title": "Análisis exploratorio de datos (EDA). Generalidades",
+    "section": "Objetivos del EDA",
+    "text": "Objetivos del EDA\n\nMaximizar el entendimiento de la base de datos y su estructura.\nVisualizar relaciones potenciales (dirección y magnitud) entre variables de exposición y de desenlace.\nDetectar valores atípicos y anomalías.\nDesarrollar modelos parsimoniosos (con las menos variables posibles) o preseleccionar variables apropiadas.\nExtraer y crear variables clínicamente relevantes.\n\nLas técnicas de EDA se pueden clasificar en:\n\nGráficas o no gráficas.\nUnivariadas (una sola variable) o multivariadas (varias variables, con o sin desenlace)."
+  },
+  {
+    "objectID": "temas/tema-02/tema-02-eda-datos-biomedicos.html#por-qué-es-importante-en-datos-biomédicos",
+    "href": "temas/tema-02/tema-02-eda-datos-biomedicos.html#por-qué-es-importante-en-datos-biomédicos",
+    "title": "Análisis exploratorio de datos (EDA). Generalidades",
+    "section": "¿Por qué es importante en datos biomédicos?",
+    "text": "¿Por qué es importante en datos biomédicos?\n\nLos datos clínicos y de investigación rara vez llegan limpios: capturas erróneas, unidades inconsistentes, valores imposibles.\nEjemplo: identificar que la edad de un paciente con diabetes mellitus es de 150 años.\nEn relación a modelos: No explorar antes de modelar, se corre el riesgo de:\n\nAjustar un modelo con datos erróneos (“garbage in, garbage out”).\nAplicar una prueba que asume normalidad a una variable muy asimétrica.\nPasar por alto una relación importante entre variables.\n\nEl EDA no reemplaza la inferencia estadística: la precede y la orienta."
+  },
+  {
+    "objectID": "temas/tema-02/tema-02-eda-datos-biomedicos.html#ejemplo-de-un-eda",
+    "href": "temas/tema-02/tema-02-eda-datos-biomedicos.html#ejemplo-de-un-eda",
+    "title": "Análisis exploratorio de datos (EDA). Generalidades",
+    "section": "Ejemplo de un EDA",
+    "text": "Ejemplo de un EDA\npima.tr2 y melanoma\nBases de data de la librería MASS:\n\npima.tr2: “A population of women who were at least 21 years old, of Pima Indian heritage and living near Phoenix, Arizona, was tested for diabetes according to World Health Organization criteria. The data were collected by the US National Institute of Diabetes and Digestive and Kidney Diseases. We used the 532 complete records after dropping the (mainly missing) data on serum insulin.”\n\npima: 200 mujeres Pima; type indica diagnóstico de diabetes (WHO).\n\nMelanoma: “The Melanoma data frame has data on 205 patients in Denmark with malignant melanoma”\n\nmelanoma: 205 pacientes con melanoma maligno; thickness es el grosor tumoral (mm)."
+  },
+  {
+    "objectID": "temas/tema-02/tema-02-eda-datos-biomedicos.html#ejemplo-de-un-eda-1",
+    "href": "temas/tema-02/tema-02-eda-datos-biomedicos.html#ejemplo-de-un-eda-1",
+    "title": "Análisis exploratorio de datos (EDA). Generalidades",
+    "section": "Ejemplo de un EDA",
+    "text": "Ejemplo de un EDA\npima.tr2 y melanoma\n\nlibrary(tidyverse)\nlibrary(ggrain)\n\ndata(Pima.tr, package = \"MASS\")\ndata(Melanoma, package = \"MASS\")\n\npima &lt;- as_tibble(Pima.tr)\n\nmelanoma &lt;- as_tibble(Melanoma) %&gt;%\n  mutate(\n    ulcer_f  = factor(ulcer, levels = c(0, 1), labels = c(\"No\", \"Sí\")),\n    status_f = factor(status, levels = c(1, 2, 3),\n                       labels = c(\"Murió de melanoma\", \"Vivo\", \"Murió otra causa\"))\n  )"
+  },
+  {
+    "objectID": "temas/tema-02/tema-02-eda-datos-biomedicos.html#técnicas-no-gráficas-describir-y-detectar-atípicos",
+    "href": "temas/tema-02/tema-02-eda-datos-biomedicos.html#técnicas-no-gráficas-describir-y-detectar-atípicos",
+    "title": "Análisis exploratorio de datos (EDA). Generalidades",
+    "section": "Técnicas no gráficas: describir y detectar atípicos",
+    "text": "Técnicas no gráficas: describir y detectar atípicos\n\nTendencia central: media, mediana, moda. Dispersión: varianza, desviación estándar (sd), rango intercuartílico (IQR).\nRegla práctica: distribución simétrica y N &gt; 30 → reporta media ± DE. Distribución asimétrica, N &lt; 30 o evidencia de atípicos → reporta mediana ± RIC (más robustas).\nUn valor fuera de 1.5 × RIC por encima de Q3 o por debajo de Q1 se considera un atípico (regla de Tukey).\nPara variables categóricas: tabulación — conteo y frecuencia por categoría."
+  },
+  {
+    "objectID": "temas/tema-02/tema-02-eda-datos-biomedicos.html#técnicas-no-gráficas-describir-y-detectar-atípicos-1",
+    "href": "temas/tema-02/tema-02-eda-datos-biomedicos.html#técnicas-no-gráficas-describir-y-detectar-atípicos-1",
+    "title": "Análisis exploratorio de datos (EDA). Generalidades",
+    "section": "Técnicas no gráficas: describir y detectar atípicos",
+    "text": "Técnicas no gráficas: describir y detectar atípicos\n\nsummary(pima)\n\n     npreg            glu              bp              skin      \n Min.   : 0.00   Min.   : 56.0   Min.   : 38.00   Min.   : 7.00  \n 1st Qu.: 1.00   1st Qu.:100.0   1st Qu.: 64.00   1st Qu.:20.75  \n Median : 2.00   Median :120.5   Median : 70.00   Median :29.00  \n Mean   : 3.57   Mean   :124.0   Mean   : 71.26   Mean   :29.21  \n 3rd Qu.: 6.00   3rd Qu.:144.0   3rd Qu.: 78.00   3rd Qu.:36.00  \n Max.   :14.00   Max.   :199.0   Max.   :110.00   Max.   :99.00  \n      bmi             ped              age         type    \n Min.   :18.20   Min.   :0.0850   Min.   :21.00   No :132  \n 1st Qu.:27.57   1st Qu.:0.2535   1st Qu.:23.00   Yes: 68  \n Median :32.80   Median :0.3725   Median :28.00            \n Mean   :32.31   Mean   :0.4608   Mean   :32.11            \n 3rd Qu.:36.50   3rd Qu.:0.6160   3rd Qu.:39.25            \n Max.   :47.90   Max.   :2.2880   Max.   :63.00"
+  },
+  {
+    "objectID": "temas/tema-02/tema-02-eda-datos-biomedicos.html#técnicas-gráficas-histograma-la-distribución-de-una-variable",
+    "href": "temas/tema-02/tema-02-eda-datos-biomedicos.html#técnicas-gráficas-histograma-la-distribución-de-una-variable",
+    "title": "Análisis exploratorio de datos (EDA). Generalidades",
+    "section": "Técnicas gráficas Histograma: la distribución de una variable",
+    "text": "Técnicas gráficas Histograma: la distribución de una variable\n\nEl histograma revela forma, modalidad, simetría y posibles atípicos.\nHipótesis: la distribución de glucosa difiere entre mujeres con y sin diabetes."
+  },
+  {
+    "objectID": "temas/tema-02/tema-02-eda-datos-biomedicos.html#técnicas-gráficas-histograma-la-distribución-de-una-variable-1",
+    "href": "temas/tema-02/tema-02-eda-datos-biomedicos.html#técnicas-gráficas-histograma-la-distribución-de-una-variable-1",
+    "title": "Análisis exploratorio de datos (EDA). Generalidades",
+    "section": "Técnicas gráficas Histograma: la distribución de una variable",
+    "text": "Técnicas gráficas Histograma: la distribución de una variable"
+  },
+  {
+    "objectID": "temas/tema-02/tema-02-eda-datos-biomedicos.html#técnicas-gráficas-boxplot-comparar-grupos-y-ver-atípicos",
+    "href": "temas/tema-02/tema-02-eda-datos-biomedicos.html#técnicas-gráficas-boxplot-comparar-grupos-y-ver-atípicos",
+    "title": "Análisis exploratorio de datos (EDA). Generalidades",
+    "section": "Técnicas gráficas Boxplot: comparar grupos y ver atípicos",
+    "text": "Técnicas gráficas Boxplot: comparar grupos y ver atípicos\n\nLa caja muestra Q1, mediana y Q3; los bigotes llegan hasta 1.5 × RIC; los puntos rojos son atípicos.\nHipótesis: el IMC medio (o mediano) es mayor en mujeres con diabetes."
+  },
+  {
+    "objectID": "temas/tema-02/tema-02-eda-datos-biomedicos.html#técnicas-gráficas-boxplot-comparar-grupos-y-ver-atípicos-1",
+    "href": "temas/tema-02/tema-02-eda-datos-biomedicos.html#técnicas-gráficas-boxplot-comparar-grupos-y-ver-atípicos-1",
+    "title": "Análisis exploratorio de datos (EDA). Generalidades",
+    "section": "Técnicas gráficas Boxplot: comparar grupos y ver atípicos",
+    "text": "Técnicas gráficas Boxplot: comparar grupos y ver atípicos"
+  },
+  {
+    "objectID": "temas/tema-02/tema-02-eda-datos-biomedicos.html#técnicas-gráficas-dispersión-relación-entre-dos-variables-continuas",
+    "href": "temas/tema-02/tema-02-eda-datos-biomedicos.html#técnicas-gráficas-dispersión-relación-entre-dos-variables-continuas",
+    "title": "Análisis exploratorio de datos (EDA). Generalidades",
+    "section": "Técnicas gráficas Dispersión: relación entre dos variables continuas",
+    "text": "Técnicas gráficas Dispersión: relación entre dos variables continuas\n\nUn scatterplot muestra dirección, forma y fuerza de una relación entre dos variables.\nHipótesis: a mayor IMC, mayor glucosa plasmática, en ambos grupos."
+  },
+  {
+    "objectID": "temas/tema-02/tema-02-eda-datos-biomedicos.html#técnicas-gráficas-dispersión-relación-entre-dos-variables-continuas-1",
+    "href": "temas/tema-02/tema-02-eda-datos-biomedicos.html#técnicas-gráficas-dispersión-relación-entre-dos-variables-continuas-1",
+    "title": "Análisis exploratorio de datos (EDA). Generalidades",
+    "section": "Técnicas gráficas Dispersión: relación entre dos variables continuas",
+    "text": "Técnicas gráficas Dispersión: relación entre dos variables continuas"
+  },
+  {
+    "objectID": "temas/tema-02/tema-02-eda-datos-biomedicos.html#transformación-de-datos-por-qué-transformar",
+    "href": "temas/tema-02/tema-02-eda-datos-biomedicos.html#transformación-de-datos-por-qué-transformar",
+    "title": "Análisis exploratorio de datos (EDA). Generalidades",
+    "section": "Transformación de datos: ¿por qué transformar?",
+    "text": "Transformación de datos: ¿por qué transformar?\nMuchas variables biomédicas (concentraciones, tiempos, tamaños de tumor) son asimétricas positivas, típicas de procesos multiplicativos.\n\nTransformación logarítmica (log(), log2()): comprime valores grandes, hace más simétrica una distribución sesgada.\nEstandarización (z = (x - media) / DE): expresa cada valor en desviaciones estándar respecto a la media; permite comparar variables en escalas distintas.\nDiscretización (cut()): convierte una variable continua en categorías (ej. grupos de edad).\n\n¿Cuándo transformar? Cuando se tiene evidencia de un sesgo marcado, o cuando un método (pruebas paramétricas, regresión) asume normalidad. En la transformación se trata de preservar información."
+  },
+  {
+    "objectID": "temas/tema-02/tema-02-eda-datos-biomedicos.html#transformación-aplicada-grosor-tumoral-en-melanoma",
+    "href": "temas/tema-02/tema-02-eda-datos-biomedicos.html#transformación-aplicada-grosor-tumoral-en-melanoma",
+    "title": "Análisis exploratorio de datos (EDA). Generalidades",
+    "section": "Transformación aplicada: grosor tumoral en Melanoma",
+    "text": "Transformación aplicada: grosor tumoral en Melanoma\n\nmelanoma |&gt; \n  ggplot2::ggplot(mapping = aes(x =1, y = thickness)) +\n  geom_rain(alpha =0.6, color= \"cyan4\", fill = \"cyan4\")+\n  theme_linedraw()+\n  labs(y = \"Tamaño del tumor no transformado\")"
+  },
+  {
+    "objectID": "temas/tema-02/tema-02-eda-datos-biomedicos.html#transformación-aplicada-grosor-tumoral-en-melanoma-1",
+    "href": "temas/tema-02/tema-02-eda-datos-biomedicos.html#transformación-aplicada-grosor-tumoral-en-melanoma-1",
+    "title": "Análisis exploratorio de datos (EDA). Generalidades",
+    "section": "Transformación aplicada: grosor tumoral en Melanoma",
+    "text": "Transformación aplicada: grosor tumoral en Melanoma\n\nmelanoma |&gt; \n  mutate(thickness = log(thickness)) |&gt; \n  ggplot2::ggplot(mapping = aes(x =1, y = thickness)) +\n  geom_rain(alpha =0.6, color= \"cyan4\", fill = \"cyan4\")+\n  theme_linedraw()+\n  labs(y = \"Tamaño del tumor con transformación log\")"
+  },
+  {
+    "objectID": "temas/tema-02/tema-02-eda-datos-biomedicos.html#transformación-aplicada-grosor-tumoral-en-melanoma-2",
+    "href": "temas/tema-02/tema-02-eda-datos-biomedicos.html#transformación-aplicada-grosor-tumoral-en-melanoma-2",
+    "title": "Análisis exploratorio de datos (EDA). Generalidades",
+    "section": "Transformación aplicada: grosor tumoral en Melanoma",
+    "text": "Transformación aplicada: grosor tumoral en Melanoma"
+  },
+  {
+    "objectID": "temas/tema-02/tema-02-eda-datos-biomedicos.html#transformación-aplicada-grosor-tumoral-en-melanoma-3",
+    "href": "temas/tema-02/tema-02-eda-datos-biomedicos.html#transformación-aplicada-grosor-tumoral-en-melanoma-3",
+    "title": "Análisis exploratorio de datos (EDA). Generalidades",
+    "section": "Transformación aplicada: grosor tumoral en Melanoma",
+    "text": "Transformación aplicada: grosor tumoral en Melanoma\n\nthickness está sesgada a la derecha; el log la vuelve más simétrica.\nHipótesis: el grosor tumoral (thickness) no sigue una distribución normal y conviene analizarlo en escala logarítmica."
+  },
+  {
+    "objectID": "temas/tema-02/tema-02-eda-datos-biomedicos.html#explorando-melanoma-ulceración-y-estatus",
+    "href": "temas/tema-02/tema-02-eda-datos-biomedicos.html#explorando-melanoma-ulceración-y-estatus",
+    "title": "Análisis exploratorio de datos (EDA). Generalidades",
+    "section": "Explorando Melanoma: ulceración y estatus",
+    "text": "Explorando Melanoma: ulceración y estatus"
+  },
+  {
+    "objectID": "temas/tema-02/tema-02-eda-datos-biomedicos.html#explorando-melanoma-ulceración-y-estatus-1",
+    "href": "temas/tema-02/tema-02-eda-datos-biomedicos.html#explorando-melanoma-ulceración-y-estatus-1",
+    "title": "Análisis exploratorio de datos (EDA). Generalidades",
+    "section": "Explorando Melanoma: ulceración y estatus",
+    "text": "Explorando Melanoma: ulceración y estatus\n\nHipótesis: los tumores ulcerados son más gruesos, y la mortalidad por melanoma es más frecuente cuando hay ulceración.\n\n\nmelanoma %&gt;% count(ulcer_f, status_f)\n\n# A tibble: 6 × 3\n  ulcer_f status_f              n\n  &lt;fct&gt;   &lt;fct&gt;             &lt;int&gt;\n1 No      Murió de melanoma    16\n2 No      Vivo                 92\n3 No      Murió otra causa      7\n4 Sí      Murió de melanoma    41\n5 Sí      Vivo                 42\n6 Sí      Murió otra causa      7"
+  },
+  {
+    "objectID": "temas/tema-02/tema-02-eda-datos-biomedicos.html#explorando-melanoma-ulceración-y-estatus-2",
+    "href": "temas/tema-02/tema-02-eda-datos-biomedicos.html#explorando-melanoma-ulceración-y-estatus-2",
+    "title": "Análisis exploratorio de datos (EDA). Generalidades",
+    "section": "Explorando Melanoma: ulceración y estatus",
+    "text": "Explorando Melanoma: ulceración y estatus\n\n\n\nHipótesis: los tumores ulcerados son más gruesos, y la mortalidad por melanoma es más frecuente cuando hay ulceración."
+  },
+  {
+    "objectID": "temas/tema-02/tema-02-eda-datos-biomedicos.html#formulación-de-hipótesis-a-partir-del-eda",
+    "href": "temas/tema-02/tema-02-eda-datos-biomedicos.html#formulación-de-hipótesis-a-partir-del-eda",
+    "title": "Análisis exploratorio de datos (EDA). Generalidades",
+    "section": "Formulación de hipótesis a partir del EDA",
+    "text": "Formulación de hipótesis a partir del EDA\nEl EDA de hoy sugiere varias hipótesis, que confirmaremos formalmente con pruebas de hipótesis en las próximas sesiones:\n\nLa distribución de glucosa difiere entre mujeres con y sin diabetes (Pima.tr).\nEl IMC es mayor, en promedio o mediana, en mujeres con diabetes.\nLa glucosa plasmática se asocia positivamente con el IMC.\nEl grosor tumoral (thickness) es asimétrico y requiere transformación logarítmica para su análisis.\nEl grosor tumoral es mayor en pacientes con ulceración presente.\nLa mortalidad por melanoma se asocia con la presencia de ulceración.\n\n(Nota: la exploración genera hipótesis; no las confirma, para eso sirve la estadística inferencial.)"
+  },
+  {
+    "objectID": "temas/tema-02/tema-02-eda-datos-biomedicos.html#lo-que-sigue-calidad-de-datos-y-datos-faltantes",
+    "href": "temas/tema-02/tema-02-eda-datos-biomedicos.html#lo-que-sigue-calidad-de-datos-y-datos-faltantes",
+    "title": "Análisis exploratorio de datos (EDA). Generalidades",
+    "section": "Lo que sigue: calidad de datos y datos faltantes",
+    "text": "Lo que sigue: calidad de datos y datos faltantes\nEl EDA también sirve para auditar la calidad de una base antes de analizarla:\n\nRangos imposibles, unidades inconsistentes, duplicados.\nDetección de valores faltantes (NA) y su patrón de ausencia.\nLa siguiente sesion veremos la primera parte relacionada los datos faltantes."
+  },
+  {
+    "objectID": "temas/tema-02/tema-02-eda-datos-biomedicos.html#resumen-técnicas-de-eda-usadas-hoy",
+    "href": "temas/tema-02/tema-02-eda-datos-biomedicos.html#resumen-técnicas-de-eda-usadas-hoy",
+    "title": "Análisis exploratorio de datos (EDA). Generalidades",
+    "section": "Resumen: técnicas de EDA usadas hoy",
+    "text": "Resumen: técnicas de EDA usadas hoy\n\n\n\n\n\n\n\n\nTécnica\nFunción en R\nQué revela\n\n\n\n\nEstadística descriptiva\nsummary(), mean(), median(), sd(), IQR()\nTendencia central y dispersión\n\n\nTabulación\ncount(), table()\nFrecuencias de categorías\n\n\nHistograma\ngeom_histogram()\nDistribución, forma, modalidad\n\n\nBoxplot\ngeom_boxplot()\nMediana, RIC, atípicos\n\n\nDispersión\ngeom_point() + geom_smooth()\nRelación entre dos variables\n\n\nTransformación\nlog(), estandarización, cut()\nCorrige asimetría, hace comparables las escalas"
+  },
+  {
+    "objectID": "temas/tema-02/tema-02-eda-datos-biomedicos.html#ejercicio",
+    "href": "temas/tema-02/tema-02-eda-datos-biomedicos.html#ejercicio",
+    "title": "Análisis exploratorio de datos (EDA). Generalidades",
+    "section": "Ejercicio",
+    "text": "Ejercicio\nUsando Pima.tr:\n\nDescribe age con estadística descriptiva (media/mediana, DE/RIC). ¿Qué regla aplica?\nConstruye un histograma de age y decide si conviene una transformación.\nConstruye un boxplot de age según type.\nFormula una hipótesis a partir de lo que observaste, para poner a prueba más adelante."
+  },
+  {
+    "objectID": "temas/tema-02/tema-02-eda-datos-biomedicos.html#recursos",
+    "href": "temas/tema-02/tema-02-eda-datos-biomedicos.html#recursos",
+    "title": "Análisis exploratorio de datos (EDA). Generalidades",
+    "section": "Recursos",
+    "text": "Recursos\n\nBioestadística en R para ciencias de la salud. https://www.cucs.udg.mx/libros/lectura_cucs.php?libro=Bioestadistica_enR_digital\nKomorowski M, Marshall DC, Salciccioli JD, Crutain Y. Exploratory Data Analysis, cap. 15, en: Secondary Analysis of Electronic Health Records (MIT Critical Data), 2016. https://doi.org/10.1007/978-3-319-43742-2_15\nWickham H, Grolemund G. R for Data Science — Exploratory Data Analysis. https://r4ds.had.co.nz/exploratory-data-analysis.html\nBravo HC. Data transformations, IntroDataSci notes. https://www.hcbravo.org/IntroDataSci/bookdown-notes/eda-data-transformations.html\nTema 2, parte 1: Visualización de datos con ggplot2\n?Pima.tr y ?Melanoma en R, para la documentación de los conjuntos de datos"
+  },
+  {
     "objectID": "temas/tema-01/tema-01-repaso-r-quarto.html",
     "href": "temas/tema-01/tema-01-repaso-r-quarto.html",
     "title": "Repaso de R y fundamentos de Quarto",
@@ -884,29 +1087,85 @@
   {
     "objectID": "temas/tema-02/index.html",
     "href": "temas/tema-02/index.html",
-    "title": "Tema 2: Visualización de datos con ggplot2",
+    "title": "Tema 2: EDA, calidad y datos faltantes I",
     "section": "",
-    "text": "Construir gráficas con ggplot2 partiendo de una versión mínima y agregando capas (color, facetas, etiquetas, tema) hasta llegar a una gráfica lista para un reporte, usando como base lo ya aprendido con dplyr y tidyr."
+    "text": "Evaluar la calidad de una base de datos e identificar distribuciones, valores atípicos y patrones de datos faltantes."
   },
   {
     "objectID": "temas/tema-02/index.html#objetivo",
     "href": "temas/tema-02/index.html#objetivo",
-    "title": "Tema 2: Visualización de datos con ggplot2",
+    "title": "Tema 2: EDA, calidad y datos faltantes I",
     "section": "",
-    "text": "Construir gráficas con ggplot2 partiendo de una versión mínima y agregando capas (color, facetas, etiquetas, tema) hasta llegar a una gráfica lista para un reporte, usando como base lo ya aprendido con dplyr y tidyr."
+    "text": "Evaluar la calidad de una base de datos e identificar distribuciones, valores atípicos y patrones de datos faltantes."
   },
   {
     "objectID": "temas/tema-02/index.html#contenidos",
     "href": "temas/tema-02/index.html#contenidos",
-    "title": "Tema 2: Visualización de datos con ggplot2",
+    "title": "Tema 2: EDA, calidad y datos faltantes I",
     "section": "Contenidos",
-    "text": "Contenidos\n\nLa gramática de gráficos de ggplot2.\nProgresión básico → pulido en dispersión, histograma, boxplot y barras.\nUso de un tema consistente (theme_set()) y guardado de gráficas (ggsave())."
+    "text": "Contenidos\n\nParte 1 — Visualización de datos con ggplot2: la gramática de gráficos, progresión básico → pulido.\nParte 2 — Análisis exploratorio de datos (EDA): etapas del análisis estadístico, qué es un EDA, objetivos e importancia, técnicas gráficas y no gráficas, transformación de datos y formulación de hipótesis.\nPróximamente — Auditoría de calidad y datos faltantes: patrones de ausencia, introducción a MCAR, MAR y MNAR."
   },
   {
     "objectID": "temas/tema-02/index.html#material-de-clase",
     "href": "temas/tema-02/index.html#material-de-clase",
-    "title": "Tema 2: Visualización de datos con ggplot2",
+    "title": "Tema 2: EDA, calidad y datos faltantes I",
     "section": "Material de clase",
-    "text": "Material de clase\nVer la presentación"
+    "text": "Material de clase\nParte 1 — Ver la presentación: ggplot2\nParte 2 — Ver la presentación: Generalidades EDA\nParte 3 — Ver documento: EDA con GGally, ggcorrplot y DataExplorer"
+  },
+  {
+    "objectID": "temas/tema-02/tema-02-eda_ggally_ggcorrplot_dataexplorer.html",
+    "href": "temas/tema-02/tema-02-eda_ggally_ggcorrplot_dataexplorer.html",
+    "title": "EDA: GGally, ggcorrplot y DataExplorer",
+    "section": "",
+    "text": "Los conceptos teóricos sobre el EDA se revisaron en la presentación EDA\nEn este documento revisaremos tres librerías de R sumamente útiles para realizar un EDA:\n\nGGally: extiende ggplot2 para construir matrices de gráficos (pares de variables) en una sola llamada.\nggcorrplot: visualiza matrices de correlación como mapas de calor, incorporando significancia estadística.\nDataExplorer: automatiza un primer reporte exploratorio completo (estructura, faltantes, distribuciones, correlaciones).\n\n\n\nPara ejemplificar el uso básico de esta librería utilizaremos la base de datos pbc. Este conjunto de datos que ya viene incluido en el paquete survival (sino lo tiene descárgelo). pbc proviene del ensayo clínico de la Clínica Mayo sobre cirrosis biliar primaria (Primary Biliary Cirrhosis) realizado entre 1974 y 1984, con 418 pacientes y variables como bilirrubina, albúmina, colesterol, cobre en orina, plaquetas y tiempo de protrombina.\n\n# Paquetes necesarios (ejecutar una sola vez si no están instalados):\n# install.packages(c(\"GGally\", \"ggcorrplot\", \"DataExplorer\"))\n\nlibrary(dplyr)          # manipulación de datos\nlibrary(GGally)         # matrices de gráficos exploratorios\nlibrary(ggcorrplot)     # mapas de calor de correlación\nlibrary(DataExplorer)   # EDA automatizado\nlibrary(survival)       # contiene el dataset pbc\n\ndata(pbc)               # llamar los datos\nglimpse(pbc)            # Un vistaso\n\nRows: 418\nColumns: 20\n$ id       &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18…\n$ time     &lt;int&gt; 400, 4500, 1012, 1925, 1504, 2503, 1832, 2466, 2400, 51, 3762…\n$ status   &lt;int&gt; 2, 0, 2, 2, 1, 2, 0, 2, 2, 2, 2, 2, 0, 2, 2, 0, 2, 2, 0, 2, 0…\n$ trt      &lt;int&gt; 1, 1, 1, 1, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 1, 2, 2, 1, 1, 2, 2…\n$ age      &lt;dbl&gt; 58.76523, 56.44627, 70.07255, 54.74059, 38.10541, 66.25873, 5…\n$ sex      &lt;fct&gt; f, f, m, f, f, f, f, f, f, f, f, f, f, m, f, f, f, f, f, f, m…\n$ ascites  &lt;int&gt; 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0…\n$ hepato   &lt;int&gt; 1, 1, 0, 1, 1, 1, 1, 0, 0, 0, 1, 0, 0, 1, 0, 0, 1, 1, 1, 1, 1…\n$ spiders  &lt;int&gt; 1, 1, 0, 1, 1, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1…\n$ edema    &lt;dbl&gt; 1.0, 0.0, 0.5, 0.5, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0…\n$ bili     &lt;dbl&gt; 14.5, 1.1, 1.4, 1.8, 3.4, 0.8, 1.0, 0.3, 3.2, 12.6, 1.4, 3.6,…\n$ chol     &lt;int&gt; 261, 302, 176, 244, 279, 248, 322, 280, 562, 200, 259, 236, 2…\n$ albumin  &lt;dbl&gt; 2.60, 4.14, 3.48, 2.54, 3.53, 3.98, 4.09, 4.00, 3.08, 2.74, 4…\n$ copper   &lt;int&gt; 156, 54, 210, 64, 143, 50, 52, 52, 79, 140, 46, 94, 40, 43, 1…\n$ alk.phos &lt;dbl&gt; 1718.0, 7394.8, 516.0, 6121.8, 671.0, 944.0, 824.0, 4651.2, 2…\n$ ast      &lt;dbl&gt; 137.95, 113.52, 96.10, 60.63, 113.15, 93.00, 60.45, 28.38, 14…\n$ trig     &lt;int&gt; 172, 88, 55, 92, 72, 63, 213, 189, 88, 143, 79, 95, 130, NA, …\n$ platelet &lt;int&gt; 190, 221, 151, 183, 136, NA, 204, 373, 251, 302, 258, 71, 244…\n$ protime  &lt;dbl&gt; 12.2, 10.6, 12.0, 10.3, 10.9, 11.0, 9.7, 11.0, 11.0, 11.5, 12…\n$ stage    &lt;int&gt; 4, 3, 4, 4, 3, 3, 3, 3, 2, 4, 4, 4, 3, 4, 3, 3, 4, 4, 3, 4, 4…\n\n\nTrabajaremos principalmente con un subconjunto de variables clínicas numéricas y dos variables categóricas:\n\nvars_num &lt;- c(\"age\", \"bili\", \"chol\", \"albumin\", \"copper\",\n              \"alk.phos\", \"ast\", \"trig\", \"platelet\", \"protime\") # Lista de variables para seleccionar y filtrar\n\npbc_cat &lt;- pbc %&gt;%\n  mutate(\n    trt   = factor(trt, labels = c(\"D-penicilamina\", \"Placebo\")),\n    stage = factor(stage),\n    sex   = factor(sex, labels = c(\"Hombre\", \"Mujer\")),\n    estado = factor(status, labels = c(\"Censurado\", \"Trasplante\", \"Fallecido\"))\n  )\n\n\nage = edad; bili = bilirrubina sérica (mg/dL); chol = colesterol (mg/dL); albumin = albúmina (g/dL); copper = cobre en orina (µg/día); alk.phos = fosfatasa alcalina (U/L); ast = aspartato aminotransferasa (U/mL); trig = triglicéridos (mg/dL); platelet = plaquetas (por mm³/1000); protime = tiempo de protrombina estandarizado (segundos)."
+  },
+  {
+    "objectID": "temas/tema-02/tema-02-eda_ggally_ggcorrplot_dataexplorer.html#introducción",
+    "href": "temas/tema-02/tema-02-eda_ggally_ggcorrplot_dataexplorer.html#introducción",
+    "title": "EDA: GGally, ggcorrplot y DataExplorer",
+    "section": "",
+    "text": "Los conceptos teóricos sobre el EDA se revisaron en la presentación EDA\nEn este documento revisaremos tres librerías de R sumamente útiles para realizar un EDA:\n\nGGally: extiende ggplot2 para construir matrices de gráficos (pares de variables) en una sola llamada.\nggcorrplot: visualiza matrices de correlación como mapas de calor, incorporando significancia estadística.\nDataExplorer: automatiza un primer reporte exploratorio completo (estructura, faltantes, distribuciones, correlaciones).\n\n\n\nPara ejemplificar el uso básico de esta librería utilizaremos la base de datos pbc. Este conjunto de datos que ya viene incluido en el paquete survival (sino lo tiene descárgelo). pbc proviene del ensayo clínico de la Clínica Mayo sobre cirrosis biliar primaria (Primary Biliary Cirrhosis) realizado entre 1974 y 1984, con 418 pacientes y variables como bilirrubina, albúmina, colesterol, cobre en orina, plaquetas y tiempo de protrombina.\n\n# Paquetes necesarios (ejecutar una sola vez si no están instalados):\n# install.packages(c(\"GGally\", \"ggcorrplot\", \"DataExplorer\"))\n\nlibrary(dplyr)          # manipulación de datos\nlibrary(GGally)         # matrices de gráficos exploratorios\nlibrary(ggcorrplot)     # mapas de calor de correlación\nlibrary(DataExplorer)   # EDA automatizado\nlibrary(survival)       # contiene el dataset pbc\n\ndata(pbc)               # llamar los datos\nglimpse(pbc)            # Un vistaso\n\nRows: 418\nColumns: 20\n$ id       &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18…\n$ time     &lt;int&gt; 400, 4500, 1012, 1925, 1504, 2503, 1832, 2466, 2400, 51, 3762…\n$ status   &lt;int&gt; 2, 0, 2, 2, 1, 2, 0, 2, 2, 2, 2, 2, 0, 2, 2, 0, 2, 2, 0, 2, 0…\n$ trt      &lt;int&gt; 1, 1, 1, 1, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 1, 2, 2, 1, 1, 2, 2…\n$ age      &lt;dbl&gt; 58.76523, 56.44627, 70.07255, 54.74059, 38.10541, 66.25873, 5…\n$ sex      &lt;fct&gt; f, f, m, f, f, f, f, f, f, f, f, f, f, m, f, f, f, f, f, f, m…\n$ ascites  &lt;int&gt; 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0…\n$ hepato   &lt;int&gt; 1, 1, 0, 1, 1, 1, 1, 0, 0, 0, 1, 0, 0, 1, 0, 0, 1, 1, 1, 1, 1…\n$ spiders  &lt;int&gt; 1, 1, 0, 1, 1, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1…\n$ edema    &lt;dbl&gt; 1.0, 0.0, 0.5, 0.5, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0…\n$ bili     &lt;dbl&gt; 14.5, 1.1, 1.4, 1.8, 3.4, 0.8, 1.0, 0.3, 3.2, 12.6, 1.4, 3.6,…\n$ chol     &lt;int&gt; 261, 302, 176, 244, 279, 248, 322, 280, 562, 200, 259, 236, 2…\n$ albumin  &lt;dbl&gt; 2.60, 4.14, 3.48, 2.54, 3.53, 3.98, 4.09, 4.00, 3.08, 2.74, 4…\n$ copper   &lt;int&gt; 156, 54, 210, 64, 143, 50, 52, 52, 79, 140, 46, 94, 40, 43, 1…\n$ alk.phos &lt;dbl&gt; 1718.0, 7394.8, 516.0, 6121.8, 671.0, 944.0, 824.0, 4651.2, 2…\n$ ast      &lt;dbl&gt; 137.95, 113.52, 96.10, 60.63, 113.15, 93.00, 60.45, 28.38, 14…\n$ trig     &lt;int&gt; 172, 88, 55, 92, 72, 63, 213, 189, 88, 143, 79, 95, 130, NA, …\n$ platelet &lt;int&gt; 190, 221, 151, 183, 136, NA, 204, 373, 251, 302, 258, 71, 244…\n$ protime  &lt;dbl&gt; 12.2, 10.6, 12.0, 10.3, 10.9, 11.0, 9.7, 11.0, 11.0, 11.5, 12…\n$ stage    &lt;int&gt; 4, 3, 4, 4, 3, 3, 3, 3, 2, 4, 4, 4, 3, 4, 3, 3, 4, 4, 3, 4, 4…\n\n\nTrabajaremos principalmente con un subconjunto de variables clínicas numéricas y dos variables categóricas:\n\nvars_num &lt;- c(\"age\", \"bili\", \"chol\", \"albumin\", \"copper\",\n              \"alk.phos\", \"ast\", \"trig\", \"platelet\", \"protime\") # Lista de variables para seleccionar y filtrar\n\npbc_cat &lt;- pbc %&gt;%\n  mutate(\n    trt   = factor(trt, labels = c(\"D-penicilamina\", \"Placebo\")),\n    stage = factor(stage),\n    sex   = factor(sex, labels = c(\"Hombre\", \"Mujer\")),\n    estado = factor(status, labels = c(\"Censurado\", \"Trasplante\", \"Fallecido\"))\n  )\n\n\nage = edad; bili = bilirrubina sérica (mg/dL); chol = colesterol (mg/dL); albumin = albúmina (g/dL); copper = cobre en orina (µg/día); alk.phos = fosfatasa alcalina (U/L); ast = aspartato aminotransferasa (U/mL); trig = triglicéridos (mg/dL); platelet = plaquetas (por mm³/1000); protime = tiempo de protrombina estandarizado (segundos)."
+  },
+  {
+    "objectID": "temas/tema-02/tema-02-eda_ggally_ggcorrplot_dataexplorer.html#ggally",
+    "href": "temas/tema-02/tema-02-eda_ggally_ggcorrplot_dataexplorer.html#ggally",
+    "title": "EDA: GGally, ggcorrplot y DataExplorer",
+    "section": "2 GGally",
+    "text": "2 GGally\n\n2.1 ¿Qué problema resuelve GGally?\n\n\n\n\n\n\nNota\n\n\n\nEn la cohorte de cirrosis biliar primaria, ¿cómo se relacionan simultáneamente la edad, la bilirrubina, la albúmina, las plaquetas y el tiempo de protrombina? ¿esa relación cambia entre hombres y mujeres? Revisar esto variable por variable, con un plot() a la vez, es lento e impide ver el panorama completo.\n\n\nGGally extiende ggplot2 para construir, en una sola instrucción, una matriz de gráficos que combina dispersión, densidad, boxplots y coeficientes de correlación entre múltiples variables a la vez. Es la herramienta natural para el primer vistazo multivariado de un conjunto de datos clínico.\n\n\n2.2 Funcionamiento básico\nLas dos funciones que más usarás son:\n\nggpairs(): construye una matriz \\(n \\times n\\) para un conjunto de columnas. Por defecto, la diagonal muestra la distribución de cada variable, el triángulo inferior muestra dispersión (o boxplots si hay una variable categórica) y el triángulo superior muestra el coeficiente de correlación.\n\ncolumns: qué columnas incluir.\nmapping = aes(colour = ..., alpha = ...): para colorear por un grupo (p. ej. sexo o desenlace clínico).\nupper, lower, diag: listas para personalizar qué tipo de gráfico va en cada panel (\"points\", \"smooth\", \"cor\", \"density\", \"box\", etc.).\n\nggcorr(): una versión más ligera y rápida, enfocada únicamente en mostrar la matriz de correlación como un mapa de calor (similar en espíritu a ggcorrplot, que veremos después, pero integrada al ecosistema de GGally).\n\nOtras funciones útiles que vale la pena conocer: ggduo() (para comparar dos conjuntos de variables distintos, por ejemplo predictores vs. desenlaces) y ggscatmat() (una versión más rápida de ggpairs() quer solo variables continuas).\n\n\n2.3 Ejemplos para el uso de GGally\nUso general de ggpairs\n\nggpairs(\n  data, # Datos\n  mapping = NULL,\n  columns = 1:ncol(data),\n  title = NULL,\n  upper = list(continuous = \"cor\", combo = \"box_no_facet\", discrete = \"count\", na = \"na\"),\n  lower = list(continuous = \"points\", combo = \"facethist\", discrete = \"facetbar\", na =\n    \"na\"),\n  diag = list(continuous = \"densityDiag\", discrete = \"barDiag\", na = \"naDiag\"),\n  params = deprecated(),\n  ...,\n  xlab = NULL,\n  ylab = NULL,\n  axisLabels = c(\"show\", \"internal\", \"none\"),\n  columnLabels = colnames(data[columns]),\n  labeller = \"label_value\",\n  switch = NULL,\n  showStrips = NULL,\n  legend = NULL,\n  cardinality_threshold = 15,\n  progress = NULL,\n  proportions = NULL,\n  legends = deprecated()\n)\n\n\nggpairs(\n  pbc_cat,\n  columns = c(\"age\", \"bili\", \"albumin\", \"platelet\", \"protime\"),\n  title = \"Relaciones entre variables clínicas de la cohorte PBC, por sexo\"\n) +\n  theme_bw(base_size = 9)\n\n\n\n\n\n\n\n\n\nggpairs(\n  pbc_cat, #\n  columns = c(\"age\", \"bili\", \"albumin\", \"platelet\", \"protime\"),\n  mapping = aes(colour = sex, alpha = 0.6), # Agrupación\n  columnLabels = c(\"Edad\", \"Bilirrubina\", \"Albúmina\", \"Plaquetas\", \"Protrombina\"), # Nombres de columnas, debe coincidir\n  title = \"Relaciones entre variables clínicas de la cohorte PBC, por sexo\"\n) +\n  theme_bw(base_size = 9)\n\n\n\n\n\n\n\n\nEn una sola figura observamos: la distribución de cada variable por sexo (diagonal), la forma de la relación entre pares de variables, por ejemplo, si la bilirrubina alta se asocia con albúmina baja, y el coeficiente de correlación de cada par, separado por sexo (triángulo superior).\nTambién podemos usar ggcorr() para una vista más compacta, solo de correlaciones, sobre el bloque completo de variables numéricas:\n\nggcorr(\n  pbc[, vars_num], # Todas las variables numericas\n  label = TRUE,\n  label_round = 2,\n  label_size = 3,\n  hjust = 0.8,\n  layout.exp = 2\n) +\n  labs(title = \"ggcorr(): correlación entre marcadores clínicos (PBC)\")\n\n\n\n\n\n\n\n\n\n\n2.4 ¿Cómo apoya el EDA?\nGGally resuelve el problema de la exploración multivariada simultánea: en vez de generar decenas de gráficos individuales, se obtiene en una sola llamada una vista que permite (1) comparar distribuciones entre grupos clínicos, (2) detectar relaciones no lineales u outliers en los diagramas de dispersión, y (3) tener una primera estimación de qué variables están correlacionadas."
+  },
+  {
+    "objectID": "temas/tema-02/tema-02-eda_ggally_ggcorrplot_dataexplorer.html#ggcorrplot",
+    "href": "temas/tema-02/tema-02-eda_ggally_ggcorrplot_dataexplorer.html#ggcorrplot",
+    "title": "EDA: GGally, ggcorrplot y DataExplorer",
+    "section": "3 ggcorrplot",
+    "text": "3 ggcorrplot\n\n3.1 ¿Qué problema resuelve?\n\n\n\n\n\n\nNotaPregunta clínica motivadora\n\n\n\nCon diez variables clínicas numéricas, la matriz de correlación tiene 45 pares posibles. ¿Cuáles correlaciones son lo bastante fuertes y estadísticamente significativas como para preocuparnos por colinealidad antes de ajustar un modelo de regresión sobre el desenlace del paciente?\n\n\nMientras que ggcorr() (de GGally) da una vista rápida, ggcorrplot está diseñado específicamente para producir mapas de calor de correlación de calidad de publicación, con la opción de superponer significancia estadística y de reordenar las variables por clustering jerárquico, lo que agrupa visualmente a los marcadores que se comportan de forma similar.\n\n\n3.2 Funcionamiento básico\nEl flujo típico son tres pasos:\n\nCalcular la matriz de correlación con cor() (usando use = \"pairwise.complete.obs\" cuando hay datos faltantes, como en nuestro caso).\nCalcular la matriz de p-valores con cor_pmat(), la función propia de ggcorrplot para pruebas de significancia por pares.\nGraficar con ggcorrplot(), cuyos argumentos principales son:\n\ntype: \"full\", \"lower\" o \"upper\" (mostrar la matriz completa o solo un triángulo, ya que es simétrica).\nhc.order = TRUE: reordena las variables agrupando las más correlacionadas entre sí (clustering jerárquico).\nlab = TRUE: imprime el valor de correlación dentro de cada celda.\np.mat e insig: permiten ocultar (insig = \"blank\") o marcar con una x (insig = \"pch\") las correlaciones que no son estadísticamente significativas.\n\n\n\n\n3.3 Ejemplo ggcorrplot\n\ndatos_num &lt;- pbc[, vars_num] # solo datos numéricos\n\ncorr_mat &lt;- round(cor(datos_num, use = \"pairwise.complete.obs\"), 2) # Obtener correlaciones solo datos completos. \n\n# use: an optional character string giving a method for computing covariances in the presence of missing values. This must be (an abbreviation of) one of the strings \"everything\", \"all.obs\", \"complete.obs\", \"na.or.complete\", or \"pairwise.complete.obs\".\n\n\np_mat    &lt;- cor_pmat(datos_num) # Obtener los valores de p para el plot\n\nggcorrplot(\n  corr_mat,\n  hc.order = TRUE, # Ordena los correlaciones por herarquia. Hace un clúster jerárquico\n  type = \"lower\", # solo la parte de abajo de la gráfica\n  lab = TRUE, # Equitas\n  lab_size = 2.8, # tamaño de los labels\n  p.mat = p_mat, # Matriz de con los valores de p\n  insig = \"blank\", # los valores de p no sinficitatvos no se muestran \n  colors = c(\"#B2182B\", \"white\", \"#2166AC\"), # Puede cambiar los colores. \n  title = \"Correlación entre marcadores clínicos en cirrosis biliar primaria\",\n  legend.title = \"r de Pearson\"\n) +\n  theme(plot.title = element_text(size = 11))\n\n\n\n\n\n\n\n\nEl reordenamiento (hc.order = TRUE) agrupa visualmente, por ejemplo, a los marcadores de daño/colestasis hepática (bilirrubina, fosfatasa alcalina, cobre) cerca unos de otros si comparten un patrón de correlación similar, y las celdas en blanco señalan qué asociaciones no alcanzan significancia estadística — evitando interpretar como relevante una correlación débil que podría deberse al azar.\n\n\n3.4 ¿Cómo apoya el EDA?\nggcorrplot resuelve específicamente el problema de priorizar y comunicar relaciones entre variables numéricas: ayuda a detectar colinealidad antes de un modelo de regresión (dos predictores muy correlacionados aportan información redundante), y el ordenamiento jerárquico sugiere agrupaciones biológicas de variables que pueden guiar un análisis de componentes principales o de clústeres posterior.\nExperimente y cambie algunos de los argumentos de la gráfica."
+  },
+  {
+    "objectID": "temas/tema-02/tema-02-eda_ggally_ggcorrplot_dataexplorer.html#dataexplorer",
+    "href": "temas/tema-02/tema-02-eda_ggally_ggcorrplot_dataexplorer.html#dataexplorer",
+    "title": "EDA: GGally, ggcorrplot y DataExplorer",
+    "section": "4 DataExplorer",
+    "text": "4 DataExplorer\n\n4.1 ¿Qué problema resuelve?\n\n\n\n\n\n\nNotaPregunta clínica motivadora\n\n\n\nAntes de decidir si imputar o excluir observaciones, ¿qué proporción de cada variable clínica está incompleta en esta cohorte, y esas ausencias están concentradas en subgrupos específicos de pacientes (por ejemplo, quienes no participaron en el ensayo aleatorizado)?\n\n\nDataExplorer automatiza la primera pasada de EDA: en lugar de escribir manualmente un summary(), un conteo de NA por columna y varios histogramas, genera ese diagnóstico completo con una o dos líneas de código — algo especialmente valioso cuando se reciben datos clínicos nuevos y se necesita un diagnóstico de calidad de datos rápido y sistemático.\n\n\n4.2 Funcionamiento básico\nLas funciones más usadas se dividen en dos familias:\n\nDiagnóstico de estructura y calidad: introduce() (tabla resumen: número de filas, columnas, variables continuas/discretas, observaciones y celdas faltantes, memoria usada) y su versión gráfica plot_intro(); plot_missing() (proporción de valores faltantes por variable, con un semáforo de severidad).\nDistribuciones y relaciones: plot_histogram() y plot_density() para variables continuas, plot_bar() para variables categóricas/discretas, y plot_correlation() para una matriz de correlación automática (incluye variables categóricas mediante codificación).\nReporte completo: create_report() genera un documento HTML con todo lo anterior en un solo llamado — el punto de partida ideal para cualquier dataset nuevo.\n\n\n\n4.3 Ejemplo introduce\n\nintroduce(pbc)\n\n\n  \n\n\n\n\n\n4.4 Ejemplo plot_intro\n\nplot_intro(pbc, title = \"Panorama general del dataset PBC\")\n\n\n\n\n\n\n\n\n\n\n4.5 Ejemplo data explorer otras funciones\n\nplot_missing(pbc, title = \"Valores faltantes por variable clínica (PBC)\")\n\n\n\n\n\n\n\n\nplot_missing() muestra de inmediato que variables como chol, copper, trig y trt tienen una proporción notable de datos faltantes (trt es NA precisamente en los pacientes que no fueron parte del ensayo aleatorizado, sino de un registro observacional adicional).\n\nplot_histogram(pbc[, vars_num], title = \"Distribución de marcadores clínicos continuos\")\n\n\n\n\n\n\n\n\n\nplot_bar(pbc_cat[, c(\"sex\", \"trt\", \"stage\")], title = \"Variables categóricas de la cohorte PBC\")\n\n\n\n\n\n\n\n\n\nplot_correlation(pbc[, vars_num], type = \"continuous\",\n                  title = \"Correlación automática (DataExplorer)\")\n\n\n\n\n\n\n\n\nFinalmente, para un diagnóstico completo en un solo paso (no se ejecuta aquí para no generar un archivo adicional, pero es la función que normalmente usarías primero al recibir un dataset nuevo):\n\ncreate_report(pbc, output_file = \"reporte_eda_pbc.html\")\n\n\n\n4.6 ¿Cómo apoya el EDA?\nDataExplorer resuelve el problema de la cobertura y velocidad: garantiza que ninguna variable se quede sin revisar (algo fácil de omitir cuando se explora “a mano”), y en particular hace visible de inmediato el patrón de datos faltantes — información indispensable en investigación clínica, donde decidir entre imputar, excluir o analizar los faltantes como su propia categoría puede cambiar las conclusiones del estudio."
+  },
+  {
+    "objectID": "temas/tema-02/tema-02-eda_ggally_ggcorrplot_dataexplorer.html#cómo-se-complementan-las-tres-librerías",
+    "href": "temas/tema-02/tema-02-eda_ggally_ggcorrplot_dataexplorer.html#cómo-se-complementan-las-tres-librerías",
+    "title": "EDA: GGally, ggcorrplot y DataExplorer",
+    "section": "5 ¿Cómo se complementan las tres librerías?",
+    "text": "5 ¿Cómo se complementan las tres librerías?\n\n\n\n\n\n\n\n\nLibrería\nPregunta que responde mejor\nMomento típico de uso\n\n\n\n\nGGally\n¿Cómo se relacionan varias variables entre sí y entre grupos clínicos, a la vez?\nExploración multivariada dirigida, tras tener hipótesis de qué variables comparar\n\n\nggcorrplot\n¿Qué correlaciones son fuertes y significativas, y qué variables se agrupan?\nAntes de modelar, para evaluar colinealidad y priorizar variables\n\n\nDataExplorer\n¿Está completo y es confiable el dataset? ¿Cómo se ve cada variable, en general?\nPrimer contacto con un dataset nuevo, diagnóstico de calidad de datos\n\n\n\nEn la práctica, un flujo de trabajo razonable es exactamente el orden en que las presentamos aquí: usar DataExplorer para un diagnóstico inicial de calidad y estructura, ggcorrplot para decidir qué variables numéricas son redundantes o interesantes, y GGally para profundizar visualmente en las relaciones entre el subconjunto de variables que resultó más relevante."
+  },
+  {
+    "objectID": "temas/tema-02/tema-02-eda_ggally_ggcorrplot_dataexplorer.html#preguntas-para-practicar",
+    "href": "temas/tema-02/tema-02-eda_ggally_ggcorrplot_dataexplorer.html#preguntas-para-practicar",
+    "title": "EDA: GGally, ggcorrplot y DataExplorer",
+    "section": "6 Preguntas para practicar",
+    "text": "6 Preguntas para practicar\n\nUsando ggpairs(), compara las variables bili, chol y albumin, coloreando por la variable estado (censurado / trasplante / fallecido). ¿El patrón de bilirrubina y albúmina difiere entre pacientes que fallecieron y los censurados?\nRepite la matriz de correlación de ggcorrplot pero solo con los pacientes que sí tienen trt registrado (es decir, los del ensayo aleatorizado). ¿Cambian las correlaciones respecto a usar la cohorte completa?\nCon plot_bar() de DataExplorer, examina la distribución de stage (estadio histológico). ¿Hay algún estadio con muy pocos pacientes que podría ser problemático para un análisis por subgrupos?\nGenera el reporte completo con create_report(pbc) y localiza, dentro del reporte HTML, la sección de valores faltantes. ¿Coincide con lo que observaste en plot_missing()?"
+  },
+  {
+    "objectID": "temas/tema-02/tema-02-eda_ggally_ggcorrplot_dataexplorer.html#referencias",
+    "href": "temas/tema-02/tema-02-eda_ggally_ggcorrplot_dataexplorer.html#referencias",
+    "title": "EDA: GGally, ggcorrplot y DataExplorer",
+    "section": "7 Referencias",
+    "text": "7 Referencias\n\nFleming TR, Harrington DP. Counting Processes and Survival Analysis. Wiley, 1991 (fuente original del dataset pbc).\nTherneau T, Grambsch P. Modeling Survival Data: Extending the Cox Model. Springer, 2000.\nSchloerke B, et al. GGally: Extension to ‘ggplot2’. CRAN.\nKassambara A. ggcorrplot: Visualization of a Correlation Matrix using ‘ggplot2’. CRAN.\nCui B. DataExplorer: Automate Data Exploration and Treatment. CRAN."
   }
 ]
