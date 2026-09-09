@@ -1,0 +1,54 @@
+/*-- scss:defaults --*/
+$body-bg: #f7f6f1;
+$body-color: #17212b;
+$link-color: #006d77;
+$presentation-heading-color: #0b3c49;
+$font-family-sans-serif: "Aptos", "Helvetica Neue", Arial, sans-serif;
+$presentation-font-size-root: 31px;
+$presentation-heading-font-weight: 650;
+$presentation-h1-font-size: 2.15em;
+$presentation-h2-font-size: 1.45em;
+$code-block-font-size: 0.60em;
+
+/*-- scss:rules --*/
+.reveal .slides { text-align: left; }
+.reveal h1, .reveal h2 { letter-spacing: -0.02em; }
+.reveal h2 { border-bottom: 4px solid #e09f3e; padding-bottom: 0.18em; }
+.reveal .title-slide h1 { max-width: 900px; }
+.reveal .subtitle { color: #46636b; max-width: 900px; }
+.reveal strong { color: #9b4d24; }
+.reveal blockquote {
+  border-left: 7px solid #e09f3e;
+  padding: 0.35em 0.7em;
+  background: rgba(255,255,255,0.55);
+  box-shadow: none;
+  width: 88%;
+}
+.reveal .decision {
+  border-left: 8px solid #006d77;
+  padding: 0.45em 0.8em;
+  background: #e5f2f1;
+}
+.reveal .warning {
+  border-left: 8px solid #c14953;
+  padding: 0.45em 0.8em;
+  background: #f8e8e8;
+}
+.reveal .demo h2::after {
+  content: "  ·  DEMOSTRACIÓN";
+  color: #9b4d24;
+  font-size: 0.48em;
+  letter-spacing: 0.06em;
+}
+.reveal .exercise h2::after {
+  content: "  ·  EJERCICIO";
+  color: #006d77;
+  font-size: 0.48em;
+  letter-spacing: 0.06em;
+}
+.reveal .small { font-size: 0.75em; }
+.reveal .tiny { font-size: 0.58em; }
+.reveal table { font-size: 0.69em; }
+.reveal .slide-number { color: #46636b; }
+.reveal .footer { color: #60767b; font-size: 0.42em; }
+

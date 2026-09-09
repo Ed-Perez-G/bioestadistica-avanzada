@@ -1,0 +1,712 @@
+---
+title: "Imputación de datos parte 1"
+subtitle: "Imputación simple. Imputacion con MICE"
+author: "Edsaúl Emilio Pérez-Guerrero"
+date: last-modified
+lang: es
+bibliography: imputacion_datos_faltantes.bib
+csl: https://www.zotero.org/styles/vancouver
+format:
+  revealjs:
+    theme: [default, imputacion_datos_faltantes.scss]
+    slide-number: c/t
+    progress: true
+    transition: fade
+    center: false
+    width: 1280
+    height: 720
+    margin: 0.07
+    code-copy: true
+    code-line-numbers: false
+    chalkboard: true
+    preview-links: auto
+    footer: "Imputación de datos parte 1"
+execute:
+  echo: true
+  warning: false
+  message: false
+  freeze: auto
+knitr:
+  opts_chunk:
+    fig-width: 8.5
+    fig-height: 4.3
+    dpi: 1
+---
+
+## Objetivos de aprendizaje
+
+Idealmente: 
+
+- Indentificar la utilidad de la imputación.
+- Decidir cuándo si y cuándo no se debe realizar.
+- Identificar los factores que influyen sobre la imputación. 
+- Conocer los mecanismos de datos faltantes.
+- Conocer las limitantes de la imputación simple.
+
+## El problema de los  `NA`
+
+- Un `NA` siempre produce un `NA`
+- Un valor faltante puede cambiar:
+  + 1. **La población analizada**, porque algunos participantes dejan de contribuir.
+  + 2. **La precisión**, porque se pierde información.
+  + 3. **La validez**, si la ausencia depende del estado clínico o del desenlace.
+  + 4. **Disminuir** considerablemente el tamaño de la muestra.
+  
+## ¿Qué es imputar?
+
+- La imputación reemplaza cada dato no observado por valores plausibles.
+- Es el proceso de reemplaar valores perdidos de una base de datos con valores estimados **MANTENIENDO LA INTEGRIDAD, VARIACIÓN Y TODAS LAS CARACTERÍSTICAS DE LAS BASES DE DATOS**
+>El objetivo es: conservar información valiosa, reduciendo el sesgo y evitando una reducción del conjunto de datos que podría comprometer la obtención de conclusiones.
+
+## ¿Cúando y cómo imputar?
+
+>No hay una respuesta que aplique para el 100% de los casos.
+
+>La imputación depende de muchos factores y de comprender todo el contexto del cual provienen los datos
+
+>La imputación debe preservar las relaciones entre variables y las propiedades estadísticas relevantes para el análisis. 
+
+**LO QUE NO ESTÁ A DISCUSIÓN:**
+
+>No imputar la varibla de descenlace
+
+>No imputar si el NA no es aleatorio
+
+## Factores que influyen en la imputación
+
+:::: {.columns}
+
+::: {.column width="50%"}
+
+1. Proporción de datos faltantes
+2. Mecanismo de datos faltantes
+3. Patrón de datos faltantes
+4. Tamaño de muestra
+5. Número de variables disponibles
+6. Correlación entre variables
+7. Tipo de variable
+8. Distribución de los datos
+9. Rangos y restricciones biológicas
+10. Estructura de dependencia
+
+:::
+
+::: {.column width="50%"}
+
+11. Información temporal
+12. Heterogeneidad de la población
+13. Efectos de lote y centro
+14. Límites de detección/cuantificación
+15. Calidad de la medición
+16. Razón clínica de los datos faltantes
+17. Variables auxiliares disponibles
+18. Relaciones no lineales e interacciones
+19. Categorías o fenotipos poco frecuentes
+20. Objetivo del análisis posterior
+
+:::
+
+::::
+
+## Pregunta claves en la imputación 
+
+| Dimensión | Pregunta clave |
+|:---|:---|
+| **Cantidad de datos faltantes** | ¿Cuánto falta? |
+| **Mecanismo y patrón** | ¿Por qué faltan los datos y cómo se distribuyen? |
+| **Información disponible** | ¿Existen otras variables que informen sobre los valores faltantes? |
+| **Características de los datos** | ¿Qué tipo de variables y estructuras de datos tenemos? |
+| **Contexto biomédico** | ¿Existe una razón clínica, biológica o técnica para los datos faltantes? |
+
+## Tres conceptos que no deben confundirse
+
+| Concepto | Pregunta | Ejemplo biomédico |
+|---|---|---|
+| **Cantidad** | ¿Cuánto falta? | 18% de HbA1c |
+| **Patrón** | ¿Dónde falta? | visitas tardías incompletas |
+| **Mecanismo** | ¿Por qué falta, dado lo observado? | abandono relacionado con HbA1c previa |
+
+
+## MCAR, MAR y MNAR. Mecanismos. 
+
+| Mecanismo | Dependencia de la probabilidad de ausencia | Lectura práctica |
+|---|---|---|
+| **MCAR** | no depende de datos observados ni faltantes | una falla logística genuinamente ajena al paciente |
+| **MAR** | depende de información observada | la ausencia queda explicada por variables disponibles |
+| **MNAR** | aún depende del valor no observado | falta información después de condicionar por lo observado |
+
+## MCAR, MAR y MNAR. Mecanismos. 
+> MCAR — Missing Completely At Random
+El hecho de que falte el dato no depende de ninguna característica del paciente ni del valor faltante.
+
+>MAR — Missing At Random
+El hecho de que falte el dato sí tiene una explicación en información que conocemos y observamos.
+
+>MNAR — Missing Not At Random
+El hecho de que falte el dato está relacionado con información que no observamos, particularmente con el propio valor faltante.
+
+## Ejemplos del mecanismo de datos faltantes
+
+| Mecanismo | Ejemplo | La ausencia depende de... |
+|:---------:|:--------|:--------------------------|
+| **MCAR** | Un tubo se rompe accidentalmente durante el transporte. | Nada relacionado con el paciente o la PCR. |
+| **MAR** | La PCR se solicita con menor frecuencia en pacientes jóvenes. | Una variable **observada**: edad. |
+| **MNAR** | Valores extremadamente altos de PCR no son reportados por el laboratorio. | El **propio valor faltante** de PCR. |
+
+::: {.warning}
+“MAR” no significa que la ausencia ocurra al azar en lenguaje cotidiano. Significa independencia condicional al modelo y a las variables observadas.
+:::
+
+## Antes de imputar
+
+1. Definir el **estimando**: población, variable, contraste, resumen y manejo de eventos intercurrentes.
+2. Auditar códigos de ausencia, límites de detección y datos estructuralmente no aplicables.
+3. Describir cantidad y patrones por tiempo, centro, tratamiento y variables clínicas.
+4. Formular un diagrama causal o una explicación clínica de la ausencia.
+5. Preespecificar análisis principal y análisis de sensibilidad.
+
+## Ausencia no equivale siempre a dato faltante
+
+- **Por diseño:** una prueba solo se aplica a un subgrupo.
+- **Bajo límite de detección:** existe información censurada.
+- **Evento intercurrente:** muerte, rescate o cambio de tratamiento exige definir el estimando.
+- **Resultado imposible:** embarazo en una población no elegible no es un NA ordinario.
+- **Genómica:** cero técnico, ausencia de cobertura y valor biológico cero requieren distinción.
+
+## ¿Por qué imputar?
+
+La imputación puede:
+
+- conservar participantes con información parcial;
+- reducir sesgo frente al análisis de casos completos bajo supuestos adecuados;
+- recuperar precisión usando variables auxiliares;
+- propagar incertidumbre por los valores no observados;
+- permitir análisis compatibles con diseños complejos.
+
+No recupera información que nunca existió y no corrige un diseño o medición deficientes.
+
+## Cuándo sí suele aportar valor
+
+- El análisis completo excluiría una fracción relevante o un subgrupo clínico distinto.
+- Variables observadas predicen tanto la ausencia como el valor faltante.
+- El mecanismo MAR resulta científicamente defendible como análisis principal.
+- El modelo de imputación puede incluir desenlace, exposición, confusores y variables auxiliares.
+- La estructura longitudinal, multinivel o no lineal puede representarse.
+- Existe un plan para sensibilidad a MNAR.
+
+## Cuándo no, o no todavía
+
+- El dato es estructuralmente inexistente o censurado y requiere otro modelo.
+- Casi no hay información para predecir una variable en una categoría o estrato.
+- El modelo sustantivo y el de imputación son incompatibles y no puede resolverse.
+- La ausencia es extrema en variables esenciales y cualquier resultado depende de extrapolación no verificable.
+- Se pretende seleccionar un solo conjunto imputado o reportar error de predicción como única validación.
+- La imputación ocurriría después de mirar qué método produce el resultado deseado.
+
+## Cuándo no
+
+- Cuand la imputada es la variable de desenlace
+
+## Imputación simple
+
+La **imputación simple** reemplaza cada valor faltante por un único valor.
+
+Métodos frecuentes:
+
+- Media para variables cuantitativas.
+- Mediana para variables cuantitativas asimétricas.
+- Moda para variables categóricas.
+- Valor obtenido mediante una regresión.
+- Valor de una observación semejante.
+
+En este caso nos concentraremos en la imputación mediante una **constante**: media, mediana o moda.
+
+## Imputación simple
+
+::: {.warning}
+En solo muy pocas situaciones es de útilidad. Reservela solo para fines exploratorios. 
+:::
+
+## La intuición detrás del método
+
+La imputación por media, mediana o moda suele aplicarse cuando:
+
+- el porcentaje de datos faltantes parece pequeño;
+- la variable no se considera central para el estudio;
+- se necesita una base de datos completa;
+- se desea evitar la eliminación de participantes;
+- se realiza un análisis exploratorio.
+
+Esta estrategia es sencilla, reproducible y fácil de explicar. Fines exploratorios. 
+
+Sin embargo, un porcentaje pequeño de datos faltantes **no garantiza** que el procedimiento sea estadísticamente válido.
+
+
+## Imputación simple
+
+La **imputación simple** reemplaza cada valor faltante por un único valor.
+
+Métodos frecuentes:
+
+- Media para variables cuantitativas.
+- Mediana para variables cuantitativas asimétricas.
+- Moda para variables categóricas.
+- Valor obtenido mediante una regresión.
+- Valor de una observación semejante.
+
+En este caso nos concentraremos en la imputación mediante una **constante**: media, mediana o moda.
+
+## La intuición detrás del método
+
+La imputación por media, mediana o moda suele aplicarse cuando:
+
+- el porcentaje de datos faltantes parece pequeño;
+- la variable no se considera central para el estudio;
+- se necesita una base de datos completa;
+- se desea evitar la eliminación de participantes;
+- se realiza un análisis exploratorio.
+
+Esta estrategia es sencilla, reproducible y fácil de explicar.
+
+Sin embargo, un porcentaje pequeño de datos faltantes **no garantiza** que el procedimiento sea estadísticamente válido.
+
+## Ejemplo: imputación por la media
+
+Supongamos que tenemos las siguientes mediciones:
+
+```{r}
+datos <- c(10, 15, 20, 25, 30, NA, NA)
+
+datos
+```
+
+Calculamos la media usando únicamente los valores observados:
+
+```{r}
+media_observada <- mean(datos, na.rm = TRUE)
+
+media_observada
+```
+
+## Sustitución de los valores faltantes
+
+```{r}
+datos_imputados <- datos
+
+datos_imputados[is.na(datos_imputados)] <- media_observada
+
+datos_imputados
+```
+
+Los dos valores faltantes se sustituyen por 20, que es la media de los valores observados.
+
+La base de datos queda completa, pero los valores añadidos no contienen variación.
+
+## Efecto sobre la media y la variabilidad
+
+```{r echo=FALSE}
+resultado <- data.frame(
+  medida = c("Media", "Desviación estándar", "Varianza"),
+  observados = c(
+    mean(datos, na.rm = TRUE),
+    sd(datos, na.rm = TRUE),
+    var(datos, na.rm = TRUE)
+  ),
+  despues_de_imputar = c(
+    mean(datos_imputados),
+    sd(datos_imputados),
+    var(datos_imputados)
+  )
+)
+
+resultado
+```
+
+La media permanece en 20, pero la desviación estándar y la varianza disminuyen.
+
+## Visualización del efecto
+
+```{r echo=FALSE}
+#| fig-width: 9
+#| fig-height: 4.5
+
+par(mfrow = c(1, 2))
+
+stripchart(
+  datos[!is.na(datos)],
+  method = "stack",
+  pch = 19,
+  col = "#006D77",
+  main = "Valores observados",
+  xlab = "Valor",
+  xlim = c(8, 32)
+)
+
+abline(v = media_observada, col = "#C14953", lwd = 2, lty = 2)
+
+stripchart(
+  datos_imputados,
+  method = "stack",
+  pch = 19,
+  col = "#E09F3E",
+  main = "Después de imputar",
+  xlab = "Valor",
+  xlim = c(8, 32)
+)
+
+abline(v = media_observada, col = "#C14953", lwd = 2, lty = 2)
+
+par(mfrow = c(1, 1))
+```
+
+## ¿Qué ocurrió?
+
+La imputación agregó observaciones artificiales exactamente en el centro de la distribución.
+
+Como todos los valores imputados son iguales:
+
+- aumenta artificialmente la concentración alrededor de la media;
+- disminuye la dispersión;
+- no se representa la incertidumbre sobre los valores faltantes;
+- puede modificarse la relación con otras variables.
+
+La base queda completa, pero parece contener más información de la que realmente se observó.
+
+## Consecuencias estadísticas
+
+La imputación mediante una constante puede:
+
+- subestimar la varianza;
+- reducir artificialmente los errores estándar;
+- producir intervalos de confianza demasiado estrechos;
+- modificar correlaciones;
+- modificar coeficientes de regresión;
+- aumentar artificialmente la frecuencia de una categoría;
+- ignorar la incertidumbre sobre el valor faltante.
+
+La media puede conservarse bajo determinadas condiciones, pero esto no significa que se conserve la distribución completa.
+
+## Media, mediana y moda
+
+| Método | Posible ventaja | Problema principal |
+|---|---|---|
+| Media | conserva la media bajo MCAR | reduce la varianza y altera asociaciones |
+| Mediana | resiste valores extremos | acumula observaciones en el centro |
+| Moda | fácil de aplicar en categorías | aumenta artificialmente la categoría más común |
+
+La mediana y la moda pueden ser más robustas en algunos contextos, pero continúan siendo valores constantes.
+
+Por tanto, tampoco representan la incertidumbre asociada con los datos faltantes.
+
+## El porcentaje faltante no decide por sí solo
+
+No existe un umbral universal como:
+
+> “Si falta menos de 5%, se puede imputar por la media”.
+
+La importancia del problema depende de:
+
+1. El mecanismo que produjo los datos faltantes.
+2. El papel de la variable en el análisis.
+3. La distribución de la variable.
+4. La relación de la variable con otras mediciones.
+5. El objetivo científico del estudio.
+6. La concentración de los datos faltantes en subgrupos específicos.
+
+Un porcentaje pequeño pero selectivo puede producir más sesgo que un porcentaje mayor distribuido casi aleatoriamente.
+
+## Ejemplo
+
+Supongamos que falta 3% de las mediciones de creatinina.
+
+**Escenario A**
+
+Las muestras se perdieron por una falla aleatoria del equipo de laboratorio.
+
+La ausencia podría aproximarse a un mecanismo completamente aleatorio.
+
+**Escenario B**
+
+Las mediciones faltan principalmente en pacientes con insuficiencia renal grave.
+
+Aunque solo falte 3%, la imputación por la media asignaría valores normales o intermedios a pacientes que probablemente presentan valores elevados.
+
+## Importancia de la variable
+
+La expresión “variable poco importante” debe definirse de acuerdo con el análisis.
+
+Una variable puede ser importante si funciona como:
+
+- desenlace o exposición;
+- tratamiento o confusora;
+- modificadora del efecto;
+- predictora de los datos faltantes;
+- variable auxiliar;
+- componente de una escala clínica.
+
+Una variable que no aparece en la tabla final todavía puede ayudar a explicar por qué faltan otros datos.
+
+## ¿Cuándo podría utlizarse?
+
+La imputación simple podría utilizarse con cautela cuando:
+
+- faltan literalmente unos pocos valores;
+- el objetivo es exclusivamente exploratorio;
+- se prepara una visualización preliminar;
+- no se realizarán pruebas de hipótesis;
+- la variable no participa directa ni indirectamente en el análisis;
+- los resultados se comparan con un análisis sin imputación;
+- el procedimiento se documenta claramente.
+
+Si una variable no tiene ninguna función analítica, puede resultar más transparente conservar los valores como `NA`.
+
+## ¿Cuándo debería evitarse?
+
+Conviene evitar la imputación por media, mediana o moda cuando:
+
+- la variable es un desenlace o exposición principal;
+- participa en una regresión o correlación;
+- se estimarán intervalos de confianza;
+- se realizarán pruebas de hipótesis;
+- los datos faltantes se concentran en un subgrupo clínico;
+- la ausencia podría depender del valor no observado;
+- la variable tiene una distribución muy asimétrica o multimodal;
+- el resultado se utilizará para decisiones clínicas individuales.
+
+## Alternativas
+
+Dependiendo del objetivo, pueden considerarse:
+
+- análisis de casos completos bajo condiciones justificadas;
+- máxima verosimilitud;
+- imputación mediante regresión;
+- emparejamiento predictivo de medias;
+- imputación múltiple;
+- modelos longitudinales o multinivel;
+- modelos específicos para datos censurados;
+- análisis de sensibilidad a mecanismos MNAR.
+
+Para inferencia biomédica, la imputación múltiple suele ser preferible porque incorpora incertidumbre entre conjuntos imputados.
+
+## Regla práctica
+
+> Si el valor imputado participa en una estimación, intervalo de confianza, prueba estadística o modelo, no utilizar una constante como solución predeterminada.
+
+Secuencia recomendada:
+
+1. Cuantificar y visualizar los datos faltantes.
+2. Investigar por qué faltan.
+3. Identificar el papel de la variable.
+4. Justificar el análisis de casos completos, si se utiliza.
+5. Considerar imputación múltiple.
+6. Comparar resultados antes y después.
+
+## Manos a la obra
+
+- Descargue el documento: <a href="tema-02-ejercicios-clase-imputacion-simple.R" download>Descargue el documento Ejercicios imputación simple</a>
+- Este documento contiene datos simulados para introducir `NA` a algunas bases de datos
+- Compare estadística y gráficamente el antes y el después.
+
+## ¿Qué significa MICE?
+
+**MICE** significa *Multivariate Imputation by Chained Equations*.
+
+En español puede describirse como:
+
+> Imputación multivariada mediante ecuaciones encadenadas.
+
+MICE también se conoce como **especificación totalmente condicional** o FCS.
+
+La idea central consiste en construir un modelo de imputación separado para cada variable incompleta, utilizando las demás variables como predictoras.
+
+MICE es una forma de realizar imputación múltiple, pero ambos términos no son sinónimos.
+
+## Fundamento condicional de MICE
+
+Supongamos que faltan valores en presión arterial, colesterol e índice de masa corporal.
+
+MICE construye modelos condicionales como:
+
+\[
+P(\text{presión arterial}\mid\text{colesterol, IMC, edad, tratamiento})
+\]
+
+\[
+P(\text{colesterol}\mid\text{presión arterial, IMC, edad, tratamiento})
+\]
+
+\[
+P(\text{IMC}\mid\text{presión arterial, colesterol, edad, tratamiento})
+\]
+
+Cada variable se actualiza usando la información disponible en las demás.
+
+## Ciclo iterativo de MICE
+
+**Inicialización**
+
+Los valores faltantes reciben valores iniciales provisionales.
+
+**Primera variable**
+
+Se ajusta un modelo usando las demás variables y se reemplazan sus valores faltantes.
+
+**Variables siguientes**
+
+El procedimiento se repite variable por variable, utilizando las imputaciones más recientes.
+
+**Nueva iteración**
+
+Al terminar una ronda, el algoritmo vuelve a la primera variable.
+
+Después de varias iteraciones, las distribuciones deberían estabilizarse.
+
+## Un modelo para cada tipo de variable
+
+MICE permite elegir un método compatible con la naturaleza de cada variable.
+
+| Tipo de variable | Método frecuente en `mice` |
+|---|---|
+| Cuantitativa continua | `pmm`, `norm` |
+| Binaria | `logreg` |
+| Categórica nominal | `polyreg` |
+| Categórica ordinal | `polr` |
+| Conteo | modelo específico o método personalizado |
+| Multinivel | métodos `2l.*`, `pan` o `jomo` |
+
+`pmm`, o emparejamiento predictivo de medias, utiliza como donantes valores realmente observados con predicciones similares.
+
+## Emparejamiento predictivo de medias
+
+Para imputar una observación incompleta, `pmm` realiza conceptualmente lo siguiente:
+
+1. Ajusta un modelo para predecir la variable incompleta.
+2. Calcula la predicción del individuo con el dato faltante.
+3. Busca individuos observados con predicciones cercanas.
+4. Selecciona un donante y utiliza su valor observado.
+
+Ventajas:
+
+- conserva valores dentro del soporte observado;
+- tolera cierta falta de normalidad;
+- evita muchos valores fisiológicamente imposibles.
+
+No garantiza ausencia de sesgo y puede funcionar mal cuando hay pocos donantes comparables.
+
+## Múltiples conjuntos imputados
+
+MICE repite el procedimiento para producir (m) conjuntos:
+
+```text
+Datos incompletos
+     ├── Imputación 1 ── Análisis 1
+     ├── Imputación 2 ── Análisis 2
+     ├── Imputación 3 ── Análisis 3
+     └── Imputación m ── Análisis m
+```
+
+Las diferencias entre conjuntos surgen de:
+
+- la incertidumbre de los parámetros del modelo;
+- la variabilidad de los valores plausibles;
+- la selección aleatoria de donantes, según el método.
+
+Elegir solamente uno de estos conjuntos elimina parte de la incertidumbre que MICE intenta representar.
+
+
+## Supuesto principal
+
+MICE se utiliza habitualmente bajo el supuesto **MAR**: *Missing At Random*.
+
+MAR significa que, después de considerar las variables observadas incluidas en el modelo, la probabilidad de ausencia ya no depende del valor faltante.
+
+Ejemplo:
+
+- la ausencia de HbA1c depende de edad, tratamiento y HbA1c previa;
+- esas variables están disponibles e incluidas en la imputación;
+- condicionando por ellas, MAR puede resultar razonable.
+
+Los datos observados no permiten demostrar que MAR sea verdadero. La justificación requiere conocimiento clínico y análisis de sensibilidad.
+
+## Variables que debe incluir el modelo
+
+El modelo de imputación debería incluir:
+
+- las variables del análisis principal;
+- el desenlace, incluso cuando se imputan covariables;
+- predictores de los valores faltantes;
+- predictores de la probabilidad de ausencia;
+- variables auxiliares clínicamente informativas;
+- interacciones, transformaciones y estructura temporal relevantes.
+
+Incluir muchas variables irrelevantes tampoco garantiza una buena imputación. La selección debe apoyarse en el diseño y en el conocimiento del proceso de ausencia.
+
+## MICE en R
+
+```r
+library(mice)
+
+# Revisar métodos y matriz de predictores
+inicial <- mice(datos, maxit = 0)
+metodos <- inicial$method
+predictores <- inicial$predictorMatrix
+
+# Generar 20 conjuntos imputados
+imp <- mice(
+  datos,
+  m = 20,
+  maxit = 20,
+  method = metodos,
+  predictorMatrix = predictores,
+  seed = 2026
+)
+
+# Ajustar el modelo en cada conjunto
+ajustes <- with(imp, lm(resultado ~ tratamiento + edad + biomarcador))
+
+# Combinar mediante reglas de Rubin
+summary(pool(ajustes), conf.int = TRUE)
+```
+
+La matriz de predictores y los métodos predeterminados siempre deben revisarse.
+
+## Evaluación de MICE
+
+Una imputación no se valida solamente porque el algoritmo terminó sin errores.
+
+Conviene revisar:
+
+- convergencia y mezcla de las cadenas;
+- eventos registrados durante la ejecución;
+- valores imposibles o poco plausibles;
+- distribuciones observadas e imputadas;
+- relaciones entre variables;
+- variación entre imputaciones;
+- estabilidad frente a cambios de semilla y número de imputaciones;
+- sensibilidad frente a mecanismos MNAR.
+
+```r
+plot(imp)
+densityplot(imp)
+stripplot(imp)
+imp$loggedEvents
+```
+
+## Qué puede y qué no puede hacer MICE
+
+**MICE puede:**
+
+- aprovechar información parcial;
+- manejar variables de diferentes tipos;
+- conservar participantes en el análisis;
+- representar incertidumbre;
+- incorporar relaciones multivariadas.
+
+**MICE no puede:**
+
+- recuperar información inexistente;
+- demostrar el supuesto MAR;
+- corregir automáticamente un mal diseño;
+- solucionar ausencia estructural o censura sin un modelo apropiado;
+- sustituir el razonamiento clínico.
+
