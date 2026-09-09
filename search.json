@@ -1,122 +1,430 @@
 [
   {
-    "objectID": "temas/tema-02/tema-02-ggplot2-basico.html#objetivo-de-la-sesión",
-    "href": "temas/tema-02/tema-02-ggplot2-basico.html#objetivo-de-la-sesión",
-    "title": "Visualización de datos con ggplot2",
-    "section": "Objetivo de la sesión",
-    "text": "Objetivo de la sesión\nAl finalizar esta sesión podrás construir gráficas con ggplot2, partiendo de una versión mínima y agregando capas hasta llegar a una gráfica lista para un reporte.\n\nYa sabes preparar datos con dplyr y tidyr.\nHoy usamos esa base para visualizar.\nTrabajaremos con Pima.tr2 (paquete MASS): variables clínicas de mujeres Pima y diagnóstico de diabetes."
+    "objectID": "temas/tema-02/tema-02-imputacion-datos-1.html#objetivos-de-aprendizaje",
+    "href": "temas/tema-02/tema-02-imputacion-datos-1.html#objetivos-de-aprendizaje",
+    "title": "Imputación de datos parte 1",
+    "section": "Objetivos de aprendizaje",
+    "text": "Objetivos de aprendizaje\nIdealmente:\n\nIndentificar la utilidad de la imputación.\nDecidir cuándo si y cuándo no se debe realizar.\nIdentificar los factores que influyen sobre la imputación.\nConocer los mecanismos de datos faltantes.\nConocer las limitantes de la imputación simple."
   },
   {
-    "objectID": "temas/tema-02/tema-02-ggplot2-basico.html#la-gramática-de-gráficos",
-    "href": "temas/tema-02/tema-02-ggplot2-basico.html#la-gramática-de-gráficos",
-    "title": "Visualización de datos con ggplot2",
-    "section": "La gramática de gráficos",
-    "text": "La gramática de gráficos\nggplot2 construye una gráfica por capas, agregadas con +:\n\ndata — la tabla de datos\naes() — qué variable va en qué eje / color / forma\ngeom_*() — el tipo de gráfica (puntos, barras, cajas…)\nfacet_*() — paneles por grupo\nlabs() / scale_*() — títulos, ejes, colores\ntheme_*() — apariencia general"
+    "objectID": "temas/tema-02/tema-02-imputacion-datos-1.html#el-problema-de-los-na",
+    "href": "temas/tema-02/tema-02-imputacion-datos-1.html#el-problema-de-los-na",
+    "title": "Imputación de datos parte 1",
+    "section": "El problema de los NA",
+    "text": "El problema de los NA\n\nUn NA siempre produce un NA\nUn valor faltante puede cambiar:\n\n\nLa población analizada, porque algunos participantes dejan de contribuir.\n\n\nLa precisión, porque se pierde información.\n\n\nLa validez, si la ausencia depende del estado clínico o del desenlace.\n\n\nDisminuir considerablemente el tamaño de la muestra."
   },
   {
-    "objectID": "temas/tema-02/tema-02-ggplot2-basico.html#cargando-y-preparando-los-datos",
-    "href": "temas/tema-02/tema-02-ggplot2-basico.html#cargando-y-preparando-los-datos",
-    "title": "Visualización de datos con ggplot2",
-    "section": "Cargando y preparando los datos",
-    "text": "Cargando y preparando los datos\n\n\nlibrary(tidyverse)\n\ndata(Pima.tr2, package = \"MASS\")\n\npima &lt;- as_tibble(Pima.tr2) %&gt;%\n  drop_na()\n\nglimpse(pima)\n\n\nRows: 200\nColumns: 8\n$ npreg &lt;int&gt; 5, 7, 5, 0, 0, 5, 3, 1, 3, 2, 0, 9, 1, 12, 1, 4, 1, 11, 1, 0, 2,…\n$ glu   &lt;int&gt; 86, 195, 77, 165, 107, 97, 83, 193, 142, 128, 137, 154, 189, 92,…\n$ bp    &lt;int&gt; 68, 70, 82, 76, 60, 76, 58, 50, 80, 78, 40, 78, 60, 62, 66, 76, …\n$ skin  &lt;int&gt; 28, 33, 41, 43, 25, 27, 31, 16, 15, 37, 35, 30, 23, 7, 52, 15, 8…\n$ bmi   &lt;dbl&gt; 30.2, 25.1, 35.8, 47.9, 26.4, 35.6, 34.3, 25.9, 32.4, 43.3, 43.1…\n$ ped   &lt;dbl&gt; 0.364, 0.163, 0.156, 0.259, 0.133, 0.378, 0.336, 0.655, 0.200, 1…\n$ age   &lt;int&gt; 24, 55, 35, 26, 23, 52, 25, 24, 63, 31, 33, 45, 59, 44, 29, 21, …\n$ type  &lt;fct&gt; No, Yes, No, No, No, Yes, No, No, No, Yes, Yes, No, Yes, Yes, No…"
+    "objectID": "temas/tema-02/tema-02-imputacion-datos-1.html#qué-es-imputar",
+    "href": "temas/tema-02/tema-02-imputacion-datos-1.html#qué-es-imputar",
+    "title": "Imputación de datos parte 1",
+    "section": "¿Qué es imputar?",
+    "text": "¿Qué es imputar?\n\nLa imputación reemplaza cada dato no observado por valores plausibles.\nEs el proceso de reemplaar valores perdidos de una base de datos con valores estimados MANTENIENDO LA INTEGRIDAD, VARIACIÓN Y TODAS LAS CARACTERÍSTICAS DE LAS BASES DE DATOS &gt;El objetivo es: conservar información valiosa, reduciendo el sesgo y evitando una reducción del conjunto de datos que podría comprometer la obtención de conclusiones."
   },
   {
-    "objectID": "temas/tema-02/tema-02-ggplot2-basico.html#dispersión-paso-1-lo-mínimo",
-    "href": "temas/tema-02/tema-02-ggplot2-basico.html#dispersión-paso-1-lo-mínimo",
-    "title": "Visualización de datos con ggplot2",
-    "section": "Dispersión — paso 1: lo mínimo",
-    "text": "Dispersión — paso 1: lo mínimo\n\n\nggplot(pima, aes(x = bmi, y = glu)) +\n  geom_point()\n\n\n\n\n\n\n\n\n\n\naes() conecta variables con la gráfica.\ngeom_point() dibuja cada fila como un punto."
+    "objectID": "temas/tema-02/tema-02-imputacion-datos-1.html#cúando-y-cómo-imputar",
+    "href": "temas/tema-02/tema-02-imputacion-datos-1.html#cúando-y-cómo-imputar",
+    "title": "Imputación de datos parte 1",
+    "section": "¿Cúando y cómo imputar?",
+    "text": "¿Cúando y cómo imputar?\n\nNo hay una respuesta que aplique para el 100% de los casos.\n\n\nLa imputación depende de muchos factores y de comprender todo el contexto del cual provienen los datos\n\n\nLa imputación debe preservar las relaciones entre variables y las propiedades estadísticas relevantes para el análisis.\n\nLO QUE NO ESTÁ A DISCUSIÓN:\n\nNo imputar la varibla de descenlace\n\n\nNo imputar si el NA no es aleatorio"
   },
   {
-    "objectID": "temas/tema-02/tema-02-ggplot2-basico.html#dispersión-paso-2-agregando-color",
-    "href": "temas/tema-02/tema-02-ggplot2-basico.html#dispersión-paso-2-agregando-color",
-    "title": "Visualización de datos con ggplot2",
-    "section": "Dispersión — paso 2: agregando color",
-    "text": "Dispersión — paso 2: agregando color\n\n\nggplot(pima, aes(x = bmi, y = glu, color = type)) +\n  geom_point()\n\n\n\n\n\n\n\n\n\n\nUna variable categórica más → un nuevo aes().\nggplot2 asigna colores y agrega la leyenda automáticamente."
+    "objectID": "temas/tema-02/tema-02-imputacion-datos-1.html#factores-que-influyen-en-la-imputación",
+    "href": "temas/tema-02/tema-02-imputacion-datos-1.html#factores-que-influyen-en-la-imputación",
+    "title": "Imputación de datos parte 1",
+    "section": "Factores que influyen en la imputación",
+    "text": "Factores que influyen en la imputación\n\n\n\nProporción de datos faltantes\nMecanismo de datos faltantes\nPatrón de datos faltantes\nTamaño de muestra\nNúmero de variables disponibles\nCorrelación entre variables\nTipo de variable\nDistribución de los datos\nRangos y restricciones biológicas\nEstructura de dependencia\n\n\n\nInformación temporal\nHeterogeneidad de la población\nEfectos de lote y centro\nLímites de detección/cuantificación\nCalidad de la medición\nRazón clínica de los datos faltantes\nVariables auxiliares disponibles\nRelaciones no lineales e interacciones\nCategorías o fenotipos poco frecuentes\nObjetivo del análisis posterior"
   },
   {
-    "objectID": "temas/tema-02/tema-02-ggplot2-basico.html#dispersión-paso-3-lista-para-un-reporte",
-    "href": "temas/tema-02/tema-02-ggplot2-basico.html#dispersión-paso-3-lista-para-un-reporte",
-    "title": "Visualización de datos con ggplot2",
-    "section": "Dispersión — paso 3: lista para un reporte",
-    "text": "Dispersión — paso 3: lista para un reporte\n\n\nggplot(pima, aes(x = bmi, y = glu, color = type)) +\n  geom_point(size = 2, alpha = 0.7) +\n  labs(\n    title = \"Glucosa vs. índice de masa corporal\",\n    subtitle = \"Mujeres Pima, según diagnóstico de diabetes\",\n    x = \"IMC (kg/m²)\",\n    y = \"Glucosa plasmática (mg/dL)\",\n    color = \"Diabetes\"\n  ) +\n  theme_minimal(base_size = 13)\n\n\n\n\n\n\n\n\n\n\nlabs() reemplaza los nombres de columnas por texto legible.\ntheme_minimal() quita el fondo gris por defecto."
+    "objectID": "temas/tema-02/tema-02-imputacion-datos-1.html#pregunta-claves-en-la-imputación",
+    "href": "temas/tema-02/tema-02-imputacion-datos-1.html#pregunta-claves-en-la-imputación",
+    "title": "Imputación de datos parte 1",
+    "section": "Pregunta claves en la imputación",
+    "text": "Pregunta claves en la imputación\n\n\n\n\n\n\n\nDimensión\nPregunta clave\n\n\n\n\nCantidad de datos faltantes\n¿Cuánto falta?\n\n\nMecanismo y patrón\n¿Por qué faltan los datos y cómo se distribuyen?\n\n\nInformación disponible\n¿Existen otras variables que informen sobre los valores faltantes?\n\n\nCaracterísticas de los datos\n¿Qué tipo de variables y estructuras de datos tenemos?\n\n\nContexto biomédico\n¿Existe una razón clínica, biológica o técnica para los datos faltantes?"
   },
   {
-    "objectID": "temas/tema-02/tema-02-ggplot2-basico.html#histograma-paso-1-lo-mínimo",
-    "href": "temas/tema-02/tema-02-ggplot2-basico.html#histograma-paso-1-lo-mínimo",
-    "title": "Visualización de datos con ggplot2",
-    "section": "Histograma — paso 1: lo mínimo",
-    "text": "Histograma — paso 1: lo mínimo\n\n\nggplot(pima, aes(x = glu)) +\n  geom_histogram()\n\n\n\n\n\n\n\n\n\n\nUna sola variable continua.\nggplot2 avisa cuántos bins usó por defecto (30)."
+    "objectID": "temas/tema-02/tema-02-imputacion-datos-1.html#tres-conceptos-que-no-deben-confundirse",
+    "href": "temas/tema-02/tema-02-imputacion-datos-1.html#tres-conceptos-que-no-deben-confundirse",
+    "title": "Imputación de datos parte 1",
+    "section": "Tres conceptos que no deben confundirse",
+    "text": "Tres conceptos que no deben confundirse\n\n\n\n\n\n\n\n\nConcepto\nPregunta\nEjemplo biomédico\n\n\n\n\nCantidad\n¿Cuánto falta?\n18% de HbA1c\n\n\nPatrón\n¿Dónde falta?\nvisitas tardías incompletas\n\n\nMecanismo\n¿Por qué falta, dado lo observado?\nabandono relacionado con HbA1c previa"
   },
   {
-    "objectID": "temas/tema-02/tema-02-ggplot2-basico.html#histograma-paso-2-comparando-grupos",
-    "href": "temas/tema-02/tema-02-ggplot2-basico.html#histograma-paso-2-comparando-grupos",
-    "title": "Visualización de datos con ggplot2",
-    "section": "Histograma — paso 2: comparando grupos",
-    "text": "Histograma — paso 2: comparando grupos\n\n\nggplot(pima, aes(x = glu, fill = type)) +\n  geom_histogram(binwidth = 10, alpha = 0.8) +\n  facet_wrap(~ type, ncol = 1) +\n  labs(\n    title = \"Distribución de glucosa según diabetes\",\n    x = \"Glucosa plasmática (mg/dL)\", y = \"Frecuencia\"\n  ) +\n  theme_minimal(base_size = 13) +\n  theme(legend.position = \"none\")\n\n\n\n\n\n\n\n\n\n\nbinwidth controla el ancho de cada barra (mejor que dejarlo por defecto).\nfacet_wrap() separa un panel por grupo."
+    "objectID": "temas/tema-02/tema-02-imputacion-datos-1.html#mcar-mar-y-mnar.-mecanismos.",
+    "href": "temas/tema-02/tema-02-imputacion-datos-1.html#mcar-mar-y-mnar.-mecanismos.",
+    "title": "Imputación de datos parte 1",
+    "section": "MCAR, MAR y MNAR. Mecanismos.",
+    "text": "MCAR, MAR y MNAR. Mecanismos.\n\n\n\n\n\n\n\n\nMecanismo\nDependencia de la probabilidad de ausencia\nLectura práctica\n\n\n\n\nMCAR\nno depende de datos observados ni faltantes\nuna falla logística genuinamente ajena al paciente\n\n\nMAR\ndepende de información observada\nla ausencia queda explicada por variables disponibles\n\n\nMNAR\naún depende del valor no observado\nfalta información después de condicionar por lo observado"
   },
   {
-    "objectID": "temas/tema-02/tema-02-ggplot2-basico.html#boxplot-paso-1-lo-mínimo",
-    "href": "temas/tema-02/tema-02-ggplot2-basico.html#boxplot-paso-1-lo-mínimo",
-    "title": "Visualización de datos con ggplot2",
-    "section": "Boxplot — paso 1: lo mínimo",
-    "text": "Boxplot — paso 1: lo mínimo\n\n\nggplot(pima, aes(x = type, y = bmi)) +\n  geom_boxplot()\n\n\n\n\n\n\n\n\n\n\nUna variable categórica en x, una continua en y."
+    "objectID": "temas/tema-02/tema-02-imputacion-datos-1.html#mcar-mar-y-mnar.-mecanismos.-1",
+    "href": "temas/tema-02/tema-02-imputacion-datos-1.html#mcar-mar-y-mnar.-mecanismos.-1",
+    "title": "Imputación de datos parte 1",
+    "section": "MCAR, MAR y MNAR. Mecanismos.",
+    "text": "MCAR, MAR y MNAR. Mecanismos.\n\nMCAR — Missing Completely At Random El hecho de que falte el dato no depende de ninguna característica del paciente ni del valor faltante.\n\n\nMAR — Missing At Random El hecho de que falte el dato sí tiene una explicación en información que conocemos y observamos.\n\n\nMNAR — Missing Not At Random El hecho de que falte el dato está relacionado con información que no observamos, particularmente con el propio valor faltante."
   },
   {
-    "objectID": "temas/tema-02/tema-02-ggplot2-basico.html#boxplot-paso-2-mostrando-los-datos",
-    "href": "temas/tema-02/tema-02-ggplot2-basico.html#boxplot-paso-2-mostrando-los-datos",
-    "title": "Visualización de datos con ggplot2",
-    "section": "Boxplot — paso 2: mostrando los datos",
-    "text": "Boxplot — paso 2: mostrando los datos\n\n\nggplot(pima, aes(x = type, y = bmi, fill = type)) +\n  geom_boxplot(alpha = 0.5, outlier.shape = NA) +\n  geom_jitter(width = 0.15, alpha = 0.4) +\n  labs(\n    title = \"IMC según diagnóstico de diabetes\",\n    x = \"Diabetes\", y = \"IMC (kg/m²)\"\n  ) +\n  theme_minimal(base_size = 13) +\n  theme(legend.position = \"none\")\n\n\n\n\n\n\n\n\n\n\noutlier.shape = NA evita puntos duplicados: los atípicos ya se ven con geom_jitter().\nCombinar dos geom_*() en una misma gráfica es algo común."
+    "objectID": "temas/tema-02/tema-02-imputacion-datos-1.html#ejemplos-del-mecanismo-de-datos-faltantes",
+    "href": "temas/tema-02/tema-02-imputacion-datos-1.html#ejemplos-del-mecanismo-de-datos-faltantes",
+    "title": "Imputación de datos parte 1",
+    "section": "Ejemplos del mecanismo de datos faltantes",
+    "text": "Ejemplos del mecanismo de datos faltantes\n\n\n\n\n\n\n\n\nMecanismo\nEjemplo\nLa ausencia depende de…\n\n\n\n\nMCAR\nUn tubo se rompe accidentalmente durante el transporte.\nNada relacionado con el paciente o la PCR.\n\n\nMAR\nLa PCR se solicita con menor frecuencia en pacientes jóvenes.\nUna variable observada: edad.\n\n\nMNAR\nValores extremadamente altos de PCR no son reportados por el laboratorio.\nEl propio valor faltante de PCR.\n\n\n\n\n“MAR” no significa que la ausencia ocurra al azar en lenguaje cotidiano. Significa independencia condicional al modelo y a las variables observadas."
   },
   {
-    "objectID": "temas/tema-02/tema-02-ggplot2-basico.html#barras-paso-1-un-conteo",
-    "href": "temas/tema-02/tema-02-ggplot2-basico.html#barras-paso-1-un-conteo",
-    "title": "Visualización de datos con ggplot2",
-    "section": "Barras — paso 1: un conteo",
-    "text": "Barras — paso 1: un conteo\n\n\nggplot(pima, aes(x = type)) +\n  geom_bar()\n\n\n\n\n\n\n\n\n\n\ngeom_bar() cuenta filas por categoría — no necesitas dplyr::count() antes."
+    "objectID": "temas/tema-02/tema-02-imputacion-datos-1.html#antes-de-imputar",
+    "href": "temas/tema-02/tema-02-imputacion-datos-1.html#antes-de-imputar",
+    "title": "Imputación de datos parte 1",
+    "section": "Antes de imputar",
+    "text": "Antes de imputar\n\nDefinir el estimando: población, variable, contraste, resumen y manejo de eventos intercurrentes.\nAuditar códigos de ausencia, límites de detección y datos estructuralmente no aplicables.\nDescribir cantidad y patrones por tiempo, centro, tratamiento y variables clínicas.\nFormular un diagrama causal o una explicación clínica de la ausencia.\nPreespecificar análisis principal y análisis de sensibilidad."
   },
   {
-    "objectID": "temas/tema-02/tema-02-ggplot2-basico.html#barras-paso-2-con-dplyr-lista-para-reporte",
-    "href": "temas/tema-02/tema-02-ggplot2-basico.html#barras-paso-2-con-dplyr-lista-para-reporte",
-    "title": "Visualización de datos con ggplot2",
-    "section": "Barras — paso 2: con dplyr, lista para reporte",
-    "text": "Barras — paso 2: con dplyr, lista para reporte\n\n\npima %&gt;%\n  count(type) %&gt;%\n  mutate(prop = n / sum(n)) %&gt;%\n  ggplot(aes(x = type, y = prop, fill = type)) +\n  geom_col() +\n  geom_text(aes(label = scales::percent(prop, accuracy = 1)),\n            vjust = -0.5) +\n  scale_y_continuous(labels = scales::percent, limits = c(0, 1)) +\n  labs(title = \"Proporción de diabetes en la muestra\",\n       x = \"Diabetes\", y = NULL) +\n  theme_minimal(base_size = 13) +\n  theme(legend.position = \"none\")\n\n\n\n\n\n\n\n\n\n\nAquí usamos dplyr primero (count(), mutate()) y el resultado se manda directo a ggplot().\ngeom_col() grafica un valor que tú ya calculaste; geom_bar() cuenta por ti."
+    "objectID": "temas/tema-02/tema-02-imputacion-datos-1.html#ausencia-no-equivale-siempre-a-dato-faltante",
+    "href": "temas/tema-02/tema-02-imputacion-datos-1.html#ausencia-no-equivale-siempre-a-dato-faltante",
+    "title": "Imputación de datos parte 1",
+    "section": "Ausencia no equivale siempre a dato faltante",
+    "text": "Ausencia no equivale siempre a dato faltante\n\nPor diseño: una prueba solo se aplica a un subgrupo.\nBajo límite de detección: existe información censurada.\nEvento intercurrente: muerte, rescate o cambio de tratamiento exige definir el estimando.\nResultado imposible: embarazo en una población no elegible no es un NA ordinario.\nGenómica: cero técnico, ausencia de cobertura y valor biológico cero requieren distinción."
   },
   {
-    "objectID": "temas/tema-02/tema-02-ggplot2-basico.html#un-tema-consistente-para-todas-tus-gráficas",
-    "href": "temas/tema-02/tema-02-ggplot2-basico.html#un-tema-consistente-para-todas-tus-gráficas",
-    "title": "Visualización de datos con ggplot2",
-    "section": "Un tema consistente para todas tus gráficas",
-    "text": "Un tema consistente para todas tus gráficas\n\n\ntema_clase &lt;- theme_minimal(base_size = 13) +\n  theme(\n    legend.position = \"top\",\n    plot.title = element_text(face = \"bold\")\n  )\n\ntheme_set(tema_clase)\n\nggplot(pima, aes(x = bmi, y = glu, color = type)) +\n  geom_point(size = 2, alpha = 0.7) +\n  geom_smooth(method = \"lm\", se = FALSE) +\n  labs(title = \"Glucosa vs. IMC\", x = \"IMC\", y = \"Glucosa\",\n       color = \"Diabetes\")\n\n\n\n\n\n\n\n\n\n\ntheme_set() aplica un tema a todas las gráficas del documento, sin repetirlo.\ngeom_smooth() agrega una línea de tendencia."
+    "objectID": "temas/tema-02/tema-02-imputacion-datos-1.html#por-qué-imputar",
+    "href": "temas/tema-02/tema-02-imputacion-datos-1.html#por-qué-imputar",
+    "title": "Imputación de datos parte 1",
+    "section": "¿Por qué imputar?",
+    "text": "¿Por qué imputar?\nLa imputación puede:\n\nconservar participantes con información parcial;\nreducir sesgo frente al análisis de casos completos bajo supuestos adecuados;\nrecuperar precisión usando variables auxiliares;\npropagar incertidumbre por los valores no observados;\npermitir análisis compatibles con diseños complejos.\n\nNo recupera información que nunca existió y no corrige un diseño o medición deficientes."
   },
   {
-    "objectID": "temas/tema-02/tema-02-ggplot2-basico.html#guardando-tu-gráfica",
-    "href": "temas/tema-02/tema-02-ggplot2-basico.html#guardando-tu-gráfica",
-    "title": "Visualización de datos con ggplot2",
-    "section": "Guardando tu gráfica",
-    "text": "Guardando tu gráfica\n\ngrafica_final &lt;- ggplot(pima, aes(x = bmi, y = glu, color = type)) +\n  geom_point(size = 2, alpha = 0.7) +\n  geom_smooth(method = \"lm\", se = FALSE) +\n  labs(title = \"Glucosa vs. IMC\", x = \"IMC\", y = \"Glucosa\",\n       color = \"Diabetes\")\n\nggsave(\"glucosa_vs_imc.png\", grafica_final,\n       width = 7, height = 5, dpi = 300)\n\n\nGuarda el objeto de ggplot2 en una variable antes de graficarlo, para poder reutilizarlo.\ndpi = 300 es resolución de calidad de reporte/publicación."
+    "objectID": "temas/tema-02/tema-02-imputacion-datos-1.html#cuándo-sí-suele-aportar-valor",
+    "href": "temas/tema-02/tema-02-imputacion-datos-1.html#cuándo-sí-suele-aportar-valor",
+    "title": "Imputación de datos parte 1",
+    "section": "Cuándo sí suele aportar valor",
+    "text": "Cuándo sí suele aportar valor\n\nEl análisis completo excluiría una fracción relevante o un subgrupo clínico distinto.\nVariables observadas predicen tanto la ausencia como el valor faltante.\nEl mecanismo MAR resulta científicamente defendible como análisis principal.\nEl modelo de imputación puede incluir desenlace, exposición, confusores y variables auxiliares.\nLa estructura longitudinal, multinivel o no lineal puede representarse.\nExiste un plan para sensibilidad a MNAR."
   },
   {
-    "objectID": "temas/tema-02/tema-02-ggplot2-basico.html#resumen-las-capas-que-usamos-hoy",
-    "href": "temas/tema-02/tema-02-ggplot2-basico.html#resumen-las-capas-que-usamos-hoy",
-    "title": "Visualización de datos con ggplot2",
-    "section": "Resumen: las capas que usamos hoy",
-    "text": "Resumen: las capas que usamos hoy\n\n\n\n\n\n\n\n\nCapa\nFunción\nQué agrega\n\n\n\n\nDatos\nggplot(pima, aes(...))\nvariables → ejes/color\n\n\nGeometría\ngeom_point(), geom_histogram(), geom_boxplot(), geom_col()\ntipo de gráfica\n\n\nPaneles\nfacet_wrap()\nun panel por grupo\n\n\nEtiquetas\nlabs()\ntítulos y nombres de eje\n\n\nEscalas\nscale_*()\nformato de colores/ejes\n\n\nTema\ntheme_minimal(), theme_set()\napariencia general"
+    "objectID": "temas/tema-02/tema-02-imputacion-datos-1.html#cuándo-no-o-no-todavía",
+    "href": "temas/tema-02/tema-02-imputacion-datos-1.html#cuándo-no-o-no-todavía",
+    "title": "Imputación de datos parte 1",
+    "section": "Cuándo no, o no todavía",
+    "text": "Cuándo no, o no todavía\n\nEl dato es estructuralmente inexistente o censurado y requiere otro modelo.\nCasi no hay información para predecir una variable en una categoría o estrato.\nEl modelo sustantivo y el de imputación son incompatibles y no puede resolverse.\nLa ausencia es extrema en variables esenciales y cualquier resultado depende de extrapolación no verificable.\nSe pretende seleccionar un solo conjunto imputado o reportar error de predicción como única validación.\nLa imputación ocurriría después de mirar qué método produce el resultado deseado."
   },
   {
-    "objectID": "temas/tema-02/tema-02-ggplot2-basico.html#ejercicio",
-    "href": "temas/tema-02/tema-02-ggplot2-basico.html#ejercicio",
-    "title": "Visualización de datos con ggplot2",
-    "section": "Ejercicio",
-    "text": "Ejercicio\nUsando pima, construye tu propia progresión básico → pulido para ped (función de pedigrí de diabetes) vs. age:\n\nGráfica de dispersión mínima.\nAgrega color por type.\nAgrega título, nombres de ejes y un tema.\nGuarda tu gráfica final con ggsave()."
+    "objectID": "temas/tema-02/tema-02-imputacion-datos-1.html#cuándo-no",
+    "href": "temas/tema-02/tema-02-imputacion-datos-1.html#cuándo-no",
+    "title": "Imputación de datos parte 1",
+    "section": "Cuándo no",
+    "text": "Cuándo no\n\nCuand la imputada es la variable de desenlace"
   },
   {
-    "objectID": "temas/tema-02/tema-02-ggplot2-basico.html#recursos",
-    "href": "temas/tema-02/tema-02-ggplot2-basico.html#recursos",
-    "title": "Visualización de datos con ggplot2",
-    "section": "Recursos",
-    "text": "Recursos\n\nBioestadística en R para ciencias de la salud. Capítulo 10. Visualización de datos. https://www.cucs.udg.mx/libros/lectura_cucs.php?libro=Bioestadistica_enR_digital#book/144\nWickham, Navarro & Pedersen, ggplot2: Elegant Graphics for Data Analysis — https://ggplot2-book.org/\nWickham, Çetinkaya-Rundel & Grolemund, R for Data Science, capítulo de visualización — https://r4ds.hadley.nz/\nHoja de referencia de ggplot2 (Posit) — https://posit.co/resources/cheatsheets/\n?Pima.tr2 en R, para la documentación del conjunto de datos"
+    "objectID": "temas/tema-02/tema-02-imputacion-datos-1.html#imputación-simple",
+    "href": "temas/tema-02/tema-02-imputacion-datos-1.html#imputación-simple",
+    "title": "Imputación de datos parte 1",
+    "section": "Imputación simple",
+    "text": "Imputación simple\nLa imputación simple reemplaza cada valor faltante por un único valor.\nMétodos frecuentes:\n\nMedia para variables cuantitativas.\nMediana para variables cuantitativas asimétricas.\nModa para variables categóricas.\nValor obtenido mediante una regresión.\nValor de una observación semejante.\n\nEn este caso nos concentraremos en la imputación mediante una constante: media, mediana o moda."
+  },
+  {
+    "objectID": "temas/tema-02/tema-02-imputacion-datos-1.html#imputación-simple-1",
+    "href": "temas/tema-02/tema-02-imputacion-datos-1.html#imputación-simple-1",
+    "title": "Imputación de datos parte 1",
+    "section": "Imputación simple",
+    "text": "Imputación simple\n\nEn solo muy pocas situaciones es de útilidad. Reservela solo para fines exploratorios."
+  },
+  {
+    "objectID": "temas/tema-02/tema-02-imputacion-datos-1.html#la-intuición-detrás-del-método",
+    "href": "temas/tema-02/tema-02-imputacion-datos-1.html#la-intuición-detrás-del-método",
+    "title": "Imputación de datos parte 1",
+    "section": "La intuición detrás del método",
+    "text": "La intuición detrás del método\nLa imputación por media, mediana o moda suele aplicarse cuando:\n\nel porcentaje de datos faltantes parece pequeño;\nla variable no se considera central para el estudio;\nse necesita una base de datos completa;\nse desea evitar la eliminación de participantes;\nse realiza un análisis exploratorio.\n\nEsta estrategia es sencilla, reproducible y fácil de explicar. Fines exploratorios.\nSin embargo, un porcentaje pequeño de datos faltantes no garantiza que el procedimiento sea estadísticamente válido."
+  },
+  {
+    "objectID": "temas/tema-02/tema-02-imputacion-datos-1.html#imputación-simple-2",
+    "href": "temas/tema-02/tema-02-imputacion-datos-1.html#imputación-simple-2",
+    "title": "Imputación de datos parte 1",
+    "section": "Imputación simple",
+    "text": "Imputación simple\nLa imputación simple reemplaza cada valor faltante por un único valor.\nMétodos frecuentes:\n\nMedia para variables cuantitativas.\nMediana para variables cuantitativas asimétricas.\nModa para variables categóricas.\nValor obtenido mediante una regresión.\nValor de una observación semejante.\n\nEn este caso nos concentraremos en la imputación mediante una constante: media, mediana o moda."
+  },
+  {
+    "objectID": "temas/tema-02/tema-02-imputacion-datos-1.html#la-intuición-detrás-del-método-1",
+    "href": "temas/tema-02/tema-02-imputacion-datos-1.html#la-intuición-detrás-del-método-1",
+    "title": "Imputación de datos parte 1",
+    "section": "La intuición detrás del método",
+    "text": "La intuición detrás del método\nLa imputación por media, mediana o moda suele aplicarse cuando:\n\nel porcentaje de datos faltantes parece pequeño;\nla variable no se considera central para el estudio;\nse necesita una base de datos completa;\nse desea evitar la eliminación de participantes;\nse realiza un análisis exploratorio.\n\nEsta estrategia es sencilla, reproducible y fácil de explicar.\nSin embargo, un porcentaje pequeño de datos faltantes no garantiza que el procedimiento sea estadísticamente válido."
+  },
+  {
+    "objectID": "temas/tema-02/tema-02-imputacion-datos-1.html#ejemplo-imputación-por-la-media",
+    "href": "temas/tema-02/tema-02-imputacion-datos-1.html#ejemplo-imputación-por-la-media",
+    "title": "Imputación de datos parte 1",
+    "section": "Ejemplo: imputación por la media",
+    "text": "Ejemplo: imputación por la media\nSupongamos que tenemos las siguientes mediciones:\n\ndatos &lt;- c(10, 15, 20, 25, 30, NA, NA)\n\ndatos\n\n[1] 10 15 20 25 30 NA NA\n\n\nCalculamos la media usando únicamente los valores observados:\n\nmedia_observada &lt;- mean(datos, na.rm = TRUE)\n\nmedia_observada\n\n[1] 20"
+  },
+  {
+    "objectID": "temas/tema-02/tema-02-imputacion-datos-1.html#sustitución-de-los-valores-faltantes",
+    "href": "temas/tema-02/tema-02-imputacion-datos-1.html#sustitución-de-los-valores-faltantes",
+    "title": "Imputación de datos parte 1",
+    "section": "Sustitución de los valores faltantes",
+    "text": "Sustitución de los valores faltantes\n\ndatos_imputados &lt;- datos\n\ndatos_imputados[is.na(datos_imputados)] &lt;- media_observada\n\ndatos_imputados\n\n[1] 10 15 20 25 30 20 20\n\n\nLos dos valores faltantes se sustituyen por 20, que es la media de los valores observados.\nLa base de datos queda completa, pero los valores añadidos no contienen variación."
+  },
+  {
+    "objectID": "temas/tema-02/tema-02-imputacion-datos-1.html#efecto-sobre-la-media-y-la-variabilidad",
+    "href": "temas/tema-02/tema-02-imputacion-datos-1.html#efecto-sobre-la-media-y-la-variabilidad",
+    "title": "Imputación de datos parte 1",
+    "section": "Efecto sobre la media y la variabilidad",
+    "text": "Efecto sobre la media y la variabilidad\n\n\n               medida observados despues_de_imputar\n1               Media  20.000000          20.000000\n2 Desviación estándar   7.905694           6.454972\n3            Varianza  62.500000          41.666667\n\n\nLa media permanece en 20, pero la desviación estándar y la varianza disminuyen."
+  },
+  {
+    "objectID": "temas/tema-02/tema-02-imputacion-datos-1.html#visualización-del-efecto",
+    "href": "temas/tema-02/tema-02-imputacion-datos-1.html#visualización-del-efecto",
+    "title": "Imputación de datos parte 1",
+    "section": "Visualización del efecto",
+    "text": "Visualización del efecto"
+  },
+  {
+    "objectID": "temas/tema-02/tema-02-imputacion-datos-1.html#qué-ocurrió",
+    "href": "temas/tema-02/tema-02-imputacion-datos-1.html#qué-ocurrió",
+    "title": "Imputación de datos parte 1",
+    "section": "¿Qué ocurrió?",
+    "text": "¿Qué ocurrió?\nLa imputación agregó observaciones artificiales exactamente en el centro de la distribución.\nComo todos los valores imputados son iguales:\n\naumenta artificialmente la concentración alrededor de la media;\ndisminuye la dispersión;\nno se representa la incertidumbre sobre los valores faltantes;\npuede modificarse la relación con otras variables.\n\nLa base queda completa, pero parece contener más información de la que realmente se observó."
+  },
+  {
+    "objectID": "temas/tema-02/tema-02-imputacion-datos-1.html#consecuencias-estadísticas",
+    "href": "temas/tema-02/tema-02-imputacion-datos-1.html#consecuencias-estadísticas",
+    "title": "Imputación de datos parte 1",
+    "section": "Consecuencias estadísticas",
+    "text": "Consecuencias estadísticas\nLa imputación mediante una constante puede:\n\nsubestimar la varianza;\nreducir artificialmente los errores estándar;\nproducir intervalos de confianza demasiado estrechos;\nmodificar correlaciones;\nmodificar coeficientes de regresión;\naumentar artificialmente la frecuencia de una categoría;\nignorar la incertidumbre sobre el valor faltante.\n\nLa media puede conservarse bajo determinadas condiciones, pero esto no significa que se conserve la distribución completa."
+  },
+  {
+    "objectID": "temas/tema-02/tema-02-imputacion-datos-1.html#media-mediana-y-moda",
+    "href": "temas/tema-02/tema-02-imputacion-datos-1.html#media-mediana-y-moda",
+    "title": "Imputación de datos parte 1",
+    "section": "Media, mediana y moda",
+    "text": "Media, mediana y moda\n\n\n\n\n\n\n\n\nMétodo\nPosible ventaja\nProblema principal\n\n\n\n\nMedia\nconserva la media bajo MCAR\nreduce la varianza y altera asociaciones\n\n\nMediana\nresiste valores extremos\nacumula observaciones en el centro\n\n\nModa\nfácil de aplicar en categorías\naumenta artificialmente la categoría más común\n\n\n\nLa mediana y la moda pueden ser más robustas en algunos contextos, pero continúan siendo valores constantes.\nPor tanto, tampoco representan la incertidumbre asociada con los datos faltantes."
+  },
+  {
+    "objectID": "temas/tema-02/tema-02-imputacion-datos-1.html#el-porcentaje-faltante-no-decide-por-sí-solo",
+    "href": "temas/tema-02/tema-02-imputacion-datos-1.html#el-porcentaje-faltante-no-decide-por-sí-solo",
+    "title": "Imputación de datos parte 1",
+    "section": "El porcentaje faltante no decide por sí solo",
+    "text": "El porcentaje faltante no decide por sí solo\nNo existe un umbral universal como:\n\n“Si falta menos de 5%, se puede imputar por la media”.\n\nLa importancia del problema depende de:\n\nEl mecanismo que produjo los datos faltantes.\nEl papel de la variable en el análisis.\nLa distribución de la variable.\nLa relación de la variable con otras mediciones.\nEl objetivo científico del estudio.\nLa concentración de los datos faltantes en subgrupos específicos.\n\nUn porcentaje pequeño pero selectivo puede producir más sesgo que un porcentaje mayor distribuido casi aleatoriamente."
+  },
+  {
+    "objectID": "temas/tema-02/tema-02-imputacion-datos-1.html#ejemplo",
+    "href": "temas/tema-02/tema-02-imputacion-datos-1.html#ejemplo",
+    "title": "Imputación de datos parte 1",
+    "section": "Ejemplo",
+    "text": "Ejemplo\nSupongamos que falta 3% de las mediciones de creatinina.\nEscenario A\nLas muestras se perdieron por una falla aleatoria del equipo de laboratorio.\nLa ausencia podría aproximarse a un mecanismo completamente aleatorio.\nEscenario B\nLas mediciones faltan principalmente en pacientes con insuficiencia renal grave.\nAunque solo falte 3%, la imputación por la media asignaría valores normales o intermedios a pacientes que probablemente presentan valores elevados."
+  },
+  {
+    "objectID": "temas/tema-02/tema-02-imputacion-datos-1.html#importancia-de-la-variable",
+    "href": "temas/tema-02/tema-02-imputacion-datos-1.html#importancia-de-la-variable",
+    "title": "Imputación de datos parte 1",
+    "section": "Importancia de la variable",
+    "text": "Importancia de la variable\nLa expresión “variable poco importante” debe definirse de acuerdo con el análisis.\nUna variable puede ser importante si funciona como:\n\ndesenlace o exposición;\ntratamiento o confusora;\nmodificadora del efecto;\npredictora de los datos faltantes;\nvariable auxiliar;\ncomponente de una escala clínica.\n\nUna variable que no aparece en la tabla final todavía puede ayudar a explicar por qué faltan otros datos."
+  },
+  {
+    "objectID": "temas/tema-02/tema-02-imputacion-datos-1.html#cuándo-podría-utlizarse",
+    "href": "temas/tema-02/tema-02-imputacion-datos-1.html#cuándo-podría-utlizarse",
+    "title": "Imputación de datos parte 1",
+    "section": "¿Cuándo podría utlizarse?",
+    "text": "¿Cuándo podría utlizarse?\nLa imputación simple podría utilizarse con cautela cuando:\n\nfaltan literalmente unos pocos valores;\nel objetivo es exclusivamente exploratorio;\nse prepara una visualización preliminar;\nno se realizarán pruebas de hipótesis;\nla variable no participa directa ni indirectamente en el análisis;\nlos resultados se comparan con un análisis sin imputación;\nel procedimiento se documenta claramente.\n\nSi una variable no tiene ninguna función analítica, puede resultar más transparente conservar los valores como NA."
+  },
+  {
+    "objectID": "temas/tema-02/tema-02-imputacion-datos-1.html#cuándo-debería-evitarse",
+    "href": "temas/tema-02/tema-02-imputacion-datos-1.html#cuándo-debería-evitarse",
+    "title": "Imputación de datos parte 1",
+    "section": "¿Cuándo debería evitarse?",
+    "text": "¿Cuándo debería evitarse?\nConviene evitar la imputación por media, mediana o moda cuando:\n\nla variable es un desenlace o exposición principal;\nparticipa en una regresión o correlación;\nse estimarán intervalos de confianza;\nse realizarán pruebas de hipótesis;\nlos datos faltantes se concentran en un subgrupo clínico;\nla ausencia podría depender del valor no observado;\nla variable tiene una distribución muy asimétrica o multimodal;\nel resultado se utilizará para decisiones clínicas individuales."
+  },
+  {
+    "objectID": "temas/tema-02/tema-02-imputacion-datos-1.html#alternativas",
+    "href": "temas/tema-02/tema-02-imputacion-datos-1.html#alternativas",
+    "title": "Imputación de datos parte 1",
+    "section": "Alternativas",
+    "text": "Alternativas\nDependiendo del objetivo, pueden considerarse:\n\nanálisis de casos completos bajo condiciones justificadas;\nmáxima verosimilitud;\nimputación mediante regresión;\nemparejamiento predictivo de medias;\nimputación múltiple;\nmodelos longitudinales o multinivel;\nmodelos específicos para datos censurados;\nanálisis de sensibilidad a mecanismos MNAR.\n\nPara inferencia biomédica, la imputación múltiple suele ser preferible porque incorpora incertidumbre entre conjuntos imputados."
+  },
+  {
+    "objectID": "temas/tema-02/tema-02-imputacion-datos-1.html#regla-práctica",
+    "href": "temas/tema-02/tema-02-imputacion-datos-1.html#regla-práctica",
+    "title": "Imputación de datos parte 1",
+    "section": "Regla práctica",
+    "text": "Regla práctica\n\nSi el valor imputado participa en una estimación, intervalo de confianza, prueba estadística o modelo, no utilizar una constante como solución predeterminada.\n\nSecuencia recomendada:\n\nCuantificar y visualizar los datos faltantes.\nInvestigar por qué faltan.\nIdentificar el papel de la variable.\nJustificar el análisis de casos completos, si se utiliza.\nConsiderar imputación múltiple.\nComparar resultados antes y después."
+  },
+  {
+    "objectID": "temas/tema-02/tema-02-imputacion-datos-1.html#manos-a-la-obra",
+    "href": "temas/tema-02/tema-02-imputacion-datos-1.html#manos-a-la-obra",
+    "title": "Imputación de datos parte 1",
+    "section": "Manos a la obra",
+    "text": "Manos a la obra\n\nDescargue el documento: Descargue el documento Ejercicios imputación simple\nEste documento contiene datos simulados para introducir NA a algunas bases de datos\nCompare estadística y gráficamente el antes y el después."
+  },
+  {
+    "objectID": "temas/tema-02/tema-02-imputacion-datos-1.html#qué-significa-mice",
+    "href": "temas/tema-02/tema-02-imputacion-datos-1.html#qué-significa-mice",
+    "title": "Imputación de datos parte 1",
+    "section": "¿Qué significa MICE?",
+    "text": "¿Qué significa MICE?\nMICE significa Multivariate Imputation by Chained Equations.\nEn español puede describirse como:\n\nImputación multivariada mediante ecuaciones encadenadas.\n\nMICE también se conoce como especificación totalmente condicional o FCS.\nLa idea central consiste en construir un modelo de imputación separado para cada variable incompleta, utilizando las demás variables como predictoras.\nMICE es una forma de realizar imputación múltiple, pero ambos términos no son sinónimos."
+  },
+  {
+    "objectID": "temas/tema-02/tema-02-imputacion-datos-1.html#fundamento-condicional-de-mice",
+    "href": "temas/tema-02/tema-02-imputacion-datos-1.html#fundamento-condicional-de-mice",
+    "title": "Imputación de datos parte 1",
+    "section": "Fundamento condicional de MICE",
+    "text": "Fundamento condicional de MICE\nSupongamos que faltan valores en presión arterial, colesterol e índice de masa corporal.\nMICE construye modelos condicionales como:\n[ P() ]\n[ P() ]\n[ P() ]\nCada variable se actualiza usando la información disponible en las demás."
+  },
+  {
+    "objectID": "temas/tema-02/tema-02-imputacion-datos-1.html#ciclo-iterativo-de-mice",
+    "href": "temas/tema-02/tema-02-imputacion-datos-1.html#ciclo-iterativo-de-mice",
+    "title": "Imputación de datos parte 1",
+    "section": "Ciclo iterativo de MICE",
+    "text": "Ciclo iterativo de MICE\nInicialización\nLos valores faltantes reciben valores iniciales provisionales.\nPrimera variable\nSe ajusta un modelo usando las demás variables y se reemplazan sus valores faltantes.\nVariables siguientes\nEl procedimiento se repite variable por variable, utilizando las imputaciones más recientes.\nNueva iteración\nAl terminar una ronda, el algoritmo vuelve a la primera variable.\nDespués de varias iteraciones, las distribuciones deberían estabilizarse."
+  },
+  {
+    "objectID": "temas/tema-02/tema-02-imputacion-datos-1.html#un-modelo-para-cada-tipo-de-variable",
+    "href": "temas/tema-02/tema-02-imputacion-datos-1.html#un-modelo-para-cada-tipo-de-variable",
+    "title": "Imputación de datos parte 1",
+    "section": "Un modelo para cada tipo de variable",
+    "text": "Un modelo para cada tipo de variable\nMICE permite elegir un método compatible con la naturaleza de cada variable.\n\n\n\nTipo de variable\nMétodo frecuente en mice\n\n\n\n\nCuantitativa continua\npmm, norm\n\n\nBinaria\nlogreg\n\n\nCategórica nominal\npolyreg\n\n\nCategórica ordinal\npolr\n\n\nConteo\nmodelo específico o método personalizado\n\n\nMultinivel\nmétodos 2l.*, pan o jomo\n\n\n\npmm, o emparejamiento predictivo de medias, utiliza como donantes valores realmente observados con predicciones similares."
+  },
+  {
+    "objectID": "temas/tema-02/tema-02-imputacion-datos-1.html#emparejamiento-predictivo-de-medias",
+    "href": "temas/tema-02/tema-02-imputacion-datos-1.html#emparejamiento-predictivo-de-medias",
+    "title": "Imputación de datos parte 1",
+    "section": "Emparejamiento predictivo de medias",
+    "text": "Emparejamiento predictivo de medias\nPara imputar una observación incompleta, pmm realiza conceptualmente lo siguiente:\n\nAjusta un modelo para predecir la variable incompleta.\nCalcula la predicción del individuo con el dato faltante.\nBusca individuos observados con predicciones cercanas.\nSelecciona un donante y utiliza su valor observado.\n\nVentajas:\n\nconserva valores dentro del soporte observado;\ntolera cierta falta de normalidad;\nevita muchos valores fisiológicamente imposibles.\n\nNo garantiza ausencia de sesgo y puede funcionar mal cuando hay pocos donantes comparables."
+  },
+  {
+    "objectID": "temas/tema-02/tema-02-imputacion-datos-1.html#múltiples-conjuntos-imputados",
+    "href": "temas/tema-02/tema-02-imputacion-datos-1.html#múltiples-conjuntos-imputados",
+    "title": "Imputación de datos parte 1",
+    "section": "Múltiples conjuntos imputados",
+    "text": "Múltiples conjuntos imputados\nMICE repite el procedimiento para producir (m) conjuntos:\nDatos incompletos\n     ├── Imputación 1 ── Análisis 1\n     ├── Imputación 2 ── Análisis 2\n     ├── Imputación 3 ── Análisis 3\n     └── Imputación m ── Análisis m\nLas diferencias entre conjuntos surgen de:\n\nla incertidumbre de los parámetros del modelo;\nla variabilidad de los valores plausibles;\nla selección aleatoria de donantes, según el método.\n\nElegir solamente uno de estos conjuntos elimina parte de la incertidumbre que MICE intenta representar."
+  },
+  {
+    "objectID": "temas/tema-02/tema-02-imputacion-datos-1.html#supuesto-principal",
+    "href": "temas/tema-02/tema-02-imputacion-datos-1.html#supuesto-principal",
+    "title": "Imputación de datos parte 1",
+    "section": "Supuesto principal",
+    "text": "Supuesto principal\nMICE se utiliza habitualmente bajo el supuesto MAR: Missing At Random.\nMAR significa que, después de considerar las variables observadas incluidas en el modelo, la probabilidad de ausencia ya no depende del valor faltante.\nEjemplo:\n\nla ausencia de HbA1c depende de edad, tratamiento y HbA1c previa;\nesas variables están disponibles e incluidas en la imputación;\ncondicionando por ellas, MAR puede resultar razonable.\n\nLos datos observados no permiten demostrar que MAR sea verdadero. La justificación requiere conocimiento clínico y análisis de sensibilidad."
+  },
+  {
+    "objectID": "temas/tema-02/tema-02-imputacion-datos-1.html#variables-que-debe-incluir-el-modelo",
+    "href": "temas/tema-02/tema-02-imputacion-datos-1.html#variables-que-debe-incluir-el-modelo",
+    "title": "Imputación de datos parte 1",
+    "section": "Variables que debe incluir el modelo",
+    "text": "Variables que debe incluir el modelo\nEl modelo de imputación debería incluir:\n\nlas variables del análisis principal;\nel desenlace, incluso cuando se imputan covariables;\npredictores de los valores faltantes;\npredictores de la probabilidad de ausencia;\nvariables auxiliares clínicamente informativas;\ninteracciones, transformaciones y estructura temporal relevantes.\n\nIncluir muchas variables irrelevantes tampoco garantiza una buena imputación. La selección debe apoyarse en el diseño y en el conocimiento del proceso de ausencia."
+  },
+  {
+    "objectID": "temas/tema-02/tema-02-imputacion-datos-1.html#mice-en-r",
+    "href": "temas/tema-02/tema-02-imputacion-datos-1.html#mice-en-r",
+    "title": "Imputación de datos parte 1",
+    "section": "MICE en R",
+    "text": "MICE en R\nlibrary(mice)\n\n# Revisar métodos y matriz de predictores\ninicial &lt;- mice(datos, maxit = 0)\nmetodos &lt;- inicial$method\npredictores &lt;- inicial$predictorMatrix\n\n# Generar 20 conjuntos imputados\nimp &lt;- mice(\n  datos,\n  m = 20,\n  maxit = 20,\n  method = metodos,\n  predictorMatrix = predictores,\n  seed = 2026\n)\n\n# Ajustar el modelo en cada conjunto\najustes &lt;- with(imp, lm(resultado ~ tratamiento + edad + biomarcador))\n\n# Combinar mediante reglas de Rubin\nsummary(pool(ajustes), conf.int = TRUE)\nLa matriz de predictores y los métodos predeterminados siempre deben revisarse."
+  },
+  {
+    "objectID": "temas/tema-02/tema-02-imputacion-datos-1.html#evaluación-de-mice",
+    "href": "temas/tema-02/tema-02-imputacion-datos-1.html#evaluación-de-mice",
+    "title": "Imputación de datos parte 1",
+    "section": "Evaluación de MICE",
+    "text": "Evaluación de MICE\nUna imputación no se valida solamente porque el algoritmo terminó sin errores.\nConviene revisar:\n\nconvergencia y mezcla de las cadenas;\neventos registrados durante la ejecución;\nvalores imposibles o poco plausibles;\ndistribuciones observadas e imputadas;\nrelaciones entre variables;\nvariación entre imputaciones;\nestabilidad frente a cambios de semilla y número de imputaciones;\nsensibilidad frente a mecanismos MNAR.\n\nplot(imp)\ndensityplot(imp)\nstripplot(imp)\nimp$loggedEvents"
+  },
+  {
+    "objectID": "temas/tema-02/tema-02-imputacion-datos-1.html#qué-puede-y-qué-no-puede-hacer-mice",
+    "href": "temas/tema-02/tema-02-imputacion-datos-1.html#qué-puede-y-qué-no-puede-hacer-mice",
+    "title": "Imputación de datos parte 1",
+    "section": "Qué puede y qué no puede hacer MICE",
+    "text": "Qué puede y qué no puede hacer MICE\nMICE puede:\n\naprovechar información parcial;\nmanejar variables de diferentes tipos;\nconservar participantes en el análisis;\nrepresentar incertidumbre;\nincorporar relaciones multivariadas.\n\nMICE no puede:\n\nrecuperar información inexistente;\ndemostrar el supuesto MAR;\ncorregir automáticamente un mal diseño;\nsolucionar ausencia estructural o censura sin un modelo apropiado;\nsustituir el razonamiento clínico."
+  },
+  {
+    "objectID": "temas/tema-02/tema-02-ejercicios-mice.html",
+    "href": "temas/tema-02/tema-02-ejercicios-mice.html",
+    "title": "Ejercicios: imputación múltiple con mice",
+    "section": "",
+    "text": "Este documento ofrece una explicación básica sobre el funcionamiento de la librería MICE. Los datos simulados fueron creados con el apoyo de AI.\n\n\n\n\n\n\n\n\n\n\nMecanismo\nDepende de…\nEn este ejercicio\n\n\n\n\nMCAR\nnada (ausencia genuinamente aleatoria)\nfalla aleatoria de un brazalete automático\n\n\nMAR\nvariables observadas\ntabaquismo/edad, o el IMC, explican la ausencia de otra variable\n\n\nMNAR\nel propio valor no observado\npacientes con HbA1c muy alta evitan el control\n\n\n\nVamos a construir los tres mecanismos a propósito, para poder discutir después qué tan bien (o mal) los maneja mice.\n\n\n\n\nSimular datos.\nInducir datos faltantes con mecanismos MCAR, MAR y MNAR conocidos.\nDiagnosticar el patrón y la cantidad de datos faltantes.\nAjustar un modelo de imputación múltiple con mice(), revisar convergencia y plausibilidad.\nAgrupar (pool) resultados de un análisis usando las reglas de Rubin.\nComparar los valores imputados contra la verdad conocida y cuantificar el sesgo.\n\n\nlibrary(tidyverse) # Manipulación de datos\nlibrary(mice) # Imputación de varibles"
+  },
+  {
+    "objectID": "temas/tema-02/tema-02-ejercicios-mice.html#recordatorio-mcar-mar-y-mnar",
+    "href": "temas/tema-02/tema-02-ejercicios-mice.html#recordatorio-mcar-mar-y-mnar",
+    "title": "Ejercicios: imputación múltiple con mice",
+    "section": "",
+    "text": "Mecanismo\nDepende de…\nEn este ejercicio\n\n\n\n\nMCAR\nnada (ausencia genuinamente aleatoria)\nfalla aleatoria de un brazalete automático\n\n\nMAR\nvariables observadas\ntabaquismo/edad, o el IMC, explican la ausencia de otra variable\n\n\nMNAR\nel propio valor no observado\npacientes con HbA1c muy alta evitan el control\n\n\n\nVamos a construir los tres mecanismos a propósito, para poder discutir después qué tan bien (o mal) los maneja mice."
+  },
+  {
+    "objectID": "temas/tema-02/tema-02-ejercicios-mice.html#objetivos-de-la-sesión",
+    "href": "temas/tema-02/tema-02-ejercicios-mice.html#objetivos-de-la-sesión",
+    "title": "Ejercicios: imputación múltiple con mice",
+    "section": "",
+    "text": "Simular datos.\nInducir datos faltantes con mecanismos MCAR, MAR y MNAR conocidos.\nDiagnosticar el patrón y la cantidad de datos faltantes.\nAjustar un modelo de imputación múltiple con mice(), revisar convergencia y plausibilidad.\nAgrupar (pool) resultados de un análisis usando las reglas de Rubin.\nComparar los valores imputados contra la verdad conocida y cuantificar el sesgo.\n\n\nlibrary(tidyverse) # Manipulación de datos\nlibrary(mice) # Imputación de varibles"
+  },
+  {
+    "objectID": "temas/tema-02/tema-02-ejercicios-mice.html#ejercicio-1-conocer-la-cohorte-simulada",
+    "href": "temas/tema-02/tema-02-ejercicios-mice.html#ejercicio-1-conocer-la-cohorte-simulada",
+    "title": "Ejercicios: imputación múltiple con mice",
+    "section": "Ejercicio 1: conocer la cohorte simulada",
+    "text": "Ejercicio 1: conocer la cohorte simulada\n\nUse glimpse() o summary() para describir datos_verdad.\nCalcule cuántos pacientes tienen diagnóstico de diabetes tipo 2 con table(datos_verdad$diagnostico_dm2).\nConfirme que no hay ningún NA todavía en esta base — es nuestra “verdad” y debe mantenerse completa e intacta durante todo el ejercicio.\nPuede utilzar cualquiera de las funciones que hemos utilizado en la clase.\n\n\n# Su código aquí"
+  },
+  {
+    "objectID": "temas/tema-02/tema-02-ejercicios-mice.html#ejercicio-2-cuantificar-y-visualizar-la-ausencia",
+    "href": "temas/tema-02/tema-02-ejercicios-mice.html#ejercicio-2-cuantificar-y-visualizar-la-ausencia",
+    "title": "Ejercicios: imputación múltiple con mice",
+    "section": "Ejercicio 2: cuantificar y visualizar la ausencia",
+    "text": "Ejercicio 2: cuantificar y visualizar la ausencia\n\ncolMeans(is.na(datos_incompletos)) * 100\n\n               id              edad              sexo               imc \n             0.00              0.00              0.00             12.75 \n    glucosa_ayuno             hba1c presion_sistolica        tabaquismo \n             5.50              1.25             11.00              0.00 \n  diagnostico_dm2 \n             0.00 \n\n\n\nmice::md.pattern(datos_incompletos, rotate.names = TRUE)\n\n\n\n\n\n\n\n\n    id edad sexo tabaquismo diagnostico_dm2 hba1c glucosa_ayuno\n288  1    1    1          1               1     1             1\n45   1    1    1          1               1     1             1\n36   1    1    1          1               1     1             1\n4    1    1    1          1               1     1             1\n19   1    1    1          1               1     1             0\n1    1    1    1          1               1     1             0\n2    1    1    1          1               1     1             0\n3    1    1    1          1               1     0             1\n1    1    1    1          1               1     0             1\n1    1    1    1          1               1     0             1\n     0    0    0          0               0     5            22\n    presion_sistolica imc    \n288                 1   1   0\n45                  1   0   1\n36                  0   1   1\n4                   0   0   2\n19                  1   1   1\n1                   1   0   2\n2                   0   1   2\n3                   1   1   1\n1                   0   1   2\n1                   0   0   3\n                   44  51 122\n\n\n\n¿Cuál variable tiene más datos faltantes? ¿El patrón es monótono o no monótono?\n¿Cuántos pacientes tienen las cuatro variables (presion_sistolica, imc, glucosa_ayuno, hba1c) completas de forma simultánea?\nSin ver el código de la Parte 2, ¿podría usted adivinar, solo mirando md.pattern(), cuál mecanismo (MCAR/MAR/MNAR) generó cada columna? Explique por qué sí o por qué no."
+  },
+  {
+    "objectID": "temas/tema-02/tema-02-ejercicios-mice.html#ejercicio-3-interpretar-la-tabla",
+    "href": "temas/tema-02/tema-02-ejercicios-mice.html#ejercicio-3-interpretar-la-tabla",
+    "title": "Ejercicios: imputación múltiple con mice",
+    "section": "Ejercicio 3: interpretar la tabla",
+    "text": "Ejercicio 3: interpretar la tabla\n\n¿Qué coeficiente se aleja más del “oráculo”: el de casos completos o el de imputación por la media?\n¿Cuántas observaciones se usaron en mod_cc respecto a mod_oraculo? Verifique con nobs().\n¿Por qué la imputación por la media tiende a atenuar (acercar a cero) algunas relaciones entre variables?"
+  },
+  {
+    "objectID": "temas/tema-02/tema-02-ejercicios-mice.html#excluir-el-identificador-de-la-matriz-de-predictores",
+    "href": "temas/tema-02/tema-02-ejercicios-mice.html#excluir-el-identificador-de-la-matriz-de-predictores",
+    "title": "Ejercicios: imputación múltiple con mice",
+    "section": "4.1 Excluir el identificador de la matriz de predictores",
+    "text": "4.1 Excluir el identificador de la matriz de predictores\nid es un identificador único: no debe usarse para predecir nada, aunque sí queremos conservarlo en la base para poder comparar después contra la verdad. Por eso lo dejamos dentro de mice(), pero apagamos su fila y columna en la matriz de predictores.\n\npred &lt;- mice::make.predictorMatrix(datos_incompletos)\npred[\"id\", ] &lt;- 0   # id no debe usarse para imputar ninguna otra variable\npred[, \"id\"] &lt;- 0   # ninguna variable debe usarse para \"imputar\" id (no tiene NA)\npred\n\n                  id edad sexo imc glucosa_ayuno hba1c presion_sistolica\nid                 0    0    0   0             0     0                 0\nedad               0    0    1   1             1     1                 1\nsexo               0    1    0   1             1     1                 1\nimc                0    1    1   0             1     1                 1\nglucosa_ayuno      0    1    1   1             0     1                 1\nhba1c              0    1    1   1             1     0                 1\npresion_sistolica  0    1    1   1             1     1                 0\ntabaquismo         0    1    1   1             1     1                 1\ndiagnostico_dm2    0    1    1   1             1     1                 1\n                  tabaquismo diagnostico_dm2\nid                         0               0\nedad                       1               1\nsexo                       1               1\nimc                        1               1\nglucosa_ayuno              1               1\nhba1c                      1               1\npresion_sistolica          1               1\ntabaquismo                 0               1\ndiagnostico_dm2            1               0"
+  },
+  {
+    "objectID": "temas/tema-02/tema-02-ejercicios-mice.html#ejercicio-4-primer-ajuste",
+    "href": "temas/tema-02/tema-02-ejercicios-mice.html#ejercicio-4-primer-ajuste",
+    "title": "Ejercicios: imputación múltiple con mice",
+    "section": "Ejercicio 4: primer ajuste",
+    "text": "Ejercicio 4: primer ajuste\n\nimp1 &lt;- mice(\n  datos_incompletos,\n  m = 5,\n  maxit = 5,\n  predictorMatrix = pred,\n  seed = 123,\n  printFlag = FALSE\n)\n\nimp1$method\n\n               id              edad              sexo               imc \n               \"\"                \"\"                \"\"             \"pmm\" \n    glucosa_ayuno             hba1c presion_sistolica        tabaquismo \n            \"pmm\"             \"pmm\"             \"pmm\"                \"\" \n  diagnostico_dm2 \n               \"\" \n\n\n\n¿Qué método asignó mice por defecto a imc, glucosa_ayuno, hba1c y presion_sistolica? Busque pmm (predictive mean matching) — ¿por qué es preferible a generar valores desde una distribución normal, en variables biomédicas con límites biológicos (por ejemplo, IMC o glucosa no pueden ser negativos)?\n¿Qué método le asignó a diagnostico_dm2? ¿Por qué ese método y no pmm?\n¿Cuántos conjuntos de datos completos genera este objeto? Verifique con imp1$m."
+  },
+  {
+    "objectID": "temas/tema-02/tema-02-ejercicios-mice.html#convergencia",
+    "href": "temas/tema-02/tema-02-ejercicios-mice.html#convergencia",
+    "title": "Ejercicios: imputación múltiple con mice",
+    "section": "4.2 Convergencia",
+    "text": "4.2 Convergencia\nCon solo maxit = 5 iteraciones puede no alcanzarse convergencia. Aumentemos a 20 y grafiquemos las cadenas.\n\nimp2 &lt;- mice(\n  datos_incompletos,\n  m = 5,\n  maxit = 20,\n  predictorMatrix = pred,\n  seed = 123,\n  printFlag = FALSE\n)\n\nplot(imp2, layout = c(2, 4))"
+  },
+  {
+    "objectID": "temas/tema-02/tema-02-ejercicios-mice.html#ejercicio-5-leer-las-cadenas-de-convergencia",
+    "href": "temas/tema-02/tema-02-ejercicios-mice.html#ejercicio-5-leer-las-cadenas-de-convergencia",
+    "title": "Ejercicios: imputación múltiple con mice",
+    "section": "Ejercicio 5: leer las cadenas de convergencia",
+    "text": "Ejercicio 5: leer las cadenas de convergencia\n\nCada línea de color en plot(imp2) corresponde a una de las m = 5 imputaciones. ¿Las líneas se entrelazan sin tendencia (buena señal) o alguna se aleja sistemáticamente de las demás?\n¿Qué esperaríamos ver en estas gráficas si maxit fuera demasiado bajo?"
+  },
+  {
+    "objectID": "temas/tema-02/tema-02-ejercicios-mice.html#plausibilidad-de-los-valores-imputados",
+    "href": "temas/tema-02/tema-02-ejercicios-mice.html#plausibilidad-de-los-valores-imputados",
+    "title": "Ejercicios: imputación múltiple con mice",
+    "section": "4.3 Plausibilidad de los valores imputados",
+    "text": "4.3 Plausibilidad de los valores imputados\n\ndensityplot(imp2, ~ hba1c)\n\n\n\n\n\n\n\nstripplot(imp2, hba1c ~ .imp, pch = 20, cex = 1.2)"
+  },
+  {
+    "objectID": "temas/tema-02/tema-02-ejercicios-mice.html#ejercicio-6-comparar-lo-observado-contra-lo-imputado",
+    "href": "temas/tema-02/tema-02-ejercicios-mice.html#ejercicio-6-comparar-lo-observado-contra-lo-imputado",
+    "title": "Ejercicios: imputación múltiple con mice",
+    "section": "Ejercicio 6: comparar lo observado contra lo imputado",
+    "text": "Ejercicio 6: comparar lo observado contra lo imputado\n\nEn densityplot(), la curva azul es la distribución observada y las curvas rosas/magenta son las imputaciones. ¿Se parecen razonablemente?\nRecuerde que hba1c tiene datos faltantes MNAR (Parte 2, punto 4): la ausencia depende del propio valor no observado. ¿Esperaría que mice pueda “darse cuenta” de esto solo con los datos disponibles? Repita densityplot() para imc o glucosa_ayuno (mecanismo MAR) y compare — ¿luce distinto el ajuste?"
+  },
+  {
+    "objectID": "temas/tema-02/tema-02-ejercicios-mice.html#ejercicio-7-interpretar-el-sesgo",
+    "href": "temas/tema-02/tema-02-ejercicios-mice.html#ejercicio-7-interpretar-el-sesgo",
+    "title": "Ejercicios: imputación múltiple con mice",
+    "section": "Ejercicio 7: interpretar el sesgo",
+    "text": "Ejercicio 7: interpretar el sesgo\n\n¿El sesgo de imc y glucosa_ayuno (mecanismo MAR) es cercano a cero?\n¿Qué observa en el sesgo de hba1c (mecanismo MNAR)? ¿En qué dirección se equivoca mice — sobreestima o subestima los valores realmente altos de HbA1c? Grafique comparacion_valores |&gt; filter(na_hba1c) con ggplot() (hba1c_verdad en el eje x, hba1c imputado en el eje y, y una línea de referencia geom_abline()) para verlo.\nCon esta evidencia, explique con sus propias palabras por qué la imputación múltiple “no puede arreglar” un mecanismo MNAR, aunque el ajuste de convergencia (Ejercicio 5) se vea perfectamente sano."
+  },
+  {
+    "objectID": "temas/tema-02/tema-02-ejercicios-mice.html#ejercicio-8-comparar-tres-estrategias",
+    "href": "temas/tema-02/tema-02-ejercicios-mice.html#ejercicio-8-comparar-tres-estrategias",
+    "title": "Ejercicios: imputación múltiple con mice",
+    "section": "Ejercicio 8: comparar tres estrategias",
+    "text": "Ejercicio 8: comparar tres estrategias\n\nConvierta los coeficientes de glucosa_ayuno a razón de momios (exp()) para el modelo oráculo, el de casos completos y el agrupado por mice. ¿Cuál se acerca más al oráculo?\nCompare el error estándar de glucosa_ayuno entre mod_cc_dm2 y agrupado. ¿El de mice es mayor o menor? ¿Por qué el agrupamiento de Rubin normalmente da errores estándar más grandes que un único conjunto imputado tratado “como si fuera dato real”?\n¿Cuántos grados de libertad usa summary(agrupado) (columna df) y por qué no son un número entero simple como en un modelo ordinario? (Pista: pool() usa la fórmula de Barnard-Rubin.)"
   },
   {
     "objectID": "temas/tema-02/tema-02-eda-datos-biomedicos.html#objetivo-de-la-sesión",
@@ -1110,7 +1418,7 @@
     "href": "temas/tema-02/index.html#material-de-clase",
     "title": "Tema 2: EDA, calidad y datos faltantes I",
     "section": "Material de clase",
-    "text": "Material de clase\nParte 1 — Ver la presentación: ggplot2\nParte 2 — Ver la presentación: Generalidades EDA\nParte 3 — Ver documento: EDA con GGally, ggcorrplot y DataExplorer"
+    "text": "Material de clase\nParte 1 — Ver la presentación: ggplot2\nParte 2 — Ver la presentación: Generalidades EDA\nParte 3 — Ver documento: EDA con GGally, ggcorrplot y DataExplorer\nParte 4 — Ver documento: Imputación de datos parte 1"
   },
   {
     "objectID": "temas/tema-02/tema-02-eda_ggally_ggcorrplot_dataexplorer.html",
@@ -1167,5 +1475,124 @@
     "title": "EDA: GGally, ggcorrplot y DataExplorer",
     "section": "7 Referencias",
     "text": "7 Referencias\n\nFleming TR, Harrington DP. Counting Processes and Survival Analysis. Wiley, 1991 (fuente original del dataset pbc).\nTherneau T, Grambsch P. Modeling Survival Data: Extending the Cox Model. Springer, 2000.\nSchloerke B, et al. GGally: Extension to ‘ggplot2’. CRAN.\nKassambara A. ggcorrplot: Visualization of a Correlation Matrix using ‘ggplot2’. CRAN.\nCui B. DataExplorer: Automate Data Exploration and Treatment. CRAN."
+  },
+  {
+    "objectID": "temas/tema-02/tema-02-ggplot2-basico.html#objetivo-de-la-sesión",
+    "href": "temas/tema-02/tema-02-ggplot2-basico.html#objetivo-de-la-sesión",
+    "title": "Visualización de datos con ggplot2",
+    "section": "Objetivo de la sesión",
+    "text": "Objetivo de la sesión\nAl finalizar esta sesión podrás construir gráficas con ggplot2, partiendo de una versión mínima y agregando capas hasta llegar a una gráfica lista para un reporte.\n\nYa sabes preparar datos con dplyr y tidyr.\nHoy usamos esa base para visualizar.\nTrabajaremos con Pima.tr2 (paquete MASS): variables clínicas de mujeres Pima y diagnóstico de diabetes."
+  },
+  {
+    "objectID": "temas/tema-02/tema-02-ggplot2-basico.html#la-gramática-de-gráficos",
+    "href": "temas/tema-02/tema-02-ggplot2-basico.html#la-gramática-de-gráficos",
+    "title": "Visualización de datos con ggplot2",
+    "section": "La gramática de gráficos",
+    "text": "La gramática de gráficos\nggplot2 construye una gráfica por capas, agregadas con +:\n\ndata — la tabla de datos\naes() — qué variable va en qué eje / color / forma\ngeom_*() — el tipo de gráfica (puntos, barras, cajas…)\nfacet_*() — paneles por grupo\nlabs() / scale_*() — títulos, ejes, colores\ntheme_*() — apariencia general"
+  },
+  {
+    "objectID": "temas/tema-02/tema-02-ggplot2-basico.html#cargando-y-preparando-los-datos",
+    "href": "temas/tema-02/tema-02-ggplot2-basico.html#cargando-y-preparando-los-datos",
+    "title": "Visualización de datos con ggplot2",
+    "section": "Cargando y preparando los datos",
+    "text": "Cargando y preparando los datos\n\n\nlibrary(tidyverse)\n\ndata(Pima.tr2, package = \"MASS\")\n\npima &lt;- as_tibble(Pima.tr2) %&gt;%\n  drop_na()\n\nglimpse(pima)\n\n\nRows: 200\nColumns: 8\n$ npreg &lt;int&gt; 5, 7, 5, 0, 0, 5, 3, 1, 3, 2, 0, 9, 1, 12, 1, 4, 1, 11, 1, 0, 2,…\n$ glu   &lt;int&gt; 86, 195, 77, 165, 107, 97, 83, 193, 142, 128, 137, 154, 189, 92,…\n$ bp    &lt;int&gt; 68, 70, 82, 76, 60, 76, 58, 50, 80, 78, 40, 78, 60, 62, 66, 76, …\n$ skin  &lt;int&gt; 28, 33, 41, 43, 25, 27, 31, 16, 15, 37, 35, 30, 23, 7, 52, 15, 8…\n$ bmi   &lt;dbl&gt; 30.2, 25.1, 35.8, 47.9, 26.4, 35.6, 34.3, 25.9, 32.4, 43.3, 43.1…\n$ ped   &lt;dbl&gt; 0.364, 0.163, 0.156, 0.259, 0.133, 0.378, 0.336, 0.655, 0.200, 1…\n$ age   &lt;int&gt; 24, 55, 35, 26, 23, 52, 25, 24, 63, 31, 33, 45, 59, 44, 29, 21, …\n$ type  &lt;fct&gt; No, Yes, No, No, No, Yes, No, No, No, Yes, Yes, No, Yes, Yes, No…"
+  },
+  {
+    "objectID": "temas/tema-02/tema-02-ggplot2-basico.html#dispersión-paso-1-lo-mínimo",
+    "href": "temas/tema-02/tema-02-ggplot2-basico.html#dispersión-paso-1-lo-mínimo",
+    "title": "Visualización de datos con ggplot2",
+    "section": "Dispersión — paso 1: lo mínimo",
+    "text": "Dispersión — paso 1: lo mínimo\n\n\nggplot(pima, aes(x = bmi, y = glu)) +\n  geom_point()\n\n\n\n\n\n\n\n\n\n\naes() conecta variables con la gráfica.\ngeom_point() dibuja cada fila como un punto."
+  },
+  {
+    "objectID": "temas/tema-02/tema-02-ggplot2-basico.html#dispersión-paso-2-agregando-color",
+    "href": "temas/tema-02/tema-02-ggplot2-basico.html#dispersión-paso-2-agregando-color",
+    "title": "Visualización de datos con ggplot2",
+    "section": "Dispersión — paso 2: agregando color",
+    "text": "Dispersión — paso 2: agregando color\n\n\nggplot(pima, aes(x = bmi, y = glu, color = type)) +\n  geom_point()\n\n\n\n\n\n\n\n\n\n\nUna variable categórica más → un nuevo aes().\nggplot2 asigna colores y agrega la leyenda automáticamente."
+  },
+  {
+    "objectID": "temas/tema-02/tema-02-ggplot2-basico.html#dispersión-paso-3-lista-para-un-reporte",
+    "href": "temas/tema-02/tema-02-ggplot2-basico.html#dispersión-paso-3-lista-para-un-reporte",
+    "title": "Visualización de datos con ggplot2",
+    "section": "Dispersión — paso 3: lista para un reporte",
+    "text": "Dispersión — paso 3: lista para un reporte\n\n\nggplot(pima, aes(x = bmi, y = glu, color = type)) +\n  geom_point(size = 2, alpha = 0.7) +\n  labs(\n    title = \"Glucosa vs. índice de masa corporal\",\n    subtitle = \"Mujeres Pima, según diagnóstico de diabetes\",\n    x = \"IMC (kg/m²)\",\n    y = \"Glucosa plasmática (mg/dL)\",\n    color = \"Diabetes\"\n  ) +\n  theme_minimal(base_size = 13)\n\n\n\n\n\n\n\n\n\n\nlabs() reemplaza los nombres de columnas por texto legible.\ntheme_minimal() quita el fondo gris por defecto."
+  },
+  {
+    "objectID": "temas/tema-02/tema-02-ggplot2-basico.html#histograma-paso-1-lo-mínimo",
+    "href": "temas/tema-02/tema-02-ggplot2-basico.html#histograma-paso-1-lo-mínimo",
+    "title": "Visualización de datos con ggplot2",
+    "section": "Histograma — paso 1: lo mínimo",
+    "text": "Histograma — paso 1: lo mínimo\n\n\nggplot(pima, aes(x = glu)) +\n  geom_histogram()\n\n\n\n\n\n\n\n\n\n\nUna sola variable continua.\nggplot2 avisa cuántos bins usó por defecto (30)."
+  },
+  {
+    "objectID": "temas/tema-02/tema-02-ggplot2-basico.html#histograma-paso-2-comparando-grupos",
+    "href": "temas/tema-02/tema-02-ggplot2-basico.html#histograma-paso-2-comparando-grupos",
+    "title": "Visualización de datos con ggplot2",
+    "section": "Histograma — paso 2: comparando grupos",
+    "text": "Histograma — paso 2: comparando grupos\n\n\nggplot(pima, aes(x = glu, fill = type)) +\n  geom_histogram(binwidth = 10, alpha = 0.8) +\n  facet_wrap(~ type, ncol = 1) +\n  labs(\n    title = \"Distribución de glucosa según diabetes\",\n    x = \"Glucosa plasmática (mg/dL)\", y = \"Frecuencia\"\n  ) +\n  theme_minimal(base_size = 13) +\n  theme(legend.position = \"none\")\n\n\n\n\n\n\n\n\n\n\nbinwidth controla el ancho de cada barra (mejor que dejarlo por defecto).\nfacet_wrap() separa un panel por grupo."
+  },
+  {
+    "objectID": "temas/tema-02/tema-02-ggplot2-basico.html#boxplot-paso-1-lo-mínimo",
+    "href": "temas/tema-02/tema-02-ggplot2-basico.html#boxplot-paso-1-lo-mínimo",
+    "title": "Visualización de datos con ggplot2",
+    "section": "Boxplot — paso 1: lo mínimo",
+    "text": "Boxplot — paso 1: lo mínimo\n\n\nggplot(pima, aes(x = type, y = bmi)) +\n  geom_boxplot()\n\n\n\n\n\n\n\n\n\n\nUna variable categórica en x, una continua en y."
+  },
+  {
+    "objectID": "temas/tema-02/tema-02-ggplot2-basico.html#boxplot-paso-2-mostrando-los-datos",
+    "href": "temas/tema-02/tema-02-ggplot2-basico.html#boxplot-paso-2-mostrando-los-datos",
+    "title": "Visualización de datos con ggplot2",
+    "section": "Boxplot — paso 2: mostrando los datos",
+    "text": "Boxplot — paso 2: mostrando los datos\n\n\nggplot(pima, aes(x = type, y = bmi, fill = type)) +\n  geom_boxplot(alpha = 0.5, outlier.shape = NA) +\n  geom_jitter(width = 0.15, alpha = 0.4) +\n  labs(\n    title = \"IMC según diagnóstico de diabetes\",\n    x = \"Diabetes\", y = \"IMC (kg/m²)\"\n  ) +\n  theme_minimal(base_size = 13) +\n  theme(legend.position = \"none\")\n\n\n\n\n\n\n\n\n\n\noutlier.shape = NA evita puntos duplicados: los atípicos ya se ven con geom_jitter().\nCombinar dos geom_*() en una misma gráfica es algo común."
+  },
+  {
+    "objectID": "temas/tema-02/tema-02-ggplot2-basico.html#barras-paso-1-un-conteo",
+    "href": "temas/tema-02/tema-02-ggplot2-basico.html#barras-paso-1-un-conteo",
+    "title": "Visualización de datos con ggplot2",
+    "section": "Barras — paso 1: un conteo",
+    "text": "Barras — paso 1: un conteo\n\n\nggplot(pima, aes(x = type)) +\n  geom_bar()\n\n\n\n\n\n\n\n\n\n\ngeom_bar() cuenta filas por categoría — no necesitas dplyr::count() antes."
+  },
+  {
+    "objectID": "temas/tema-02/tema-02-ggplot2-basico.html#barras-paso-2-con-dplyr-lista-para-reporte",
+    "href": "temas/tema-02/tema-02-ggplot2-basico.html#barras-paso-2-con-dplyr-lista-para-reporte",
+    "title": "Visualización de datos con ggplot2",
+    "section": "Barras — paso 2: con dplyr, lista para reporte",
+    "text": "Barras — paso 2: con dplyr, lista para reporte\n\n\npima %&gt;%\n  count(type) %&gt;%\n  mutate(prop = n / sum(n)) %&gt;%\n  ggplot(aes(x = type, y = prop, fill = type)) +\n  geom_col() +\n  geom_text(aes(label = scales::percent(prop, accuracy = 1)),\n            vjust = -0.5) +\n  scale_y_continuous(labels = scales::percent, limits = c(0, 1)) +\n  labs(title = \"Proporción de diabetes en la muestra\",\n       x = \"Diabetes\", y = NULL) +\n  theme_minimal(base_size = 13) +\n  theme(legend.position = \"none\")\n\n\n\n\n\n\n\n\n\n\nAquí usamos dplyr primero (count(), mutate()) y el resultado se manda directo a ggplot().\ngeom_col() grafica un valor que tú ya calculaste; geom_bar() cuenta por ti."
+  },
+  {
+    "objectID": "temas/tema-02/tema-02-ggplot2-basico.html#un-tema-consistente-para-todas-tus-gráficas",
+    "href": "temas/tema-02/tema-02-ggplot2-basico.html#un-tema-consistente-para-todas-tus-gráficas",
+    "title": "Visualización de datos con ggplot2",
+    "section": "Un tema consistente para todas tus gráficas",
+    "text": "Un tema consistente para todas tus gráficas\n\n\ntema_clase &lt;- theme_minimal(base_size = 13) +\n  theme(\n    legend.position = \"top\",\n    plot.title = element_text(face = \"bold\")\n  )\n\ntheme_set(tema_clase)\n\nggplot(pima, aes(x = bmi, y = glu, color = type)) +\n  geom_point(size = 2, alpha = 0.7) +\n  geom_smooth(method = \"lm\", se = FALSE) +\n  labs(title = \"Glucosa vs. IMC\", x = \"IMC\", y = \"Glucosa\",\n       color = \"Diabetes\")\n\n\n\n\n\n\n\n\n\n\ntheme_set() aplica un tema a todas las gráficas del documento, sin repetirlo.\ngeom_smooth() agrega una línea de tendencia."
+  },
+  {
+    "objectID": "temas/tema-02/tema-02-ggplot2-basico.html#guardando-tu-gráfica",
+    "href": "temas/tema-02/tema-02-ggplot2-basico.html#guardando-tu-gráfica",
+    "title": "Visualización de datos con ggplot2",
+    "section": "Guardando tu gráfica",
+    "text": "Guardando tu gráfica\n\ngrafica_final &lt;- ggplot(pima, aes(x = bmi, y = glu, color = type)) +\n  geom_point(size = 2, alpha = 0.7) +\n  geom_smooth(method = \"lm\", se = FALSE) +\n  labs(title = \"Glucosa vs. IMC\", x = \"IMC\", y = \"Glucosa\",\n       color = \"Diabetes\")\n\nggsave(\"glucosa_vs_imc.png\", grafica_final,\n       width = 7, height = 5, dpi = 300)\n\n\nGuarda el objeto de ggplot2 en una variable antes de graficarlo, para poder reutilizarlo.\ndpi = 300 es resolución de calidad de reporte/publicación."
+  },
+  {
+    "objectID": "temas/tema-02/tema-02-ggplot2-basico.html#resumen-las-capas-que-usamos-hoy",
+    "href": "temas/tema-02/tema-02-ggplot2-basico.html#resumen-las-capas-que-usamos-hoy",
+    "title": "Visualización de datos con ggplot2",
+    "section": "Resumen: las capas que usamos hoy",
+    "text": "Resumen: las capas que usamos hoy\n\n\n\n\n\n\n\n\nCapa\nFunción\nQué agrega\n\n\n\n\nDatos\nggplot(pima, aes(...))\nvariables → ejes/color\n\n\nGeometría\ngeom_point(), geom_histogram(), geom_boxplot(), geom_col()\ntipo de gráfica\n\n\nPaneles\nfacet_wrap()\nun panel por grupo\n\n\nEtiquetas\nlabs()\ntítulos y nombres de eje\n\n\nEscalas\nscale_*()\nformato de colores/ejes\n\n\nTema\ntheme_minimal(), theme_set()\napariencia general"
+  },
+  {
+    "objectID": "temas/tema-02/tema-02-ggplot2-basico.html#ejercicio",
+    "href": "temas/tema-02/tema-02-ggplot2-basico.html#ejercicio",
+    "title": "Visualización de datos con ggplot2",
+    "section": "Ejercicio",
+    "text": "Ejercicio\nUsando pima, construye tu propia progresión básico → pulido para ped (función de pedigrí de diabetes) vs. age:\n\nGráfica de dispersión mínima.\nAgrega color por type.\nAgrega título, nombres de ejes y un tema.\nGuarda tu gráfica final con ggsave()."
+  },
+  {
+    "objectID": "temas/tema-02/tema-02-ggplot2-basico.html#recursos",
+    "href": "temas/tema-02/tema-02-ggplot2-basico.html#recursos",
+    "title": "Visualización de datos con ggplot2",
+    "section": "Recursos",
+    "text": "Recursos\n\nBioestadística en R para ciencias de la salud. Capítulo 10. Visualización de datos. https://www.cucs.udg.mx/libros/lectura_cucs.php?libro=Bioestadistica_enR_digital#book/144\nWickham, Navarro & Pedersen, ggplot2: Elegant Graphics for Data Analysis — https://ggplot2-book.org/\nWickham, Çetinkaya-Rundel & Grolemund, R for Data Science, capítulo de visualización — https://r4ds.hadley.nz/\nHoja de referencia de ggplot2 (Posit) — https://posit.co/resources/cheatsheets/\n?Pima.tr2 en R, para la documentación del conjunto de datos"
   }
 ]

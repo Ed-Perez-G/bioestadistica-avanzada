@@ -1,8 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://Ed-Perez-G.github.io/bioestadistica-avanzada/temas/tema-02/tema-02-ggplot2-basico.html</loc>
-    <lastmod>2026-09-01T01:53:13.593Z</lastmod>
+    <loc>https://Ed-Perez-G.github.io/bioestadistica-avanzada/temas/tema-02/tema-02-imputacion-datos-1.html</loc>
+    <lastmod>2026-09-09T21:47:38.979Z</lastmod>
+  </url>
+  <url>
+    <loc>https://Ed-Perez-G.github.io/bioestadistica-avanzada/temas/tema-02/tema-02-ejercicios-mice.html</loc>
+    <lastmod>2026-09-09T13:12:37.150Z</lastmod>
   </url>
   <url>
     <loc>https://Ed-Perez-G.github.io/bioestadistica-avanzada/temas/tema-02/tema-02-eda-datos-biomedicos.html</loc>
@@ -42,10 +46,14 @@
   </url>
   <url>
     <loc>https://Ed-Perez-G.github.io/bioestadistica-avanzada/temas/tema-02/index.html</loc>
-    <lastmod>2026-09-07T02:00:29.513Z</lastmod>
+    <lastmod>2026-09-09T21:41:17.046Z</lastmod>
   </url>
   <url>
     <loc>https://Ed-Perez-G.github.io/bioestadistica-avanzada/temas/tema-02/tema-02-eda_ggally_ggcorrplot_dataexplorer.html</loc>
     <lastmod>2026-09-07T01:56:12.269Z</lastmod>
+  </url>
+  <url>
+    <loc>https://Ed-Perez-G.github.io/bioestadistica-avanzada/temas/tema-02/tema-02-ggplot2-basico.html</loc>
+    <lastmod>2026-09-01T01:53:13.593Z</lastmod>
   </url>
 </urlset>
