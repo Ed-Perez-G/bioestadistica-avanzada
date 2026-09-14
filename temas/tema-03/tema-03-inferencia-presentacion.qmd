@@ -1,0 +1,229 @@
+---
+title: "Tema 3: Inferencia estadística"
+subtitle: "Repaso de conceptos básico"
+author: "Edsaúl Emilio Pérez-Guerrero"
+date: last-modified
+lang: es
+bibliography: biblio-inferencia.bib
+csl: https://www.zotero.org/styles/vancouver
+format:
+  revealjs:
+    theme: [tema-inferencia.scss]
+    slide-number: c/t
+    progress: true
+    transition: fade
+    center: false
+    width: 1280
+    height: 720
+    margin: 0.07
+    code-copy: true
+    code-line-numbers: false
+    chalkboard: true
+    preview-links: auto
+    footer: "Inferencia estadística"
+execute:
+  echo: true
+  warning: false
+  message: false
+  freeze: auto
+knitr:
+  opts_chunk:
+    fig-width: 8.5
+    fig-height: 4.3
+    dpi: 1
+---
+
+## Contenido
+
+## Inferencia estadística
+
+La inferencia estadística es el conjunto de métodos que permite sacar conclusiones sobre una población grande a partir del análisis de una muestra pequeña y representativa.
+
+- Pruebas de hipótesis
+- Intervalos de confianza
+
+## Enfoque frecuentista vs bayesiano
+
+### Enfoque frecuentista
+Este enfoque se basa en la idea de que la probabilidad de un evento se calcula como la proporción de veces que ocurre el evento en un número muy grande de ensayos repetidos. Es decir, tomamos los datos de un gran número de eventos y los comparamos con nuestros datos. La probabilidad está predefinida y no cambia.
+
+### Enfoque bayesiano
+Se basa en el teorema de Bayes, que actualiza nuestras creencias sobre la probabilidad de un evento a medida que obtenemos nueva información
+
+
+## Valores de $p$
+
+El valor p indica qué tan incompatibles son los datos con la hipótesis nula. 
+
+>Si en realidad no hubiera diferencia o asociación, ¿qué tan probable sería obtener un resultado como el observado o uno aún más extremo?
+
+Para un p-value de 0.03
+
+>Si en realidad no hubiera diferencia o asociación, ¿qué tan probable sería obtener un resultado como el observado o uno aún más extremo?
+
+## Valores de $p$
+
+Es importante aclarar lo que no significa:
+
+- No significa que haya un 3 % de probabilidad de que la hipótesis nula sea verdadera.
+- No significa que haya un 97 % de probabilidad de que el tratamiento funcione.
+- No significa que exista un 3 % de probabilidad de que el resultado "se deba al azar".
+- No mide el tamaño ni la importancia de la diferencia
+
+## Valores de $p$
+
+
+::: {.callout-important}
+Los valores de $p$ no lo son todo. Nunca debe limitarse a un valor de $p$.
+
+Siempre acompañe con:
+
+- Tamaño del efecto  
+- Y su intervalo de confianza
+:::
+
+
+## Intervalos de confianza
+
+Los intervalos de confianza (IC) te ayudan a inferir qué valores de un parámetro poblacional son compatibles con tus datos y con qué precisión lo has estimado, bajo los supuestos del análisis.
+
+Nos dice: 
+> Si repitiéramos el muestreo muchas veces y construyéramos un intervalo con el mismo procedimiento en cada muestra, aproximadamente el 95 % de esos intervalos contendría el verdadero parámetro poblacional, bajo los supuestos del método.
+
+## Intervalos de confianza
+
+```{r warning=FALSE, message=FALSE, echo=FALSE}
+# Reproduce los dos ejemplos con valores aproximados leídos de las imágenes.
+# Si hace falta: install.packages("ggplot2")
+library(ggplot2)
+
+datos <- data.frame(
+  estudio = rep(c("A. Estudio 1: IC solapados",
+                  "B. Estudio 2: IC sin solapamiento"), each = 2),
+  tratamiento = rep(c("Estándar", "Nuevo"), 2),
+  estimacion = c(15, 19, 15, 19),
+  inferior = c(11, 16, 14, 17),
+  superior = c(18, 21, 16, 21)
+)
+datos$tratamiento <- factor(datos$tratamiento,
+                            levels = c("Estándar", "Nuevo"))
+
+# Rojo: intersección de los IC (16–18).
+# Azul: espacio entre los IC (16–17); no representa otro IC.
+bandas <- data.frame(
+  estudio = unique(datos$estudio),
+  inferior = c(16, 16),
+  superior = c(18, 17),
+  tipo = c("Solapamiento", "Separación")
+)
+
+panel <- ggplot(datos, aes(x = tratamiento, y = estimacion)) +
+  geom_rect(
+    data = bandas,
+    aes(xmin = 0.5, xmax = 2.5, ymin = inferior,
+        ymax = superior, fill = tipo),
+    inherit.aes = FALSE, alpha = 0.45
+  ) +
+  geom_errorbar(aes(ymin = inferior, ymax = superior),
+                width = 0.20, linewidth = 1.1) +
+  geom_point(size = 4.2) +
+  facet_wrap(~ estudio, nrow = 1) +
+  scale_fill_manual(values = c("Solapamiento" = "#FF7379",
+                               "Separación" = "#7970FF"),
+                    guide = "none") +
+  scale_y_continuous(breaks = seq(10, 22, 2),
+                     minor_breaks = seq(10, 22, 1)) +
+  coord_cartesian(ylim = c(10.5, 21.5)) +
+  labs(
+    title = "Intervalos de confianza de la supervivencia a 5 años",
+    subtitle = "Puntos: estimaciones puntuales · Barras: intervalos de confianza",
+    x = "Tratamiento", y = "Supervivencia (%)",
+    caption = paste(
+      "Rojo: solapamiento de los IC. Azul: separación entre los IC.",
+      "Valores aproximados reconstruidos de las imágenes.",
+      sep = "\n"
+    )
+  ) +
+  theme_minimal(base_size = 14) +
+  theme(
+    plot.title = element_text(face = "bold", size = 18),
+    plot.subtitle = element_text(color = "#555555", margin = margin(b = 16)),
+    strip.text = element_text(face = "bold", size = 13, margin = margin(b = 12)),
+    panel.grid.minor.x = element_blank(),
+    panel.spacing = grid::unit(1.5, "lines"),
+    plot.caption = element_text(hjust = 0, color = "#555555", margin = margin(t = 12)),
+    plot.margin = margin(18, 20, 14, 18)
+  )
+
+print(panel)
+
+```
+
+## Tamaño del efecto
+
+### ¿qué tan grande es la diferencia o asociación?
+
+El tamaño del efecto cuantifica la magnitud de una diferencia entre grupos o de una asociación entre variables.
+
+Un efecto estadísticamente significativo puede ser pequeño. Su importancia depende del contexto
+
+
+| Medida | ¿Qué nos dice? |
+|---|---|
+| **Tamaño del efecto** | Cuánto difieren los grupos. |
+| **IC del 95 %** | Con qué precisión estimamos esa diferencia. |
+| **Valor p** | Qué tan incompatibles son los datos con la hipótesis de ausencia de diferencia. |
+
+## Principales medidas del tamaño del efecto
+
+### Tamaño del efecto: diferencias entre grupos
+
+| Medida | ¿Qué cuantifica? | Características |
+|---|---|---|
+| **Diferencia de medias** | Diferencia entre las medias de dos grupos. | Conserva las unidades originales. Valor nulo: **0**. |
+| **d de Cohen** | Diferencia de medias expresada en desviaciones estándar. | No tiene unidades; facilita comparar resultados medidos en distintas escalas. Valor nulo: **0**. |
+| **g de Hedges** | Diferencia de medias estandarizada con corrección del sesgo. | Útil especialmente con muestras pequeñas. Valor nulo: **0**. |
+| **Delta de Cliff** | Predominio de los valores de un grupo sobre los del otro. | Basada en comparaciones por pares; útil para datos ordinales. Varía de **−1 a 1**; valor nulo: **0**. |
+
+## Principales medidas del tamaño del efecto
+
+### Tamaño del efecto: resultados binarios
+
+| Medida | ¿Qué cuantifica? | Características |
+|---|---|---|
+| **Diferencia de riesgos** | Diferencia absoluta entre dos probabilidades. | Se puede expresar en puntos porcentuales. Valor nulo: **0**. |
+| **Riesgo relativo (RR)** | Cociente entre el riesgo de un grupo y el del grupo de referencia. | RR = 2 indica el doble de riesgo. Valor nulo: **1**. |
+| **Odds ratio (OR)** | Cociente de los *odds*: \(p/(1-p)\). | Frecuente en regresión logística y estudios de casos y controles. No equivale al RR. Valor nulo: **1**. |
+| **Número necesario a tratar (NNT)** | Personas que deben tratarse para obtener un beneficio adicional. | Inverso de la reducción absoluta del riesgo; requiere especificar el periodo de seguimiento. |
+
+
+## Principales medidas del tamaño del efecto
+
+### Tamaño del efecto: varianza explicada
+
+| Medida | ¿Qué cuantifica? | Características |
+|---|---|---|
+| **R²** | Proporción de variación de la respuesta explicada por un modelo lineal. | En el ajuste habitual con intercepto, varía de **0 a 1**. No demuestra causalidad. |
+| **Eta cuadrado (η²)** | Proporción de la variación total asociada a un efecto en ANOVA. | Varía de **0 a 1**; puede sobreestimar el efecto poblacional. |
+| **Eta cuadrado parcial (η²p)** | Variación atribuida al efecto respecto a la suma de efecto y error. | Depende del diseño y de los términos del modelo; no equivale generalmente a η². |
+| **Omega cuadrado (ω²)** | Proporción de varianza atribuible a un efecto, con corrección del sesgo. | Menos sesgado que η²; su estimación puede ser negativa cuando el efecto es muy pequeño. |
+
+## Principales medidas del tamaño del efecto
+### Tamaño del efecto: tiempo hasta un evento
+
+| Aspecto | Idea clave |
+|---|---|
+| **Magnitud** | Los criterios de “pequeño”, “moderado” o “grande” dependen de la medida y del contexto. |
+| **Dirección** | El signo o la posición respecto a 1 depende del grupo de referencia y de cómo se define el resultado. |
+| **Precisión** | Acompañar la estimación con su intervalo de confianza. |
+| **Relevancia** | Valorar la importancia práctica; la significación estadística no determina la magnitud del efecto. |
+
+
+## ¿Cómo interpretar el tamaño del efecto?
+
+| Aspecto | Idea clave |
+|---|---|
+| **Magnitud** | Los criterios de “pequeño”, “moderado” o “grande” dependen de la medida y del contexto. |
+| **Dirección** | El signo o la posición respecto a 1 depende del grupo de referencia y de cómo se define el resultado. |
+| **Precisión** | Acompañar la estimación con su intervalo de confianza. |
+| **Relevancia** | Valorar la importancia práctica; la significación estadística no determina la magnitud del efecto. |

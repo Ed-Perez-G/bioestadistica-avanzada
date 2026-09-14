@@ -120,6 +120,8 @@ Idealmente:
 
 ## Tres conceptos que no deben confundirse
 
+Entender y aplicar estos conceptos es esencial para realizar la imputación de datos: 
+
 | Concepto | Pregunta | Ejemplo biomédico |
 |---|---|---|
 | **Cantidad** | ¿Cuánto falta? | 18% de HbA1c |
@@ -166,6 +168,8 @@ El hecho de que falte el dato está relacionado con información que no observam
 5. Preespecificar análisis principal y análisis de sensibilidad.
 
 ## Ausencia no equivale siempre a dato faltante
+
+Hay situaciones en las que  la asuencia de un dato no necesariamente es un dato faltante:
 
 - **Por diseño:** una prueba solo se aplica a un subgrupo.
 - **Bajo límite de detección:** existe información censurada.
@@ -388,15 +392,15 @@ La media puede conservarse bajo determinadas condiciones, pero esto no significa
 
 ## Media, mediana y moda
 
+Cuanto podría ser posible aplicar una imputación simple por media, mediana o moda
+
 | Método | Posible ventaja | Problema principal |
 |---|---|---|
 | Media | conserva la media bajo MCAR | reduce la varianza y altera asociaciones |
 | Mediana | resiste valores extremos | acumula observaciones en el centro |
 | Moda | fácil de aplicar en categorías | aumenta artificialmente la categoría más común |
 
-La mediana y la moda pueden ser más robustas en algunos contextos, pero continúan siendo valores constantes.
-
-Por tanto, tampoco representan la incertidumbre asociada con los datos faltantes.
+La mediana y la moda pueden ser más robustas en algunos contextos, pero continúan siendo valores constantes. Por tanto, tampoco representan la incertidumbre asociada con los datos faltantes.
 
 ## El porcentaje faltante no decide por sí solo
 
@@ -433,7 +437,6 @@ Aunque solo falte 3%, la imputación por la media asignaría valores normales o 
 
 ## Importancia de la variable
 
-La expresión “variable poco importante” debe definirse de acuerdo con el análisis.
 
 Una variable puede ser importante si funciona como:
 
@@ -486,7 +489,7 @@ Dependiendo del objetivo, pueden considerarse:
 - modelos específicos para datos censurados;
 - análisis de sensibilidad a mecanismos MNAR.
 
-Para inferencia biomédica, la imputación múltiple suele ser preferible porque incorpora incertidumbre entre conjuntos imputados.
+Se revisaran en clases futuras. 
 
 ## Regla práctica
 
@@ -507,11 +510,19 @@ Secuencia recomendada:
 - Este documento contiene datos simulados para introducir `NA` a algunas bases de datos
 - Compare estadística y gráficamente el antes y el después.
 
+## Diferencias entre la imputación simple y la imputación múltiple
+
+La principal diferencia es que la imputación simple rellena cada dato faltante con un único valor fijo, mientras que la imputación múltiple crea varios conjuntos de datos completos con diferentes valores plausibles para reflejar la incertidumbre.
+  + Número de valores
+  + Tratamiento de la incertidumbre
+  + Efecto en los datos: La imputación simple suele reducir la variabilidad artificialmente y puede sesgar las relaciones estadísticas. La imputación múltiple preserva la distribución real y la variabilidad del muestreo. 
+  + Complejidad del análisis:  La imputación múltiple exige analizar cada base de datos por separado y luego unificar los resultados media
+
+
 ## ¿Qué significa MICE?
 
 **MICE** significa *Multivariate Imputation by Chained Equations*.
 
-En español puede describirse como:
 
 > Imputación multivariada mediante ecuaciones encadenadas.
 
@@ -521,23 +532,37 @@ La idea central consiste en construir un modelo de imputación separado para cad
 
 MICE es una forma de realizar imputación múltiple, pero ambos términos no son sinónimos.
 
+
 ## Fundamento condicional de MICE
 
-Supongamos que faltan valores en presión arterial, colesterol e índice de masa corporal.
+| ID | Trt     | TA     | Colesterol | IMC    | EDAD |
+|----|---------|--------|------------|--------|------|
+| 1  | Placebo | **NA** | 220        | 27     | 45   |
+| 2  | Farmaco | 120    | **NA**     | 28     | 34   |
+| 3  | Placebo | 128    | 180        | **NA** | 56   |
+| 4  | Placebo | 110    | 179        | 26     | 37   |
+| 5  | Farmaco | 107    | 200        | 25     | 29   |
+
+
+
+
+## Fundamento condicional de MICE
+
+Faltan valores en presión arterial, colesterol e índice de masa corporal.
 
 MICE construye modelos condicionales como:
 
-\[
+$$
 P(\text{presión arterial}\mid\text{colesterol, IMC, edad, tratamiento})
-\]
+$$
 
-\[
+$$
 P(\text{colesterol}\mid\text{presión arterial, IMC, edad, tratamiento})
-\]
+$$
 
-\[
+$$
 P(\text{IMC}\mid\text{presión arterial, colesterol, edad, tratamiento})
-\]
+$$
 
 Cada variable se actualiza usando la información disponible en las demás.
 
@@ -560,6 +585,112 @@ El procedimiento se repite variable por variable, utilizando las imputaciones m�
 Al terminar una ronda, el algoritmo vuelve a la primera variable.
 
 Después de varias iteraciones, las distribuciones deberían estabilizarse.
+
+## Ciclo iterativo de MICE
+
+```{r eval=FALSE}
+
+               Datos con NA
+                    │
+                    ▼
+                  MICE
+                    │
+       ┌────────────┼────────────┐
+       ▼            ▼            ▼
+   Dataset 1    Dataset 2    Dataset 3
+       ...          ...          ...
+                    │
+                    ▼
+                Dataset m
+
+```
+
+
+::: {.callout-note}
+
+MICE no intenta descubrir el valor verdadero. Genera múltiples valores plausibles para representar la incertidumbre asociada con los datos faltantes.
+:::
+
+
+## Ecuaciones encadenadas
+
+```{r eval=FALSE}
+                 Imputar BMI
+                      │
+                      ▼
+                 Imputar PCR
+                      │
+                      ▼
+              Imputar Presión
+                      │
+                      ▼
+               Actualizar BMI
+                      │
+                      ▼
+                     ...
+```
+
+::: {.fragment}
+
+Una vuelta completa por todas las variables con datos faltantes constituye una:
+
+Iteración
+
+:::
+
+::: {.fragment .callout-note}
+Los valores recién imputados pueden utilizarse para actualizar las imputaciones de las demás variables.
+:::
+
+
+## Múltiples conjuntos imputados
+
+MICE repite el procedimiento para producir (m) conjuntos:
+
+```text
+Datos incompletos
+     ├── Imputación 1 ── Análisis 1
+     ├── Imputación 2 ── Análisis 2
+     ├── Imputación 3 ── Análisis 3
+     └── Imputación m ── Análisis m
+```
+
+Las diferencias entre conjuntos surgen de:
+
+- la incertidumbre de los parámetros del modelo;
+- la variabilidad de los valores plausibles;
+- la selección aleatoria de donantes, según el método.
+
+Elegir solamente uno de estos conjuntos elimina parte de la incertidumbre que MICE intenta representar
+
+## pool y reglas de Rubin
+
+Rubin combina ambas fuentes de incertidumbre:
+
+$$
+\boxed{
+T =
+\bar{U}
++
+\left(1+\frac{1}{m}\right)B
+}
+$$
+
+
+Donde: 
+
+   + $\bar U$ representa la variabilidad dentre de las imputaciones
+   + $\left(1+\frac{1}{m}\right)B$ La varibibilidad entre las imputaciones
+
+Finalmente:
+
+$$
+\boxed{
+SE_{pooled}=\sqrt{T}
+}
+$$
+
+
 
 ## Un modelo para cada tipo de variable
 
@@ -593,25 +724,6 @@ Ventajas:
 
 No garantiza ausencia de sesgo y puede funcionar mal cuando hay pocos donantes comparables.
 
-## Múltiples conjuntos imputados
-
-MICE repite el procedimiento para producir (m) conjuntos:
-
-```text
-Datos incompletos
-     ├── Imputación 1 ── Análisis 1
-     ├── Imputación 2 ── Análisis 2
-     ├── Imputación 3 ── Análisis 3
-     └── Imputación m ── Análisis m
-```
-
-Las diferencias entre conjuntos surgen de:
-
-- la incertidumbre de los parámetros del modelo;
-- la variabilidad de los valores plausibles;
-- la selección aleatoria de donantes, según el método.
-
-Elegir solamente uno de estos conjuntos elimina parte de la incertidumbre que MICE intenta representar.
 
 
 ## Supuesto principal
@@ -709,4 +821,38 @@ imp$loggedEvents
 - corregir automáticamente un mal diseño;
 - solucionar ausencia estructural o censura sin un modelo apropiado;
 - sustituir el razonamiento clínico.
+
+## Referencias
+1. National Research Council. The Prevention and Treatment of Missing Data in Clinical Trials. National Academies Press; 2010. doi:10.17226/12955
+2. Jonathan A. C. Sterne, Ian R. White, John B. Carlin, Michael Spratt, Patrick Royston, Michael G. Kenward, Angela M. Wood, James R. Carpenter. Multiple Imputation for Missing Data in Epidemiological and Clinical Research: Potential and Pitfalls. BMJ. 2009;338:b2393. doi:10.1136/bmj.b2393
+3. Donald B. Rubin. Multiple Imputation for Nonresponse in Surveys. Wiley; 1987. doi:10.1002/9780470316696
+4. Donald B. Rubin. Inference and Missing Data. Biometrika. 1976;63(3):581-92. doi:10.2307/2335739
+5. Stef van Buuren. Flexible Imputation of Missing Data [Internet]. 2.ª ed. CRC Press; 2018. Disponible en: https://stefvanbuuren.name/fimd/
+
+## Referencias
+6. International Council for Harmonisation. ICH E9(R1): Addendum on Estimands and Sensitivity Analysis in Clinical Trials [Internet]. 2019. Disponible en: https://www.ema.europa.eu/en/ich-e9-statistical-principles-clinical-trials-scientific-guideline
+7. Ian R. White, Patrick Royston, Angela M. Wood. Multiple Imputation Using Chained Equations: Issues and Guidance for Practice. Statistics in Medicine. 2011;30(4):377-99. doi:10.1002/sim.4067
+8. Cattram D. Nguyen, John B. Carlin, Katherine J. Lee. Model Checking in Multiple Imputation: An Overview and Case Study. Emerging Themes in Epidemiology. 2017;14:8. doi:10.1186/s12982-017-0062-6
+
+## Referencias
+9. Erik von Elm, Douglas G. Altman, Matthias Egger, Stuart J. Pocock, Peter C. Gøtzsche, Jan P. Vandenbroucke. The Strengthening the Reporting of Observational Studies in Epidemiology (STROBE) Statement. PLoS Medicine. 2007;4(10):e296. doi:10.1371/journal.pmed.0040296
+10. Katherine J. Lee, Kate Tilling, Rosie P. Cornish, Roderick J. A. Little, Melanie L. Bell, Els Goetghebeur, Joseph W. Hogan, James R. Carpenter. Framework for the Treatment and Reporting of Missing Data in Observational Studies: The TARMOS Framework. Journal of Clinical Epidemiology. 2021;134:79-88. doi:10.1016/j.jclinepi.2021.01.008
+11. Heymans MW, Twisk JWR. Handling missing data in clinical research. J Clin Epidemiol. 2022 Nov;151:185-188. [doi: 10.1016/j.jclinepi.2022.08.016](https://doi.org/10.1016/j.jclinepi.2022.08.016). Epub 2022 Sep 21. PMID: 36150546.
+
+## Referencias
+12. Kazijevs M, Samad MD. Deep imputation of missing values in time series health data: A review with benchmarking. J Biomed Inform. 2023 Aug;144:104440. [doi: 10.1016/j.jbi.2023.104440](https://doi.org/10.1016/j.jbi.2023.104440). Epub 2023 Jul 8. PMID: 37429511; PMCID: PMC10529422.
+13. Chen CY, Chang YW. Missing data imputation using classification and regression trees. PeerJ Comput Sci. 2024 Jun 28;10:e2119. [doi: 10.7717/peerj-cs.2119](https://doi.org/10.7717/peerj-cs.2119). PMID: 38983189; PMCID: PMC11232582.
+
+## Referencias
+14. Wang S, Frederich R, Mancuso JP. Imputation of Missing Data for Time-to-Event Endpoints Using Retrieved Dropouts. Ther Innov Regul Sci. 2024 Jan;58(1):114-126. [doi: 10.1007/s43441-023-00575-5](https://doi.org/10.1007/s43441-023-00575-5). Epub 2023 Oct 7. PMID: 37805643; PMCID: PMC10764582.
+15. White IR, Royston P, Wood AM. Multiple imputation using chained equations: Issues and guidance for practice. Stat Med. 2011 Feb 20;30(4):377-99. [doi: 10.1002/sim.4067](https://doi.org/10.1002/sim.4067). Epub 2010 Nov 30. PMID: 21225900.
+16. Zhang G, He Y, Cai B, Moriarity C, Shin HC, Parsons V, Irimata KE. Multiple imputation of missing data with skip-pattern covariates: a comparison of alternative strategies. J Stat Comput Simul. 2023;94(7):1543-1570. [doi: 10.1080/00949655.2023.2293124](https://doi.org/10.1080/00949655.2023.2293124). PMID: 38883968; PMCID: PMC11177582.
+
+## Recursos para continuar
+
+- [Flexible Imputation of Missing Data, edición en línea](https://stefvanbuuren.name/fimd/)
+- [Documentación y viñetas de `mice`](https://amices.org/mice/)
+- [TARMOS: marco para estudios observacionales](https://doi.org/10.1016/j.jclinepi.2021.01.008)
+- [National Academies: datos faltantes en ensayos clínicos](https://doi.org/10.17226/12955)
+- [ICH E9(R1): estimandos y sensibilidad](https://www.ema.europa.eu/en/ich-e9-statistical-principles-clinical-trials-scientific-guideline)
 

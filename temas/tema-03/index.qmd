@@ -1,0 +1,17 @@
+---
+title: "Tema 3: Inferencia estadística"
+---
+
+## Objetivo
+
+Objetivo: Interpretar estimaciones, intervalos de confianza, tamaños del efecto y valores $p$.
+
+## Contenidos
+
+- Repaso de inferencia estadística
+- Generaliades sobre  `rstatix`
+- Uso básico de `ggstatsplot`
+
+## Material de clase
+
+

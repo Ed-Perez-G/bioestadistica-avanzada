@@ -20,4 +20,6 @@ Evaluar la calidad de una base de datos e identificar distribuciones, valores at
 
 [Parte 3 — Ver documento: EDA con GGally, ggcorrplot y DataExplorer](tema-02-eda_ggally_ggcorrplot_dataexplorer.qmd)
 
-[Parte 4 — Ver documento: Imputación de datos parte 1](tema-02-imputacion-datos-1.qmd)
+[Parte 4 — Presentacion: Imputación de datos parte 1](tema-02-imputacion-datos-1.qmd)
+
+[Parte 5 - Ejercicios MICE. Descarguq plantilla](../../descargas/tema-02-ejercicios-mice.qmd){download="tema-02-ejercicios-mice.qmd"}
