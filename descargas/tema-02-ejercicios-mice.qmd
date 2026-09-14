@@ -1,0 +1,475 @@
+---
+title: "Ejercicios: imputación múltiple con mice"
+subtitle: "Agregue un subtitulo"
+author: "Sustituir"
+date: last-modified
+lang: es
+format:
+  html:
+    toc: true # Tabla de contenidos
+    toc-depth: 2 # Profundidad de la tabla de contenidos
+    code-fold: false # Código visible, si es true el codigo se despliega con un boton
+    code-tools: true # Muestra botones de herramientas
+    embed-resources: true # Genera un solo archivo, de lo contrario se crean carpetas
+execute:
+  warning: false      # ✅ Oculta warnings de R (amarillos)
+  message: false      # ✅ Oculta mensajes de R (azules)
+  echo: true          # ✅ Muestra el código (default)
+  eval: true          # ✅ Ejecuta el código (default)
+editor: source # También puede ser visual
+---
+
+# Como usar esta plantilla
+
+Esta plantilla fue diseñada para que una vez descargado complete los espacios dedicados a los ejercicios y corra el código. 
+
+Agregue su nombre y cambie los parámetros necesarios de los encabezados. 
+
+# Introducción
+
+Este documento ofrece una explicación muy básica sobre el funcionamiento de la librería MICE. 
+
+Los aspectos teóricos destrás de MICE fueron revisados en la presentación. 
+
+Los datos simulados fueron creados con el apoyo de AI con el siguiente promt: 
+
+::: {.callout-note appearance="simple"}
+
+## Promt utilizado
+
+Genera un script reproducible para una práctica con mice.
+
+Objetivo:
+Simular una cohorte cardiometabólica de 400 pacientes y comparar
+imputaciones con los valores verdaderos.
+
+1. Crear una base completa llamada datos_verdad con:
+   - id: identificador único.
+   - edad: entre 30 y 75 años.
+   - sexo: factor con categorías Mujer y Hombre.
+   - tabaquismo: factor con categorías No y Sí.
+   - imc: variable continua en kg/m².
+   - glucosa_ayuno: variable continua en mg/dL.
+   - hba1c: variable continua expresada en porcentaje.
+   - presion_sistolica: variable continua en mmHg.
+   - diagnostico_dm2: factor con categorías No y Sí.
+
+2. Simular relaciones razonables:
+   - El IMC se relaciona con la edad.
+   - La glucosa se relaciona con IMC y edad.
+   - La HbA1c se relaciona con glucosa.
+   - La presión sistólica se relaciona con edad e IMC.
+   - La probabilidad de diabetes depende de glucosa, IMC y edad,
+     mediante un modelo logístico.
+   Incluye variabilidad aleatoria y explica las distribuciones,
+   los parámetros y las simplificaciones utilizadas. No presentes
+   estos parámetros docentes como estimaciones clínicas validadas.
+
+3. Conservar datos_verdad intacta y crear una copia llamada
+   datos_incompletos. Introducir estos mecanismos:
+   - MCAR en presión sistólica: probabilidad constante de ausencia.
+   - MAR en IMC y glucosa: la ausencia depende exclusivamente de
+     edad y tabaquismo, que deben permanecer completos.
+   - MNAR en HbA1c: la probabilidad de ausencia aumenta con el
+     propio valor de HbA1c que después se oculta.
+
+4. Buscar aproximadamente entre 10 % y 20 % de faltantes por
+   variable afectada, para facilitar las comparaciones gráficas.
+   Distinguir proporciones objetivo de proporciones realizadas.
+
+5. Guardar indicadores lógicos llamados miss_presion, miss_imc,
+   miss_glu y miss_hba1c para identificar los valores ocultados.
+
+6. Incluir verificaciones de:
+   - Dimensiones y tipos de variables.
+   - Ausencia de NA en datos_verdad.
+   - Rangos y resúmenes de las variables.
+   - Frecuencia del diagnóstico de diabetes.
+   - Porcentajes de faltantes y mice::md.pattern().
+
+Usa set.seed(2026), tidyverse y mice. Entrega código comentado,
+listo para ejecutar, y una explicación breve de cada bloque.
+No inventes resultados numéricos si no ejecutaste el código.
+
+:::
+
+
+
+## Recordatorio: MCAR, MAR y MNAR
+
+| Mecanismo | Depende de... | En este ejercicio |
+|---|---|---|
+| **MCAR** | nada (ausencia genuinamente aleatoria) | falla aleatoria de un brazalete automático |
+| **MAR** | variables **observadas** | tabaquismo/edad, o el IMC, explican la ausencia de otra variable |
+| **MNAR** | el propio valor **no observado** | pacientes con HbA1c muy alta evitan el control |
+
+Vamos a construir los tres mecanismos a propósito, para poder discutir después qué tan bien o mal los maneja `mice`.
+
+## Objetivos de la sesión
+
+- Simular datos. 
+- Inducir datos faltantes con mecanismos MCAR, MAR y MNAR conocidos.
+- Diagnosticar el patrón y la cantidad de datos faltantes.
+- Ajustar un modelo de imputación múltiple con `mice()`, revisar convergencia y plausibilidad.
+- Agrupar (*pool*) resultados de un análisis usando las reglas de Rubin.
+- Comparar los valores imputados contra la verdad conocida y cuantificar el sesgo.
+
+```{r}
+library(tidyverse) # Manipulación de datos
+library(mice) # Imputación de varibles 
+```
+
+# Parte 1. Simular una cohorte de referencia (verdadera) completa
+
+Vamos a simular `r "n = 400"` pacientes de una cohorte cardiometabólica, con edad, sexo, IMC, glucosa en ayuno, HbA1c, presión sistólica, tabaquismo y diagnóstico de diabetes tipo 2. 
+
+Las relaciones entre variables no son arbitrarias: la glucosa depende del IMC y la edad, la HbA1c depende de la glucosa, y el diagnóstico depende de las tres — igual que esperaríamos clínicamente.
+
+```{r}
+set.seed(2026) # Sembrar semilla
+n <- 400 # Ajustar los dasto simulados
+
+edad <- round(runif(n, 30, 75))
+sexo <- factor(sample(c("Mujer", "Hombre"), n, replace = TRUE, prob = c(0.55, 0.45)))
+tabaquismo <- factor(sample(c("No", "Sí"), n, replace = TRUE, prob = c(0.72, 0.28)))
+
+imc <- round(23 + 0.05 * (edad - 50) + rnorm(n, 0, 4), 1)
+imc <- pmin(pmax(imc, 16), 45)
+
+glucosa_ayuno <- round(80 + 0.9 * (imc - 25) + 0.3 * (edad - 50) + rnorm(n, 0, 8), 1)
+glucosa_ayuno <- pmax(glucosa_ayuno, 65)
+
+hba1c <- round(4.8 + 0.035 * (glucosa_ayuno - 80) + rnorm(n, 0, 0.4), 2)
+hba1c <- pmax(hba1c, 4.2)
+
+presion_sistolica <- round(105 + 0.4 * (edad - 50) + 0.5 * (imc - 25) + rnorm(n, 0, 9))
+
+logit_dm2 <- -7 + 0.045 * glucosa_ayuno + 0.06 * imc + 0.02 * edad
+diagnostico_dm2 <- factor(rbinom(n, 1, plogis(logit_dm2)), labels = c("No", "Sí"))
+
+datos_verdad <- tibble(
+  id = 1:n, edad, sexo, imc, glucosa_ayuno, hba1c,
+  presion_sistolica, tabaquismo, diagnostico_dm2
+)
+```
+
+
+
+
+
+
+## Ejercicio 1: conocer la cohorte simulada
+
+- Use `glimpse()` o `summary()` para describir `datos_verdad`.
+- Calcule cuántos pacientes tienen diagnóstico de diabetes tipo 2 con.
+- *Confirme que no hay ningún `NA` con visdat*
+- Puede utilzar cualquiera de las otras funciones que hemos utilizado en la clase. 
+
+```{r eval=FALSE}
+# Su código aquí
+
+```
+
+# Parte 2. Inducir datos faltantes con mecanismo conocido
+
+Copiamos `datos_verdad` en `datos_incompletos` y ahora sí introducimos los `NA`, cada uno con una regla distinta. Note que en cada caso definimos explícitamente la probabilidad de faltar como función de otras variables (o de sí misma).
+
+```{r}
+datos_incompletos <- datos_verdad
+
+# 1) MCAR en presión sistólica: falla aleatoria de un brazalete automático,
+#    la probabilidad de faltar NO depende de nada — 10% del total
+miss_presion <- rbinom(n, 1, 0.10) == 1
+datos_incompletos$presion_sistolica[miss_presion] <- NA
+
+# 2) MAR en IMC: depende de variables OBSERVADAS (tabaquismo y edad),
+#    no del propio IMC -> mecanismo MAR
+prob_miss_imc <- plogis(-2.3 + 0.9 * (tabaquismo == "Sí") + 0.02 * (edad - 50))
+miss_imc <- rbinom(n, 1, prob_miss_imc) == 1
+datos_incompletos$imc[miss_imc] <- NA
+
+# 3) MAR en glucosa_ayuno: depende del IMC observado (pacientes con IMC alto
+#    son referidos a un laboratorio externo que no siempre reporta a tiempo)
+prob_miss_glu <- plogis(-2.6 + 0.08 * (imc - 25))
+miss_glu <- rbinom(n, 1, prob_miss_glu) == 1
+datos_incompletos$glucosa_ayuno[miss_glu] <- NA
+
+# 4) MNAR en hba1c: la probabilidad de faltar depende del propio valor NO
+#    observado de HbA1c (evitación del control en pacientes con mal control)
+prob_miss_hba1c <- plogis(-3.0 + 1.1 * (hba1c - 6.0))
+miss_hba1c <- rbinom(n, 1, prob_miss_hba1c) == 1
+datos_incompletos$hba1c[miss_hba1c] <- NA
+```
+
+::: {.callout-note}
+Guardamos los indicadores lógicos (`miss_imc`, `miss_glu`, `miss_hba1c`) porque los necesitaremos en la Parte 5 para comparar contra la verdad. No los borre.
+:::
+
+## Ejercicio 2: cuantificar y visualizar la ausencia
+
+```{r}
+colMeans(is.na(datos_incompletos)) * 100
+```
+
+```{r}
+mice::md.pattern(datos_incompletos, rotate.names = TRUE)
+```
+
+- *¿Cuál variable tiene más datos faltantes? ¿El patrón es monótono o no monótono?*
+- *¿Cuántos pacientes tienen las cuatro variables (`presion_sistolica`, `imc`, `glucosa_ayuno`, `hba1c`) completas de forma simultánea?*
+- *Sin ver el código de la Parte 2, ¿podría usted adivinar, solo mirando `md.pattern()`, cuál mecanismo (MCAR/MAR/MNAR) generó cada columna? Explique por qué sí o por qué no.*
+
+
+# Parte 4. Primera imputación múltiple con `mice`
+
+## 4.1 Excluir el identificador de la matriz de predictores
+
+`id` es un identificador único: no debe usarse para *predecir* nada, aunque sí queremos conservarlo en la base para poder comparar después contra la verdad. Por eso lo dejamos dentro de `mice()`, pero apagamos su fila y columna en la matriz de predictores.
+
+```{r}
+pred <- mice::make.predictorMatrix(datos_incompletos) # Crea un matriz
+pred["id", ] <- 0   # id no debe usarse para imputar ninguna otra variable
+pred[, "id"] <- 0   # ninguna variable debe usarse para "imputar" id (no tiene NA)
+pred
+```
+
+Otra opción sería simplemente no incluir "id" en la matriz, aunque esto podría complicar indentificar al pacientes. 
+
+```{r eval=FALSE}
+pred <- mice::make.predictorMatrix(datos_incompletos[,-"id"])
+```
+
+
+## Ejercicio 4: primer ajuste
+
+```{r}
+imp1 <- mice(
+  datos_incompletos, # Base que contiene los NA
+  m = 5, # ¿Cuántas bases serán imputadas?
+  maxit = 5, # Ciclos de actulización, iteraciones 
+  predictorMatrix = pred, # Aquí, Usar la matriz que define qué variables pueden predecir a cuáles; aquí excluimos id.
+  seed = 123, # Sembrar la semilla
+  printFlag = FALSE # ocultar el proceso de la imputaciones
+)
+
+imp1$method
+```
+
+- *¿Qué método asignó `mice` por defecto a `imc`, `glucosa_ayuno`, `hba1c` y `presion_sistolica`? Busque `pmm` (*predictive mean matching*) — ¿por qué es preferible a generar valores desde una distribución normal, en variables biomédicas con límites biológicos (por ejemplo, IMC o glucosa no pueden ser negativos)?*
+- *¿Qué método le asignó a `diagnostico_dm2`? ¿Por qué ese método y no `pmm`?*
+- *¿Cuántos conjuntos de datos completos genera este objeto? Verifique con `imp1$m`.*
+
+## 4.2 Convergencia
+
+Con solo `maxit = 5` iteraciones puede no alcanzarse convergencia. Aumentemos a 20 y grafiquemos las cadenas.
+
+```{r}
+imp2 <- mice(
+  datos_incompletos,
+  m = 5,
+  maxit = 20,
+  predictorMatrix = pred,
+  seed = 123,
+  printFlag = FALSE
+)
+
+plot(imp2, layout = c(2, 4))
+# Produce gráficas para evaluar si las imputaciones se han estabilizado
+# se seleccionar media y desviación estándar
+```
+
+
+Para cada variable imputada se muestran dos medidas: la media y la desviación estándar de sus valores imputados, a lo largo de las iteraciones.
+
+- Eje horizontal: las iteraciones, de 1 a 20.
+- Eje vertical: la media o la desviación estándar.
+- Cada línea de color: una de las cinco cadenas de imputación.
+
+¿Qué esperamos ver? Líneas que fluctúen alrededor de niveles estables y se mezclen entre sí. No tienen que quedar planas ni coincidir: la variación aleatoria es parte del procedimiento.
+
+¿Qué nos haría sospechar problemas? Una tendencia persistente hacia arriba o abajo, o una cadena que permanezca separada de las demás.
+
+Por ejemplo, si la media del IMC imputado sigue aumentando con cada iteración, eso sugiere que el proceso aún no se estabiliza. Si fluctúa sin tendencia alrededor de un nivel similar en las cinco cadenas, es una señal favorable.
+
+Una gráfica estable no garantiza que las imputaciones sean correctas: también hay que revisar su plausibilidad y los supuestos sobre los datos faltantes.
+
+
+## Ejercicio 5: leer las cadenas de convergencia
+
+- *Cada línea de color en `plot(imp2)` corresponde a una de las `m = 5` imputaciones. ¿Las líneas se entrelazan sin tendencia (buena señal) o alguna se aleja sistemáticamente de las demás?*
+- *¿Qué esperaríamos ver en estas gráficas si `maxit` fuera demasiado bajo?*
+
+```{r}
+plot(imp1, layout = c(2, 4))
+```
+
+
+## 4.3 Plausibilidad de los valores imputados
+
+Estas dos gráficas permiten revisar si los valores imputados de HbA1c parecen plausibles, comparándolos con los valores observados.
+
+
+```{r}
+densityplot(imp2, ~ hba1c)
+stripplot(imp2, hba1c ~ .imp, pch = 20, cex = 1.2)
+```
+
+¿Podemos concluir que las imputaciones fueron correctas? Todavía no. Se ven compatibles con los valores disponibles, pero eso no demuestra que estén cerca de los cinco valores verdaderos que ocultamos.
+
+
+## Ejercicio 6: comparar lo observado contra lo imputado
+
+- *En `densityplot()`, la curva azul es la distribución observada y las curvas rosas/magenta son las imputaciones. ¿Se parecen razonablemente?*
+- Repita `densityplot()` para `imc` o `glucosa_ayuno` (mecanismo MAR) y compare — ¿luce distinto el ajuste?*
+
+# Parte 5. La ventaja de simular: comparar contra la verdad
+
+Esta parte solo es posible porque simulamos los datos: sabemos exactamente qué valor "verdadero" tenía cada paciente antes de introducir el `NA`.
+
+```{r}
+huecos <- tibble(
+  id = datos_verdad$id,
+  na_imc     = miss_imc,
+  na_glucosa = miss_glu,
+  na_hba1c   = miss_hba1c
+)
+
+verdad_larga <- datos_verdad |>
+  select(id, glucosa_verdad = glucosa_ayuno, imc_verdad = imc, hba1c_verdad = hba1c)
+
+comparacion_valores <- mice::complete(imp2, action = "long", include = FALSE) |>
+  select(.imp, id, glucosa_ayuno, imc, hba1c) |>
+  left_join(verdad_larga, by = "id") |>
+  left_join(huecos, by = "id")
+
+# Sesgo y RMSE, solo entre los valores que SÍ fueron imputados
+comparacion_valores |>
+  filter(na_imc) |>
+  summarise(variable = "imc", sesgo = mean(imc - imc_verdad),
+            rmse = sqrt(mean((imc - imc_verdad)^2)))
+
+comparacion_valores |>
+  filter(na_glucosa) |>
+  summarise(variable = "glucosa_ayuno", sesgo = mean(glucosa_ayuno - glucosa_verdad),
+            rmse = sqrt(mean((glucosa_ayuno - glucosa_verdad)^2)))
+
+comparacion_valores |>
+  filter(na_hba1c) |>
+  summarise(variable = "hba1c", sesgo = mean(hba1c - hba1c_verdad),
+            rmse = sqrt(mean((hba1c - hba1c_verdad)^2)))
+```
+
+## Ejercicio 7: interpretar el sesgo
+
+- *¿El sesgo de `imc` y `glucosa_ayuno` (mecanismo MAR) es cercano a cero?*
+- *¿Qué observa en el sesgo de `hba1c` (mecanismo MNAR)? ¿En qué dirección se equivoca `mice`, sobreestima o subestima los valores realmente altos de HbA1c? Grafique `comparacion_valores |> filter(na_hba1c)` con `ggplot()` (`hba1c_verdad` en el eje x, `hba1c` imputado en el eje y, y una línea de referencia `geom_abline()`) para verlo.*
+
+
+
+
+# Retos opcionales
+
+Estos retos no son obligatorios, pero profundizan la intuición sobre `mice`.
+
+**Reto 1 — Sensibilidad a la cantidad de datos faltantes.** Repita la Parte 2 subiendo la proporción de `NA` en `glucosa_ayuno` (por ejemplo duplicando el intercepto de `prob_miss_glu`) y vuelva a correr las Partes 4 y 5. ¿El sesgo aumenta, o se mantiene estable mientras el mecanismo siga siendo MAR?
+
+**Reto 2 — Otro método de imputación.** Compare `method = "pmm"` (por defecto) contra `method = "rf"` (bosques aleatorios; requiere el paquete `randomForest`) para `imc`. ¿Cambia el sesgo o el RMSE calculados en la Parte 5?
+
+```{r eval=FALSE}
+# Su código aquí (Reto 2)
+
+```
+
+**Reto 3 — `ampute()`.** El propio paquete `mice` incluye una función, `mice::ampute()`, diseñada para simular patrones de datos faltantes MCAR/MAR/MNAR de forma más general que las fórmulas manuales que usamos aquí. Consulte `?mice::ampute` y genere un patrón alternativo de ausencia sobre `datos_verdad`; compare el patrón resultante con `md.pattern()` contra el que construimos manualmente.
+
+```{r eval=FALSE}
+# Su código aquí (Reto 3)
+
+```
+
+Aquí un ejemplo para de codigo para el **reto 3**:
+
+
+```{r eval=FALSE}
+library(mice)
+library(dplyr)
+
+# 1. Seleccionar las variables donde crearemos faltantes
+variables <- c(
+  "imc", "glucosa_ayuno", "hba1c", "presion_sistolica"
+)
+
+datos_numericos <- datos_verdad |>
+  select(all_of(variables))
+
+# 2. Definir los patrones de ausencia
+# 1 = conservar el dato
+# 0 = convertirlo en NA
+# Las columnas siguen el orden de "variables"
+
+patrones <- rbind(
+  c(0, 1, 1, 1),  # Patrón 1: falta solo IMC
+  c(1, 0, 0, 1),  # Patrón 2: faltan glucosa y HbA1c
+  c(0, 1, 1, 0)   # Patrón 3: faltan IMC y presión
+)
+
+colnames(patrones) <- variables
+patrones
+
+# 3. Generar los faltantes
+set.seed(2026)
+
+amputacion <- mice::ampute(
+  data = as.data.frame(datos_numericos),
+  prop = 0.30,
+  patterns = patrones,
+  freq = c(0.50, 0.30, 0.20),
+  mech = "MCAR",
+  bycases = TRUE
+)
+
+# 4. Crear la base alternativa
+# $amp contiene los datos con los nuevos NA
+datos_alternativos <- datos_verdad
+datos_alternativos[variables] <- amputacion$amp
+
+# 5. Comparar los patrones de ausencia
+# En Quarto aparecerá una gráfica después de la otra
+
+mice::md.pattern(datos_incompletos, rotate.names = TRUE)
+
+mice::md.pattern(datos_alternativos, rotate.names = TRUE)
+
+# 6. Comparar porcentajes de faltantes por variable
+tibble(
+  variable = variables,
+  manual_porcentaje = colMeans(
+    is.na(datos_incompletos[variables])
+  ) * 100,
+  ampute_porcentaje = colMeans(
+    is.na(datos_alternativos[variables])
+  ) * 100
+)
+
+# 7. Comparar cuántos pacientes tienen todos los datos completos
+tibble(
+  procedimiento = c("Manual", "ampute"),
+  pacientes_completos = c(
+    sum(complete.cases(datos_incompletos)),
+    sum(complete.cases(datos_alternativos))
+  ),
+  pacientes_con_faltantes = c(
+    sum(!complete.cases(datos_incompletos)),
+    sum(!complete.cases(datos_alternativos))
+  )
+)
+```
+
+
+# Preguntas de reflexión final
+
+- *Enumere al menos dos decisiones que tomó "el investigador" (usted) al construir `datos_incompletos` que en un estudio real tendrían que justificarse clínicamente en lugar de solo estadísticamente.*
+- *Si en un estudio real usted sospechara que una variable tiene datos faltantes MNAR (como `hba1c` aquí), ¿qué haría además de imputar con `mice`? la repuesta está en un análisis de sensibilidad. Investigue qué es. Puede utilizar una AI para generar código para hacer un análisis de sensibilidad.*
+- *¿Por qué es una mala práctica reportar un único conjunto de datos imputado como si fuera el dato real, en vez de reportar los resultados agrupados de varias imputaciones?*
+
+# Referencias

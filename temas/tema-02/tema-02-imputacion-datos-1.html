@@ -10,7 +10,7 @@
   <meta name="generator" content="quarto-1.8.25">
 
   <meta name="author" content="Edsaúl Emilio Pérez-Guerrero">
-  <meta name="dcterms.date" content="2026-09-09">
+  <meta name="dcterms.date" content="2026-09-12">
   <title>Bioestadística avanzada – Imputación de datos parte 1</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -207,7 +207,7 @@ Edsaúl Emilio Pérez-Guerrero
 </div>
 </div>
 
-  <p class="date">2026-09-09</p>
+  <p class="date">2026-09-12</p>
 </section>
 <section id="objetivos-de-aprendizaje" class="slide level2">
 <h2>Objetivos de aprendizaje</h2>
@@ -337,6 +337,7 @@ Edsaúl Emilio Pérez-Guerrero
 </section>
 <section id="tres-conceptos-que-no-deben-confundirse" class="slide level2">
 <h2>Tres conceptos que no deben confundirse</h2>
+<p>Entender y aplicar estos conceptos es esencial para realizar la imputación de datos:</p>
 <table class="caption-top">
 <colgroup>
 <col style="width: 33%">
@@ -464,6 +465,7 @@ Edsaúl Emilio Pérez-Guerrero
 </section>
 <section id="ausencia-no-equivale-siempre-a-dato-faltante" class="slide level2">
 <h2>Ausencia no equivale siempre a dato faltante</h2>
+<p>Hay situaciones en las que la asuencia de un dato no necesariamente es un dato faltante:</p>
 <ul>
 <li><strong>Por diseño:</strong> una prueba solo se aplica a un subgrupo.</li>
 <li><strong>Bajo límite de detección:</strong> existe información censurada.</li>
@@ -650,6 +652,7 @@ Edsaúl Emilio Pérez-Guerrero
 </section>
 <section id="media-mediana-y-moda" class="slide level2">
 <h2>Media, mediana y moda</h2>
+<p>Cuanto podría ser posible aplicar una imputación simple por media, mediana o moda</p>
 <table class="caption-top">
 <colgroup>
 <col style="width: 33%">
@@ -681,8 +684,7 @@ Edsaúl Emilio Pérez-Guerrero
 </tr>
 </tbody>
 </table>
-<p>La mediana y la moda pueden ser más robustas en algunos contextos, pero continúan siendo valores constantes.</p>
-<p>Por tanto, tampoco representan la incertidumbre asociada con los datos faltantes.</p>
+<p>La mediana y la moda pueden ser más robustas en algunos contextos, pero continúan siendo valores constantes. Por tanto, tampoco representan la incertidumbre asociada con los datos faltantes.</p>
 </section>
 <section id="el-porcentaje-faltante-no-decide-por-sí-solo" class="slide level2">
 <h2>El porcentaje faltante no decide por sí solo</h2>
@@ -713,7 +715,6 @@ Edsaúl Emilio Pérez-Guerrero
 </section>
 <section id="importancia-de-la-variable" class="slide level2">
 <h2>Importancia de la variable</h2>
-<p>La expresión “variable poco importante” debe definirse de acuerdo con el análisis.</p>
 <p>Una variable puede ser importante si funciona como:</p>
 <ul>
 <li>desenlace o exposición;</li>
@@ -766,7 +767,7 @@ Edsaúl Emilio Pérez-Guerrero
 <li>modelos específicos para datos censurados;</li>
 <li>análisis de sensibilidad a mecanismos MNAR.</li>
 </ul>
-<p>Para inferencia biomédica, la imputación múltiple suele ser preferible porque incorpora incertidumbre entre conjuntos imputados.</p>
+<p>Se revisaran en clases futuras.</p>
 </section>
 <section id="regla-práctica" class="slide level2">
 <h2>Regla práctica</h2>
@@ -791,10 +792,13 @@ Edsaúl Emilio Pérez-Guerrero
 <li>Compare estadística y gráficamente el antes y el después.</li>
 </ul>
 </section>
+<section id="diferencias-entre-la-imputación-simple-y-la-imputación-múltiple" class="slide level2">
+<h2>Diferencias entre la imputación simple y la imputación múltiple</h2>
+<p>La principal diferencia es que la imputación simple rellena cada dato faltante con un único valor fijo, mientras que la imputación múltiple crea varios conjuntos de datos completos con diferentes valores plausibles para reflejar la incertidumbre. + Número de valores + Tratamiento de la incertidumbre + Efecto en los datos: La imputación simple suele reducir la variabilidad artificialmente y puede sesgar las relaciones estadísticas. La imputación múltiple preserva la distribución real y la variabilidad del muestreo. + Complejidad del análisis: La imputación múltiple exige analizar cada base de datos por separado y luego unificar los resultados media</p>
+</section>
 <section id="qué-significa-mice" class="slide level2">
 <h2>¿Qué significa MICE?</h2>
 <p><strong>MICE</strong> significa <em>Multivariate Imputation by Chained Equations</em>.</p>
-<p>En español puede describirse como:</p>
 <blockquote>
 <p>Imputación multivariada mediante ecuaciones encadenadas.</p>
 </blockquote>
@@ -804,11 +808,74 @@ Edsaúl Emilio Pérez-Guerrero
 </section>
 <section id="fundamento-condicional-de-mice" class="slide level2">
 <h2>Fundamento condicional de MICE</h2>
-<p>Supongamos que faltan valores en presión arterial, colesterol e índice de masa corporal.</p>
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th>ID</th>
+<th>Trt</th>
+<th>TA</th>
+<th>Colesterol</th>
+<th>IMC</th>
+<th>EDAD</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>1</td>
+<td>Placebo</td>
+<td><strong>NA</strong></td>
+<td>220</td>
+<td>27</td>
+<td>45</td>
+</tr>
+<tr class="even">
+<td>2</td>
+<td>Farmaco</td>
+<td>120</td>
+<td><strong>NA</strong></td>
+<td>28</td>
+<td>34</td>
+</tr>
+<tr class="odd">
+<td>3</td>
+<td>Placebo</td>
+<td>128</td>
+<td>180</td>
+<td><strong>NA</strong></td>
+<td>56</td>
+</tr>
+<tr class="even">
+<td>4</td>
+<td>Placebo</td>
+<td>110</td>
+<td>179</td>
+<td>26</td>
+<td>37</td>
+</tr>
+<tr class="odd">
+<td>5</td>
+<td>Farmaco</td>
+<td>107</td>
+<td>200</td>
+<td>25</td>
+<td>29</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="fundamento-condicional-de-mice-1" class="slide level2">
+<h2>Fundamento condicional de MICE</h2>
+<p>Faltan valores en presión arterial, colesterol e índice de masa corporal.</p>
 <p>MICE construye modelos condicionales como:</p>
-<p>[ P() ]</p>
-<p>[ P() ]</p>
-<p>[ P() ]</p>
+<p><span class="math display">\[
+P(\text{presión arterial}\mid\text{colesterol, IMC, edad, tratamiento})
+\]</span></p>
+<p><span class="math display">\[
+P(\text{colesterol}\mid\text{presión arterial, IMC, edad, tratamiento})
+\]</span></p>
+<p><span class="math display">\[
+P(\text{IMC}\mid\text{presión arterial, colesterol, edad, tratamiento})
+\]</span></p>
 <p>Cada variable se actualiza usando la información disponible en las demás.</p>
 </section>
 <section id="ciclo-iterativo-de-mice" class="slide level2">
@@ -822,6 +889,112 @@ Edsaúl Emilio Pérez-Guerrero
 <p><strong>Nueva iteración</strong></p>
 <p>Al terminar una ronda, el algoritmo vuelve a la primera variable.</p>
 <p>Después de varias iteraciones, las distribuciones deberían estabilizarse.</p>
+</section>
+<section id="ciclo-iterativo-de-mice-1" class="slide level2">
+<h2>Ciclo iterativo de MICE</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a aria-hidden="true" tabindex="-1"></a>               Datos con <span class="cn">NA</span></span>
+<span id="cb8-2"><a aria-hidden="true" tabindex="-1"></a>                    │</span>
+<span id="cb8-3"><a aria-hidden="true" tabindex="-1"></a>                    ▼</span>
+<span id="cb8-4"><a aria-hidden="true" tabindex="-1"></a>                  MICE</span>
+<span id="cb8-5"><a aria-hidden="true" tabindex="-1"></a>                    │</span>
+<span id="cb8-6"><a aria-hidden="true" tabindex="-1"></a>       ┌────────────┼────────────┐</span>
+<span id="cb8-7"><a aria-hidden="true" tabindex="-1"></a>       ▼            ▼            ▼</span>
+<span id="cb8-8"><a aria-hidden="true" tabindex="-1"></a>   Dataset <span class="dv">1</span>    Dataset <span class="dv">2</span>    Dataset <span class="dv">3</span></span>
+<span id="cb8-9"><a aria-hidden="true" tabindex="-1"></a>       ...          ...          ...</span>
+<span id="cb8-10"><a aria-hidden="true" tabindex="-1"></a>                    │</span>
+<span id="cb8-11"><a aria-hidden="true" tabindex="-1"></a>                    ▼</span>
+<span id="cb8-12"><a aria-hidden="true" tabindex="-1"></a>                Dataset m</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div class="callout callout-note callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Nota</strong></p>
+</div>
+<div class="callout-content">
+<p>MICE no intenta descubrir el valor verdadero. Genera múltiples valores plausibles para representar la incertidumbre asociada con los datos faltantes.</p>
+</div>
+</div>
+</div>
+</section>
+<section id="ecuaciones-encadenadas" class="slide level2">
+<h2>Ecuaciones encadenadas</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a aria-hidden="true" tabindex="-1"></a>                 Imputar BMI</span>
+<span id="cb9-2"><a aria-hidden="true" tabindex="-1"></a>                      │</span>
+<span id="cb9-3"><a aria-hidden="true" tabindex="-1"></a>                      ▼</span>
+<span id="cb9-4"><a aria-hidden="true" tabindex="-1"></a>                 Imputar PCR</span>
+<span id="cb9-5"><a aria-hidden="true" tabindex="-1"></a>                      │</span>
+<span id="cb9-6"><a aria-hidden="true" tabindex="-1"></a>                      ▼</span>
+<span id="cb9-7"><a aria-hidden="true" tabindex="-1"></a>              Imputar Presión</span>
+<span id="cb9-8"><a aria-hidden="true" tabindex="-1"></a>                      │</span>
+<span id="cb9-9"><a aria-hidden="true" tabindex="-1"></a>                      ▼</span>
+<span id="cb9-10"><a aria-hidden="true" tabindex="-1"></a>               Actualizar BMI</span>
+<span id="cb9-11"><a aria-hidden="true" tabindex="-1"></a>                      │</span>
+<span id="cb9-12"><a aria-hidden="true" tabindex="-1"></a>                      ▼</span>
+<span id="cb9-13"><a aria-hidden="true" tabindex="-1"></a>                     ...</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div class="fragment">
+<p>Una vuelta completa por todas las variables con datos faltantes constituye una:</p>
+<p>Iteración</p>
+</div>
+<div class="fragment">
+<div class="callout callout-note callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Nota</strong></p>
+</div>
+<div class="callout-content">
+<p>Los valores recién imputados pueden utilizarse para actualizar las imputaciones de las demás variables.</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="múltiples-conjuntos-imputados" class="slide level2">
+<h2>Múltiples conjuntos imputados</h2>
+<p>MICE repite el procedimiento para producir (m) conjuntos:</p>
+<pre class="text"><code>Datos incompletos
+     ├── Imputación 1 ── Análisis 1
+     ├── Imputación 2 ── Análisis 2
+     ├── Imputación 3 ── Análisis 3
+     └── Imputación m ── Análisis m</code></pre>
+<p>Las diferencias entre conjuntos surgen de:</p>
+<ul>
+<li>la incertidumbre de los parámetros del modelo;</li>
+<li>la variabilidad de los valores plausibles;</li>
+<li>la selección aleatoria de donantes, según el método.</li>
+</ul>
+<p>Elegir solamente uno de estos conjuntos elimina parte de la incertidumbre que MICE intenta representar</p>
+</section>
+<section id="pool-y-reglas-de-rubin" class="slide level2">
+<h2>pool y reglas de Rubin</h2>
+<p>Rubin combina ambas fuentes de incertidumbre:</p>
+<p><span class="math display">\[
+\boxed{
+T =
+\bar{U}
++
+\left(1+\frac{1}{m}\right)B
+}
+\]</span></p>
+<p>Donde:</p>
+<ul>
+<li><span class="math inline">\(\bar U\)</span> representa la variabilidad dentre de las imputaciones</li>
+<li><span class="math inline">\(\left(1+\frac{1}{m}\right)B\)</span> La varibibilidad entre las imputaciones</li>
+</ul>
+<p>Finalmente:</p>
+<p><span class="math display">\[
+\boxed{
+SE_{pooled}=\sqrt{T}
+}
+\]</span></p>
 </section>
 <section id="un-modelo-para-cada-tipo-de-variable" class="slide level2">
 <h2>Un modelo para cada tipo de variable</h2>
@@ -879,22 +1052,6 @@ Edsaúl Emilio Pérez-Guerrero
 </ul>
 <p>No garantiza ausencia de sesgo y puede funcionar mal cuando hay pocos donantes comparables.</p>
 </section>
-<section id="múltiples-conjuntos-imputados" class="slide level2">
-<h2>Múltiples conjuntos imputados</h2>
-<p>MICE repite el procedimiento para producir (m) conjuntos:</p>
-<pre class="text"><code>Datos incompletos
-     ├── Imputación 1 ── Análisis 1
-     ├── Imputación 2 ── Análisis 2
-     ├── Imputación 3 ── Análisis 3
-     └── Imputación m ── Análisis m</code></pre>
-<p>Las diferencias entre conjuntos surgen de:</p>
-<ul>
-<li>la incertidumbre de los parámetros del modelo;</li>
-<li>la variabilidad de los valores plausibles;</li>
-<li>la selección aleatoria de donantes, según el método.</li>
-</ul>
-<p>Elegir solamente uno de estos conjuntos elimina parte de la incertidumbre que MICE intenta representar.</p>
-</section>
 <section id="supuesto-principal" class="slide level2">
 <h2>Supuesto principal</h2>
 <p>MICE se utiliza habitualmente bajo el supuesto <strong>MAR</strong>: <em>Missing At Random</em>.</p>
@@ -922,28 +1079,28 @@ Edsaúl Emilio Pérez-Guerrero
 </section>
 <section id="mice-en-r" class="slide level2">
 <h2>MICE en R</h2>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(mice)</span>
-<span id="cb9-2"><a aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-3"><a aria-hidden="true" tabindex="-1"></a><span class="co"># Revisar métodos y matriz de predictores</span></span>
-<span id="cb9-4"><a aria-hidden="true" tabindex="-1"></a>inicial <span class="ot">&lt;-</span> <span class="fu">mice</span>(datos, <span class="at">maxit =</span> <span class="dv">0</span>)</span>
-<span id="cb9-5"><a aria-hidden="true" tabindex="-1"></a>metodos <span class="ot">&lt;-</span> inicial<span class="sc">$</span>method</span>
-<span id="cb9-6"><a aria-hidden="true" tabindex="-1"></a>predictores <span class="ot">&lt;-</span> inicial<span class="sc">$</span>predictorMatrix</span>
-<span id="cb9-7"><a aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-8"><a aria-hidden="true" tabindex="-1"></a><span class="co"># Generar 20 conjuntos imputados</span></span>
-<span id="cb9-9"><a aria-hidden="true" tabindex="-1"></a>imp <span class="ot">&lt;-</span> <span class="fu">mice</span>(</span>
-<span id="cb9-10"><a aria-hidden="true" tabindex="-1"></a>  datos,</span>
-<span id="cb9-11"><a aria-hidden="true" tabindex="-1"></a>  <span class="at">m =</span> <span class="dv">20</span>,</span>
-<span id="cb9-12"><a aria-hidden="true" tabindex="-1"></a>  <span class="at">maxit =</span> <span class="dv">20</span>,</span>
-<span id="cb9-13"><a aria-hidden="true" tabindex="-1"></a>  <span class="at">method =</span> metodos,</span>
-<span id="cb9-14"><a aria-hidden="true" tabindex="-1"></a>  <span class="at">predictorMatrix =</span> predictores,</span>
-<span id="cb9-15"><a aria-hidden="true" tabindex="-1"></a>  <span class="at">seed =</span> <span class="dv">2026</span></span>
-<span id="cb9-16"><a aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb9-17"><a aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-18"><a aria-hidden="true" tabindex="-1"></a><span class="co"># Ajustar el modelo en cada conjunto</span></span>
-<span id="cb9-19"><a aria-hidden="true" tabindex="-1"></a>ajustes <span class="ot">&lt;-</span> <span class="fu">with</span>(imp, <span class="fu">lm</span>(resultado <span class="sc">~</span> tratamiento <span class="sc">+</span> edad <span class="sc">+</span> biomarcador))</span>
-<span id="cb9-20"><a aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-21"><a aria-hidden="true" tabindex="-1"></a><span class="co"># Combinar mediante reglas de Rubin</span></span>
-<span id="cb9-22"><a aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(<span class="fu">pool</span>(ajustes), <span class="at">conf.int =</span> <span class="cn">TRUE</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(mice)</span>
+<span id="cb11-2"><a aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-3"><a aria-hidden="true" tabindex="-1"></a><span class="co"># Revisar métodos y matriz de predictores</span></span>
+<span id="cb11-4"><a aria-hidden="true" tabindex="-1"></a>inicial <span class="ot">&lt;-</span> <span class="fu">mice</span>(datos, <span class="at">maxit =</span> <span class="dv">0</span>)</span>
+<span id="cb11-5"><a aria-hidden="true" tabindex="-1"></a>metodos <span class="ot">&lt;-</span> inicial<span class="sc">$</span>method</span>
+<span id="cb11-6"><a aria-hidden="true" tabindex="-1"></a>predictores <span class="ot">&lt;-</span> inicial<span class="sc">$</span>predictorMatrix</span>
+<span id="cb11-7"><a aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-8"><a aria-hidden="true" tabindex="-1"></a><span class="co"># Generar 20 conjuntos imputados</span></span>
+<span id="cb11-9"><a aria-hidden="true" tabindex="-1"></a>imp <span class="ot">&lt;-</span> <span class="fu">mice</span>(</span>
+<span id="cb11-10"><a aria-hidden="true" tabindex="-1"></a>  datos,</span>
+<span id="cb11-11"><a aria-hidden="true" tabindex="-1"></a>  <span class="at">m =</span> <span class="dv">20</span>,</span>
+<span id="cb11-12"><a aria-hidden="true" tabindex="-1"></a>  <span class="at">maxit =</span> <span class="dv">20</span>,</span>
+<span id="cb11-13"><a aria-hidden="true" tabindex="-1"></a>  <span class="at">method =</span> metodos,</span>
+<span id="cb11-14"><a aria-hidden="true" tabindex="-1"></a>  <span class="at">predictorMatrix =</span> predictores,</span>
+<span id="cb11-15"><a aria-hidden="true" tabindex="-1"></a>  <span class="at">seed =</span> <span class="dv">2026</span></span>
+<span id="cb11-16"><a aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb11-17"><a aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-18"><a aria-hidden="true" tabindex="-1"></a><span class="co"># Ajustar el modelo en cada conjunto</span></span>
+<span id="cb11-19"><a aria-hidden="true" tabindex="-1"></a>ajustes <span class="ot">&lt;-</span> <span class="fu">with</span>(imp, <span class="fu">lm</span>(resultado <span class="sc">~</span> tratamiento <span class="sc">+</span> edad <span class="sc">+</span> biomarcador))</span>
+<span id="cb11-20"><a aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-21"><a aria-hidden="true" tabindex="-1"></a><span class="co"># Combinar mediante reglas de Rubin</span></span>
+<span id="cb11-22"><a aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(<span class="fu">pool</span>(ajustes), <span class="at">conf.int =</span> <span class="cn">TRUE</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 <p>La matriz de predictores y los métodos predeterminados siempre deben revisarse.</p>
 </section>
 <section id="evaluación-de-mice" class="slide level2">
@@ -960,10 +1117,10 @@ Edsaúl Emilio Pérez-Guerrero
 <li>estabilidad frente a cambios de semilla y número de imputaciones;</li>
 <li>sensibilidad frente a mecanismos MNAR.</li>
 </ul>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(imp)</span>
-<span id="cb10-2"><a aria-hidden="true" tabindex="-1"></a><span class="fu">densityplot</span>(imp)</span>
-<span id="cb10-3"><a aria-hidden="true" tabindex="-1"></a><span class="fu">stripplot</span>(imp)</span>
-<span id="cb10-4"><a aria-hidden="true" tabindex="-1"></a>imp<span class="sc">$</span>loggedEvents</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(imp)</span>
+<span id="cb12-2"><a aria-hidden="true" tabindex="-1"></a><span class="fu">densityplot</span>(imp)</span>
+<span id="cb12-3"><a aria-hidden="true" tabindex="-1"></a><span class="fu">stripplot</span>(imp)</span>
+<span id="cb12-4"><a aria-hidden="true" tabindex="-1"></a>imp<span class="sc">$</span>loggedEvents</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
 <section id="qué-puede-y-qué-no-puede-hacer-mice" class="slide level2">
 <h2>Qué puede y qué no puede hacer MICE</h2>
@@ -982,6 +1139,57 @@ Edsaúl Emilio Pérez-Guerrero
 <li>corregir automáticamente un mal diseño;</li>
 <li>solucionar ausencia estructural o censura sin un modelo apropiado;</li>
 <li>sustituir el razonamiento clínico.</li>
+</ul>
+</section>
+<section id="referencias" class="slide level2">
+<h2>Referencias</h2>
+<ol type="1">
+<li>National Research Council. The Prevention and Treatment of Missing Data in Clinical Trials. National Academies Press; 2010. doi:10.17226/12955</li>
+<li>Jonathan A. C. Sterne, Ian R. White, John B. Carlin, Michael Spratt, Patrick Royston, Michael G. Kenward, Angela M. Wood, James R. Carpenter. Multiple Imputation for Missing Data in Epidemiological and Clinical Research: Potential and Pitfalls. BMJ. 2009;338:b2393. doi:10.1136/bmj.b2393</li>
+<li>Donald B. Rubin. Multiple Imputation for Nonresponse in Surveys. Wiley; 1987. doi:10.1002/9780470316696</li>
+<li>Donald B. Rubin. Inference and Missing Data. Biometrika. 1976;63(3):581-92. doi:10.2307/2335739</li>
+<li>Stef van Buuren. Flexible Imputation of Missing Data [Internet]. 2.ª ed.&nbsp;CRC Press; 2018. Disponible en: https://stefvanbuuren.name/fimd/</li>
+</ol>
+</section>
+<section id="referencias-1" class="slide level2">
+<h2>Referencias</h2>
+<ol start="6" type="1">
+<li>International Council for Harmonisation. ICH E9(R1): Addendum on Estimands and Sensitivity Analysis in Clinical Trials [Internet]. 2019. Disponible en: https://www.ema.europa.eu/en/ich-e9-statistical-principles-clinical-trials-scientific-guideline</li>
+<li>Ian R. White, Patrick Royston, Angela M. Wood. Multiple Imputation Using Chained Equations: Issues and Guidance for Practice. Statistics in Medicine. 2011;30(4):377-99. doi:10.1002/sim.4067</li>
+<li>Cattram D. Nguyen, John B. Carlin, Katherine J. Lee. Model Checking in Multiple Imputation: An Overview and Case Study. Emerging Themes in Epidemiology. 2017;14:8. doi:10.1186/s12982-017-0062-6</li>
+</ol>
+</section>
+<section id="referencias-2" class="slide level2">
+<h2>Referencias</h2>
+<ol start="9" type="1">
+<li>Erik von Elm, Douglas G. Altman, Matthias Egger, Stuart J. Pocock, Peter C. Gøtzsche, Jan P. Vandenbroucke. The Strengthening the Reporting of Observational Studies in Epidemiology (STROBE) Statement. PLoS Medicine. 2007;4(10):e296. doi:10.1371/journal.pmed.0040296</li>
+<li>Katherine J. Lee, Kate Tilling, Rosie P. Cornish, Roderick J. A. Little, Melanie L. Bell, Els Goetghebeur, Joseph W. Hogan, James R. Carpenter. Framework for the Treatment and Reporting of Missing Data in Observational Studies: The TARMOS Framework. Journal of Clinical Epidemiology. 2021;134:79-88. doi:10.1016/j.jclinepi.2021.01.008</li>
+<li>Heymans MW, Twisk JWR. Handling missing data in clinical research. J Clin Epidemiol. 2022 Nov;151:185-188. <a href="https://doi.org/10.1016/j.jclinepi.2022.08.016">doi: 10.1016/j.jclinepi.2022.08.016</a>. Epub 2022 Sep 21. PMID: 36150546.</li>
+</ol>
+</section>
+<section id="referencias-3" class="slide level2">
+<h2>Referencias</h2>
+<ol start="12" type="1">
+<li>Kazijevs M, Samad MD. Deep imputation of missing values in time series health data: A review with benchmarking. J Biomed Inform. 2023 Aug;144:104440. <a href="https://doi.org/10.1016/j.jbi.2023.104440">doi: 10.1016/j.jbi.2023.104440</a>. Epub 2023 Jul 8. PMID: 37429511; PMCID: PMC10529422.</li>
+<li>Chen CY, Chang YW. Missing data imputation using classification and regression trees. PeerJ Comput Sci. 2024 Jun 28;10:e2119. <a href="https://doi.org/10.7717/peerj-cs.2119">doi: 10.7717/peerj-cs.2119</a>. PMID: 38983189; PMCID: PMC11232582.</li>
+</ol>
+</section>
+<section id="referencias-4" class="slide level2">
+<h2>Referencias</h2>
+<ol start="14" type="1">
+<li>Wang S, Frederich R, Mancuso JP. Imputation of Missing Data for Time-to-Event Endpoints Using Retrieved Dropouts. Ther Innov Regul Sci. 2024 Jan;58(1):114-126. <a href="https://doi.org/10.1007/s43441-023-00575-5">doi: 10.1007/s43441-023-00575-5</a>. Epub 2023 Oct 7. PMID: 37805643; PMCID: PMC10764582.</li>
+<li>White IR, Royston P, Wood AM. Multiple imputation using chained equations: Issues and guidance for practice. Stat Med. 2011 Feb 20;30(4):377-99. <a href="https://doi.org/10.1002/sim.4067">doi: 10.1002/sim.4067</a>. Epub 2010 Nov 30. PMID: 21225900.</li>
+<li>Zhang G, He Y, Cai B, Moriarity C, Shin HC, Parsons V, Irimata KE. Multiple imputation of missing data with skip-pattern covariates: a comparison of alternative strategies. J Stat Comput Simul. 2023;94(7):1543-1570. <a href="https://doi.org/10.1080/00949655.2023.2293124">doi: 10.1080/00949655.2023.2293124</a>. PMID: 38883968; PMCID: PMC11177582.</li>
+</ol>
+</section>
+<section id="recursos-para-continuar" class="slide level2">
+<h2>Recursos para continuar</h2>
+<ul>
+<li><a href="https://stefvanbuuren.name/fimd/">Flexible Imputation of Missing Data, edición en línea</a></li>
+<li><a href="https://amices.org/mice/">Documentación y viñetas de <code>mice</code></a></li>
+<li><a href="https://doi.org/10.1016/j.jclinepi.2021.01.008">TARMOS: marco para estudios observacionales</a></li>
+<li><a href="https://doi.org/10.17226/12955">National Academies: datos faltantes en ensayos clínicos</a></li>
+<li><a href="https://www.ema.europa.eu/en/ich-e9-statistical-principles-clinical-trials-scientific-guideline">ICH E9(R1): estimandos y sensibilidad</a></li>
 </ul>
 
 
