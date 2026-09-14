@@ -513,10 +513,11 @@ Secuencia recomendada:
 ## Diferencias entre la imputación simple y la imputación múltiple
 
 La principal diferencia es que la imputación simple rellena cada dato faltante con un único valor fijo, mientras que la imputación múltiple crea varios conjuntos de datos completos con diferentes valores plausibles para reflejar la incertidumbre.
-  + Número de valores
-  + Tratamiento de la incertidumbre
-  + Efecto en los datos: La imputación simple suele reducir la variabilidad artificialmente y puede sesgar las relaciones estadísticas. La imputación múltiple preserva la distribución real y la variabilidad del muestreo. 
-  + Complejidad del análisis:  La imputación múltiple exige analizar cada base de datos por separado y luego unificar los resultados media
+
+- Número de valores
+- Tratamiento de la incertidumbre
+- Efecto en los datos: La imputación simple suele reducir la variabilidad artificialmente y puede sesgar las relaciones estadísticas. La imputación múltiple preserva la distribución real y la variabilidad del muestreo. 
+- Complejidad del análisis:  La imputación múltiple exige analizar cada base de datos por separado y luego unificar los resultados media
 
 
 ## ¿Qué significa MICE?

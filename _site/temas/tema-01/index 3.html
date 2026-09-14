@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Tema 3: Inferencia estadística – Bioestadística avanzada</title>
+<title>Tema 1: Repaso de R y análisis reproducible – Bioestadística avanzada</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -69,35 +69,6 @@ ul.task-list li input[type="checkbox"] {
   }
 }</script>
 
-  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
-  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
-
-<script type="text/javascript">
-const typesetMath = (el) => {
-  if (window.MathJax) {
-    // MathJax Typeset
-    window.MathJax.typeset([el]);
-  } else if (window.katex) {
-    // KaTeX Render
-    var mathElements = el.getElementsByClassName("math");
-    var macros = [];
-    for (var i = 0; i < mathElements.length; i++) {
-      var texText = mathElements[i].firstChild;
-      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
-        window.katex.render(texText.data, mathElements[i], {
-          displayMode: mathElements[i].classList.contains('display'),
-          throwOnError: false,
-          macros: macros,
-          fleqn: false
-        });
-      }
-    }
-  }
-}
-window.Quarto = {
-  typesetMath
-};
-</script>
 
 <link rel="stylesheet" href="../../styles.css">
 </head>
@@ -171,7 +142,7 @@ window.Quarto = {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Tema 3: Inferencia estadística</h1>
+<h1 class="title">Tema 1: Repaso de R y análisis reproducible</h1>
 </div>
 
 
@@ -190,18 +161,24 @@ window.Quarto = {
 
 <section id="objetivo" class="level2">
 <h2 class="anchored" data-anchor-id="objetivo">Objetivo</h2>
-<p>Objetivo: Interpretar estimaciones, intervalos de confianza, tamaños del efecto y valores <span class="math inline">\(p\)</span>.</p>
+<p>Organizar y documentar un flujo completo de análisis utilizando R, tidyverse y Quarto.</p>
 </section>
 <section id="contenidos" class="level2">
 <h2 class="anchored" data-anchor-id="contenidos">Contenidos</h2>
 <ul>
-<li>Repaso de inferencia estadística</li>
-<li>Generaliades sobre <code>rstatix</code></li>
-<li>Uso básico de <code>ggstatsplot</code></li>
+<li>Repaso selectivo de R.</li>
+<li>Organización de proyectos.</li>
+<li>Introducción a Quarto.</li>
+<li>Importación y transformación de datos.</li>
+<li>Elaboración de reportes reproducibles.</li>
 </ul>
 </section>
 <section id="material-de-clase" class="level2">
 <h2 class="anchored" data-anchor-id="material-de-clase">Material de clase</h2>
+<p><a href="../../descargas/tema-01-repaso-r-quarto.qmd" download="tema-01-repaso-r-quarto.qmd">Descargar el documento editable de Quarto</a></p>
+<p><a href="../../descargas/tema-01-manipulacion-datos-dplyr-tidyr-parte-1.qmd" download="tema-01-manipulacion-datos-dplyr-tidyr-parte-1.qmd">Descargar documento intro tidyverse parte 1</a></p>
+<p><a href="../../descargas/tema-01-manipulacion-datos-dplyr-tidyr-parte-2.qmd" download="tema-01-manipulacion-datos-dplyr-tidyr-parte-2.qmd">Descargar documento intro tidyverse parte 2</a></p>
+<p><a href="../../descargas/tema-01-ejercicios-dplyr-tidyr-parte-2.qmd" download="tema-01-ejercicios-dplyr-tidyr-parte-2.qmd">Descargar ejercicios tidyverse parte 2</a></p>
 
 
 </section>

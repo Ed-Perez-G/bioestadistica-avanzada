@@ -1,5 +1,103 @@
 [
   {
+    "objectID": "temas/tema-03/tema-03-inferencia-presentacion.html#contenido",
+    "href": "temas/tema-03/tema-03-inferencia-presentacion.html#contenido",
+    "title": "Tema 3: Inferencia estadística",
+    "section": "Contenido",
+    "text": "Contenido"
+  },
+  {
+    "objectID": "temas/tema-03/tema-03-inferencia-presentacion.html#inferencia-estadística",
+    "href": "temas/tema-03/tema-03-inferencia-presentacion.html#inferencia-estadística",
+    "title": "Tema 3: Inferencia estadística",
+    "section": "Inferencia estadística",
+    "text": "Inferencia estadística\nLa inferencia estadística es el conjunto de métodos que permite sacar conclusiones sobre una población grande a partir del análisis de una muestra pequeña y representativa.\n\nPruebas de hipótesis\nIntervalos de confianza"
+  },
+  {
+    "objectID": "temas/tema-03/tema-03-inferencia-presentacion.html#enfoque-frecuentista-vs-bayesiano",
+    "href": "temas/tema-03/tema-03-inferencia-presentacion.html#enfoque-frecuentista-vs-bayesiano",
+    "title": "Tema 3: Inferencia estadística",
+    "section": "Enfoque frecuentista vs bayesiano",
+    "text": "Enfoque frecuentista vs bayesiano\nEnfoque frecuentista\nEste enfoque se basa en la idea de que la probabilidad de un evento se calcula como la proporción de veces que ocurre el evento en un número muy grande de ensayos repetidos. Es decir, tomamos los datos de un gran número de eventos y los comparamos con nuestros datos. La probabilidad está predefinida y no cambia.\nEnfoque bayesiano\nSe basa en el teorema de Bayes, que actualiza nuestras creencias sobre la probabilidad de un evento a medida que obtenemos nueva información"
+  },
+  {
+    "objectID": "temas/tema-03/tema-03-inferencia-presentacion.html#valores-de-p",
+    "href": "temas/tema-03/tema-03-inferencia-presentacion.html#valores-de-p",
+    "title": "Tema 3: Inferencia estadística",
+    "section": "Valores de \\(p\\)",
+    "text": "Valores de \\(p\\)\nEl valor p indica qué tan incompatibles son los datos con la hipótesis nula.\n\nSi en realidad no hubiera diferencia o asociación, ¿qué tan probable sería obtener un resultado como el observado o uno aún más extremo?\n\nPara un p-value de 0.03\n\nSi en realidad no hubiera diferencia o asociación, ¿qué tan probable sería obtener un resultado como el observado o uno aún más extremo?"
+  },
+  {
+    "objectID": "temas/tema-03/tema-03-inferencia-presentacion.html#valores-de-p-1",
+    "href": "temas/tema-03/tema-03-inferencia-presentacion.html#valores-de-p-1",
+    "title": "Tema 3: Inferencia estadística",
+    "section": "Valores de \\(p\\)",
+    "text": "Valores de \\(p\\)\nEs importante aclarar lo que no significa:\n\nNo significa que haya un 3 % de probabilidad de que la hipótesis nula sea verdadera.\nNo significa que haya un 97 % de probabilidad de que el tratamiento funcione.\nNo significa que exista un 3 % de probabilidad de que el resultado “se deba al azar”.\nNo mide el tamaño ni la importancia de la diferencia"
+  },
+  {
+    "objectID": "temas/tema-03/tema-03-inferencia-presentacion.html#valores-de-p-2",
+    "href": "temas/tema-03/tema-03-inferencia-presentacion.html#valores-de-p-2",
+    "title": "Tema 3: Inferencia estadística",
+    "section": "Valores de \\(p\\)",
+    "text": "Valores de \\(p\\)\n\n\n\n\n\n\nImportante\n\n\nLos valores de \\(p\\) no lo son todo. Nunca debe limitarse a un valor de \\(p\\).\nSiempre acompañe con:\n\nTamaño del efecto\n\nY su intervalo de confianza"
+  },
+  {
+    "objectID": "temas/tema-03/tema-03-inferencia-presentacion.html#intervalos-de-confianza",
+    "href": "temas/tema-03/tema-03-inferencia-presentacion.html#intervalos-de-confianza",
+    "title": "Tema 3: Inferencia estadística",
+    "section": "Intervalos de confianza",
+    "text": "Intervalos de confianza\nLos intervalos de confianza (IC) te ayudan a inferir qué valores de un parámetro poblacional son compatibles con tus datos y con qué precisión lo has estimado, bajo los supuestos del análisis.\nNos dice: &gt; Si repitiéramos el muestreo muchas veces y construyéramos un intervalo con el mismo procedimiento en cada muestra, aproximadamente el 95 % de esos intervalos contendría el verdadero parámetro poblacional, bajo los supuestos del método."
+  },
+  {
+    "objectID": "temas/tema-03/tema-03-inferencia-presentacion.html#intervalos-de-confianza-1",
+    "href": "temas/tema-03/tema-03-inferencia-presentacion.html#intervalos-de-confianza-1",
+    "title": "Tema 3: Inferencia estadística",
+    "section": "Intervalos de confianza",
+    "text": "Intervalos de confianza"
+  },
+  {
+    "objectID": "temas/tema-03/tema-03-inferencia-presentacion.html#tamaño-del-efecto",
+    "href": "temas/tema-03/tema-03-inferencia-presentacion.html#tamaño-del-efecto",
+    "title": "Tema 3: Inferencia estadística",
+    "section": "Tamaño del efecto",
+    "text": "Tamaño del efecto\n¿qué tan grande es la diferencia o asociación?\nEl tamaño del efecto cuantifica la magnitud de una diferencia entre grupos o de una asociación entre variables.\nUn efecto estadísticamente significativo puede ser pequeño. Su importancia depende del contexto\n\n\n\n\n\n\n\nMedida\n¿Qué nos dice?\n\n\n\n\nTamaño del efecto\nCuánto difieren los grupos.\n\n\nIC del 95 %\nCon qué precisión estimamos esa diferencia.\n\n\nValor p\nQué tan incompatibles son los datos con la hipótesis de ausencia de diferencia."
+  },
+  {
+    "objectID": "temas/tema-03/tema-03-inferencia-presentacion.html#principales-medidas-del-tamaño-del-efecto",
+    "href": "temas/tema-03/tema-03-inferencia-presentacion.html#principales-medidas-del-tamaño-del-efecto",
+    "title": "Tema 3: Inferencia estadística",
+    "section": "Principales medidas del tamaño del efecto",
+    "text": "Principales medidas del tamaño del efecto\nTamaño del efecto: diferencias entre grupos\n\n\n\n\n\n\n\n\nMedida\n¿Qué cuantifica?\nCaracterísticas\n\n\n\n\nDiferencia de medias\nDiferencia entre las medias de dos grupos.\nConserva las unidades originales. Valor nulo: 0.\n\n\nd de Cohen\nDiferencia de medias expresada en desviaciones estándar.\nNo tiene unidades; facilita comparar resultados medidos en distintas escalas. Valor nulo: 0.\n\n\ng de Hedges\nDiferencia de medias estandarizada con corrección del sesgo.\nÚtil especialmente con muestras pequeñas. Valor nulo: 0.\n\n\nDelta de Cliff\nPredominio de los valores de un grupo sobre los del otro.\nBasada en comparaciones por pares; útil para datos ordinales. Varía de −1 a 1; valor nulo: 0."
+  },
+  {
+    "objectID": "temas/tema-03/tema-03-inferencia-presentacion.html#principales-medidas-del-tamaño-del-efecto-1",
+    "href": "temas/tema-03/tema-03-inferencia-presentacion.html#principales-medidas-del-tamaño-del-efecto-1",
+    "title": "Tema 3: Inferencia estadística",
+    "section": "Principales medidas del tamaño del efecto",
+    "text": "Principales medidas del tamaño del efecto\nTamaño del efecto: resultados binarios\n\n\n\n\n\n\n\n\nMedida\n¿Qué cuantifica?\nCaracterísticas\n\n\n\n\nDiferencia de riesgos\nDiferencia absoluta entre dos probabilidades.\nSe puede expresar en puntos porcentuales. Valor nulo: 0.\n\n\nRiesgo relativo (RR)\nCociente entre el riesgo de un grupo y el del grupo de referencia.\nRR = 2 indica el doble de riesgo. Valor nulo: 1.\n\n\nOdds ratio (OR)\nCociente de los odds: (p/(1-p)).\nFrecuente en regresión logística y estudios de casos y controles. No equivale al RR. Valor nulo: 1.\n\n\nNúmero necesario a tratar (NNT)\nPersonas que deben tratarse para obtener un beneficio adicional.\nInverso de la reducción absoluta del riesgo; requiere especificar el periodo de seguimiento."
+  },
+  {
+    "objectID": "temas/tema-03/tema-03-inferencia-presentacion.html#principales-medidas-del-tamaño-del-efecto-2",
+    "href": "temas/tema-03/tema-03-inferencia-presentacion.html#principales-medidas-del-tamaño-del-efecto-2",
+    "title": "Tema 3: Inferencia estadística",
+    "section": "Principales medidas del tamaño del efecto",
+    "text": "Principales medidas del tamaño del efecto\nTamaño del efecto: varianza explicada\n\n\n\n\n\n\n\n\nMedida\n¿Qué cuantifica?\nCaracterísticas\n\n\n\n\nR²\nProporción de variación de la respuesta explicada por un modelo lineal.\nEn el ajuste habitual con intercepto, varía de 0 a 1. No demuestra causalidad.\n\n\nEta cuadrado (η²)\nProporción de la variación total asociada a un efecto en ANOVA.\nVaría de 0 a 1; puede sobreestimar el efecto poblacional.\n\n\nEta cuadrado parcial (η²p)\nVariación atribuida al efecto respecto a la suma de efecto y error.\nDepende del diseño y de los términos del modelo; no equivale generalmente a η².\n\n\nOmega cuadrado (ω²)\nProporción de varianza atribuible a un efecto, con corrección del sesgo.\nMenos sesgado que η²; su estimación puede ser negativa cuando el efecto es muy pequeño."
+  },
+  {
+    "objectID": "temas/tema-03/tema-03-inferencia-presentacion.html#principales-medidas-del-tamaño-del-efecto-3",
+    "href": "temas/tema-03/tema-03-inferencia-presentacion.html#principales-medidas-del-tamaño-del-efecto-3",
+    "title": "Tema 3: Inferencia estadística",
+    "section": "Principales medidas del tamaño del efecto",
+    "text": "Principales medidas del tamaño del efecto\nTamaño del efecto: tiempo hasta un evento\n\n\n\n\n\n\n\nAspecto\nIdea clave\n\n\n\n\nMagnitud\nLos criterios de “pequeño”, “moderado” o “grande” dependen de la medida y del contexto.\n\n\nDirección\nEl signo o la posición respecto a 1 depende del grupo de referencia y de cómo se define el resultado.\n\n\nPrecisión\nAcompañar la estimación con su intervalo de confianza.\n\n\nRelevancia\nValorar la importancia práctica; la significación estadística no determina la magnitud del efecto."
+  },
+  {
+    "objectID": "temas/tema-03/tema-03-inferencia-presentacion.html#cómo-interpretar-el-tamaño-del-efecto",
+    "href": "temas/tema-03/tema-03-inferencia-presentacion.html#cómo-interpretar-el-tamaño-del-efecto",
+    "title": "Tema 3: Inferencia estadística",
+    "section": "¿Cómo interpretar el tamaño del efecto?",
+    "text": "¿Cómo interpretar el tamaño del efecto?\n\n\n\n\n\n\n\nAspecto\nIdea clave\n\n\n\n\nMagnitud\nLos criterios de “pequeño”, “moderado” o “grande” dependen de la medida y del contexto.\n\n\nDirección\nEl signo o la posición respecto a 1 depende del grupo de referencia y de cómo se define el resultado.\n\n\nPrecisión\nAcompañar la estimación con su intervalo de confianza.\n\n\nRelevancia\nValorar la importancia práctica; la significación estadística no determina la magnitud del efecto."
+  },
+  {
     "objectID": "temas/tema-02/tema-02-imputacion-datos-1.html#objetivos-de-aprendizaje",
     "href": "temas/tema-02/tema-02-imputacion-datos-1.html#objetivos-de-aprendizaje",
     "title": "Imputación de datos parte 1",
@@ -252,6 +350,13 @@
     "text": "Manos a la obra\n\nDescargue el documento: Descargue el documento Ejercicios imputación simple\nEste documento contiene datos simulados para introducir NA a algunas bases de datos\nCompare estadística y gráficamente el antes y el después."
   },
   {
+    "objectID": "temas/tema-02/tema-02-imputacion-datos-1.html#diferencias-entre-la-imputación-simple-y-la-imputación-múltiple",
+    "href": "temas/tema-02/tema-02-imputacion-datos-1.html#diferencias-entre-la-imputación-simple-y-la-imputación-múltiple",
+    "title": "Imputación de datos parte 1",
+    "section": "Diferencias entre la imputación simple y la imputación múltiple",
+    "text": "Diferencias entre la imputación simple y la imputación múltiple\nLa principal diferencia es que la imputación simple rellena cada dato faltante con un único valor fijo, mientras que la imputación múltiple crea varios conjuntos de datos completos con diferentes valores plausibles para reflejar la incertidumbre.\n\nNúmero de valores\nTratamiento de la incertidumbre\nEfecto en los datos: La imputación simple suele reducir la variabilidad artificialmente y puede sesgar las relaciones estadísticas. La imputación múltiple preserva la distribución real y la variabilidad del muestreo.\nComplejidad del análisis: La imputación múltiple exige analizar cada base de datos por separado y luego unificar los resultados media"
+  },
+  {
     "objectID": "temas/tema-02/tema-02-imputacion-datos-1.html#qué-significa-mice",
     "href": "temas/tema-02/tema-02-imputacion-datos-1.html#qué-significa-mice",
     "title": "Imputación de datos parte 1",
@@ -266,11 +371,46 @@
     "text": "Fundamento condicional de MICE\n\n\n\nID\nTrt\nTA\nColesterol\nIMC\nEDAD\n\n\n\n\n1\nPlacebo\nNA\n220\n27\n45\n\n\n2\nFarmaco\n120\nNA\n28\n34\n\n\n3\nPlacebo\n128\n180\nNA\n56\n\n\n4\nPlacebo\n110\n179\n26\n37\n\n\n5\nFarmaco\n107\n200\n25\n29"
   },
   {
+    "objectID": "temas/tema-02/tema-02-imputacion-datos-1.html#fundamento-condicional-de-mice-1",
+    "href": "temas/tema-02/tema-02-imputacion-datos-1.html#fundamento-condicional-de-mice-1",
+    "title": "Imputación de datos parte 1",
+    "section": "Fundamento condicional de MICE",
+    "text": "Fundamento condicional de MICE\nFaltan valores en presión arterial, colesterol e índice de masa corporal.\nMICE construye modelos condicionales como:\n\\[\nP(\\text{presión arterial}\\mid\\text{colesterol, IMC, edad, tratamiento})\n\\]\n\\[\nP(\\text{colesterol}\\mid\\text{presión arterial, IMC, edad, tratamiento})\n\\]\n\\[\nP(\\text{IMC}\\mid\\text{presión arterial, colesterol, edad, tratamiento})\n\\]\nCada variable se actualiza usando la información disponible en las demás."
+  },
+  {
     "objectID": "temas/tema-02/tema-02-imputacion-datos-1.html#ciclo-iterativo-de-mice",
     "href": "temas/tema-02/tema-02-imputacion-datos-1.html#ciclo-iterativo-de-mice",
     "title": "Imputación de datos parte 1",
     "section": "Ciclo iterativo de MICE",
     "text": "Ciclo iterativo de MICE\nInicialización\nLos valores faltantes reciben valores iniciales provisionales.\nPrimera variable\nSe ajusta un modelo usando las demás variables y se reemplazan sus valores faltantes.\nVariables siguientes\nEl procedimiento se repite variable por variable, utilizando las imputaciones más recientes.\nNueva iteración\nAl terminar una ronda, el algoritmo vuelve a la primera variable.\nDespués de varias iteraciones, las distribuciones deberían estabilizarse."
+  },
+  {
+    "objectID": "temas/tema-02/tema-02-imputacion-datos-1.html#ciclo-iterativo-de-mice-1",
+    "href": "temas/tema-02/tema-02-imputacion-datos-1.html#ciclo-iterativo-de-mice-1",
+    "title": "Imputación de datos parte 1",
+    "section": "Ciclo iterativo de MICE",
+    "text": "Ciclo iterativo de MICE\n\n               Datos con NA\n                    │\n                    ▼\n                  MICE\n                    │\n       ┌────────────┼────────────┐\n       ▼            ▼            ▼\n   Dataset 1    Dataset 2    Dataset 3\n       ...          ...          ...\n                    │\n                    ▼\n                Dataset m\n\n\n\n\n\n\n\nNota\n\n\nMICE no intenta descubrir el valor verdadero. Genera múltiples valores plausibles para representar la incertidumbre asociada con los datos faltantes."
+  },
+  {
+    "objectID": "temas/tema-02/tema-02-imputacion-datos-1.html#ecuaciones-encadenadas",
+    "href": "temas/tema-02/tema-02-imputacion-datos-1.html#ecuaciones-encadenadas",
+    "title": "Imputación de datos parte 1",
+    "section": "Ecuaciones encadenadas",
+    "text": "Ecuaciones encadenadas\n\n                 Imputar BMI\n                      │\n                      ▼\n                 Imputar PCR\n                      │\n                      ▼\n              Imputar Presión\n                      │\n                      ▼\n               Actualizar BMI\n                      │\n                      ▼\n                     ...\n\n\nUna vuelta completa por todas las variables con datos faltantes constituye una:\nIteración\n\n\n\n\n\n\n\n\nNota\n\n\nLos valores recién imputados pueden utilizarse para actualizar las imputaciones de las demás variables."
+  },
+  {
+    "objectID": "temas/tema-02/tema-02-imputacion-datos-1.html#múltiples-conjuntos-imputados",
+    "href": "temas/tema-02/tema-02-imputacion-datos-1.html#múltiples-conjuntos-imputados",
+    "title": "Imputación de datos parte 1",
+    "section": "Múltiples conjuntos imputados",
+    "text": "Múltiples conjuntos imputados\nMICE repite el procedimiento para producir (m) conjuntos:\nDatos incompletos\n     ├── Imputación 1 ── Análisis 1\n     ├── Imputación 2 ── Análisis 2\n     ├── Imputación 3 ── Análisis 3\n     └── Imputación m ── Análisis m\nLas diferencias entre conjuntos surgen de:\n\nla incertidumbre de los parámetros del modelo;\nla variabilidad de los valores plausibles;\nla selección aleatoria de donantes, según el método.\n\nElegir solamente uno de estos conjuntos elimina parte de la incertidumbre que MICE intenta representar"
+  },
+  {
+    "objectID": "temas/tema-02/tema-02-imputacion-datos-1.html#pool-y-reglas-de-rubin",
+    "href": "temas/tema-02/tema-02-imputacion-datos-1.html#pool-y-reglas-de-rubin",
+    "title": "Imputación de datos parte 1",
+    "section": "pool y reglas de Rubin",
+    "text": "pool y reglas de Rubin\nRubin combina ambas fuentes de incertidumbre:\n\\[\n\\boxed{\nT =\n\\bar{U}\n+\n\\left(1+\\frac{1}{m}\\right)B\n}\n\\]\nDonde:\n\n\\(\\bar U\\) representa la variabilidad dentre de las imputaciones\n\\(\\left(1+\\frac{1}{m}\\right)B\\) La varibibilidad entre las imputaciones\n\nFinalmente:\n\\[\n\\boxed{\nSE_{pooled}=\\sqrt{T}\n}\n\\]"
   },
   {
     "objectID": "temas/tema-02/tema-02-imputacion-datos-1.html#un-modelo-para-cada-tipo-de-variable",
@@ -285,13 +425,6 @@
     "title": "Imputación de datos parte 1",
     "section": "Emparejamiento predictivo de medias",
     "text": "Emparejamiento predictivo de medias\nPara imputar una observación incompleta, pmm realiza conceptualmente lo siguiente:\n\nAjusta un modelo para predecir la variable incompleta.\nCalcula la predicción del individuo con el dato faltante.\nBusca individuos observados con predicciones cercanas.\nSelecciona un donante y utiliza su valor observado.\n\nVentajas:\n\nconserva valores dentro del soporte observado;\ntolera cierta falta de normalidad;\nevita muchos valores fisiológicamente imposibles.\n\nNo garantiza ausencia de sesgo y puede funcionar mal cuando hay pocos donantes comparables."
-  },
-  {
-    "objectID": "temas/tema-02/tema-02-imputacion-datos-1.html#múltiples-conjuntos-imputados",
-    "href": "temas/tema-02/tema-02-imputacion-datos-1.html#múltiples-conjuntos-imputados",
-    "title": "Imputación de datos parte 1",
-    "section": "Múltiples conjuntos imputados",
-    "text": "Múltiples conjuntos imputados\nMICE repite el procedimiento para producir (m) conjuntos:\nDatos incompletos\n     ├── Imputación 1 ── Análisis 1\n     ├── Imputación 2 ── Análisis 2\n     ├── Imputación 3 ── Análisis 3\n     └── Imputación m ── Análisis m\nLas diferencias entre conjuntos surgen de:\n\nla incertidumbre de los parámetros del modelo;\nla variabilidad de los valores plausibles;\nla selección aleatoria de donantes, según el método.\n\nElegir solamente uno de estos conjuntos elimina parte de la incertidumbre que MICE intenta representar"
   },
   {
     "objectID": "temas/tema-02/tema-02-imputacion-datos-1.html#supuesto-principal",
@@ -329,6 +462,48 @@
     "text": "Qué puede y qué no puede hacer MICE\nMICE puede:\n\naprovechar información parcial;\nmanejar variables de diferentes tipos;\nconservar participantes en el análisis;\nrepresentar incertidumbre;\nincorporar relaciones multivariadas.\n\nMICE no puede:\n\nrecuperar información inexistente;\ndemostrar el supuesto MAR;\ncorregir automáticamente un mal diseño;\nsolucionar ausencia estructural o censura sin un modelo apropiado;\nsustituir el razonamiento clínico."
   },
   {
+    "objectID": "temas/tema-02/tema-02-imputacion-datos-1.html#referencias",
+    "href": "temas/tema-02/tema-02-imputacion-datos-1.html#referencias",
+    "title": "Imputación de datos parte 1",
+    "section": "Referencias",
+    "text": "Referencias\n\nNational Research Council. The Prevention and Treatment of Missing Data in Clinical Trials. National Academies Press; 2010. doi:10.17226/12955\nJonathan A. C. Sterne, Ian R. White, John B. Carlin, Michael Spratt, Patrick Royston, Michael G. Kenward, Angela M. Wood, James R. Carpenter. Multiple Imputation for Missing Data in Epidemiological and Clinical Research: Potential and Pitfalls. BMJ. 2009;338:b2393. doi:10.1136/bmj.b2393\nDonald B. Rubin. Multiple Imputation for Nonresponse in Surveys. Wiley; 1987. doi:10.1002/9780470316696\nDonald B. Rubin. Inference and Missing Data. Biometrika. 1976;63(3):581-92. doi:10.2307/2335739\nStef van Buuren. Flexible Imputation of Missing Data [Internet]. 2.ª ed. CRC Press; 2018. Disponible en: https://stefvanbuuren.name/fimd/"
+  },
+  {
+    "objectID": "temas/tema-02/tema-02-imputacion-datos-1.html#referencias-1",
+    "href": "temas/tema-02/tema-02-imputacion-datos-1.html#referencias-1",
+    "title": "Imputación de datos parte 1",
+    "section": "Referencias",
+    "text": "Referencias\n\nInternational Council for Harmonisation. ICH E9(R1): Addendum on Estimands and Sensitivity Analysis in Clinical Trials [Internet]. 2019. Disponible en: https://www.ema.europa.eu/en/ich-e9-statistical-principles-clinical-trials-scientific-guideline\nIan R. White, Patrick Royston, Angela M. Wood. Multiple Imputation Using Chained Equations: Issues and Guidance for Practice. Statistics in Medicine. 2011;30(4):377-99. doi:10.1002/sim.4067\nCattram D. Nguyen, John B. Carlin, Katherine J. Lee. Model Checking in Multiple Imputation: An Overview and Case Study. Emerging Themes in Epidemiology. 2017;14:8. doi:10.1186/s12982-017-0062-6"
+  },
+  {
+    "objectID": "temas/tema-02/tema-02-imputacion-datos-1.html#referencias-2",
+    "href": "temas/tema-02/tema-02-imputacion-datos-1.html#referencias-2",
+    "title": "Imputación de datos parte 1",
+    "section": "Referencias",
+    "text": "Referencias\n\nErik von Elm, Douglas G. Altman, Matthias Egger, Stuart J. Pocock, Peter C. Gøtzsche, Jan P. Vandenbroucke. The Strengthening the Reporting of Observational Studies in Epidemiology (STROBE) Statement. PLoS Medicine. 2007;4(10):e296. doi:10.1371/journal.pmed.0040296\nKatherine J. Lee, Kate Tilling, Rosie P. Cornish, Roderick J. A. Little, Melanie L. Bell, Els Goetghebeur, Joseph W. Hogan, James R. Carpenter. Framework for the Treatment and Reporting of Missing Data in Observational Studies: The TARMOS Framework. Journal of Clinical Epidemiology. 2021;134:79-88. doi:10.1016/j.jclinepi.2021.01.008\nHeymans MW, Twisk JWR. Handling missing data in clinical research. J Clin Epidemiol. 2022 Nov;151:185-188. doi: 10.1016/j.jclinepi.2022.08.016. Epub 2022 Sep 21. PMID: 36150546."
+  },
+  {
+    "objectID": "temas/tema-02/tema-02-imputacion-datos-1.html#referencias-3",
+    "href": "temas/tema-02/tema-02-imputacion-datos-1.html#referencias-3",
+    "title": "Imputación de datos parte 1",
+    "section": "Referencias",
+    "text": "Referencias\n\nKazijevs M, Samad MD. Deep imputation of missing values in time series health data: A review with benchmarking. J Biomed Inform. 2023 Aug;144:104440. doi: 10.1016/j.jbi.2023.104440. Epub 2023 Jul 8. PMID: 37429511; PMCID: PMC10529422.\nChen CY, Chang YW. Missing data imputation using classification and regression trees. PeerJ Comput Sci. 2024 Jun 28;10:e2119. doi: 10.7717/peerj-cs.2119. PMID: 38983189; PMCID: PMC11232582."
+  },
+  {
+    "objectID": "temas/tema-02/tema-02-imputacion-datos-1.html#referencias-4",
+    "href": "temas/tema-02/tema-02-imputacion-datos-1.html#referencias-4",
+    "title": "Imputación de datos parte 1",
+    "section": "Referencias",
+    "text": "Referencias\n\nWang S, Frederich R, Mancuso JP. Imputation of Missing Data for Time-to-Event Endpoints Using Retrieved Dropouts. Ther Innov Regul Sci. 2024 Jan;58(1):114-126. doi: 10.1007/s43441-023-00575-5. Epub 2023 Oct 7. PMID: 37805643; PMCID: PMC10764582.\nWhite IR, Royston P, Wood AM. Multiple imputation using chained equations: Issues and guidance for practice. Stat Med. 2011 Feb 20;30(4):377-99. doi: 10.1002/sim.4067. Epub 2010 Nov 30. PMID: 21225900.\nZhang G, He Y, Cai B, Moriarity C, Shin HC, Parsons V, Irimata KE. Multiple imputation of missing data with skip-pattern covariates: a comparison of alternative strategies. J Stat Comput Simul. 2023;94(7):1543-1570. doi: 10.1080/00949655.2023.2293124. PMID: 38883968; PMCID: PMC11177582."
+  },
+  {
+    "objectID": "temas/tema-02/tema-02-imputacion-datos-1.html#recursos-para-continuar",
+    "href": "temas/tema-02/tema-02-imputacion-datos-1.html#recursos-para-continuar",
+    "title": "Imputación de datos parte 1",
+    "section": "Recursos para continuar",
+    "text": "Recursos para continuar\n\nFlexible Imputation of Missing Data, edición en línea\nDocumentación y viñetas de mice\nTARMOS: marco para estudios observacionales\nNational Academies: datos faltantes en ensayos clínicos\nICH E9(R1): estimandos y sensibilidad"
+  },
+  {
     "objectID": "temas/tema-02/tema-02-ejercicios-mice.html",
     "href": "temas/tema-02/tema-02-ejercicios-mice.html",
     "title": "Ejercicios: imputación múltiple con mice",
@@ -362,13 +537,6 @@
     "title": "Ejercicios: imputación múltiple con mice",
     "section": "Ejercicio 2: cuantificar y visualizar la ausencia",
     "text": "Ejercicio 2: cuantificar y visualizar la ausencia\n\ncolMeans(is.na(datos_incompletos)) * 100\n\n               id              edad              sexo               imc \n             0.00              0.00              0.00             12.75 \n    glucosa_ayuno             hba1c presion_sistolica        tabaquismo \n             5.50              1.25             11.00              0.00 \n  diagnostico_dm2 \n             0.00 \n\n\n\nmice::md.pattern(datos_incompletos, rotate.names = TRUE)\n\n\n\n\n\n\n\n\n    id edad sexo tabaquismo diagnostico_dm2 hba1c glucosa_ayuno\n288  1    1    1          1               1     1             1\n45   1    1    1          1               1     1             1\n36   1    1    1          1               1     1             1\n4    1    1    1          1               1     1             1\n19   1    1    1          1               1     1             0\n1    1    1    1          1               1     1             0\n2    1    1    1          1               1     1             0\n3    1    1    1          1               1     0             1\n1    1    1    1          1               1     0             1\n1    1    1    1          1               1     0             1\n     0    0    0          0               0     5            22\n    presion_sistolica imc    \n288                 1   1   0\n45                  1   0   1\n36                  0   1   1\n4                   0   0   2\n19                  1   1   1\n1                   1   0   2\n2                   0   1   2\n3                   1   1   1\n1                   0   1   2\n1                   0   0   3\n                   44  51 122\n\n\n\n¿Cuál variable tiene más datos faltantes? ¿El patrón es monótono o no monótono?\n¿Cuántos pacientes tienen las cuatro variables (presion_sistolica, imc, glucosa_ayuno, hba1c) completas de forma simultánea?\nSin ver el código de la Parte 2, ¿podría usted adivinar, solo mirando md.pattern(), cuál mecanismo (MCAR/MAR/MNAR) generó cada columna? Explique por qué sí o por qué no."
-  },
-  {
-    "objectID": "temas/tema-02/tema-02-ejercicios-mice.html#ejercicio-3-interpretar-la-tabla",
-    "href": "temas/tema-02/tema-02-ejercicios-mice.html#ejercicio-3-interpretar-la-tabla",
-    "title": "Ejercicios: imputación múltiple con mice",
-    "section": "Ejercicio 3: interpretar la tabla",
-    "text": "Ejercicio 3: interpretar la tabla\n\n¿Qué coeficiente se aleja más del “oráculo”: el de casos completos o el de imputación por la media?\n¿Cuántas observaciones se usaron en mod_cc respecto a mod_oraculo? Verifique con nobs().\n¿Por qué la imputación por la media tiende a atenuar (acercar a cero) algunas relaciones entre variables?"
   },
   {
     "objectID": "temas/tema-02/tema-02-ejercicios-mice.html#excluir-el-identificador-de-la-matriz-de-predictores",
@@ -418,13 +586,6 @@
     "title": "Ejercicios: imputación múltiple con mice",
     "section": "Ejercicio 7: interpretar el sesgo",
     "text": "Ejercicio 7: interpretar el sesgo\n\n¿El sesgo de imc y glucosa_ayuno (mecanismo MAR) es cercano a cero?\n¿Qué observa en el sesgo de hba1c (mecanismo MNAR)? ¿En qué dirección se equivoca mice, sobreestima o subestima los valores realmente altos de HbA1c? Grafique comparacion_valores |&gt; filter(na_hba1c) con ggplot() (hba1c_verdad en el eje x, hba1c imputado en el eje y, y una línea de referencia geom_abline()) para verlo."
-  },
-  {
-    "objectID": "temas/tema-02/tema-02-ejercicios-mice.html#ejercicio-8-comparar-tres-estrategias",
-    "href": "temas/tema-02/tema-02-ejercicios-mice.html#ejercicio-8-comparar-tres-estrategias",
-    "title": "Ejercicios: imputación múltiple con mice",
-    "section": "Ejercicio 8: comparar tres estrategias",
-    "text": "Ejercicio 8: comparar tres estrategias\n\nConvierta los coeficientes de glucosa_ayuno a razón de momios (exp()) para el modelo oráculo, el de casos completos y el agrupado por mice. ¿Cuál se acerca más al oráculo?\nCompare el error estándar de glucosa_ayuno entre mod_cc_dm2 y agrupado. ¿El de mice es mayor o menor? ¿Por qué el agrupamiento de Rubin normalmente da errores estándar más grandes que un único conjunto imputado tratado “como si fuera dato real”?\n¿Cuántos grados de libertad usa summary(agrupado) (columna df) y por qué no son un número entero simple como en un modelo ordinario? (Pista: pool() usa la fórmula de Barnard-Rubin.)"
   },
   {
     "objectID": "temas/tema-02/tema-02-eda-datos-biomedicos.html#objetivo-de-la-sesión",
@@ -1594,195 +1755,6 @@
     "title": "Visualización de datos con ggplot2",
     "section": "Recursos",
     "text": "Recursos\n\nBioestadística en R para ciencias de la salud. Capítulo 10. Visualización de datos. https://www.cucs.udg.mx/libros/lectura_cucs.php?libro=Bioestadistica_enR_digital#book/144\nWickham, Navarro & Pedersen, ggplot2: Elegant Graphics for Data Analysis — https://ggplot2-book.org/\nWickham, Çetinkaya-Rundel & Grolemund, R for Data Science, capítulo de visualización — https://r4ds.hadley.nz/\nHoja de referencia de ggplot2 (Posit) — https://posit.co/resources/cheatsheets/\n?Pima.tr2 en R, para la documentación del conjunto de datos"
-  },
-  {
-    "objectID": "temas/tema-02/tema-02-imputacion-datos-1.html#referencias",
-    "href": "temas/tema-02/tema-02-imputacion-datos-1.html#referencias",
-    "title": "Imputación de datos parte 1",
-    "section": "Referencias",
-    "text": "Referencias\n\nNational Research Council. The Prevention and Treatment of Missing Data in Clinical Trials. National Academies Press; 2010. doi:10.17226/12955\nJonathan A. C. Sterne, Ian R. White, John B. Carlin, Michael Spratt, Patrick Royston, Michael G. Kenward, Angela M. Wood, James R. Carpenter. Multiple Imputation for Missing Data in Epidemiological and Clinical Research: Potential and Pitfalls. BMJ. 2009;338:b2393. doi:10.1136/bmj.b2393\nDonald B. Rubin. Multiple Imputation for Nonresponse in Surveys. Wiley; 1987. doi:10.1002/9780470316696\nDonald B. Rubin. Inference and Missing Data. Biometrika. 1976;63(3):581-92. doi:10.2307/2335739\nStef van Buuren. Flexible Imputation of Missing Data [Internet]. 2.ª ed. CRC Press; 2018. Disponible en: https://stefvanbuuren.name/fimd/"
-  },
-  {
-    "objectID": "temas/tema-02/tema-02-imputacion-datos-1.html#recursos-para-continuar",
-    "href": "temas/tema-02/tema-02-imputacion-datos-1.html#recursos-para-continuar",
-    "title": "Imputación de datos parte 1",
-    "section": "Recursos para continuar",
-    "text": "Recursos para continuar\n\nFlexible Imputation of Missing Data, edición en línea\nDocumentación y viñetas de mice\nTARMOS: marco para estudios observacionales\nNational Academies: datos faltantes en ensayos clínicos\nICH E9(R1): estimandos y sensibilidad"
-  },
-  {
-    "objectID": "temas/tema-02/tema-02-imputacion-datos-1.html#referencias-1",
-    "href": "temas/tema-02/tema-02-imputacion-datos-1.html#referencias-1",
-    "title": "Imputación de datos parte 1",
-    "section": "Referencias",
-    "text": "Referencias\n\nInternational Council for Harmonisation. ICH E9(R1): Addendum on Estimands and Sensitivity Analysis in Clinical Trials [Internet]. 2019. Disponible en: https://www.ema.europa.eu/en/ich-e9-statistical-principles-clinical-trials-scientific-guideline\nIan R. White, Patrick Royston, Angela M. Wood. Multiple Imputation Using Chained Equations: Issues and Guidance for Practice. Statistics in Medicine. 2011;30(4):377-99. doi:10.1002/sim.4067\nCattram D. Nguyen, John B. Carlin, Katherine J. Lee. Model Checking in Multiple Imputation: An Overview and Case Study. Emerging Themes in Epidemiology. 2017;14:8. doi:10.1186/s12982-017-0062-6"
-  },
-  {
-    "objectID": "temas/tema-02/tema-02-imputacion-datos-1.html#referencias-2",
-    "href": "temas/tema-02/tema-02-imputacion-datos-1.html#referencias-2",
-    "title": "Imputación de datos parte 1",
-    "section": "Referencias",
-    "text": "Referencias\n\nErik von Elm, Douglas G. Altman, Matthias Egger, Stuart J. Pocock, Peter C. Gøtzsche, Jan P. Vandenbroucke. The Strengthening the Reporting of Observational Studies in Epidemiology (STROBE) Statement. PLoS Medicine. 2007;4(10):e296. doi:10.1371/journal.pmed.0040296\nKatherine J. Lee, Kate Tilling, Rosie P. Cornish, Roderick J. A. Little, Melanie L. Bell, Els Goetghebeur, Joseph W. Hogan, James R. Carpenter. Framework for the Treatment and Reporting of Missing Data in Observational Studies: The TARMOS Framework. Journal of Clinical Epidemiology. 2021;134:79-88. doi:10.1016/j.jclinepi.2021.01.008\nHeymans MW, Twisk JWR. Handling missing data in clinical research. J Clin Epidemiol. 2022 Nov;151:185-188. doi: 10.1016/j.jclinepi.2022.08.016. Epub 2022 Sep 21. PMID: 36150546."
-  },
-  {
-    "objectID": "temas/tema-02/tema-02-imputacion-datos-1.html#diferencias-entre-la-imputación-simple-y-la-imputación-múltiple",
-    "href": "temas/tema-02/tema-02-imputacion-datos-1.html#diferencias-entre-la-imputación-simple-y-la-imputación-múltiple",
-    "title": "Imputación de datos parte 1",
-    "section": "Diferencias entre la imputación simple y la imputación múltiple",
-    "text": "Diferencias entre la imputación simple y la imputación múltiple\nLa principal diferencia es que la imputación simple rellena cada dato faltante con un único valor fijo, mientras que la imputación múltiple crea varios conjuntos de datos completos con diferentes valores plausibles para reflejar la incertidumbre. + Número de valores + Tratamiento de la incertidumbre + Efecto en los datos: La imputación simple suele reducir la variabilidad artificialmente y puede sesgar las relaciones estadísticas. La imputación múltiple preserva la distribución real y la variabilidad del muestreo. + Complejidad del análisis: La imputación múltiple exige analizar cada base de datos por separado y luego unificar los resultados media"
-  },
-  {
-    "objectID": "temas/tema-02/tema-02-imputacion-datos-1.html#fundamento-condicional-de-mice-1",
-    "href": "temas/tema-02/tema-02-imputacion-datos-1.html#fundamento-condicional-de-mice-1",
-    "title": "Imputación de datos parte 1",
-    "section": "Fundamento condicional de MICE",
-    "text": "Fundamento condicional de MICE\nFaltan valores en presión arterial, colesterol e índice de masa corporal.\nMICE construye modelos condicionales como:\n\\[\nP(\\text{presión arterial}\\mid\\text{colesterol, IMC, edad, tratamiento})\n\\]\n\\[\nP(\\text{colesterol}\\mid\\text{presión arterial, IMC, edad, tratamiento})\n\\]\n\\[\nP(\\text{IMC}\\mid\\text{presión arterial, colesterol, edad, tratamiento})\n\\]\nCada variable se actualiza usando la información disponible en las demás."
-  },
-  {
-    "objectID": "temas/tema-02/tema-02-imputacion-datos-1.html#ciclo-iterativo-de-mice-1",
-    "href": "temas/tema-02/tema-02-imputacion-datos-1.html#ciclo-iterativo-de-mice-1",
-    "title": "Imputación de datos parte 1",
-    "section": "Ciclo iterativo de MICE",
-    "text": "Ciclo iterativo de MICE\n\n               Datos con NA\n                    │\n                    ▼\n                  MICE\n                    │\n       ┌────────────┼────────────┐\n       ▼            ▼            ▼\n   Dataset 1    Dataset 2    Dataset 3\n       ...          ...          ...\n                    │\n                    ▼\n                Dataset m\n\n\n\n\n\n\n\nNota\n\n\nMICE no intenta descubrir el valor verdadero. Genera múltiples valores plausibles para representar la incertidumbre asociada con los datos faltantes."
-  },
-  {
-    "objectID": "temas/tema-02/tema-02-imputacion-datos-1.html#combinación-y-regals-de-rubin",
-    "href": "temas/tema-02/tema-02-imputacion-datos-1.html#combinación-y-regals-de-rubin",
-    "title": "Imputación de datos parte 1",
-    "section": "Combinación y regals de Rubin",
-    "text": "Combinación y regals de Rubin"
-  },
-  {
-    "objectID": "temas/tema-02/tema-02-imputacion-datos-1.html#ecuaciones-encadenadas",
-    "href": "temas/tema-02/tema-02-imputacion-datos-1.html#ecuaciones-encadenadas",
-    "title": "Imputación de datos parte 1",
-    "section": "Ecuaciones encadenadas",
-    "text": "Ecuaciones encadenadas\n\n                 Imputar BMI\n                      │\n                      ▼\n                 Imputar PCR\n                      │\n                      ▼\n              Imputar Presión\n                      │\n                      ▼\n               Actualizar BMI\n                      │\n                      ▼\n                     ...\n\n\nUna vuelta completa por todas las variables con datos faltantes constituye una:\nIteración\n\n\n\n\n\n\n\n\nNota\n\n\nLos valores recién imputados pueden utilizarse para actualizar las imputaciones de las demás variables."
-  },
-  {
-    "objectID": "temas/tema-02/tema-02-imputacion-datos-1.html#combinación-y-reglas-de-rubin",
-    "href": "temas/tema-02/tema-02-imputacion-datos-1.html#combinación-y-reglas-de-rubin",
-    "title": "Imputación de datos parte 1",
-    "section": "Combinación y reglas de Rubin",
-    "text": "Combinación y reglas de Rubin"
-  },
-  {
-    "objectID": "temas/tema-02/tema-02-imputacion-datos-1.html#pool-y-reglas-de-rubin",
-    "href": "temas/tema-02/tema-02-imputacion-datos-1.html#pool-y-reglas-de-rubin",
-    "title": "Imputación de datos parte 1",
-    "section": "pool y reglas de Rubin",
-    "text": "pool y reglas de Rubin\nRubin combina ambas fuentes de incertidumbre:\n\\[\n\\boxed{\nT =\n\\bar{U}\n+\n\\left(1+\\frac{1}{m}\\right)B\n}\n\\]\nDonde:\n\n\\(\\bar U\\) representa la variabilidad dentre de las imputaciones\n\\(\\left(1+\\frac{1}{m}\\right)B\\) La varibibilidad entre las imputaciones\n\nFinalmente:\n\\[\n\\boxed{\nSE_{pooled}=\\sqrt{T}\n}\n\\]"
-  },
-  {
-    "objectID": "temas/tema-02/tema-02-imputacion-datos-1.html#referencias-3",
-    "href": "temas/tema-02/tema-02-imputacion-datos-1.html#referencias-3",
-    "title": "Imputación de datos parte 1",
-    "section": "Referencias",
-    "text": "Referencias\n\nKazijevs M, Samad MD. Deep imputation of missing values in time series health data: A review with benchmarking. J Biomed Inform. 2023 Aug;144:104440. doi: 10.1016/j.jbi.2023.104440. Epub 2023 Jul 8. PMID: 37429511; PMCID: PMC10529422.\nChen CY, Chang YW. Missing data imputation using classification and regression trees. PeerJ Comput Sci. 2024 Jun 28;10:e2119. doi: 10.7717/peerj-cs.2119. PMID: 38983189; PMCID: PMC11232582."
-  },
-  {
-    "objectID": "temas/tema-02/tema-02-imputacion-datos-1.html#referencias-4",
-    "href": "temas/tema-02/tema-02-imputacion-datos-1.html#referencias-4",
-    "title": "Imputación de datos parte 1",
-    "section": "Referencias",
-    "text": "Referencias\n\nWang S, Frederich R, Mancuso JP. Imputation of Missing Data for Time-to-Event Endpoints Using Retrieved Dropouts. Ther Innov Regul Sci. 2024 Jan;58(1):114-126. doi: 10.1007/s43441-023-00575-5. Epub 2023 Oct 7. PMID: 37805643; PMCID: PMC10764582.\nWhite IR, Royston P, Wood AM. Multiple imputation using chained equations: Issues and guidance for practice. Stat Med. 2011 Feb 20;30(4):377-99. doi: 10.1002/sim.4067. Epub 2010 Nov 30. PMID: 21225900.\nZhang G, He Y, Cai B, Moriarity C, Shin HC, Parsons V, Irimata KE. Multiple imputation of missing data with skip-pattern covariates: a comparison of alternative strategies. J Stat Comput Simul. 2023;94(7):1543-1570. doi: 10.1080/00949655.2023.2293124. PMID: 38883968; PMCID: PMC11177582."
-  },
-  {
-    "objectID": "temas/tema-03/tema-03-inferencia-presentacion.html#contenido",
-    "href": "temas/tema-03/tema-03-inferencia-presentacion.html#contenido",
-    "title": "Tema 3: Inferencia estadística",
-    "section": "Contenido",
-    "text": "Contenido"
-  },
-  {
-    "objectID": "temas/tema-03/tema-03-inferencia-presentacion.html#inferencia-estadística",
-    "href": "temas/tema-03/tema-03-inferencia-presentacion.html#inferencia-estadística",
-    "title": "Tema 3: Inferencia estadística",
-    "section": "Inferencia estadística",
-    "text": "Inferencia estadística\nLa inferencia estadística es el conjunto de métodos que permite sacar conclusiones sobre una población grande a partir del análisis de una muestra pequeña y representativa.\n\nPruebas de hipótesis\nIntervalos de confianza"
-  },
-  {
-    "objectID": "temas/tema-03/tema-03-inferencia-presentacion.html#enfoque-frecuentista-vs-bayesiano",
-    "href": "temas/tema-03/tema-03-inferencia-presentacion.html#enfoque-frecuentista-vs-bayesiano",
-    "title": "Tema 3: Inferencia estadística",
-    "section": "Enfoque frecuentista vs bayesiano",
-    "text": "Enfoque frecuentista vs bayesiano\nEnfoque frecuentista\nEste enfoque se basa en la idea de que la probabilidad de un evento se calcula como la proporción de veces que ocurre el evento en un número muy grande de ensayos repetidos. Es decir, tomamos los datos de un gran número de eventos y los comparamos con nuestros datos. La probabilidad está predefinida y no cambia.\nEnfoque bayesiano\nSe basa en el teorema de Bayes, que actualiza nuestras creencias sobre la probabilidad de un evento a medida que obtenemos nueva información"
-  },
-  {
-    "objectID": "temas/tema-03/tema-03-inferencia-presentacion.html#valores-de-p",
-    "href": "temas/tema-03/tema-03-inferencia-presentacion.html#valores-de-p",
-    "title": "Tema 3: Inferencia estadística",
-    "section": "Valores de \\(p\\)",
-    "text": "Valores de \\(p\\)\nEl valor p indica qué tan incompatibles son los datos con la hipótesis nula.\n\nSi en realidad no hubiera diferencia o asociación, ¿qué tan probable sería obtener un resultado como el observado o uno aún más extremo?\n\nPara un p-value de 0.03\n\nSi en realidad no hubiera diferencia o asociación, ¿qué tan probable sería obtener un resultado como el observado o uno aún más extremo?"
-  },
-  {
-    "objectID": "temas/tema-03/tema-03-inferencia-presentacion.html#valores-de-p-1",
-    "href": "temas/tema-03/tema-03-inferencia-presentacion.html#valores-de-p-1",
-    "title": "Tema 3: Inferencia estadística",
-    "section": "Valores de \\(p\\)",
-    "text": "Valores de \\(p\\)\nEs importante aclarar lo que no significa:\n\nNo significa que haya un 3 % de probabilidad de que la hipótesis nula sea verdadera.\nNo significa que haya un 97 % de probabilidad de que el tratamiento funcione.\nNo significa que exista un 3 % de probabilidad de que el resultado “se deba al azar”.\nNo mide el tamaño ni la importancia de la diferencia"
-  },
-  {
-    "objectID": "temas/tema-03/tema-03-inferencia-presentacion.html#valores-de-p-2",
-    "href": "temas/tema-03/tema-03-inferencia-presentacion.html#valores-de-p-2",
-    "title": "Tema 3: Inferencia estadística",
-    "section": "Valores de \\(p\\)",
-    "text": "Valores de \\(p\\)\n\n\n\n\n\n\nImportante\n\n\nLos valores de \\(p\\) no lo son todo. Nunca debe limitarse a un valor de \\(p\\).\nSiempre acompañe con:\n\nTamaño del efecto\n\nY su intervalo de confianza"
-  },
-  {
-    "objectID": "temas/tema-03/tema-03-inferencia-presentacion.html#intervalos-de-confianza",
-    "href": "temas/tema-03/tema-03-inferencia-presentacion.html#intervalos-de-confianza",
-    "title": "Tema 3: Inferencia estadística",
-    "section": "Intervalos de confianza",
-    "text": "Intervalos de confianza\nLos intervalos de confianza (IC) te ayudan a inferir qué valores de un parámetro poblacional son compatibles con tus datos y con qué precisión lo has estimado, bajo los supuestos del análisis.\nNos dice: &gt; Si repitiéramos el muestreo muchas veces y construyéramos un intervalo con el mismo procedimiento en cada muestra, aproximadamente el 95 % de esos intervalos contendría el verdadero parámetro poblacional, bajo los supuestos del método."
-  },
-  {
-    "objectID": "temas/tema-03/tema-03-inferencia-presentacion.html#intervalos-de-confianza-1",
-    "href": "temas/tema-03/tema-03-inferencia-presentacion.html#intervalos-de-confianza-1",
-    "title": "Tema 3: Inferencia estadística",
-    "section": "Intervalos de confianza",
-    "text": "Intervalos de confianza"
-  },
-  {
-    "objectID": "temas/tema-03/tema-03-inferencia-presentacion.html#tamaño-del-efecto",
-    "href": "temas/tema-03/tema-03-inferencia-presentacion.html#tamaño-del-efecto",
-    "title": "Tema 3: Inferencia estadística",
-    "section": "Tamaño del efecto",
-    "text": "Tamaño del efecto\n¿qué tan grande es la diferencia o asociación?\nEl tamaño del efecto cuantifica la magnitud de una diferencia entre grupos o de una asociación entre variables.\nUn efecto estadísticamente significativo puede ser pequeño. Su importancia depende del contexto\n\n\n\n\n\n\n\nMedida\n¿Qué nos dice?\n\n\n\n\nTamaño del efecto\nCuánto difieren los grupos.\n\n\nIC del 95 %\nCon qué precisión estimamos esa diferencia.\n\n\nValor p\nQué tan incompatibles son los datos con la hipótesis de ausencia de diferencia."
-  },
-  {
-    "objectID": "temas/tema-03/tema-03-inferencia-presentacion.html#principales-medidas-del-tamaño-del-efecto",
-    "href": "temas/tema-03/tema-03-inferencia-presentacion.html#principales-medidas-del-tamaño-del-efecto",
-    "title": "Tema 3: Inferencia estadística",
-    "section": "Principales medidas del tamaño del efecto",
-    "text": "Principales medidas del tamaño del efecto\nTamaño del efecto: diferencias entre grupos\n\n\n\n\n\n\n\n\nMedida\n¿Qué cuantifica?\nCaracterísticas\n\n\n\n\nDiferencia de medias\nDiferencia entre las medias de dos grupos.\nConserva las unidades originales. Valor nulo: 0.\n\n\nd de Cohen\nDiferencia de medias expresada en desviaciones estándar.\nNo tiene unidades; facilita comparar resultados medidos en distintas escalas. Valor nulo: 0.\n\n\ng de Hedges\nDiferencia de medias estandarizada con corrección del sesgo.\nÚtil especialmente con muestras pequeñas. Valor nulo: 0.\n\n\nDelta de Cliff\nPredominio de los valores de un grupo sobre los del otro.\nBasada en comparaciones por pares; útil para datos ordinales. Varía de −1 a 1; valor nulo: 0."
-  },
-  {
-    "objectID": "temas/tema-03/tema-03-inferencia-presentacion.html#principales-medidas-del-tamaño-del-efecto-1",
-    "href": "temas/tema-03/tema-03-inferencia-presentacion.html#principales-medidas-del-tamaño-del-efecto-1",
-    "title": "Tema 3: Inferencia estadística",
-    "section": "Principales medidas del tamaño del efecto",
-    "text": "Principales medidas del tamaño del efecto\nTamaño del efecto: resultados binarios\n\n\n\n\n\n\n\n\nMedida\n¿Qué cuantifica?\nCaracterísticas\n\n\n\n\nDiferencia de riesgos\nDiferencia absoluta entre dos probabilidades.\nSe puede expresar en puntos porcentuales. Valor nulo: 0.\n\n\nRiesgo relativo (RR)\nCociente entre el riesgo de un grupo y el del grupo de referencia.\nRR = 2 indica el doble de riesgo. Valor nulo: 1.\n\n\nOdds ratio (OR)\nCociente de los odds: (p/(1-p)).\nFrecuente en regresión logística y estudios de casos y controles. No equivale al RR. Valor nulo: 1.\n\n\nNúmero necesario a tratar (NNT)\nPersonas que deben tratarse para obtener un beneficio adicional.\nInverso de la reducción absoluta del riesgo; requiere especificar el periodo de seguimiento."
-  },
-  {
-    "objectID": "temas/tema-03/tema-03-inferencia-presentacion.html#principales-medidas-del-tamaño-del-efecto-2",
-    "href": "temas/tema-03/tema-03-inferencia-presentacion.html#principales-medidas-del-tamaño-del-efecto-2",
-    "title": "Tema 3: Inferencia estadística",
-    "section": "Principales medidas del tamaño del efecto",
-    "text": "Principales medidas del tamaño del efecto\nTamaño del efecto: varianza explicada\n\n\n\n\n\n\n\n\nMedida\n¿Qué cuantifica?\nCaracterísticas\n\n\n\n\nR²\nProporción de variación de la respuesta explicada por un modelo lineal.\nEn el ajuste habitual con intercepto, varía de 0 a 1. No demuestra causalidad.\n\n\nEta cuadrado (η²)\nProporción de la variación total asociada a un efecto en ANOVA.\nVaría de 0 a 1; puede sobreestimar el efecto poblacional.\n\n\nEta cuadrado parcial (η²p)\nVariación atribuida al efecto respecto a la suma de efecto y error.\nDepende del diseño y de los términos del modelo; no equivale generalmente a η².\n\n\nOmega cuadrado (ω²)\nProporción de varianza atribuible a un efecto, con corrección del sesgo.\nMenos sesgado que η²; su estimación puede ser negativa cuando el efecto es muy pequeño."
-  },
-  {
-    "objectID": "temas/tema-03/tema-03-inferencia-presentacion.html#principales-medidas-del-tamaño-del-efecto-3",
-    "href": "temas/tema-03/tema-03-inferencia-presentacion.html#principales-medidas-del-tamaño-del-efecto-3",
-    "title": "Tema 3: Inferencia estadística",
-    "section": "Principales medidas del tamaño del efecto",
-    "text": "Principales medidas del tamaño del efecto\nTamaño del efecto: tiempo hasta un evento\n\n\n\n\n\n\n\nAspecto\nIdea clave\n\n\n\n\nMagnitud\nLos criterios de “pequeño”, “moderado” o “grande” dependen de la medida y del contexto.\n\n\nDirección\nEl signo o la posición respecto a 1 depende del grupo de referencia y de cómo se define el resultado.\n\n\nPrecisión\nAcompañar la estimación con su intervalo de confianza.\n\n\nRelevancia\nValorar la importancia práctica; la significación estadística no determina la magnitud del efecto."
-  },
-  {
-    "objectID": "temas/tema-03/tema-03-inferencia-presentacion.html#cómo-interpretar-el-tamaño-del-efecto",
-    "href": "temas/tema-03/tema-03-inferencia-presentacion.html#cómo-interpretar-el-tamaño-del-efecto",
-    "title": "Tema 3: Inferencia estadística",
-    "section": "¿Cómo interpretar el tamaño del efecto?",
-    "text": "¿Cómo interpretar el tamaño del efecto?\n\n\n\n\n\n\n\nAspecto\nIdea clave\n\n\n\n\nMagnitud\nLos criterios de “pequeño”, “moderado” o “grande” dependen de la medida y del contexto.\n\n\nDirección\nEl signo o la posición respecto a 1 depende del grupo de referencia y de cómo se define el resultado.\n\n\nPrecisión\nAcompañar la estimación con su intervalo de confianza.\n\n\nRelevancia\nValorar la importancia práctica; la significación estadística no determina la magnitud del efecto."
   },
   {
     "objectID": "temas/tema-03/index.html",
