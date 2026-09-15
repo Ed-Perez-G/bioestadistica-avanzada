@@ -14,4 +14,8 @@ Objetivo: Interpretar estimaciones, intervalos de confianza, tamaños del efecto
 
 ## Material de clase
 
+[Parte 1 - Ver la presentación: conceptos básicos de inferencia estadística](tema-03-inferencia-presentacion.qmd)
 
+[Parte 2 — Plantilla de quarto para pruebas de hipótesis](../../descargas/ttema-03-plantilla_bioestadistica_rstatix.qmd){download="tema-03-plantilla_bioestadistica_rstatix.qmd"}
+
+[Parte 3 - Visualizar plantilla](tema-03-plantilla_bioestadistica_rstatix.qmd)

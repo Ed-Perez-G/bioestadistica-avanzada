@@ -1,0 +1,1353 @@
+---
+title: "Pruebas de Hipótesis, Intervalos de Confianza y Tamaño del Efecto con rstatix y ggstatsplot"
+author: "Ponga su nombre"
+date: today
+format: 
+  html:
+    toc: true
+    toc-depth: 3
+    number-sections: true
+    code-fold: false
+    code-tools: true
+lang: es
+---
+
+# Introducción
+
+En esta clase aprenderemos a realizar pruebas de hipótesis de forma sistemática en R utilizando dos paquetes complementarios:
+
+- **`rstatix`**: Un paquete que facilita los cálculos estadísticos y proporciona resultados en formato `tibble` (tidy).
+- **`ggstatsplot`**: Un paquete que integra pruebas de hipótesis directamente en visualizaciones de `ggplot2`.
+
+## Adecuación de la base de datos
+
+```{r message=FALSE, warning=FALSE}
+#| message: false
+library(MASS)
+library(tidyverse)
+library(rstatix)
+library(ggstatsplot)
+
+data("birthwt")
+
+# Recodificar variables cualitativas con etiquetas descriptivas
+birthwt <- birthwt %>%
+  mutate(
+    low = factor(low, labels = c("Peso Normal", "Bajo Peso")),
+    race = factor(race, labels = c("Blanca", "Afroamericano", "Otra")),
+    smoke = factor(smoke, labels = c("No fumadora", "Fumadora")),
+    ht = factor(ht, labels = c("No hipertensión", "Hipertensión")),
+    ui = factor(ui, labels = c("No irritabilidad", "Irritabilidad"))
+  )
+
+head(birthwt)
+```
+
+# Introducción a rstatix: ¿Cómo funciona este paquete?
+
+## Filosofía de rstatix
+
+El paquete `rstatix` fue diseñado bajo la filosofía **tidy data** de R. Sus características principales son:
+
+1. **Resultados en formato tibble**: Los resultados estadísticos se presentan como tablas ordenadas, no como listas complejas.
+2. **pipes (`%>%` o |> )**: Compatible con el flujo de trabajo de `tidyverse`.
+3. **Nombres consistentes**: Columnas intuitivas como `statistic`, `p.value`, `df`, `estimate`, `conf.low`, `conf.high`.
+4. **Tamaño del efecto automático**: Muchas funciones calculan automáticamente medidas de efecto (eta squared, Cohen's d, etc.).
+
+## Estructura general de una función rstatix
+
+```{r}
+# Estructura típica:
+# datos %>%
+#   funcion_estadistica(formula = variable_respuesta ~ variable_explicativa)
+```
+
+Por ejemplo, para una prueba de t de dos muestras independientes:
+
+```{r}
+birthwt %>%
+  t_test(bwt ~ smoke)  # peso del bebé ~ tabaquismo
+```
+
+
+Note que:
+- `rstatix` devuelve un `tibble` con columnas claras.
+- Si especifica `detailed = TRUE`, obtiene información adicional.
+- Puede encadenar operaciones con `%>%` antes y después.
+- Note el `_`, esto permite diferenciar las funciones de `rstatix` del paquete base de `R` 
+
+---
+
+# PREGUNTA 1: Variables Cualitativas (Ejemplo modelo)
+
+## ¿El bajo peso al nacer se asocia a la hipertensión previa al embarazo?
+
+**Tipo de variables**: Ambas cualitativas (categóricas binarias)  
+**Prueba apropiada**: Chi-cuadrado (χ²) o Exacta de Fisher  
+**Medida de efecto**: V de Cramér
+
+### 1. Descriptivos
+
+Primero, examinemos la distribución de las variables y su asociación:
+
+```{r}
+# Tabla de frecuencias absolutas
+birthwt |> 
+  count(low, ht)
+
+# Tabla de frecuencias relativas (proporciones)
+table(birthwt$low, birthwt$ht) |> 
+  prop.table(margin = 2)
+
+# Otra forma
+birthwt %>%
+  group_by(low, ht) %>%
+  summarise(n = n(), .groups = "drop") %>%
+  mutate(prop = n / sum(n))
+```
+
+**Interpretación**: Observe la distribución conjunta. ¿Qué proporción de mujeres con bajo peso al nacer tienen hipertensión? ¿Y entre las de peso normal?
+
+### 2. Visualización con ggplot2
+
+```{r}
+# Gráfico de barras apiladas (proporciones)
+p1 <- ggplot(birthwt, aes(x = low, fill = ht)) +
+  geom_bar(position = "fill", alpha = 0.8) +
+  scale_y_continuous(labels = scales::percent) + # cambia los eje a %
+  labs(
+    title = "Asociación entre Bajo Peso al Nacer e Hipertensión Materna",
+    x = "Peso al Nacer",
+    y = "Proporción",
+    fill = "Hipertensión"
+  ) +
+  theme_minimal() +
+  theme(axis.text = element_text(size = 11))
+
+print(p1)
+
+# Gráfico de barras agrupadas (conteos)
+p2 <- ggplot(birthwt, aes(x = low, fill = ht)) +
+  geom_bar(position = "dodge", alpha = 0.8) +
+  labs(
+    title = "Conteo de Casos",
+    x = "Peso al Nacer",
+    y = "Frecuencia",
+    fill = "Hipertensión"
+  ) +
+  theme_minimal() +
+  geom_text(
+    stat = "count",
+    aes(label = after_stat(count)),
+    position = position_dodge(width = 0.9),
+    vjust = -0.5
+  )
+
+print(p2)
+```
+
+¿Cuál de las dos gráficas es mejor para nuestros fines?
+
+### 3. Prueba de Chi-Cuadrado con rstatix
+
+`rstatix` no es la mejor opción para la prueba de Chi-Cuadrado. Aún así vamos a revisar como realizarla. 
+
+
+#### 3.1 Evaluación de supuestos
+Antes de realizar la prueba, evaluamos el supuesto de frecuencias esperadas:
+
+```{r}
+# El supuesto: todas las frecuencias esperadas ≥ 5
+# Chi-cuadrado es robusto cuando se cumple este supuesto
+table1 <- table(birthwt$low, birthwt$ht)
+chisq.test(table1)->resultado1
+resultado1$expected
+```
+
+Parece que Chi-Cuadrado no es la mejor opción, aún así vamos a realizar esta prueba con rstatix
+
+```{r}
+table1 <- with(birthwt, table(low, ht))
+
+table1 |>
+  rstatix::chisq_test(correct = T) # Necesita una tabla
+# Trate de siempre hacer una correcion 
+```
+
+**Interpretación de supuestos**: ¿Se cumplen? Si alguna celda tiene frecuencia esperada < 5, use la Exacta de Fisher.
+
+#### 3.2 Prueba exacta de fisher
+
+La alternativa es realizar la prueba exacta de fisher
+```{r}
+fisher.test(table1)
+```
+
+### 3.3 Tamaño del Efecto: V de Cramér
+
+Necesita la librería `rcompanion`
+
+```{r}
+# Calcular V de Cramér (medida de asociación)
+# V = √(χ² / (n × (min(k,r) - 1)))
+# donde k = # de columnas, r = # de filas
+
+rcompanion::cramerV(table1)
+
+
+# Interpretación de V de Cramér (criterios de Cohen):
+# < 0.1: efecto negligible
+# 0.1 - 0.3: efecto pequeño
+# 0.3 - 0.5: efecto mediano
+# > 0.5: efecto grande
+```
+
+**Interpretación del tamaño del efecto**: 
+- V de Cramér mide la fuerza de la asociación entre dos variables categóricas.
+- Rango: 0 (sin asociación) a 1 (asociación perfecta).
+
+### 3.4 Intervalos de Confianza
+
+Para asociaciones entre variables categóricas, reportamos la **Razón de Odds (OR)** con su IC 95%:
+
+```{r}
+# Crear tabla 2x2
+tabla_2x2 <- table(birthwt$low, birthwt$ht)
+print("Tabla 2x2:")
+print(tabla_2x2)
+
+# Calcular OR manualmente (método frecuentista)
+a <- tabla_2x2[2, 2]  # Bajo peso + Hipertensión
+b <- tabla_2x2[2, 1]  # Bajo peso + Sin hipertensión
+c <- tabla_2x2[1, 2]  # Peso normal + Hipertensión
+d <- tabla_2x2[1, 1]  # Peso normal + Sin hipertensión
+
+OR <- (a * d) / (b * c)
+log_OR <- log(OR)
+SE_log_OR <- sqrt(1/a + 1/b + 1/c + 1/d)
+IC_lower <- exp(log_OR - 1.96 * SE_log_OR)
+IC_upper <- exp(log_OR + 1.96 * SE_log_OR)
+
+cat("\n=== RAZÓN DE ODDS CON IC 95% ===\n")
+cat("OR:", round(OR, 3), "\n")
+cat("IC 95%: [", round(IC_lower, 3), " - ", round(IC_upper, 3), "]\n")
+cat("\nInterpretación: Las mujeres con bajo peso al nacer tienen",
+    round(OR, 2), "veces la probabilidad de tener hipertensión\n")
+cat("comparadas con mujeres de peso normal.\n")
+```
+
+
+Para el tamaño del efecto necesita la librería `confintr`:
+
+```{r}
+library(confintr)
+
+# Calculate Cramér's V with its 95% confidence interval
+ci_cramersv(table1)
+
+```
+
+
+### 4. Visualización con ggstatsplot
+
+`ggstatsplot` integra la prueba estadística directamente en el gráfico:
+
+```{r}
+#| warning: false
+#| message: false
+
+ggstatsplot::ggbarstats(
+  data = birthwt,
+  x = low,
+  y = ht,
+  title = "Bajo Peso al Nacer e Hipertensión Materna",
+  subtitle = "Prueba Chi-Cuadrado con IC 95%",
+  xlab = "Peso al Nacer",
+  ylab = "Hipertensión",
+  legend.title = "Hipertensión",
+  results.subtitle = TRUE,  # Mostrar resultados de prueba
+  proportion.test = FALSE,  # No usar prueba de proporciones
+  messages = FALSE
+)
+```
+
+**¿Qué ve en este gráfico?**
+- Las proporciones de cada categoría.
+- El resultado de la prueba Chi-Cuadrado en el subtítulo.
+- El tamaño del efecto reportado.
+
+---
+
+## Resumen de la Pregunta 1
+
+| Concepto | Resultado |
+|----------|-----------|
+| **Variables** | Ambas categóricas binarias |
+| **Prueba** | Chi-Cuadrado (χ²) |
+| **Supuesto evaluado** | Frecuencias esperadas ≥ 5 |
+| **Estadístico** | χ² = 4.54 (ejemplo) |
+| **p-valor** | < 0.05 (hipótesis nula rechazada) |
+| **Tamaño del efecto** | V de Cramér |
+
+---
+
+# PREGUNTA 2: Variables Cuantitativas (Ejemplo modelo)
+
+## ¿El peso al nacer es diferente entre las mujeres que fuman y las que no fuman?
+
+**Tipo de variables**: Cuantitativa (peso en gramos) vs. Cualitativa (tabaquismo sí/no)  
+**Pruebas**: Prueba t de Student (paramétrica) o U de Mann-Whitney (no paramétrica)  
+**Medida de efecto**: Cohen's d
+
+### 1. Descriptivos
+
+```{r}
+# Resumen por grupo
+birthwt %>%
+  group_by(smoke) %>%
+  summarise(
+    n = n(),
+    media = mean(bwt),
+    de = sd(bwt),
+    mediana = median(bwt),
+    min = min(bwt),
+    max = max(bwt),
+    .groups = "drop"
+  )
+
+# Usando rstatix para descriptivos completos
+birthwt %>%
+  group_by(smoke) %>%
+  get_summary_stats(bwt, type = "full")
+```
+
+### 2. Visualización con ggplot2
+
+```{r}
+# Boxplot + puntos individuales
+p3 <- ggplot(birthwt, aes(x = smoke, y = bwt, fill = smoke)) +
+  geom_boxplot(alpha = 0.6, show.legend = FALSE) +
+  geom_jitter(width = 0.2, alpha = 0.4, size = 2) +
+  labs(
+    title = "Peso al Nacer según Tabaquismo Materno",
+    x = "Tabaquismo",
+    y = "Peso del Bebé (gramos)"
+  ) +
+  theme_minimal() +
+  theme(axis.text = element_text(size = 11))
+
+print(p3)
+
+# Histogramas por grupo
+p4 <- ggplot(birthwt, aes(x = bwt, fill = smoke)) +
+  geom_histogram(position = "identity", alpha = 0.6, bins = 15) +
+  facet_wrap(~smoke) +
+  labs(
+    title = "Distribución del Peso al Nacer",
+    x = "Peso (gramos)",
+    y = "Frecuencia",
+    fill = "Tabaquismo"
+  ) +
+  theme_minimal()
+
+print(p4)
+```
+
+### 3. Evaluación de Supuestos
+
+#### 3.1 Normalidad (Shapiro-Wilk con rstatix)
+
+```{r}
+# Prueba de normalidad por grupo
+normality <- birthwt %>%
+  group_by(smoke) %>%
+  shapiro_test(bwt)
+
+print("Prueba de Shapiro-Wilk por grupo:")
+print(normality)
+
+cat("\nInterpretación:\n")
+cat("Si p > 0.05: datos normales\n")
+cat("Si p ≤ 0.05: datos NO normales → use prueba no paramétrica\n")
+```
+
+#### 3.2 Homogeneidad de varianzas (Levene con rstatix)
+
+```{r}
+# Prueba de Levene
+homogeneity <- birthwt %>%
+  levene_test(bwt ~ smoke)
+
+print("Prueba de Levene:")
+print(homogeneity)
+
+cat("\nInterpretación:\n")
+cat("Si p > 0.05: varianzas iguales (use t-test con var.equal = TRUE)\n")
+cat("Si p ≤ 0.05: varianzas desiguales (use t-test de Welch)\n")
+```
+
+### 4. Prueba t de Student con rstatix
+
+```{r}
+# Prueba t de dos muestras independientes
+t_test_result <- birthwt %>%
+  t_test(bwt ~ smoke, detailed = TRUE)
+
+print("Prueba t de Student:")
+print(t_test_result)
+
+# Extracción de resultados
+cat("\n=== INTERPRETACIÓN ===\n")
+cat("Estadístico t:", round(t_test_result$statistic, 4), "\n")
+cat("Grados de libertad:", round(t_test_result$df, 1), "\n")
+cat("p-valor:", round(t_test_result$p, 4), "\n")
+```
+
+### 4.1 Cohen's d: Tamaño del Efecto
+
+```{r}
+# Calcular Cohen's d
+cohens_d <- birthwt %>%
+  cohens_d(bwt ~ smoke, var.equal = TRUE)
+
+print("Cohen's d (tamaño del efecto):")
+print(cohens_d)
+
+# Interpretación de Cohen's d:
+# |d| < 0.2: efecto negligible
+# 0.2 - 0.5: efecto pequeño
+# 0.5 - 0.8: efecto mediano
+# > 0.8: efecto grande
+
+cat("\nInterpretación:\n")
+cat("Cohen's d mide la diferencia estandarizada entre dos grupos.\n")
+cat("Permite comparar efectos entre estudios diferentes.\n")
+```
+
+### 4.2 Intervalo de Confianza 95% para la Diferencia de Medias
+
+```{r}
+# El IC 95% ya está incluido en t_test (detailed = TRUE)
+# Extrayamos explícitamente la diferencia de medias e IC
+
+no_fum <- birthwt %>% filter(smoke == "No fumadora") %>% pull(bwt)
+fum <- birthwt %>% filter(smoke == "Fumadora") %>% pull(bwt)
+
+diff_medias <- mean(no_fum) - mean(fum)
+se_diff <- sqrt(var(no_fum)/length(no_fum) + var(fum)/length(fum))
+df_total <- length(no_fum) + length(fum) - 2
+t_crit <- qt(0.975, df = df_total)
+
+IC_lower_diff <- diff_medias - t_crit * se_diff
+IC_upper_diff <- diff_medias + t_crit * se_diff
+
+cat("\n=== IC 95% PARA LA DIFERENCIA DE MEDIAS ===\n")
+cat("Diferencia:", round(diff_medias, 2), "gramos\n")
+cat("IC 95%: [", round(IC_lower_diff, 2), " - ", round(IC_upper_diff, 2), "]\n")
+cat("\nInterpretación: Con 95% de confianza, el peso promedio\n")
+cat("de bebés de no fumadoras es", round(abs(diff_medias), 2), 
+    "gramos más que el de fumadoras.\n")
+```
+
+No se complique y obtenga los IC con rstatix. 
+
+### 5. Alternativa no paramétrica: U de Mann-Whitney
+
+Si los supuestos de normalidad no se cumplen:
+
+```{r}
+# Prueba U de Mann-Whitney (Wilcoxon)
+mann_whitney <- birthwt %>%
+  wilcox_test(bwt ~ smoke, detailed = TRUE)
+
+print("Prueba U de Mann-Whitney:")
+print(mann_whitney)
+
+# Tamaño del efecto para U de Mann-Whitney: r
+effect_mw <- birthwt %>%
+  wilcox_effsize(bwt ~ smoke)
+
+print("\nTamaño del efecto (r):")
+print(effect_mw)
+```
+
+### 6. Visualización con ggstatsplot
+
+```{r}
+#| warning: false
+#| message: false
+
+ggstatsplot::ggbetweenstats(
+  data = birthwt,
+  x = smoke,
+  y = bwt,
+  type = "parametric",  # o "nonparametric" si necesario
+  title = "Peso al Nacer según Tabaquismo Materno",
+  subtitle = "Prueba t de Student con Cohen's d",
+  xlab = "Tabaquismo",
+  ylab = "Peso del Bebé (gramos)",
+  messages = FALSE,
+  plot.type = "box"  # "box", "violin", "dotplot", "strip"
+)
+```
+
+`ggstaplot` solo realiza el test de welch. 
+---
+
+## Resumen de la Pregunta 2
+
+| Concepto | Resultado |
+|----------|-----------|
+| **Variables** | Cuantitativa vs. Categórica |
+| **Normalidad** | Evaluada (Shapiro-Wilk) |
+| **Varianzas iguales** | Evaluada (Levene) |
+| **Prueba seleccionada** | t-test (paramétrica) o Mann-Whitney |
+| **Tamaño del efecto** | Cohen's d (o r para Mann-Whitney) |
+| **IC 95%** | Diferencia de medias |
+
+---
+
+# PREGUNTA 3: Comparación de 3+ Grupos (Variables Cuantitativas)
+
+## ¿El peso de la madre en el último período menstrual es diferente entre las distintas razas?
+
+**Tipo de variables**: Cuantitativa (peso) vs. Categórica con 3+ categorías (raza)  
+**Pruebas**: ANOVA (paramétrica) o Kruskal-Wallis (no paramétrica)  
+**Medida de efecto**: Eta cuadrada (η²) o Epsilon cuadrada (ε²)
+
+### 1. Descriptivos
+
+```{r}
+# Resumen por grupo de raza
+birthwt %>%
+  group_by(race) %>%
+  summarise(
+    n = n(),
+    media = mean(lwt),
+    de = sd(lwt),
+    mediana = median(lwt),
+    min = min(lwt),
+    max = max(lwt),
+    .groups = "drop"
+  )
+
+# Usando rstatix para descriptivos completos
+birthwt %>%
+  group_by(race) %>%
+  get_summary_stats(lwt, type = "full")
+```
+
+**Interpretación**: ¿Observa diferencias en las medias entre grupos? ¿Hay variabilidad dentro de cada grupo?
+
+### 2. Visualización con ggplot2
+
+
+```{r}
+# Boxplot comparativo
+p5 <- ggplot(birthwt, aes(x = race, y = lwt, fill = race)) +
+  geom_boxplot(alpha = 0.6, show.legend = FALSE) +
+  geom_jitter(width = 0.2, alpha = 0.4, size = 2) +
+  labs(
+    title = "Peso de la Madre en el Último Período Menstrual por Raza",
+    x = "Raza",
+    y = "Peso (libras)"
+  ) +
+  theme_minimal() +
+  theme(axis.text = element_text(size = 11))
+
+print(p5)
+
+# Violin plot alternativo
+p6 <- ggplot(birthwt, aes(x = race, y = lwt, fill = race)) +
+  geom_violin(alpha = 0.6, show.legend = FALSE) +
+  geom_boxplot(width = 0.1, alpha = 0.8) +
+  labs(
+    title = "Distribución del Peso Materno",
+    x = "Raza",
+    y = "Peso (libras)"
+  ) +
+  theme_minimal()
+
+print(p6)
+```
+
+Vamos a apoyarnos de `ggpurb`
+
+```{r}
+library(ggpubr)
+```
+
+
+```{r}
+table(birthwt$race)
+```
+```{r}
+comparaciones <- list(
+  c("Blanca", "Afroamericano"),
+  c("Blanca", "Otra"),
+   c("Afroamericano", "Otra"))
+```
+
+```{r}
+p6+stat_compare_means()
+```
+
+```{r}
+p5+stat_compare_means(comparisons = comparaciones)
+```
+
+Tambien podemos obtener las comparaciones con rstatix
+
+```{r}
+birthwt |> t_test(formula = lwt~race, detailed = T)
+```
+
+```{r}
+birthwt |> wilcox_test(formula = lwt~race, detailed = T)
+```
+
+### 3. Evaluación de Supuestos
+
+#### 3.1 Normalidad por grupo (Shapiro-Wilk)
+
+```{r}
+# Prueba de normalidad en cada grupo
+normality_3g <- birthwt %>%
+  group_by(race) %>%
+  shapiro_test(lwt) %>%
+  add_significance()
+
+print("Normalidad por grupo de raza:")
+print(normality_3g)
+
+cat("\nInterpretación:\n")
+cat("Si todos los p > 0.05: ANOVA es apropiada\n")
+cat("Si algún p ≤ 0.05: considere Kruskal-Wallis\n")
+```
+
+#### 3.2 Homogeneidad de varianzas (Levene)
+
+```{r}
+# Prueba de Levene
+homogeneity_3g <- birthwt %>%
+  levene_test(lwt ~ race)
+
+print("Homogeneidad de varianzas:")
+print(homogeneity_3g)
+
+cat("\nInterpretación:\n")
+cat("Si p > 0.05: varianzas iguales (ANOVA es robusta)\n")
+cat("Si p ≤ 0.05: varianzas desiguales (use Welch ANOVA)\n")
+```
+
+### 4. ANOVA (Análisis de Varianza) aqui
+
+#### 4.1 ANOVA de una vía
+
+```{r}
+# ANOVA con rstatix
+anova_result <- birthwt %>%
+  anova_test(lwt ~ race, detailed = TRUE)
+
+print("Resultado de ANOVA:")
+print(anova_result)
+
+cat("\n=== INTERPRETACIÓN ===\n")
+cat("Hipótesis nula (H0): Todas las medias son iguales\n")
+cat("Hipótesis alternativa (H1): Al menos una media es diferente\n")
+cat("\nEstadístico F:", round(anova_result$F, 4), "\n")
+cat("Grados de libertad:", anova_result$DFn, ",", anova_result$DFd, "\n")
+cat("p-valor:", round(anova_result$p, 4), "\n")
+```
+
+#### 4.2 Eta cuadrada: Tamaño del efecto
+
+```{r}
+# Eta cuadrada es el porcentaje de varianza explicada
+# η² = SS_between / SS_total
+
+eta_sq <- birthwt %>%
+  anova_test(lwt ~ race) %>%
+  pull(ges)  # "ges" = generalized eta squared
+
+cat("\n=== TAMAÑO DEL EFECTO (Eta Cuadrada) ===\n")
+cat("η²:", round(eta_sq, 4), "\n")
+cat("Porcentaje de varianza explicada por la raza:",
+    round(eta_sq * 100, 2), "%\n")
+
+# Interpretación de η²:
+# < 0.01: efecto negligible
+# 0.01 - 0.06: efecto pequeño
+# 0.06 - 0.14: efecto mediano
+# > 0.14: efecto grande
+
+```
+
+### 4.3 Intervalos de Confianza para las Medias
+
+```{r}
+# IC 95% para la media de cada grupo
+ic_medias <- birthwt %>%
+  group_by(race) %>%
+  summarise(
+    n = n(),
+    media = mean(lwt),
+    de = sd(lwt),
+    ee = sd(lwt) / sqrt(n()),
+    ic_lower = media - 1.96 * ee,
+    ic_upper = media + 1.96 * ee,
+    .groups = "drop"
+  )
+
+print("IC 95% para la media de peso materno por raza:")
+print(ic_medias)
+
+# Visualizar los IC
+p7 <- birthwt |> 
+  ggbarplot(x = "race", y = "lwt", 
+  add= "mean_ci", fill = 'race')+
+    stat_compare_means(method = 'anova')
+p7
+```
+
+
+### 5. Alternativa no paramétrica: Kruskal-Wallis
+
+Si los supuestos de normalidad se violan:
+
+```{r}
+# Kruskal-Wallis: versión no paramétrica de ANOVA
+kw_result <- birthwt %>%
+  kruskal_test(lwt ~ race)
+
+print("Prueba de Kruskal-Wallis:")
+print(kw_result)
+
+cat("\n=== TAMAÑO DEL EFECTO (Epsilon Cuadrada) ===\n")
+# Epsilon squared para Kruskal-Wallis
+n <- nrow(birthwt)
+H <- kw_result$statistic
+k <- n_distinct(birthwt$race)
+epsilon_sq <- (H - k + 1) / (n - k)
+
+cat("ε²:", round(epsilon_sq, 4), "\n")
+cat("Porcentaje de varianza explicada:",
+    round(epsilon_sq * 100, 2), "%\n")
+```
+
+
+### 6. Visualización con ggstatsplot
+
+```{r}
+#| warning: false
+#| message: false
+
+ggstatsplot::ggbetweenstats(
+  data = birthwt,
+  x = race,
+  y = lwt,
+  type = "parametric",  # ANOVA
+  title = "Peso Materno Comparado entre Razas",
+  subtitle = "ANOVA con Eta Cuadrada",
+  xlab = "Raza",
+  ylab = "Peso (libras)",
+  messages = FALSE,
+  plot.type = "box"
+)
+```
+
+
+```{r}
+#| warning: false
+#| message: false
+
+ggstatsplot::ggbetweenstats(
+  data = birthwt,
+  x = race,
+  y = lwt,
+  type = "np",  # <----------- cabmiar aqui
+  title = "Peso Materno Comparado entre Razas",
+  subtitle = "ANOVA con Eta Cuadrada",
+  xlab = "Raza",
+  ylab = "Peso (libras)",
+  messages = FALSE,
+  plot.type = "box"
+)
+```
+**Nota**: Este gráfico incluye automáticamente:
+- Distribución de datos por grupo
+- Resultado de la prueba estadística
+- Tamaño del efecto
+- Intervalos de confianza para el efecto
+
+---
+
+## Resumen de la Pregunta 3
+
+| Concepto | Resultado |
+|----------|-----------|
+| **Variables** | Cuantitativa vs. Categórica (3+ grupos) |
+| **Normalidad** | Evaluada por grupo (Shapiro-Wilk) |
+| **Varianzas iguales** | Evaluada (Levene) |
+| **Prueba seleccionada** | ANOVA o Kruskal-Wallis |
+| **Tamaño del efecto** | η² (ANOVA) o ε² (Kruskal-Wallis) |
+| **Comparaciones pareadas** | Tukey HSD o Mann-Whitney corregida |
+| **IC 95%** | Para cada media de grupo |
+
+---
+
+# PREGUNTA 4: Correlación entre Variables Cuantitativas
+
+## ¿Existe relación entre el peso de la madre en el último período menstrual y el peso del bebé al nacer?
+
+**Tipo de variables**: Ambas cuantitativas continuas  
+**Pruebas**: Correlación de Pearson (paramétrica) o Spearman (no paramétrica)  
+**Medida de efecto**: Coeficiente de correlación (r o ρ)
+
+### 1. Descriptivos de ambas variables
+
+```{r}
+# Estadísticos descriptivos
+birthwt %>%
+  select(lwt, bwt) %>%
+  get_summary_stats(type = "full")
+
+# Correlación descriptiva rápida
+cat("\nCorrelación entre peso materno y peso del bebé:\n")
+cor(birthwt$lwt, birthwt$bwt, method = "pearson")
+```
+
+### 2. Visualización con ggplot2
+
+```{r}
+# Diagrama de dispersión con línea de regresión
+p8 <- ggplot(birthwt, aes(x = lwt, y = bwt)) +
+  geom_point(alpha = 0.6, size = 2.5, color = "steelblue") +
+  geom_smooth(method = "lm", se = TRUE, color = "red", alpha = 0.2) +
+  labs(
+    title = "Relación entre Peso Materno y Peso del Bebé al Nacer",
+    x = "Peso de la Madre (libras)",
+    y = "Peso del Bebé (gramos)",
+    caption = "Línea de regresión con IC 95%"
+  ) +
+  theme_minimal() +
+  theme(axis.text = element_text(size = 11))
+
+print(p8)
+
+# Diagrama de dispersión con densidades marginales
+p9 <- ggplot(birthwt, aes(x = lwt, y = bwt)) +
+  geom_point(alpha = 0.5, color = "darkblue") +
+  geom_smooth(method = "lm", se = FALSE, color = "red", linetype = "dashed") +
+  labs(
+    title = "Dispersión de Pesos",
+    x = "Peso Materno (libras)",
+    y = "Peso del Bebé (gramos)"
+  ) +
+  theme_minimal()
+
+print(p9)
+```
+
+### 3. Evaluación de Supuestos
+
+#### 3.1 Normalidad de ambas variables (Shapiro-Wilk)
+
+```{r}
+# Normalidad de peso materno
+norm_lwt <- birthwt %>% shapiro_test(lwt)
+print("Normalidad de peso materno:")
+print(norm_lwt)
+
+# Normalidad de peso del bebé
+norm_bwt <- birthwt %>% shapiro_test(bwt)
+print("\nNormalidad de peso del bebé:")
+print(norm_bwt)
+
+cat("\nInterpretación:\n")
+cat("Si ambos p > 0.05: use Pearson\n")
+cat("Si alguno p ≤ 0.05: use Spearman\n")
+```
+
+#### 3.2 Linealidad
+
+```{r}
+# Inspeccionamos visualmente (ver gráficos anteriores)
+# Si la relación no es lineal, transforme variables o use Spearman
+
+cat("Evalúe la linealidad en el diagrama de dispersión.\n")
+cat("¿La relación sigue aproximadamente una línea recta?\n")
+```
+
+#### 3.3 Homocedasticidad
+
+```{r}
+# La variabilidad de Y debe ser constante en todos los valores de X
+# También se evalúa visualmente en el diagrama de dispersión
+
+cat("Evalúe la homocedasticidad en el diagrama de dispersión.\n")
+cat("¿El ancho de la nube de puntos es similar en todos los valores de X?\n")
+```
+
+### 4. Correlación de Pearson
+
+```{r}
+# Correlación de Pearson
+pearson_corr <- birthwt %>%
+  cor_test(lwt, bwt, method = "pearson")
+
+print("Correlación de Pearson:")
+print(pearson_corr)
+
+cat("\n=== INTERPRETACIÓN ===\n")
+cat("Coeficiente de correlación (r):", round(pearson_corr$cor, 4), "\n")
+cat("p-valor:", round(pearson_corr$p, 4), "\n")
+cat("\nInterpretación de r:\n")
+cat("r = 0: sin correlación\n")
+cat("r = 0.1 a 0.3: correlación débil\n")
+cat("r = 0.3 a 0.7: correlación moderada\n")
+cat("r > 0.7: correlación fuerte\n")
+cat("El signo (+/-) indica dirección (positiva/negativa)\n")
+```
+
+### 4.1 Tamaño del efecto: R² (Coeficiente de Determinación)
+
+```{r}
+# R² indica el % de varianza de Y explicado por X
+r_value <- pearson_corr$cor
+r_squared <- r_value^2
+
+cat("\n=== COEFICIENTE DE DETERMINACIÓN ===\n")
+cat("R²:", round(r_squared, 4), "\n")
+cat("Porcentaje de varianza explicada:",
+    round(r_squared * 100, 2), "%\n")
+cat("\nInterpretación:\n")
+cat("El", round(r_squared * 100, 2), "% de la variabilidad en el peso del bebé\n")
+cat("puede ser explicado por el peso materno.\n")
+```
+
+### 4.2 Intervalo de Confianza para la correlación
+
+```{r}
+# El IC 95% está incluido en cor_test
+ic_r_lower <- pearson_corr$conf.low
+ic_r_upper <- pearson_corr$conf.high
+
+cat("\n=== IC 95% PARA LA CORRELACIÓN ===\n")
+cat("IC 95%: [", round(ic_r_lower, 4), " - ", round(ic_r_upper, 4), "]\n")
+cat("\nInterpretación: Con 95% de confianza, la correlación poblacional\n")
+cat("está entre", round(ic_r_lower, 3), "y", round(ic_r_upper, 3), "\n")
+```
+
+### 5. Correlación de Spearman (alternativa no paramétrica)
+
+Si los supuestos de normalidad no se cumplen:
+
+```{r}
+# Correlación de Spearman (basada en rangos)
+spearman_corr <- birthwt %>%
+  cor_test(lwt, bwt, method = "spearman")
+
+print("Correlación de Spearman:")
+print(spearman_corr)
+
+cat("\n=== COMPARACIÓN: PEARSON vs SPEARMAN ===\n")
+cat("Pearson r:", round(pearson_corr$cor, 4), "\n")
+cat("Spearman ρ:", round(spearman_corr$cor, 4), "\n")
+cat("Diferencia:", round(abs(pearson_corr$cor - spearman_corr$cor), 4), "\n")
+cat("\nSi son similares, los datos probablemente sean lineales.\n")
+cat("Si difieren mucho, considere la relación no lineal.\n")
+```
+
+Utilizando ggstatsplot
+
+
+```{r}
+birthwt |> 
+  ggstatsplot::ggscatterstats(x = lwt, 
+  y = bwt, type = "p") # utilice np si es no paramétrica
+```
+
+
+### 6. Regresión lineal simple 
+
+Para ir más allá de la correlación:
+
+```{r}
+# Modelo de regresión lineal
+modelo <- lm(bwt ~ lwt, data = birthwt)
+
+# Resumen del modelo
+summary(modelo)
+
+cat("\n=== ECUACIÓN DE REGRESIÓN ===\n")
+coef_intercept <- coef(modelo)[1]
+coef_slope <- coef(modelo)[2]
+
+cat("Peso bebé = ", round(coef_intercept, 2),
+    " + ", round(coef_slope, 4), " × Peso madre\n")
+cat("\nInterpretación:\n")
+cat("Por cada libra adicional de peso materno,\n")
+cat("el peso del bebé aumenta", round(coef_slope, 2), "gramos en promedio.\n")
+
+# IC 95% para los coeficientes
+ci_modelo <- confint(modelo, level = 0.95)
+print("IC 95% para los coeficientes:")
+print(ci_modelo)
+```
+
+### 7. Visualización con ggstatsplot
+
+```{r}
+#| warning: false
+#| message: false
+
+ggstatsplot::ggscatterstats(
+  data = birthwt,
+  x = lwt,
+  y = bwt,
+  type = "parametric",  # Pearson
+  title = "Correlación entre Peso Materno y Peso del Bebé",
+  subtitle = "Correlación de Pearson con IC 95%",
+  xlab = "Peso de la Madre (libras)",
+  ylab = "Peso del Bebé (gramos)",
+  messages = FALSE
+)
+```
+
+**¿Qué ve en este gráfico?**
+- Los datos como puntos dispersos
+- La línea de regresión
+- El coeficiente de correlación (r)
+- El p-valor
+- El intervalo de confianza (sombreado alrededor de la línea)
+- R² (varianza explicada)
+
+---
+
+## Resumen de la Pregunta 4
+
+| Concepto | Resultado |
+|----------|-----------|
+| **Variables** | Ambas cuantitativas continuas |
+| **Normalidad** | Evaluada (Shapiro-Wilk) |
+| **Linealidad** | Evaluada visualmente |
+| **Homocedasticidad** | Evaluada visualmente |
+| **Prueba seleccionada** | Pearson o Spearman |
+| **Coeficiente** | r (Pearson) o ρ (Spearman) |
+| **Tamaño del efecto** | R² (coeficiente de determinación) |
+| **IC 95%** | Para la correlación |
+| **Modelo (opcional)** | Regresión lineal simple |
+
+---
+
+
+
+## Pregunta: ¿La edad de la madre es diferente entre fumadoras y no fumadoras?
+
+**Su tarea**:
+
+1. **Descriptivos**: Calcule media, desviación estándar, mediana y rango por grupo de tabaquismo.
+
+2. **Visualización**: Cree un boxplot con puntos individuales (como en el ejemplo).
+
+3. **Supuestos**: 
+   - Evalúe normalidad con `shapiro_test()`
+   - Evalúe homogeneidad de varianzas con `levene_test()`
+
+4. **Prueba estadística**: 
+   - Realice una prueba t con `t_test()`
+   - Si los supuestos se violan, use Mann-Whitney con `wilcox_test()`
+
+5. **Tamaño del efecto**: 
+   - Calcule Cohen's d (o r para Mann-Whitney)
+   - Interprete según los criterios presentados
+
+6. **Intervalo de Confianza**: 
+   - Reporte el IC 95% para la diferencia de medias
+
+7. **Gráfico integrado**: 
+   - Use `ggbetweenstats()` para generar un gráfico con la prueba incluida
+
+8. **Redacte una conclusión** de no más de 3 líneas explicando:
+   - Si hay diferencia significativa
+   - El tamaño de la diferencia (en años)
+   - La magnitud del efecto
+
+---
+
+## Ejercicio 2: Tres o más grupos (Variables Cuantitativas)
+
+### Pregunta: ¿La edad de la madre es diferente entre las mujeres de distintas razas?
+
+**Su tarea**:
+
+1. **Descriptivos**: 
+   - Calcule media, DE, mediana y rango por grupo de raza
+   - Use `get_summary_stats()` para obtener todos los estadísticos
+
+2. **Visualización**: 
+   - Cree un boxplot comparativo
+   - Agregue un violin plot como alternativa
+
+3. **Supuestos**: 
+   - Prueba de normalidad por grupo (Shapiro-Wilk)
+   - Prueba de homogeneidad de varianzas (Levene)
+
+4. **Prueba estadística**: 
+   - Realice ANOVA con `anova_test(detailed = TRUE)`
+   - Si los supuestos se violan, use Kruskal-Wallis con `kruskal_test()`
+
+5. **Tamaño del efecto**: 
+   - Calcule eta cuadrada (η²) o epsilon cuadrada (ε²)
+   - Interprete el porcentaje de varianza explicada
+
+6. **Comparaciones pareadas** (si la prueba general es significativa):
+   - Use `tukey_hsd()` para ANOVA
+   - Use `pairwise_wilcox_test()` con corrección Bonferroni para Kruskal-Wallis
+
+7. **Intervalos de Confianza**: 
+   - Calcule el IC 95% para la media de cada grupo
+   - Visualice los IC con un gráfico de barras con error bars
+
+8. **Gráfico integrado**: 
+   - Use `ggbetweenstats()` especificando 3+ grupos
+
+9. **Redacte una conclusión** explicando:
+   - Si hay diferencia significativa entre grupos
+   - Cuáles grupos difieren (si aplica)
+   - La proporción de varianza explicada por la raza
+
+---
+
+## Ejercicio 3: Correlación entre Variables Cuantitativas
+
+### Pregunta: ¿Existe relación entre la edad de la madre y el peso del bebé al nacer?
+
+**Su tarea**:
+
+1. **Descriptivos**: 
+   - Estadísticos para ambas variables por separado
+   - Correlación descriptiva rápida
+
+2. **Visualización**: 
+   - Cree un diagrama de dispersión con línea de regresión
+   - Agregue el IC 95% alrededor de la línea
+
+3. **Supuestos**: 
+   - Prueba de normalidad para ambas variables
+   - Evalúe visualmente linealidad y homocedasticidad
+
+4. **Prueba de Pearson**: 
+   - Use `cor_test(method = "pearson", detailed = TRUE)`
+   - Reporte r, p-valor e IC 95%
+
+5. **Alternativa de Spearman**: 
+   - Use `cor_test(method = "spearman", detailed = TRUE)`
+   - Compare con Pearson
+
+6. **Tamaño del efecto**: 
+   - Calcule R² (coeficiente de determinación)
+   - Interprete el porcentaje de varianza explicada
+
+7. **Regresión lineal** (opcional): 
+   - Ajuste un modelo `lm(bwt ~ age)`
+   - Reporte la ecuación e IC para los coeficientes
+   - Interprete la pendiente en contexto
+
+8. **Gráfico integrado**: 
+   - Use `ggscatterstats()` con correlación de Pearson
+
+9. **Redacte una conclusión** explicando:
+   - Si la correlación es significativa
+   - La dirección y fuerza de la asociación
+   - El porcentaje de varianza explicada
+   - La interpretación práctica (ej: cambio esperado en peso del bebé)
+
+---
+
+## Ejercicio 4: Análisis Avanzado (Elección libre)
+
+Seleccione una de las siguientes preguntas y realice el análisis completo siguiendo la estructura de los ejemplos:
+
+### Opción A: Variables Cualitativas
+¿El antecedente de tabaquismo es independiente de la raza?
+
+### Opción B: Variables Cuantitativas (dos grupos)
+¿El peso de la madre es diferente entre mujeres con y sin irritabilidad urinaria?
+
+### Opción C: Variables Cuantitativas (tres+ grupos)
+¿El número de visitas prenatales es diferente entre mujeres de distintas razas?
+
+### Opción D: Correlación
+¿Existe relación entre el número de visitas prenatales y el peso del bebé al nacer?
+
+**Para cualquiera que elija:**
+
+1. **Defina claramente** el tipo de análisis (categórico, cuantitativo, correlación)
+2. **Explore los datos**: descriptivos + gráficos
+3. **Evalúe supuestos** apropiados para su análisis
+4. **Realice la prueba** seleccionada con `rstatix`
+5. **Reporte**: p-valor, tamaño del efecto, IC 95%
+6. **Visualice** con `ggplot2` y luego con `ggstatsplot`
+7. **Interprete** los resultados en contexto clínico/biológico
+8. **Redacte** una conclusión profesional de 3-5 líneas
+
+---
+
+# Referencia rápida: Funciones principales de rstatix
+
+```{r}
+# ====== VARIABLES CATEGÓRICAS ======
+# Chi-cuadrado (2 variables categóricas)
+# datos %>% chisq_test(table(datos 1, datos 2))
+
+# ====== VARIABLES CUANTITATIVAS: DOS GRUPOS ======
+# Prueba t de Student (paramétrica)
+# datos %>% t_test(variable_continua ~ variable_categorica, detailed = TRUE)
+
+# Mann-Whitney / Wilcoxon (no paramétrica)
+# datos %>% wilcox_test(variable_continua ~ variable_categorica, detailed = TRUE)
+
+# ====== VARIABLES CUANTITATIVAS: 3+ GRUPOS ======
+# ANOVA de una vía (paramétrica)
+# datos %>% anova_test(variable_continua ~ variable_categorica, detailed = TRUE)
+
+# Kruskal-Wallis (no paramétrica)
+# datos %>% kruskal_test(variable_continua ~ variable_categorica, detailed = TRUE)
+
+# ====== COMPARACIONES POST-HOC ======
+# Tukey HSD (después de ANOVA)
+# datos %>% tukey_hsd(variable_continua ~ variable_categorica)
+
+# Mann-Whitney pareadas con corrección Bonferroni (después de Kruskal-Wallis)
+# datos %>% pairwise_wilcox_test(variable_continua ~ variable_categorica, 
+#                                 p.adjust.method = "bonferroni")
+
+# ====== CORRELACIÓN ======
+# Pearson (paramétrica, variables continuas)
+# datos %>% cor_test(variable1, variable2, method = "pearson", detailed = TRUE)
+
+# Spearman (no paramétrica, variables continuas)
+# datos %>% cor_test(variable1, variable2, method = "spearman", detailed = TRUE)
+
+# ====== EVALUACIÓN DE SUPUESTOS ======
+# Normalidad: Shapiro-Wilk
+# datos %>% shapiro_test(variable)
+# datos %>% group_by(grupo) %>% shapiro_test(variable)
+
+# Homocedasticidad: Levene
+# datos %>% levene_test(variable ~ grupo)
+
+# ====== TAMAÑO DEL EFECTO ======
+# Cohen's d (dos grupos paramétrico)
+# datos %>% cohens_d(variable ~ grupo)
+
+# r de Mann-Whitney (dos grupos no paramétrico)
+# datos %>% wilcox_effsize(variable ~ grupo)
+
+# Eta cuadrada (ANOVA)
+# datos %>% anova_test(variable ~ grupo) %>% pull(ges)
+
+# Epsilon cuadrada (Kruskal-Wallis)
+# Calcular manualmente: (H - k + 1) / (n - k)
+
+# Cramér V (Chi-cuadrado)
+# datos %>% chisq_test(var1 ~ var2) %>% cramer_v()
+
+# R² para correlación
+# r_value <- correlacion$cor
+# r_squared <- r_value^2
+
+# ====== DESCRIPTIVOS ======
+# Resumen completo por grupos
+# datos %>% group_by(grupo) %>% get_summary_stats(variable, type = "full")
+
+# Tabla de frecuencias (categóricas)
+# table(datos$var1, datos$var2)
+```
+
+---
+
+# Notas Pedagógicas
+
+## ¿Por qué rstatix?
+
+- **Consistencia**: Mismo formato de salida para todas las pruebas.
+- **Tidy data**: Resultados listos para `ggplot2` y posterior análisis.
+- **Automatización**: Calcula automáticamente tamaño del efecto e IC.
+- **Compatibilidad**: Se integra perfectamente con `dplyr` y `ggplot2`.
+
+## ¿Cuándo usar ggstatsplot?
+
+- **Comunicación**: Gráficos publicables listos de usar.
+- **Docencia**: Visualiza simultáneamente datos y resultados.
+- **Exploración**: Rápido testeo visual de múltiples relaciones.
+- **Limitación**: Para análisis complejos, `rstatix` + `ggplot2` da más control.
+
+## Tabla de Decisión: ¿Qué prueba debo usar?
+
+```{r}
+# Esta tabla mental le ayuda a elegir:
+
+# PREGUNTA: ¿Asociación entre dos CATEGÓRICAS?
+#   → Chi-cuadrado (chisq_test)
+#   → Tamaño del efecto: Cramér V
+#   → Alternativa no paramétrica: Exacta de Fisher
+
+# PREGUNTA: ¿Diferencia en una CUANTITATIVA entre 2 GRUPOS?
+#   ¿Datos normales? (Shapiro-Wilk p > 0.05)
+#     SÍ → Prueba t (t_test) | Tamaño: Cohen's d
+#     NO → Mann-Whitney (wilcox_test) | Tamaño: r
+
+# PREGUNTA: ¿Diferencia en una CUANTITATIVA entre 3+ GRUPOS?
+#   ¿Datos normales? (Shapiro-Wilk p > 0.05)
+#   ¿Varianzas iguales? (Levene p > 0.05)
+#     SÍ a ambas → ANOVA (anova_test) | Tamaño: η²
+#     NO → Kruskal-Wallis (kruskal_test) | Tamaño: ε²
+#   Si significativa:
+#     Después ANOVA → Tukey HSD (tukey_hsd)
+#     Después K-W → Mann-Whitney pareadas (pairwise_wilcox_test)
+
+# PREGUNTA: ¿Relación entre dos CUANTITATIVAS?
+#   ¿Datos normales? (Shapiro-Wilk p > 0.05)
+#   ¿Relación lineal? (Inspeccione diagrama dispersión)
+#     SÍ a ambas → Pearson (cor_test) | Tamaño: R²
+#     NO → Spearman (cor_test) | Tamaño: r²
+```
+
+## Recomendaciones
+
+1. **Siempre explore los datos primero**: Gráficos antes de pruebas.
+   - Histogramas y Q-Q plots para normalidad
+   - Boxplots para comparar grupos
+   - Diagramas de dispersión para relaciones
+
+2. **Evalúe supuestos**: No asumir normalidad o homocedasticidad.
+   - Shapiro-Wilk para normalidad (p > 0.05 = normal)
+   - Levene para varianzas iguales (p > 0.05 = iguales)
+
+3. **Reporte siempre**: p-valor, tamaño del efecto e IC.
+   - **Mínimo**: Estadístico, p-valor, IC 95%
+   - **Ideal**: Añadir tamaño del efecto e interpretación contextual
+
+4. **Contexto clínico**: No solo significancia estadística.
+   - Una diferencia pequeña puede ser estadísticamente significativa
+   - Una diferencia grande puede no ser clínicamente relevante
+   - Combine p-valor + tamaño del efecto + conocimiento del dominio
+
+## Checklist para Reportar Resultados
+
+Para cada análisis, incluya:
+
+- ✅ Descriptivos (media, DE, mediana, rango)
+- ✅ Supuestos evaluados y resultados
+- ✅ Nombre de la prueba realizada
+- ✅ Estadístico (t, F, H, χ², r, etc.)
+- ✅ Grados de libertad (si aplica)
+- ✅ p-valor (p = 0.XXX o p < 0.001)
+- ✅ Tamaño del efecto (Cohen's d, η², R², etc.)
+- ✅ Intervalo de confianza 95%
+- ✅ Gráfico que visualice los datos y la prueba
+- ✅ Conclusión en una frase clara
+

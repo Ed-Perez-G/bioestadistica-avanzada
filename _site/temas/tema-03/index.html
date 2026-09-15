@@ -142,6 +142,10 @@ window.Quarto = {
     <a class="dropdown-item" href="../../temas/tema-02/index.html">
  <span class="dropdown-text">Tema 2: EDA, calidad y datos faltantes I</span></a>
   </li>  
+        <li>
+    <a class="dropdown-item" href="../../temas/tema-03/index.html">
+ <span class="dropdown-text">Tema 3: Repaso inferencia estadística</span></a>
+  </li>  
     </ul>
   </li>
 </ul>
@@ -202,6 +206,9 @@ window.Quarto = {
 </section>
 <section id="material-de-clase" class="level2">
 <h2 class="anchored" data-anchor-id="material-de-clase">Material de clase</h2>
+<p><a href="../../temas/tema-03/tema-03-inferencia-presentacion.html">Parte 1 - Ver la presentación: conceptos básicos de inferencia estadística</a></p>
+<p><a href="../../descargas/ttema-03-plantilla_bioestadistica_rstatix.qmd" download="tema-03-plantilla_bioestadistica_rstatix.qmd">Parte 2 — Plantilla de quarto para pruebas de hipótesis</a></p>
+<p><a href="../../temas/tema-03/tema-03-plantilla_bioestadistica_rstatix.html">Parte 3 - Visualizar plantilla</a></p>
 
 
 </section>
@@ -280,7 +287,7 @@ window.Quarto = {
     }
       var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
       var mailtoRegex = new RegExp(/^mailto:/);
-        var filterRegex = new RegExp("https:\/\/Ed-Perez-G\.github\.io\/bioestadistica-avanzada\/");
+        var filterRegex = new RegExp('/' + window.location.host + '/');
       var isInternal = (href) => {
           return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
       }
