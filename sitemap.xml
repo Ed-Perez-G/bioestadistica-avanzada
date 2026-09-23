@@ -1,8 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
+    <loc>https://Ed-Perez-G.github.io/bioestadistica-avanzada/temas/tema-04/tema-04-pruebas_posthoc.html</loc>
+    <lastmod>2026-09-23T21:13:12.118Z</lastmod>
+  </url>
+  <url>
     <loc>https://Ed-Perez-G.github.io/bioestadistica-avanzada/temas/tema-03/tema-03-plantilla_bioestadistica_rstatix.html</loc>
-    <lastmod>2026-09-15T12:53:13.549Z</lastmod>
+    <lastmod>2026-09-16T01:18:50.376Z</lastmod>
   </url>
   <url>
     <loc>https://Ed-Perez-G.github.io/bioestadistica-avanzada/temas/tema-03/index.html</loc>
@@ -67,5 +71,9 @@
   <url>
     <loc>https://Ed-Perez-G.github.io/bioestadistica-avanzada/temas/tema-03/tema-03-inferencia-presentacion.html</loc>
     <lastmod>2026-09-13T19:55:41.340Z</lastmod>
+  </url>
+  <url>
+    <loc>https://Ed-Perez-G.github.io/bioestadistica-avanzada/temas/tema-04/index.html</loc>
+    <lastmod>2026-09-23T21:10:20.129Z</lastmod>
   </url>
 </urlset>

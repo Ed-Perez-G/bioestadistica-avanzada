@@ -289,7 +289,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <div>
     <div class="quarto-title-meta-heading">Fecha de publicación</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">15 de septiembre de 2026</p>
+      <p class="date">23 de septiembre de 2026</p>
     </div>
   </div>
   
@@ -370,12 +370,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>Por ejemplo, para una prueba de t de dos muestras independientes:</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>birthwt <span class="sc">%&gt;%</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">t_test</span>(bwt <span class="sc">~</span> smoke)  <span class="co"># peso del bebé ~ tabaquismo</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">t_test</span>(bwt <span class="sc">~</span> smoke, <span class="at">detailed =</span> T)  <span class="co"># peso del bebé ~ tabaquismo</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 1 × 8
-  .y.   group1      group2      n1    n2 statistic    df     p
-* &lt;chr&gt; &lt;chr&gt;       &lt;chr&gt;    &lt;int&gt; &lt;int&gt;     &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
-1 bwt   No fumadora Fumadora   115    74      2.73  170. 0.007</code></pre>
+<pre><code># A tibble: 1 × 15
+  estimate estimate1 estimate2 .y.   group1   group2    n1    n2 statistic     p
+*    &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt; &lt;chr&gt; &lt;chr&gt;    &lt;chr&gt;  &lt;int&gt; &lt;int&gt;     &lt;dbl&gt; &lt;dbl&gt;
+1     284.     3056.     2772. bwt   No fuma… Fumad…   115    74      2.73 0.007
+# ℹ 5 more variables: df &lt;dbl&gt;, conf.low &lt;dbl&gt;, conf.high &lt;dbl&gt;, method &lt;chr&gt;,
+#   alternative &lt;chr&gt;</code></pre>
 </div>
 </div>
 <p>Note que: - <code>rstatix</code> devuelve un <code>tibble</code> con columnas claras. - Si especifica <code>detailed = TRUE</code>, obtiene información adicional. - Puede encadenar operaciones con <code>%&gt;%</code> antes y después. - Note el <code>_</code>, esto permite diferenciar las funciones de <code>rstatix</code> del paquete base de <code>R</code></p>
@@ -491,9 +493,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># El supuesto: todas las frecuencias esperadas ≥ 5</span></span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Chi-cuadrado es robusto cuando se cumple este supuesto</span></span>
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>table1 <span class="ot">&lt;-</span> <span class="fu">table</span>(birthwt<span class="sc">$</span>low, birthwt<span class="sc">$</span>ht)</span>
-<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="fu">chisq.test</span>(table1)<span class="ot">-&gt;</span>resultado1</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="fu">chisq.test</span>(table1, <span class="at">correct =</span> T)<span class="ot">-&gt;</span>resultado1</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stderr">
-<pre><code>Warning in chisq.test(table1): Chi-squared approximation may be incorrect</code></pre>
+<pre><code>Warning in chisq.test(table1, correct = T): Chi-squared approximation may be
+incorrect</code></pre>
 </div>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>resultado1<span class="sc">$</span>expected</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
@@ -1033,7 +1036,7 @@ Interpretación: Con 95% de confianza, el peso promedio</code></pre>
 <span id="cb111-2"><a href="#cb111-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> birthwt,</span>
 <span id="cb111-3"><a href="#cb111-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">x =</span> smoke,</span>
 <span id="cb111-4"><a href="#cb111-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">y =</span> bwt,</span>
-<span id="cb111-5"><a href="#cb111-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">type =</span> <span class="st">"parametric"</span>,  <span class="co"># o "nonparametric" si necesario</span></span>
+<span id="cb111-5"><a href="#cb111-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">type =</span> <span class="st">"parametric"</span>,  <span class="co"># o "nonparametric" si necesario, "p", "np"</span></span>
 <span id="cb111-6"><a href="#cb111-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">title =</span> <span class="st">"Peso al Nacer según Tabaquismo Materno"</span>,</span>
 <span id="cb111-7"><a href="#cb111-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">subtitle =</span> <span class="st">"Prueba t de Student con Cohen's d"</span>,</span>
 <span id="cb111-8"><a href="#cb111-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">xlab =</span> <span class="st">"Tabaquismo"</span>,</span>
@@ -1204,7 +1207,7 @@ Interpretación: Con 95% de confianza, el peso promedio</code></pre>
 <span id="cb122-4"><a href="#cb122-4" aria-hidden="true" tabindex="-1"></a>   <span class="fu">c</span>(<span class="st">"Afroamericano"</span>, <span class="st">"Otra"</span>))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb123"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb123-1"><a href="#cb123-1" aria-hidden="true" tabindex="-1"></a>p6<span class="sc">+</span><span class="fu">stat_compare_means</span>()</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb123"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb123-1"><a href="#cb123-1" aria-hidden="true" tabindex="-1"></a>p6<span class="sc">+</span><span class="fu">stat_compare_means</span>(<span class="at">method =</span> <span class="st">'anova'</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -2950,7 +2953,7 @@ lwt            1.048845    7.80937</code></pre>
 <span id="cb300-68"><a href="#cb300-68" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb300-71"><a href="#cb300-71" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
 <span id="cb300-72"><a href="#cb300-72" aria-hidden="true" tabindex="-1"></a>birthwt <span class="sc">%&gt;%</span></span>
-<span id="cb300-73"><a href="#cb300-73" aria-hidden="true" tabindex="-1"></a>  <span class="fu">t_test</span>(bwt <span class="sc">~</span> smoke)  <span class="co"># peso del bebé ~ tabaquismo</span></span>
+<span id="cb300-73"><a href="#cb300-73" aria-hidden="true" tabindex="-1"></a>  <span class="fu">t_test</span>(bwt <span class="sc">~</span> smoke, <span class="at">detailed =</span> T)  <span class="co"># peso del bebé ~ tabaquismo</span></span>
 <span id="cb300-74"><a href="#cb300-74" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb300-75"><a href="#cb300-75" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb300-76"><a href="#cb300-76" aria-hidden="true" tabindex="-1"></a></span>
@@ -3044,7 +3047,7 @@ lwt            1.048845    7.80937</code></pre>
 <span id="cb300-170"><a href="#cb300-170" aria-hidden="true" tabindex="-1"></a><span class="co"># El supuesto: todas las frecuencias esperadas ≥ 5</span></span>
 <span id="cb300-171"><a href="#cb300-171" aria-hidden="true" tabindex="-1"></a><span class="co"># Chi-cuadrado es robusto cuando se cumple este supuesto</span></span>
 <span id="cb300-172"><a href="#cb300-172" aria-hidden="true" tabindex="-1"></a>table1 <span class="ot">&lt;-</span> <span class="fu">table</span>(birthwt<span class="sc">$</span>low, birthwt<span class="sc">$</span>ht)</span>
-<span id="cb300-173"><a href="#cb300-173" aria-hidden="true" tabindex="-1"></a><span class="fu">chisq.test</span>(table1)<span class="ot">-&gt;</span>resultado1</span>
+<span id="cb300-173"><a href="#cb300-173" aria-hidden="true" tabindex="-1"></a><span class="fu">chisq.test</span>(table1, <span class="at">correct =</span> T)<span class="ot">-&gt;</span>resultado1</span>
 <span id="cb300-174"><a href="#cb300-174" aria-hidden="true" tabindex="-1"></a>resultado1<span class="sc">$</span>expected</span>
 <span id="cb300-175"><a href="#cb300-175" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb300-176"><a href="#cb300-176" aria-hidden="true" tabindex="-1"></a></span>
@@ -3365,7 +3368,7 @@ lwt            1.048845    7.80937</code></pre>
 <span id="cb300-521"><a href="#cb300-521" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> birthwt,</span>
 <span id="cb300-522"><a href="#cb300-522" aria-hidden="true" tabindex="-1"></a>  <span class="at">x =</span> smoke,</span>
 <span id="cb300-523"><a href="#cb300-523" aria-hidden="true" tabindex="-1"></a>  <span class="at">y =</span> bwt,</span>
-<span id="cb300-524"><a href="#cb300-524" aria-hidden="true" tabindex="-1"></a>  <span class="at">type =</span> <span class="st">"parametric"</span>,  <span class="co"># o "nonparametric" si necesario</span></span>
+<span id="cb300-524"><a href="#cb300-524" aria-hidden="true" tabindex="-1"></a>  <span class="at">type =</span> <span class="st">"parametric"</span>,  <span class="co"># o "nonparametric" si necesario, "p", "np"</span></span>
 <span id="cb300-525"><a href="#cb300-525" aria-hidden="true" tabindex="-1"></a>  <span class="at">title =</span> <span class="st">"Peso al Nacer según Tabaquismo Materno"</span>,</span>
 <span id="cb300-526"><a href="#cb300-526" aria-hidden="true" tabindex="-1"></a>  <span class="at">subtitle =</span> <span class="st">"Prueba t de Student con Cohen's d"</span>,</span>
 <span id="cb300-527"><a href="#cb300-527" aria-hidden="true" tabindex="-1"></a>  <span class="at">xlab =</span> <span class="st">"Tabaquismo"</span>,</span>
@@ -3473,7 +3476,7 @@ lwt            1.048845    7.80937</code></pre>
 <span id="cb300-639"><a href="#cb300-639" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb300-640"><a href="#cb300-640" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb300-643"><a href="#cb300-643" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb300-644"><a href="#cb300-644" aria-hidden="true" tabindex="-1"></a>p6<span class="sc">+</span><span class="fu">stat_compare_means</span>()</span>
+<span id="cb300-644"><a href="#cb300-644" aria-hidden="true" tabindex="-1"></a>p6<span class="sc">+</span><span class="fu">stat_compare_means</span>(<span class="at">method =</span> <span class="st">'anova'</span>)</span>
 <span id="cb300-645"><a href="#cb300-645" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb300-646"><a href="#cb300-646" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb300-649"><a href="#cb300-649" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
