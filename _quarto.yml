@@ -28,6 +28,8 @@ website:
             text: "Tema 2: EDA, calidad y datos faltantes I"
           - href: temas/tema-03/index.qmd
             text: "Tema 3: Repaso inferencia estadística"
+          - href: temas/tema-04/index.qmd
+            text: "Tema 4: Pos hoc y comparaciones múltiples"
 
   page-footer:
     left: "© 2026 Edsaúl E. Pérez-Guerrero"
