@@ -1,0 +1,15 @@
+---
+title: "Tema 4: Pruebas pos hoc y comparaciones múltiples"
+---
+
+## Objetivo
+
+
+## Contenidos
+
+
+
+## Material de clase
+
+[Presentacion pruebas pos hoc y comparaciones múltiples](tema-04-pruebas_posthoc.qmd)
+

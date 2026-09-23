@@ -1,0 +1,1494 @@
+---
+title: "Pruebas post hoc y corrección por comparaciones múltiples"
+subtitle: "¿Entre qué grupos está la diferencia y cómo evitar falsos positivos?"
+author: "Edsaúl Emilio Pérez-Guerrero"
+date: last-modified
+lang: es
+bibliography: pruebas_posthoc.bib
+csl: https://www.zotero.org/styles/vancouver
+format:
+  revealjs:
+    theme: [default, pruebas_posthoc.scss]
+    slide-number: c/t
+    progress: true
+    transition: fade
+    center: false
+    width: 1280
+    height: 720
+    margin: 0.07
+    code-copy: true
+    code-line-numbers: false
+    chalkboard: true
+    preview-links: auto
+    footer: "Pruebas post hoc y comparaciones múltiples"
+execute:
+  echo: true
+  warning: false
+  message: false
+  freeze: auto
+knitr:
+  opts_chunk:
+    fig-width: 8.5
+    fig-height: 4.3
+    dpi: 120
+    comment: ""
+---
+
+```{r}
+#| label: setup
+#| include: false
+library(MASS)       # base de datos Cushings
+library(ggplot2)
+library(dplyr)
+library(rstatix)    # pruebas en formato tidy
+library(DescTools)  # Dunnett, Scheffé, Nemenyi
+library(PMCMRplus)  # Dunnett T3, Dunn vs. control, Friedman
+library(emmeans)    # medias marginales estimadas
+library(tidyr)
+theme_set(theme_minimal(base_size = 15))
+options(digits = 4, pillar.sigfig = 3)
+```
+
+## Objetivos de aprendizaje
+
+- Explicar **qué** son las pruebas post hoc y las correcciones por comparaciones múltiples;
+- Justificar **por qué** hacer muchas pruebas sin corrección produce falsos positivos;
+- Distinguir una **prueba post hoc** de una **corrección del valor de *p***;
+- Elegir la prueba adecuada según el diseño y los supuestos;
+- Ejecutar e interpretar cada prueba en `R`;
+
+## Una nota sobre el capítulo 18 {.fe}
+
+Esta presentación se basa en el capítulo 18 del libro **Bioestadística en R para ciencias de la salud**. Al revisarlo por enésima vez econtré: **errores de fundamento, fórmulas e interpretación**. 
+
+A lo largo de la presentación hay:
+
+::: {.errata}
+**El capítulo dice:** lo que aparece en el texto original.<br>
+**Lo correcto:** la versión corregida y, cuando se puede, la demostración en `R`.
+:::
+
+. . .
+
+::: {.warning}
+Al final hay una tabla con todas las correcciones.
+:::
+
+
+## Paquetes y datos que usaremos
+
+```{r}
+#| eval: false
+install.packages(c("MASS", "rstatix", "DescTools", "PMCMRplus",
+                   "emmeans", "ggplot2", "dplyr", "tidyr"))
+```
+
+. . .
+
+::: columns
+::: {.column width="50%"}
+**Datos 1 · simulados.** IL‑6 (pg/mL) en un grupo control y tres fármacos. Cumplen normalidad y varianzas iguales.
+
+```{r}
+set.seed(2025)
+il6 <- data.frame(
+  grupo = factor(rep(c("Control", "Farmaco_A",
+                       "Farmaco_B", "Farmaco_C"),
+                     each = 15)),
+  IL6 = c(rnorm(15, 40, 6), rnorm(15, 42, 6),
+          rnorm(15, 50, 6), rnorm(15, 52, 6)))
+```
+:::
+
+::: {.column width="50%"}
+**Datos 2 · reales.** `Cushings` [@venables2002]: tetrahidrocortisona urinaria según el tipo de síndrome de Cushing (a = adenoma, b = hiperplasia bilateral, c = carcinoma, u = desconocido). *n* pequeño, asimetría y varianzas distintas.
+
+```{r}
+data(Cushings, package = "MASS")
+table(Cushings$Type)
+```
+:::
+:::
+
+# 1. ¿Qué son?
+
+## El punto de partida: una prueba ómnibus
+
+El ANOVA y la prueba de Kruskal‑Wallis evalúan una hipótesis **global**:
+
+$$H_0:\ \mu_1 = \mu_2 = \dots = \mu_k \qquad H_A:\ \text{al menos una media es diferente}$$
+
+. . .
+
+```{r}
+aov(IL6 ~ grupo, data = il6) |> summary()
+```
+
+. . .
+
+::: {.decision}
+Un *p* \< 0.05 nos dice **que** hay diferencias, pero **no entre qué grupos**. Para eso necesitamos comparaciones por pares.
+:::
+
+## Visualmente
+
+```{r}
+#| fig-height: 4.2
+ggplot(il6, aes(grupo, IL6, fill = grupo)) +
+  geom_boxplot(alpha = 0.6, outlier.shape = NA, show.legend = FALSE) +
+  geom_jitter(width = 0.12, alpha = 0.6, show.legend = FALSE) +
+  labs(x = NULL, y = "IL-6 (pg/mL)")
+```
+
+¿Control ≠ Fármaco A? ¿Fármaco B ≠ Fármaco C? La gráfica sugiere, **la prueba decide**.
+
+## Definiciones
+
+::: columns
+::: {.column width="50%"}
+[Prueba post hoc]{.h3}
+
+Procedimiento diseñado para comparar grupos **después** de una prueba ómnibus (ANOVA o Kruskal‑Wallis). Tiene su **propio estadístico y su propia distribución de referencia**, que ya toma en cuenta cuántas comparaciones se hacen.
+
+*Ejemplos:* Tukey, Dunnett, Scheffé, Games‑Howell, Dunn, Nemenyi.
+:::
+
+::: {.column width="50%"}
+[Corrección por comparaciones múltiples]{.h3}
+
+Regla que **ajusta los valores de *p*** (o el umbral α) de un conjunto de pruebas que ya se hicieron, para controlar la tasa de falsos positivos.
+
+Sirve para **cualquier** conjunto de pruebas: pares de grupos, varios desenlaces, miles de genes.
+
+*Ejemplos:* Bonferroni, Holm, Hochberg, Hommel, Benjamini‑Hochberg.
+:::
+:::
+
+# 2. ¿Por qué se usan?
+
+## ¿Cuántas comparaciones hay?
+
+Con *k* grupos, el número de comparaciones por pares es
+
+$$m = \frac{k(k-1)}{2}$$
+
+| Grupos (*k*) | 3 | 4 | 5 | 6 | 8 | 10 |
+|---|---|---|---|---|---|---|
+| Comparaciones (*m*) | 3 | 6 | 10 | 15 | 28 | 45 |
+
+Con 4 grupos (nuestros datos de IL‑6) hay **6** comparaciones: Control–A, Control–B, Control–C, A–B, A–C y B–C.
+
+## La inflación del error tipo I
+
+Si cada prueba usa α = 0.05, la probabilidad de **al menos un falso positivo** en *m* pruebas independientes es la **tasa de error por familia** (*familywise error rate*, FWER):
+
+$$\text{FWER} = 1 - (1 - \alpha)^m$$
+
+```{r}
+#| output-location: column
+m <- c(1, 3, 6, 10, 15, 20, 45)
+data.frame(m, FWER = 1 - (1 - 0.05)^m)
+```
+
+::: {.warning}
+Con 15 comparaciones, la probabilidad de encontrar “algo” sin que exista nada supera el 50 %: es como lanzar una moneda.
+:::
+
+## Comprobémoslo con una simulación
+
+Cuatro grupos **idénticos** (H~0~ verdadera). Hacemos las 6 pruebas *t* sin corregir y contamos cuántas veces aparece al menos un *p* \< 0.05.
+
+```{r}
+#| output-location: column
+set.seed(1)
+al_menos_uno <- replicate(2000, {
+  y <- rnorm(40)                   # sin diferencias reales
+  g <- gl(4, 10)                   # 4 grupos de 10
+  p <- pairwise.t.test(y, g,
+         p.adjust.method = "none")$p.value
+  any(p < 0.05, na.rm = TRUE)
+})
+mean(al_menos_uno)  # FWER observado
+```
+
+. . .
+
+El FWER real (\~20 %) es menor que el teórico (26 %) porque las comparaciones comparten grupos y no son independientes; aun así, es **cuatro veces** el 5 % prometido.
+
+## ¿Qué queremos controlar?
+
+| | H~0~ verdadera | H~0~ falsa |
+|---|---|---|
+| **No rechazo** | ✔ | Error tipo II |
+| **Rechazo** (“descubrimiento”) | **V** = falsos positivos | ✔ |
+
+- **FWER** = P(V ≥ 1): probabilidad de cometer **al menos un** falso positivo. Estricto. Adecuado con pocas comparaciones y decisiones clínicas.
+- **FDR** (*false discovery rate*) = proporción esperada de falsos positivos **entre los descubrimientos**. Más permisivo. Adecuado con cientos o miles de pruebas (genes, SNPs, metabolitos) [@benjamini1995].
+
+## El precio: la potencia
+
+::: columns
+::: {.column width="55%"}
+Controlar el error tipo I **exige umbrales más estrictos**, lo que aumenta el error tipo II (no detectar diferencias reales).
+
+Todas las pruebas que veremos buscan el mismo equilibrio:
+
+> controlar los falsos positivos **perdiendo la menor potencia posible**.
+
+La elección correcta depende de **cuántas** y **cuáles** comparaciones nos interesan realmente.
+:::
+
+::: {.column width="45%"}
+::: {.decision}
+**Regla práctica:** define las comparaciones de interés **antes** de ver los datos. Menos comparaciones = más potencia.
+:::
+:::
+:::
+
+# 3. Post hoc vs. corrección
+
+## Diferencias clave
+
+| | Prueba post hoc | Corrección de *p* |
+|---|---|---|
+| **Qué hace** | Calcula un estadístico propio para cada par | Ajusta *p* ya calculados |
+| **Distribución** | Específica (rango estudentizado, Dunnett, *F*) | La de la prueba original |
+| **Varianza** | Suele usar la varianza común del modelo (MSE) | No la necesita |
+| **Contexto** | Después de ANOVA / Kruskal‑Wallis | Cualquier familia de pruebas |
+| **Controla** | FWER | FWER (Bonferroni, Holm…) o FDR (BH) |
+| **Ejemplos** | Tukey, Dunnett, Scheffé, Games‑Howell, Dunn | Bonferroni, Holm, Hochberg, BH |
+
+. . .
+
+::: {.decision}
+En la práctica se combinan: por ejemplo, la prueba de Dunn calcula un *z* por par y **después** aplica Bonferroni, Holm o BH.
+:::
+
+## ¿Hace falta que el ANOVA sea significativo?
+
+- Tradicionalmente se enseña: *primero ANOVA significativo, después post hoc*.
+- Tukey, Dunnett y Games‑Howell **controlan el FWER por sí mismos**; no requieren formalmente un *F* significativo.
+- Pueden ocurrir discrepancias:
+  - *F* significativo y ningún par significativo (la diferencia está en un contraste complejo);
+  - *F* no significativo y un par significativo.
+
+::: {.errata}
+El capítulo atribuye estas discrepancias a que “ambos requieren un patrón gaussiano”. La razón real es que **prueban hipótesis distintas**: una *F* significativa garantiza que algún **contraste** sea significativo (Scheffé), no necesariamente un par.
+:::
+
+::: {.warning}
+Lo que **no** es válido es probar varios métodos y reportar el que “sí dio”. La prueba se elige por el diseño y los supuestos, **antes** del análisis.
+:::
+
+## Guía de decisión
+
+```{mermaid}
+%%| echo: false
+%%| fig-width: 11
+flowchart LR
+  A["¿Datos aproximadamente<br/>normales?"] -->|Sí| B["¿Varianzas<br/>homogéneas?"]
+  A -->|No| N["Kruskal-Wallis"]
+  N --> N1["Dunn + Holm/BH<br/>Nemenyi (n iguales)"]
+  B -->|Sí| C["¿Qué comparaciones?"]
+  B -->|No| H["Games-Howell<br/>Dunnett T3 (n pequeños)"]
+  C -->|"Todos contra todos"| T["Tukey HSD"]
+  C -->|"Todos contra un control"| D["Dunnett"]
+  C -->|"Contrastes complejos<br/>no planeados"| S["Scheffé"]
+  C -->|"Pocas, planeadas"| BH["t por pares + Holm"]
+```
+
+Una guía, no una ley [@lee2018; @kim2015]. Covariables, proporciones y medidas repetidas: sección 5.
+
+# 4. Principales pruebas
+
+## Mapa de las pruebas
+
+::: {.small}
+
+| Prueba | Tipo | Comparaciones | Varianzas iguales | Normalidad |
+|---|---|---|---|---|
+| **Tukey HSD** | Post hoc | Todos vs. todos | Sí | Sí |
+| **Dunnett** | Post hoc | Todos vs. control | Sí | Sí |
+| **Scheffé** | Post hoc | Cualquier contraste | Sí | Sí |
+| **Games‑Howell** | Post hoc | Todos vs. todos | **No** | Sí |
+| **Dunnett T3** | Post hoc | Todos vs. todos | **No** | Sí |
+| **Dunn** | Post hoc no paramétrica | Todos vs. todos | — | **No** |
+| **Nemenyi** | Post hoc no paramétrica | Todos vs. todos | — | **No** |
+| **Bonferroni / Holm** | Corrección (FWER) | Cualquiera | Depende de la prueba | Depende |
+| **Hochberg / Hommel** | Corrección (FWER) | Cualquiera | Depende | Depende |
+| **Benjamini‑Hochberg** | Corrección (FDR) | Muchas pruebas | Depende | Depende |
+| **Fisher LSD protegida** | Post hoc | Todos vs. todos (*k* = 3) | Sí | Sí |
+| **emmeans** | Post hoc sobre un modelo | Pares, vs. control, contrastes | Según el modelo | Según el modelo |
+| **Proporciones por pares** | *z*/χ² + corrección | Todos vs. todos | — | — |
+| **Friedman + Wilcoxon pareado** | Post hoc no paramétrica pareada | Todos vs. todos | — | **No** |
+:::
+
+Las cuatro últimas filas son pruebas **nuevas** respecto al capítulo 18.
+
+
+
+# Tukey HSD {background-color="#0b3c49"}
+
+## Tukey HSD · fundamento y supuestos
+
+::: columns
+::: {.column width="58%"}
+*Honestly Significant Difference* [@tukey1949; @kramer1956]. Compara **todos los pares** usando la distribución del **rango estudentizado** (*q*): la distribución de la diferencia **más grande** entre *k* medias. Si controlamos la mayor diferencia, controlamos todas.
+
+Diferencia mínima significativa (Tukey‑Kramer):
+
+::: {.formula}
+$$\text{HSD}_{ij} = q_{\alpha,\,k,\,N-k}\ \sqrt{\frac{MSE}{2}\left(\frac{1}{n_i}+\frac{1}{n_j}\right)}$$
+:::
+
+Si $|\bar x_i - \bar x_j| > \text{HSD}_{ij}$ → diferencia significativa.
+:::
+
+::: {.column width="42%"}
+[Supuestos]{.h3}
+
+- Observaciones independientes
+- Normalidad de los residuos
+- **Homogeneidad de varianzas**
+- *n* iguales es lo ideal; con *n* distintos se usa la versión Tukey‑Kramer (la que implementa `R`)
+:::
+:::
+
+## Tukey a mano: tabaquismo y peso al nacer
+
+Peso medio al nacer (kg) según la duración del tabaquismo materno. MSE = 0.022.
+
+```{r}
+#| output-location: column
+medias <- c(menos18 = 3.44, s18_31 = 3.39, mas32 = 3.27)
+n      <- c(34, 24, 77)
+MSE    <- 0.022
+k <- 3; N <- sum(n)
+q <- qtukey(0.95, nmeans = k, df = N - k)  # 3.35
+
+pares <- combn(3, 2)
+data.frame(
+  par  = paste(names(medias)[pares[1, ]],
+               names(medias)[pares[2, ]], sep = " vs "),
+  dif  = abs(medias[pares[1, ]] - medias[pares[2, ]]),
+  HSD  = q * sqrt(MSE / 2 *
+          (1 / n[pares[1, ]] + 1 / n[pares[2, ]]))) |>
+  mutate(signif = dif > HSD)
+```
+
+. . .
+
+Sólo **\<18 vs. 18–31 semanas** no difiere: 0.05 kg \< 0.094 kg.
+
+## Tukey HSD · en R {.demo}
+
+```{r}
+#| output-location: column
+modelo <- aov(IL6 ~ grupo, data = il6)
+TukeyHSD(modelo)
+```
+
+`diff` = diferencia de medias; `lwr`–`upr` = IC 95 % **ajustado**; `p adj` = *p* ajustado por Tukey. Si el IC no incluye el 0, la diferencia es significativa.
+
+## Tukey HSD · gráfica de intervalos {.demo}
+
+```{r}
+#| output-location: column
+#| fig-width: 6
+#| fig-height: 5
+tukey_hsd(il6, IL6 ~ grupo) |>
+  mutate(par = paste(group2, "-", group1)) |>
+  ggplot(aes(estimate,
+             reorder(par, estimate))) +
+  geom_vline(xintercept = 0,
+             linetype = 2) +
+  geom_pointrange(aes(xmin = conf.low,
+                      xmax = conf.high)) +
+  labs(x = "Diferencia de medias\n(IC 95 % Tukey)",
+       y = NULL)
+```
+
+`tukey_hsd()` (paquete `rstatix`) devuelve lo mismo en formato *tibble*, útil para graficar o exportar.
+
+## Tukey HSD · ventajas y desventajas
+
+::: columns
+::: {.column width="50%"}
+::: {.pro}
+[Ventajas]{.h3}
+
+- Controla exactamente el FWER para todas las comparaciones por pares.
+- Más potente que Bonferroni cuando se hacen todas las comparaciones.
+- Da intervalos de confianza ajustados, no sólo *p*.
+- Disponible en R base (`TukeyHSD`).
+:::
+:::
+
+::: {.column width="50%"}
+::: {.con}
+[Desventajas]{.h3}
+
+- Sensible a varianzas desiguales, sobre todo con *n* distintos.
+- Sensible a valores atípicos.
+- Si sólo interesan algunas comparaciones (p. ej., contra un control) pierde potencia.
+- No sirve para contrastes complejos.
+:::
+:::
+:::
+
+## Tukey · fe de erratas {.fe}
+
+| El capítulo dice | Lo correcto |
+|---|---|
+| Ejemplo: $|\bar x_1-\bar x_2| = 0.10 > 0.094$ → se rechaza H~0~ | 3.44 − 3.39 = **0.05** \< 0.094 → **no** se rechaza H~0~ |
+| $|\bar x_1-\bar x_3| = 0.001 < 0.0726$ → “se acepta” H~0~ | 3.44 − 3.27 = **0.17** \> 0.0726 → **sí** se rechaza H~0~. Además, H~0~ nunca se “acepta”: **no se rechaza** |
+| $v = 126$ grados de libertad | $v = N - k = 135 - 3 = 132$ (*q* = 3.35) |
+| Supuesto: “*n* igual para los grupos” | No es necesario: `TukeyHSD()` usa Tukey‑Kramer, que admite *n* distintos |
+| Ventaja: “requiere pocos supuestos y es robusta” | Requiere normalidad y homocedasticidad (la misma tabla lo dice como desventaja) |
+| Desventaja: “computacionalmente intensivo” | Se calcula al instante en cualquier software |
+
+
+# Dunnett {background-color="#0b3c49"}
+
+## Dunnett · fundamento y supuestos
+
+::: columns
+::: {.column width="58%"}
+Compara **cada tratamiento contra un grupo control** [@dunnett1955]. Sólo hay *k* − 1 comparaciones (no *k*(*k*−1)/2), así que **gana potencia** frente a Tukey.
+
+::: {.formula}
+$$t_i = \frac{\bar x_i - \bar x_c}{\sqrt{MSE\left(\dfrac{1}{n_i}+\dfrac{1}{n_c}\right)}}$$
+:::
+
+El valor crítico proviene de la **distribución de Dunnett** (una *t* multivariada), que considera que todas las comparaciones comparten el mismo control y, por tanto, están correlacionadas.
+:::
+
+::: {.column width="42%"}
+[Supuestos]{.h3}
+
+- Independencia
+- Normalidad de los residuos
+- Homogeneidad de varianzas
+- Un control **definido antes** del análisis
+
+::: {.decision}
+**Diseño:** conviene que el control tenga más sujetos: $n_c \approx n\sqrt{k-1}$.
+:::
+:::
+:::
+
+## Dunnett · en R {.demo}
+
+```{r}
+#| output-location: column
+DunnettTest(IL6 ~ grupo, data = il6,
+            control = "Control")
+```
+
+Por defecto `DunnettTest` usa el **primer nivel** del factor como control; conviene declararlo con `control =`.
+
+. . .
+
+**Lectura:** los fármacos B y C elevan significativamente la IL‑6 respecto al control; el fármaco A no.
+
+## Dunnett · ventajas y desventajas
+
+::: columns
+::: {.column width="50%"}
+::: {.pro}
+[Ventajas]{.h3}
+
+- La opción más potente cuando la pregunta es “¿qué tratamientos difieren del control?”.
+- Menos comparaciones → menor penalización.
+- Muy común en farmacología, toxicología y ensayos de dosis.
+:::
+:::
+
+::: {.column width="50%"}
+::: {.con}
+[Desventajas]{.h3}
+
+- No compara los tratamientos entre sí.
+- Requiere normalidad y varianzas iguales.
+- El control debe elegirse *a priori*; cambiarlo después de ver los datos invalida la prueba.
+- No confundir con la prueba de **Dunn** (no paramétrica).
+:::
+:::
+:::
+
+## Dunnett · fe de erratas {.fe}
+
+::: columns
+::: {.column width="55%"}
+::: {.errata}
+**El capítulo dice:**
+$$D = \frac{\bar x_i - \bar x_c}{\sqrt{2 \times MSE \left(\frac{1}{n_i}+\frac{1}{n_c}\right)}}$$
+
+**Lo correcto:**
+$$t_i = \frac{\bar x_i - \bar x_c}{\sqrt{MSE \left(\frac{1}{n_i}+\frac{1}{n_c}\right)}}$$
+:::
+:::
+
+::: {.column width="45%"}
+El “2” sólo aparece cuando $n_i = n_c = n$, porque $\frac{1}{n}+\frac{1}{n} = \frac{2}{n}$. Poner **ambos** duplica la varianza y hace la prueba demasiado conservadora.
+
+Otras precisiones:
+
+- El nombre es **Dunnett** (Charles W. Dunnett), no “Dunnet”. Problema de edición. 
+- “Más poderosa que pruebas *t* individuales” es impreciso: las *t* sin corregir tienen más potencia porque **no controlan** el FWER. La comparación justa es con Tukey o Bonferroni.
+:::
+:::
+
+# Scheffé {background-color="#0b3c49"}
+
+## Scheffé · fundamento y supuestos
+
+::: columns
+::: {.column width="58%"}
+Controla el FWER para **todos los contrastes posibles**, incluidos los complejos [@scheffe1953]. Un contraste es una combinación de medias con coeficientes que suman cero, por ejemplo:
+
+$$L = \bar x_{\text{Control}} - \tfrac{1}{3}(\bar x_A + \bar x_B + \bar x_C)$$
+
+Es significativo si
+
+::: {.formula}
+$$|L| > \sqrt{(k-1)\,F_{\alpha;\,k-1,\,N-k}}\ \sqrt{MSE\sum \frac{c_i^2}{n_i}}$$
+:::
+:::
+
+::: {.column width="42%"}
+[Supuestos]{.h3}
+
+- Independencia
+- Normalidad de los residuos
+- Homogeneidad de varianzas
+- Admite *n* distintos
+
+::: {.decision}
+Es coherente con la *F*: si el ANOVA no es significativo, **ningún** contraste de Scheffé lo será.
+:::
+:::
+:::
+
+## Scheffé · en R {.demo}
+
+::: columns
+::: {.column width="50%"}
+**Todos los pares**
+
+```{r}
+ScheffeTest(modelo)
+```
+:::
+
+::: {.column width="50%"}
+**Contraste complejo:** control vs. promedio de los fármacos
+
+```{r}
+contraste <- matrix(c(1, -1/3, -1/3, -1/3),
+  dimnames = list(levels(il6$grupo),
+                  "Control vs Farmacos"))
+ScheffeTest(modelo, contrasts = contraste)
+```
+:::
+:::
+
+## Scheffé · ventajas y desventajas
+
+::: columns
+::: {.column width="50%"}
+::: {.pro}
+[Ventajas]{.h3}
+
+- Permite probar **cualquier** contraste, incluso los que se nos ocurren al ver los datos.
+- No hay que definir los contrastes de antemano.
+- Admite grupos de distinto tamaño.
+- Útil en análisis exploratorios.
+:::
+:::
+
+::: {.column width="50%"}
+::: {.con}
+[Desventajas]{.h3}
+
+- La más **conservadora** para comparaciones por pares: IC amplios y poca potencia.
+- Si sólo interesan pares, Tukey es mejor.
+- Requiere normalidad y varianzas iguales.
+:::
+:::
+:::
+
+## Scheffé · fe de erratas {.fe}
+
+| El capítulo dice | Lo correcto |
+|---|---|
+| “No requiere estrictamente varianzas homogéneas ni normalidad” | Tiene los **mismos supuestos que el ANOVA** |
+| “Requiere grupos de igual tamaño” | Admite *n* distintos sin problema |
+| “Más sujeto a errores de tipo I que otras pruebas post hoc” | Es la **más conservadora**: comete **menos** errores tipo I |
+| “Riesgo reducido de errores de tipo II” y “prueba relativamente poderosa” | Lo contrario: es la de **menor potencia** para comparar pares (la misma tabla lo dice en su última fila) |
+| “`scheffe.test` no da un valor de *p*” | Con `group = FALSE` sí lo da; `DescTools::ScheffeTest()` también |
+
+::: {.decision}
+La tabla original mezcla ventajas de Tukey con desventajas de Scheffé. Regla fácil: **más flexible = menos potente**.
+:::
+
+# Games‑Howell y Dunnett T3 {background-color="#0b3c49"}
+
+## Cuando las varianzas son distintas
+
+::: columns
+::: {.column width="55%"}
+```{r}
+Cushings |>
+  group_by(Type) |>
+  summarise(n = n(),
+            media = mean(Tetrahydrocortisone),
+            DE = sd(Tetrahydrocortisone))
+levene_test(Cushings, Tetrahydrocortisone ~ Type)
+```
+:::
+
+::: {.column width="45%"}
+```{r}
+#| echo: false
+#| fig-width: 5
+#| fig-height: 4.2
+ggplot(Cushings, aes(Type, Tetrahydrocortisone)) +
+  geom_boxplot(fill = "#e5f2f1", outlier.shape = NA) +
+  geom_jitter(width = 0.1) +
+  labs(x = "Tipo de Cushing",
+       y = "Tetrahidrocortisona (mg/24 h)")
+```
+:::
+:::
+
+::: {.small}
+Las DE van de 0.9 a 19. Levene no lo detecta porque con *n* tan pequeños tiene poca potencia. Tukey no es apropiado aquí.
+:::
+
+## Games‑Howell · fundamento y supuestos
+
+::: columns
+::: {.column width="58%"}
+Para cada par calcula una *t* **tipo Welch**, con la varianza de cada grupo (no la MSE común) y grados de libertad propios [@games1976]:
+
+::: {.formula}
+$$t_{ij} = \frac{\bar x_i - \bar x_j}{\sqrt{\dfrac{s_i^2}{n_i} + \dfrac{s_j^2}{n_j}}}$$
+:::
+
+El *p* se obtiene de la distribución del rango estudentizado ($q = t\sqrt 2$), igual que en Tukey. Es, en esencia, un **Tukey para varianzas desiguales**.
+:::
+
+::: {.column width="42%"}
+[Supuestos]{.h3}
+
+- Independencia
+- Normalidad (aproximada) en cada grupo
+- **No** requiere varianzas iguales
+- **No** requiere *n* iguales
+- Funciona mejor con *n* ≥ 6 por grupo
+
+::: {.warning}
+Es una prueba **paramétrica**: no sustituye a Dunn cuando los datos no son normales.
+:::
+:::
+:::
+
+## Games‑Howell · en R {.demo}
+
+```{r}
+games_howell_test(Cushings, Tetrahydrocortisone ~ Type) |>
+  select(group1, group2, estimate, conf.low, conf.high, p.adj, p.adj.signif)
+```
+
+. . .
+
+Sólo **a vs. b** es significativa. Tukey, que usa una varianza común, da una conclusión **distinta** (a vs. c):
+
+```{r}
+tukey_hsd(Cushings, Tetrahydrocortisone ~ Type) |>
+  select(group1, group2, estimate, p.adj, p.adj.signif)
+```
+
+## Dunnett T3 · fundamento y en R {.demo}
+
+::: columns
+::: {.column width="45%"}
+También usa *t* tipo Welch para **todos los pares**, pero toma el valor crítico de la distribución del **módulo máximo estudentizado** [@dunnett1980]. Con grupos pequeños controla mejor el error tipo I que Games‑Howell.
+
+::: {.warning}
+A pesar del nombre, **no** compara contra un control y **no** es no paramétrica.
+:::
+
+**Supuestos:** independencia y normalidad; varianzas y *n* pueden ser distintos.
+:::
+
+::: {.column width="55%"}
+```{r}
+dunnettT3Test(Tetrahydrocortisone ~ Type,
+              data = Cushings)
+```
+
+Útil aquí: el carcinoma tiene sólo *n* = 5. Coincide con Games‑Howell: sólo a vs. b.
+
+```{r}
+table(Cushings$Type)
+```
+
+:::
+:::
+
+## Games‑Howell y T3 · ventajas y desventajas
+
+::: columns
+::: {.column width="50%"}
+::: {.pro}
+[Ventajas]{.h3}
+
+- Válidas con varianzas **y** tamaños de muestra distintos, lo habitual en estudios clínicos.
+- Games‑Howell: buena potencia con *n* moderados.
+- T3: más conservadora y fiable con *n* pequeños.
+- En la duda sobre homocedasticidad, son una opción segura.
+:::
+:::
+
+::: {.column width="50%"}
+::: {.con}
+[Desventajas]{.h3}
+
+- Siguen requiriendo normalidad aproximada.
+- Games‑Howell puede ser algo liberal con *n* \< 6 por grupo.
+- Si las varianzas sí son iguales, pierden un poco de potencia frente a Tukey.
+- T3 no está en R base (`PMCMRplus`).
+:::
+:::
+:::
+
+## Games‑Howell y T3 · fe de erratas {.fe}
+
+| Prueba | El capítulo dice | Lo correcto |
+|---|---|---|
+| Games‑Howell | “Prueba post hoc **no paramétrica**” | Es **paramétrica**: compara medias, usa varianzas y supone normalidad. Sólo relaja la igualdad de varianzas |
+| Games‑Howell | “Compara si los intervalos de confianza se solapan” | Compara cada diferencia con un valor crítico del rango estudentizado. Mirar si los IC individuales se solapan **no** es una prueba válida |
+| Dunnett T3 | “Equivalente **no paramétrico** de Dunnett” | Es paramétrica (*t* de Welch) |
+| Dunnett T3 | “Determina si la media de un **control** difiere de dos o más condiciones” | Compara **todos los pares**; no hay grupo control (véase la salida de `dunnettT3Test()`) |
+| Dunnett T3 | “Prueba de comparación **a priori**” | Es una prueba post hoc por pares |
+
+::: {.warning}
+El nombre engaña: “Dunnett T3” viene del autor (Dunnett, 1980), no de la prueba contra un control (Dunnett, 1955).
+:::
+
+# Dunn {background-color="#0b3c49"}
+
+## Dunn · fundamento y supuestos
+
+::: columns
+::: {.column width="58%"}
+Post hoc **no paramétrica** tras Kruskal‑Wallis [@dunn1964; @dinno2015]. Usa los **mismos rangos conjuntos** del Kruskal‑Wallis y compara los rangos medios de cada par:
+
+::: {.formula}
+$$z_{ij} = \frac{\bar R_i - \bar R_j}{\sqrt{\dfrac{N(N+1)}{12}\left(\dfrac{1}{n_i}+\dfrac{1}{n_j}\right)}}$$
+:::
+
+(con corrección por empates). Después se ajustan los *p* con Bonferroni, Holm o BH.
+:::
+
+::: {.column width="42%"}
+[Supuestos]{.h3}
+
+- Muestras independientes
+- Variable al menos ordinal
+- No requiere normalidad ni varianzas iguales
+- Para hablar de **medianas**, las distribuciones deben tener forma similar
+
+::: {.decision}
+Hacer varias U de Mann‑Whitney **no** es equivalente: cada par se clasificaría por separado.
+:::
+:::
+:::
+
+## Dunn · en R {.demo}
+
+```{r}
+kruskal_test(Cushings, Tetrahydrocortisone ~ Type)
+```
+
+```{r}
+dunn_test(Cushings, Tetrahydrocortisone ~ Type,
+          p.adjust.method = "holm") |>
+  select(group1, group2, statistic, p, p.adj, p.adj.signif)
+```
+
+`p` = sin ajustar; `p.adj` = ajustado por Holm. Diferencias: a vs. c y a vs. u. Note que a vs. b era significativa **sin** ajustar (*p* = 0.02) y deja de serlo tras la corrección.
+
+## Dunn · ventajas y desventajas
+
+::: columns
+::: {.column width="50%"}
+::: {.pro}
+[Ventajas]{.h3}
+
+- No requiere normalidad ni homocedasticidad.
+- Adecuada para escalas ordinales (dolor, EVA, puntajes clínicos).
+- Robusta ante valores atípicos.
+- Admite *n* distintos y cualquier método de ajuste de *p*.
+:::
+:::
+
+::: {.column width="50%"}
+::: {.con}
+[Desventajas]{.h3}
+
+- Menor potencia que las pruebas paramétricas cuando sus supuestos se cumplen.
+- El resultado cambia según el ajuste elegido (declárelo siempre).
+- Compara rangos medios, no medias; la interpretación como medianas exige distribuciones de forma similar.
+:::
+:::
+:::
+
+## Dunn contra un grupo control {.demo}
+
+::: columns
+::: {.column width="45%"}
+¿Y si el interés es comparar varios grupos contra un **control** con datos no normales?
+
+Dunnett **no** sirve (es paramétrica). La opción es Dunn **muchos‑contra‑uno**: sólo *k* − 1 comparaciones, así que la corrección penaliza menos.
+
+Aquí, el adenoma (a) como referencia.
+:::
+
+::: {.column width="55%"}
+```{r}
+kwManyOneDunnTest(Tetrahydrocortisone ~ Type,
+                  data = Cushings,
+                  p.adjust.method = "holm")
+```
+:::
+:::
+
+## Dunn · fe de erratas (1/2): el ejemplo en R {.fe}
+
+::: columns
+::: {.column width="52%"}
+::: {.errata}
+**El capítulo usa** `dunn.test(datos$Dolor, datos$Tratamiento, kw = T)` y lee *p* = 0.0104 como significativo.
+
+**Pero** `dunn.test()` por defecto:
+
+1. **No ajusta** los *p* (`method = "none"`).
+2. Reporta *p* de **una cola**: se rechaza si *p* ≤ α/2 = 0.025.
+:::
+
+`kw = TRUE` no indica “que viene de un ANOVA”: sólo imprime el Kruskal‑Wallis.
+
+
+:::
+
+::: {.column width="48%"}
+Uso correcto:
+
+```{r}
+#| eval: false
+dunn.test::dunn.test(x, g,
+  method = "holm",  # ajustar
+  altp   = TRUE)    # p de dos colas
+```
+
+El *p* de una cola es la mitad del de dos colas:
+
+```{r}
+dunn_test(Cushings, Tetrahydrocortisone ~ Type,
+          p.adjust.method = "none") |>
+  mutate(p_una_cola = p / 2) |>
+  select(group1, group2, p, p_una_cola) |>
+  head(3)
+```
+:::
+:::
+
+## Dunn · fe de erratas (2/2) {.fe}
+
+| El capítulo dice | Lo correcto |
+|---|---|
+| “`rstatix` da resultados distintos porque el ajuste es distinto” | La diferencia real: `dunn.test` **sin ajuste y a una cola** vs. `rstatix` **Holm y dos colas** |
+| Desventaja: “sólo para dos grupos” | Se diseñó para *k* grupos: *Multiple comparisons using rank sums* [@dunn1964] |
+| Desventaja: “incrementa el riesgo de error tipo I” | Con un ajuste (Bonferroni, Holm, BH) **controla** el error tipo I; ése es su propósito |
+| “Si se compara con un control, Dunnett o T3 de Dunnett serían más apropiadas” | Ambas son paramétricas. Para datos no normales use Dunn muchos‑contra‑uno (diapositiva anterior) |
+| Hipótesis alternativa: “diferencias entre las medianas **de al menos dos grupos**” | Ésa es la H~A~ del Kruskal‑Wallis. En Dunn, cada par tiene su propia H~0~: la distribución del grupo *i* = la del grupo *j* |
+
+# Nemenyi {background-color="#0b3c49"}
+
+## Nemenyi · fundamento, supuestos y R {.demo}
+
+::: columns
+::: {.column width="45%"}
+Es el **análogo de Tukey con rangos** [@nemenyi1963]: compara las diferencias de rangos medios contra la distribución del rango estudentizado. Se usa tras Kruskal‑Wallis (y también tras Friedman en diseños pareados).
+
+**Supuestos:** independencia, variable ordinal o continua; pensada para *n* **iguales**.
+
+**Ventaja:** sencilla y directa.<br>
+**Desventaja:** conservadora; con *n* distintos, Dunn suele ser preferible.
+:::
+
+::: {.column width="55%"}
+```{r}
+NemenyiTest(Tetrahydrocortisone ~ Type,
+            data = Cushings)
+```
+
+Aquí coincide con Dunn + Holm: a vs. c y a vs. u.
+:::
+:::
+
+## Nemenyi · fe de erratas {.fe}
+
+::: columns
+::: {.column width="55%"}
+::: {.errata}
+**El capítulo dice:**
+$$s.e. = \sqrt{\frac{k(n+1)}{12}}$$
+
+**Lo correcto** (tras Kruskal‑Wallis, *N* = total):
+$$s.e. = \sqrt{\frac{N(N+1)}{12}\left(\frac{1}{n_i}+\frac{1}{n_j}\right)}$$
+:::
+:::
+
+::: {.column width="45%"}
+La fórmula del capítulo parece una mezcla con la del post hoc de **Friedman** (medidas repetidas), donde el error estándar es $\sqrt{k(k+1)/(6n)}$, con *n* = número de bloques.
+
+La prueba compara $|\bar R_i - \bar R_j| / s.e.$ contra $q/\sqrt 2$ del rango estudentizado.
+:::
+:::
+
+# Correcciones del valor de *p* {background-color="#0b3c49"}
+
+## Bonferroni · fundamento
+
+::: columns
+::: {.column width="55%"}
+La corrección más simple: dividir α entre el número de comparaciones *m*, o, de forma equivalente, multiplicar cada *p*:
+
+::: {.formula}
+$$\alpha^* = \frac{\alpha}{m} \qquad\Longleftrightarrow\qquad p_{\text{ajustado}} = \min(1,\ m \cdot p)$$
+:::
+
+Con 6 comparaciones: α\* = 0.05 / 6 = 0.0083.
+
+**Supuestos:** ninguno sobre la dependencia entre pruebas; los de la prueba original (*t*, *z*, etc.) sí aplican.
+:::
+
+::: {.column width="45%"}
+::: {.pro}
+**Ventajas:** simple, universal, válida con cualquier dependencia; razonable con pocas comparaciones planeadas.
+:::
+
+::: {.con}
+**Desventajas:** muy conservadora; la potencia cae rápido conforme crece *m*. Siempre hay una alternativa igual de válida y más potente: **Holm** [@armstrong2014].
+:::
+:::
+:::
+
+## Holm · el Bonferroni secuencial
+
+::: columns
+::: {.column width="55%"}
+Método **escalonado descendente** [@holm1979]:
+
+1. Ordenar los *p* de menor a mayor: $p_{(1)} \le \dots \le p_{(m)}$.
+2. Comparar $p_{(i)}$ con $\alpha/(m - i + 1)$.
+3. Rechazar mientras se cumpla; **detenerse** en el primero que no.
+
+El más pequeño se compara con α/*m* (igual que Bonferroni), el siguiente con α/(*m*−1)… cada paso es menos estricto.
+:::
+
+::: {.column width="45%"}
+```{r}
+p <- c(0.004, 0.010, 0.015, 0.30)
+data.frame(p,
+  umbral = 0.05 / (4:1),
+  Bonf   = p.adjust(p, "bonferroni"),
+  Holm   = p.adjust(p, "holm"))
+```
+
+Bonferroni rechaza 2; Holm rechaza 3.
+:::
+:::
+
+::: {.decision}
+Holm controla el FWER igual que Bonferroni, sin supuestos adicionales, y **siempre** tiene igual o más potencia. Es el método por defecto en `pairwise.t.test()` y `rstatix`.
+:::
+
+## Holm y Bonferroni · fe de erratas {.fe}
+
+| El capítulo dice | Lo correcto |
+|---|---|
+| “Bonferroni compara todas las combinaciones posibles; Holm sólo las que son significativas” | **Ambos** evalúan todas las comparaciones. La diferencia es el umbral: Bonferroni usa α/*m* para todas; Holm usa α/*m*, α/(*m*−1), … de forma escalonada |
+| Nombre: “Holms” | **Holm** (Sture Holm, 1979) |
+| Función `pairs.t.test()` | La función es `pairwise.t.test()` |
+| Bonferroni: “$H$ no excede el número de comparaciones de interés” como ventaja | Es una recomendación de uso: definir *a priori* sólo las comparaciones de interés reduce *m* |
+| Hommel: no menciona supuestos | Hochberg y Hommel requieren independencia o dependencia positiva entre pruebas; Holm no |
+
+## Hochberg y Hommel
+
+::: columns
+::: {.column width="55%"}
+**Hochberg** [@hochberg1988]: escalonado **ascendente**. Empieza por el *p* más grande; en cuanto uno cumple $p_{(i)} \le \alpha/(m-i+1)$, se rechazan ese y todos los menores.
+
+**Hommel** [@hommel1988]: basado en la prueba de Simes; algo más potente que Hochberg, pero de cálculo más complejo.
+
+Potencia: Bonferroni \< Holm \< Hochberg \< Hommel.
+:::
+
+::: {.column width="45%"}
+::: {.warning}
+**Supuesto adicional:** las pruebas deben ser independientes o tener dependencia positiva. Si no está seguro, use Holm.
+:::
+
+```{r}
+p.adjust(p, "hochberg")
+p.adjust(p, "hommel")
+```
+:::
+:::
+
+## Benjamini‑Hochberg (FDR) · fundamento
+
+::: columns
+::: {.column width="55%"}
+Controla la **tasa de falsos descubrimientos** en lugar del FWER [@benjamini1995]:
+
+1. Ordenar los *m* valores *p* de menor a mayor y asignar su rango *i*.
+2. Calcular el umbral $\dfrac{i}{m}\,Q$ (Q = FDR aceptada, p. ej., 0.05).
+3. Buscar el **mayor** *i* con $p_{(i)} \le \frac{i}{m}Q$; se rechazan esa y todas las hipótesis con *p* menor.
+
+**Supuestos:** independencia o dependencia positiva (para dependencia arbitraria existe Benjamini‑Yekutieli, `"BY"`).
+:::
+
+::: {.column width="45%"}
+```{r}
+p8 <- c(A = .001, B = .008, C = .039, D = .041,
+        E = .042, F = .060, G = .074, H = .205)
+data.frame(p = p8, rango = 1:8,
+           umbral = (1:8) / 8 * 0.05,
+           p_BH = p.adjust(p8, "BH")) |>
+  mutate(rechaza = p_BH < 0.05)
+```
+
+Con Q = 0.05, sólo A y B son descubrimientos.
+:::
+:::
+
+## Benjamini‑Hochberg · fe de erratas {.fe}
+
+::: columns
+::: {.column width="50%"}
+::: {.errata}
+**El capítulo dice:** con 8 pruebas y Q = 25 %, “solamente la comparación del grupo A sería significativa”.
+
+**Lo correcto:** con Q = 25 %, **las 8** son significativas. El mayor *i* que cumple $p_{(i)} \le \frac{i}{m}Q$ es *i* = 8 (0.205 ≤ 0.25), y se rechazan esa y todas las de *p* menor.
+:::
+
+Con Q = 0.05 (diapositiva anterior) son significativas A y B.
+:::
+
+::: {.column width="50%"}
+```{r}
+p8 <= (1:8) / 8 * 0.25        # regla BH
+p.adjust(p8, "BH") < 0.25     # igual con p ajustados
+```
+
+::: {.decision}
+BH es **escalonado ascendente**: no se detiene en el primer *p* que no cumple, como Holm; busca el **último** que sí cumple.
+:::
+:::
+:::
+
+## BH · por qué importa en genética
+
+Simulamos 1000 genes: 100 con expresión diferencial real y 900 sin efecto.
+
+```{r}
+#| output-location: column
+set.seed(42)
+real <- rep(c(TRUE, FALSE), c(100, 900))
+p_genes <- ifelse(real,
+  rbeta(1000, 0.1, 10), # efecto real: p pequeños
+  runif(1000))          # H0 verdadera: p uniformes
+
+metodos <- c("none", "bonferroni", "holm", "BH")
+sapply(metodos, function(m) {
+  sig <- p.adjust(p_genes, m) < 0.05
+  c(descubrimientos = sum(sig),
+    verdaderos = sum(sig & real),
+    falsos     = sum(sig & !real))
+})
+```
+
+. . .
+
+Sin corrección: 62 falsos positivos (¡más de un tercio de los “hallazgos”!). Bonferroni y Holm: 0 falsos, pero pierden la mitad de los genes reales. BH: recupera 72 de 100 con sólo 4 falsos (\~5 % de los descubrimientos).
+
+## Correcciones · ventajas y desventajas
+
+| Método | Controla | Ventajas | Desventajas |
+|---|---|---|---|
+| **Bonferroni** | FWER | Simple; válida con cualquier dependencia | Muy conservadora |
+| **Holm** | FWER | Siempre ≥ potencia que Bonferroni, mismos supuestos | Sigue siendo estricta con *m* grande |
+| **Hochberg** | FWER | Más potente que Holm | Requiere independencia o dependencia positiva |
+| **Hommel** | FWER | La más potente de las FWER clásicas | Cálculo complejo; mismo supuesto que Hochberg |
+| **BH** | FDR | Gran potencia con cientos o miles de pruebas | Tolera algunos falsos positivos; no apta para decisiones confirmatorias con pocas pruebas |
+
+## Todas en R con una sola función {.demo}
+
+::: columns
+::: {.column width="50%"}
+**R base** (varianza agrupada)
+
+```{r}
+pairwise.t.test(il6$IL6, il6$grupo,
+                p.adjust.method = "holm")
+```
+:::
+
+::: {.column width="50%"}
+**rstatix** (formato *tidy*)
+
+```{r}
+pairwise_t_test(il6, IL6 ~ grupo,
+                p.adjust.method = "BH") |>
+  select(group1, group2, p.adj, p.adj.signif)
+```
+:::
+:::
+
+::: {.small}
+Métodos: `"bonferroni"`, `"holm"`, `"hochberg"`, `"hommel"`, `"BH"` (= `"fdr"`), `"BY"`, `"none"`. Para comparar métodos sobre los mismos *p*: `p.adjust(p, method = ...)`.
+:::
+
+# 5. Otras pruebas útiles
+
+## ¿Qué pasa fuera del ANOVA de una vía?
+
+En ciencias de la salud muchos diseños no son “*k* grupos independientes con una variable continua”:
+
+| Situación | Prueba nueva |
+|---|---|
+| Tres grupos y comparaciones simples | **Fisher LSD protegida** |
+| Ajustar por covariables (edad, sexo) o varios factores | **Medias marginales con `emmeans`** |
+| Desenlace binario (respuesta sí/no, mortalidad) | **Comparación de proporciones por pares** |
+| Mismos sujetos medidos varias veces | **Friedman + Wilcoxon pareado** |
+
+# Fisher LSD protegida {background-color="#0b3c49"}
+
+## Fisher LSD protegida {.demo}
+
+::: columns
+::: {.column width="50%"}
+**Fundamento:** *Least Significant Difference* [@fisher1935]. Dos pasos:
+
+1. ANOVA. Si *F* **no** es significativa, se detiene.
+2. Si lo es, pruebas *t* por pares con la MSE común, **sin** ajustar.
+
+**Supuestos:** los del ANOVA.
+
+::: {.pro}
+**Ventaja:** la más potente; con **exactamente 3 grupos** controla el FWER [@levin1994].
+:::
+
+::: {.con}
+**Desventaja:** con 4 o más grupos **no** controla el FWER.
+:::
+:::
+
+::: {.column width="50%"}
+```{r}
+# Paso 2 (el ANOVA ya fue significativo)
+pairwise.t.test(il6$IL6, il6$grupo,
+                p.adjust.method = "none")
+```
+
+Compare con Tukey: A vs. B da *p* = 0.005 aquí y 0.025 con Tukey. Con 4 grupos, LSD es **demasiado liberal**.
+:::
+:::
+
+# emmeans {background-color="#0b3c49"}
+
+## emmeans · fundamento y supuestos
+
+::: columns
+::: {.column width="58%"}
+Las pruebas anteriores comparan **medias crudas**. Si el modelo incluye covariables u otros factores, hay que comparar **medias marginales estimadas** (EMM): la media predicha de cada grupo con las demás variables fijas [@lenth2024].
+
+`emmeans` hace el post hoc **sobre cualquier modelo**: ANCOVA, ANOVA de dos vías, modelos mixtos, regresión logística…
+
+Y aplica el ajuste que elijamos: Tukey, Dunnett, Holm, Bonferroni, Scheffé…
+:::
+
+::: {.column width="42%"}
+[Supuestos]{.h3}
+
+- Los del modelo ajustado (para `lm`: independencia, normalidad de residuos, homocedasticidad, linealidad)
+- Un modelo bien especificado
+
+::: {.decision}
+Es la forma moderna de hacer un post hoc cuando hay **más de un factor** o **covariables**.
+:::
+:::
+:::
+
+## emmeans · en R {.demo}
+
+¿El peso al nacer difiere por grupo étnico, **ajustando por tabaquismo**? (`MASS::birthwt`)
+
+::: columns
+::: {.column width="50%"}
+```{r}
+bw <- birthwt |>
+  mutate(raza = factor(race, labels =
+           c("Blanca", "Negra", "Otra")),
+         fuma = factor(smoke, labels =
+           c("No", "Sí")))
+modelo_bw <- lm(bwt ~ raza + fuma, data = bw)
+emm <- emmeans(modelo_bw, ~ raza)
+emm
+```
+:::
+
+::: {.column width="50%"}
+```{r}
+pairs(emm, adjust = "tukey")      # todos vs. todos
+contrast(emm, "trt.vs.ctrl",      # vs. referencia
+         ref = "Blanca")          # (Dunnett)
+```
+:::
+:::
+
+## emmeans · ventajas y desventajas
+
+::: columns
+::: {.column width="50%"}
+::: {.pro}
+[Ventajas]{.h3}
+- Un solo marco para casi cualquier modelo.
+- Compara medias **ajustadas**, no crudas.
+- Permite pares, vs. control, contrastes a la medida e interacciones (`~ fuma | raza`).
+- Da estimaciones con IC, no sólo *p*.
+:::
+:::
+
+::: {.column width="50%"}
+::: {.con}
+[Desventajas]{.h3}
+- Hay que ajustar y validar primero el modelo.
+- Con interacciones, las medias marginales promediadas pueden ser engañosas.
+- Curva de aprendizaje mayor que `TukeyHSD()`.
+:::
+:::
+:::
+
+# Proporciones por pares {background-color="#0b3c49"}
+
+## Proporciones · fundamento y en R {.demo}
+
+::: columns
+::: {.column width="48%"}
+**Fundamento:** tras un χ² significativo en una tabla 2 × *k*, se compara cada par de proporciones (prueba *z* o χ² de 2 × 2) y se ajustan los *p* (Holm, BH…).
+
+**Supuestos:** observaciones independientes; frecuencias esperadas ≥ 5. Si no se cumple, use `pairwise_fisher_test()` de `rstatix`.
+
+Ejemplo: respuesta clínica en 4 esquemas de tratamiento (50 pacientes por esquema).
+:::
+
+::: {.column width="52%"}
+```{r}
+responden <- c(E1 = 15, E2 = 18, E3 = 28, E4 = 31)
+n <- rep(50, 4)
+chisq.test(rbind(responden, n - responden))$p.value
+pairwise.prop.test(responden, n,
+                   p.adjust.method = "holm")
+```
+
+El χ² global es significativo, pero sólo **E1 vs. E4** lo es tras ajustar.
+:::
+:::
+
+## Proporciones · ventajas y desventajas
+
+::: columns
+::: {.column width="50%"}
+::: {.pro}
+[Ventajas]{.h3}
+- Responde la pregunta clínica típica: ¿qué tratamiento tiene mayor tasa de respuesta?
+- Se hace con R base.
+- Admite cualquier ajuste de `p.adjust()`.
+:::
+:::
+
+::: {.column width="50%"}
+::: {.con}
+[Desventajas]{.h3}
+- No ajusta por covariables (para eso: regresión logística + `emmeans`).
+- Con conteos pequeños la aproximación falla (use Fisher).
+- Reporte también diferencias de riesgo o *odds ratios* con IC.
+:::
+:::
+:::
+
+# Medidas repetidas no paramétricas {background-color="#0b3c49"}
+
+## Friedman + post hoc · fundamento
+
+::: columns
+::: {.column width="55%"}
+Cuando los **mismos pacientes** se miden en varios momentos, los grupos no son independientes: Kruskal‑Wallis, Dunn, Tukey y Games‑Howell **no** son válidos.
+
+- **Ómnibus:** prueba de Friedman [@friedman1937]. Ordena los valores **dentro de cada paciente**.
+- **Post hoc:**
+  - Wilcoxon de rangos con signo **pareado** por cada par + Holm; o
+  - Nemenyi para Friedman (bloques completos).
+:::
+
+::: {.column width="45%"}
+[Supuestos]{.h3}
+
+- Pacientes (bloques) independientes entre sí
+- Variable al menos ordinal
+- Diseño completo: cada paciente medido en todos los tiempos
+- Wilcoxon pareado: diferencias aproximadamente simétricas
+:::
+:::
+
+## Friedman + post hoc · en R {.demo}
+
+Dolor (EVA 0–100) en 12 pacientes: basal, semana 1 y semana 4.
+
+::: columns
+::: {.column width="45%"}
+```{r}
+set.seed(7)
+base <- round(runif(12, 55, 80))
+dolor <- data.frame(
+  id = factor(rep(1:12, 3)),
+  tiempo = factor(rep(c("Basal", "Semana_1",
+                        "Semana_4"), each = 12)),
+  EVA = c(base,
+          base - round(rnorm(12, 6, 6)),
+          base - round(rnorm(12, 15, 7))))
+friedman_test(dolor, EVA ~ tiempo | id)$p
+```
+:::
+
+::: {.column width="55%"}
+```{r}
+wilcox_test(dolor, EVA ~ tiempo, paired = TRUE,
+            p.adjust.method = "holm") |>
+  select(group1, group2, p, p.adj)
+frdAllPairsNemenyiTest(EVA ~ tiempo | id,
+                       data = dolor)
+```
+:::
+:::
+
+## Friedman + post hoc · ventajas y desventajas
+
+::: columns
+::: {.column width="50%"}
+::: {.pro}
+[Ventajas]{.h3}
+- Respeta el diseño pareado: cada paciente es su propio control.
+- No requiere normalidad.
+- Wilcoxon + Holm es sencillo y potente con pocas mediciones.
+:::
+:::
+
+::: {.column width="50%"}
+::: {.con}
+[Desventajas]{.h3}
+- Pierde a los pacientes con alguna medición faltante.
+- No incorpora covariables ni tiempos desiguales (para eso: modelos mixtos + `emmeans`).
+- Nemenyi es conservadora: aquí no detecta Semana 1 vs. Semana 4, y Wilcoxon + Holm sí.
+:::
+:::
+:::
+
+# Resumen
+
+## Guía rápida
+
+| Situación | Opción recomendada |
+|---|---|
+| ANOVA, varianzas iguales, todos vs. todos | **Tukey HSD** |
+| ANOVA, cada tratamiento vs. un control | **Dunnett** |
+| Contrastes complejos o no planeados | **Scheffé** |
+| Varianzas desiguales | **Games‑Howell** (T3 si *n* pequeños) |
+| Kruskal‑Wallis | **Dunn** + Holm o BH (Nemenyi si *n* iguales) |
+| Pocas comparaciones planeadas | Prueba *t* por pares + **Holm** |
+| Muchas pruebas (genes, SNPs, biomarcadores) | **Benjamini‑Hochberg** |
+| Covariables o varios factores | Modelo + **`emmeans`** |
+| Proporciones en varios grupos | χ² + **`pairwise.prop.test()`** con Holm |
+| Medidas repetidas, datos no normales | **Friedman** + Wilcoxon pareado con Holm |
+
+## Errores frecuentes
+
+- Hacer varias pruebas *t* o U de Mann‑Whitney **sin corrección**.
+- Probar varios métodos y reportar el que “sí dio” (*p‑hacking*).
+- Usar Tukey con varianzas claramente distintas.
+- Confundir **Dunn** (no paramétrica) con **Dunnett** (vs. control).
+- Usar pruebas para grupos independientes cuando los datos son **pareados**.
+- Aceptar los valores por defecto de una función sin leer su ayuda (véase `dunn.test`).
+- Reportar sólo “*p* \< 0.05”, sin diferencias de medias ni intervalos de confianza.
+- No declarar en métodos qué prueba post hoc o qué ajuste se usó.
+
+## ¿Cómo reportarlo?
+
+> “Los niveles de IL‑6 difirieron entre grupos (ANOVA de una vía, F(3, 56) = …, *p* \< 0.001). Las comparaciones contra el control se realizaron con la prueba de Dunnett. Los fármacos B y C aumentaron la IL‑6 (diferencia de medias = … pg/mL, IC 95 % …, *p* ajustado \< 0.001), mientras que el fármaco A no mostró diferencia (*p* ajustado = …).”
+
+::: {.decision}
+Incluya siempre: prueba ómnibus, prueba post hoc o corrección utilizada, diferencia con su IC y *p* ajustado.
+:::
+
+## Fe de erratas del capítulo 18: resumen (1/2) {.fe}
+
+| Sección | Error | Corrección |
+|---|---|---|
+| Bonferroni | Función `pairs.t.test()` | `pairwise.t.test()` |
+| Tukey | Interpretación del ejemplo invertida (0.10 y 0.001) | 0.05 (no significativa) y 0.17 (significativa) |
+| Tukey | *v* = 126; “se acepta H~0~” | *v* = 132; “no se rechaza H~0~” |
+| Tukey | Requiere *n* iguales; “pocos supuestos”; “computacionalmente intensivo” | Tukey‑Kramer admite *n* distintos; requiere normalidad y homocedasticidad; es inmediato |
+| Dunnett | Fórmula con 2 × MSE × (1/*n*~i~ + 1/*n*~c~) | Sin el 2: MSE × (1/*n*~i~ + 1/*n*~c~) |
+| Scheffé | No requiere normalidad ni homocedasticidad; requiere *n* iguales | Mismos supuestos que el ANOVA; admite *n* distintos |
+| Scheffé | “Más errores tipo I”, “menos tipo II”, “relativamente poderosa” | La más conservadora y la menos potente para pares |
+| Games‑Howell | No paramétrica; compara solapamiento de IC | Paramétrica; usa el rango estudentizado |
+| Dunnett T3 | No paramétrica; compara contra un control; a priori | Paramétrica; todos los pares; post hoc |
+
+## Fe de erratas del capítulo 18: resumen (2/2) {.fe}
+
+| Sección | Error | Corrección |
+|---|---|---|
+| Dunn | `dunn.test()` sin ajuste y *p* de una cola leídos como ajustados | Usar `method = "holm"` y `altp = TRUE` |
+| Dunn | `kw = TRUE` “indica que viene de un ANOVA” | Sólo imprime el Kruskal‑Wallis |
+| Dunn | “Sólo para dos grupos”; “incrementa el error tipo I” | Diseñada para *k* grupos; con ajuste lo controla |
+| Dunn | Contra un control: Dunnett o T3 | Dunn muchos‑contra‑uno (no paramétrica) |
+| Nemenyi | s.e. = √(*k*(*n*+1)/12) | s.e. = √(*N*(*N*+1)/12 · (1/*n*~i~ + 1/*n*~j~)) |
+| Holm | “Bonferroni compara todas; Holm sólo las significativas” | Ambos evalúan todas; Holm usa umbrales escalonados |
+| Hommel | Sin supuestos | Requiere independencia o dependencia positiva |
+| BH | Con Q = 25 %, sólo A es significativa | Las 8 son significativas |
+| Comentarios finales | “Los procedimientos sólo son válidos para comparaciones planificadas” | Al revés: las post hoc están diseñadas para comparaciones **no** planeadas |
+| Comentarios finales | *F* significativa sin pares significativos “porque requieren patrón gaussiano” | Prueban hipótesis distintas: una *F* significativa garantiza algún **contraste** significativo (Scheffé), no necesariamente un par |
+
+## Ejercicio {.exercise}
+
+Con la base `Cushings` (paquete `MASS`), analice **Pregnanetriol** según `Type`:
+
+1. Explore los datos (gráfica y estadísticos por grupo) y evalúe normalidad y homogeneidad de varianzas.
+2. Decida entre ANOVA y Kruskal‑Wallis y justifique.
+3. Aplique la prueba post hoc adecuada según la guía de decisión.
+4. Compare los *p* ajustados con Bonferroni, Holm y BH usando `pairwise.t.test()`.
+5. Considere el tipo **a** como referencia y aplique Dunnett. ¿Cambian sus conclusiones?
+6. Redacte un párrafo de resultados como el del ejemplo anterior.
+7. Busque en el capítulo 18 una afirmación que **no** hayamos corregido y evalúela con una simulación en `R`.
+
+## Referencias
+
+::: {#refs .tiny}
+:::

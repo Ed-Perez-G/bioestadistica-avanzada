@@ -66,7 +66,7 @@ Por ejemplo, para una prueba de t de dos muestras independientes:
 
 ```{r}
 birthwt %>%
-  t_test(bwt ~ smoke)  # peso del bebé ~ tabaquismo
+  t_test(bwt ~ smoke, detailed = T)  # peso del bebé ~ tabaquismo
 ```
 
 
@@ -160,7 +160,7 @@ Antes de realizar la prueba, evaluamos el supuesto de frecuencias esperadas:
 # El supuesto: todas las frecuencias esperadas ≥ 5
 # Chi-cuadrado es robusto cuando se cumple este supuesto
 table1 <- table(birthwt$low, birthwt$ht)
-chisq.test(table1)->resultado1
+chisq.test(table1, correct = T)->resultado1
 resultado1$expected
 ```
 
@@ -481,7 +481,7 @@ ggstatsplot::ggbetweenstats(
   data = birthwt,
   x = smoke,
   y = bwt,
-  type = "parametric",  # o "nonparametric" si necesario
+  type = "parametric",  # o "nonparametric" si necesario, "p", "np"
   title = "Peso al Nacer según Tabaquismo Materno",
   subtitle = "Prueba t de Student con Cohen's d",
   xlab = "Tabaquismo",
@@ -589,7 +589,7 @@ comparaciones <- list(
 ```
 
 ```{r}
-p6+stat_compare_means()
+p6+stat_compare_means(method = 'anova')
 ```
 
 ```{r}

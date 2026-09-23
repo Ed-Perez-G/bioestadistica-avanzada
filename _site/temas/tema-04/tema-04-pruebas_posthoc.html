@@ -1,0 +1,2868 @@
+<!DOCTYPE html>
+<html lang="es"><head>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-html/tabby.min.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/light-border.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-7b89279ff1a6dce999919e0e67d4d9ec.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
+  <meta name="generator" content="quarto-1.8.25">
+
+  <meta name="author" content="Edsaúl Emilio Pérez-Guerrero">
+  <meta name="dcterms.date" content="2026-09-23">
+  <title>Bioestadística avanzada – Pruebas post hoc y corrección por comparaciones múltiples</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <link rel="stylesheet" href="../../site_libs/revealjs/dist/reset.css">
+  <link rel="stylesheet" href="../../site_libs/revealjs/dist/reveal.css">
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+      vertical-align: middle;
+    }
+    /* CSS for syntax highlighting */
+    html { -webkit-text-size-adjust: 100%; }
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      { color: #003b4f; background-color: #f1f3f5; }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span { color: #003b4f; } /* Normal */
+    code span.al { color: #ad0000; } /* Alert */
+    code span.an { color: #5e5e5e; } /* Annotation */
+    code span.at { color: #657422; } /* Attribute */
+    code span.bn { color: #ad0000; } /* BaseN */
+    code span.bu { } /* BuiltIn */
+    code span.cf { color: #003b4f; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #20794d; } /* Char */
+    code span.cn { color: #8f5902; } /* Constant */
+    code span.co { color: #5e5e5e; } /* Comment */
+    code span.cv { color: #5e5e5e; font-style: italic; } /* CommentVar */
+    code span.do { color: #5e5e5e; font-style: italic; } /* Documentation */
+    code span.dt { color: #ad0000; } /* DataType */
+    code span.dv { color: #ad0000; } /* DecVal */
+    code span.er { color: #ad0000; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #ad0000; } /* Float */
+    code span.fu { color: #4758ab; } /* Function */
+    code span.im { color: #00769e; } /* Import */
+    code span.in { color: #5e5e5e; } /* Information */
+    code span.kw { color: #003b4f; font-weight: bold; } /* Keyword */
+    code span.op { color: #5e5e5e; } /* Operator */
+    code span.ot { color: #003b4f; } /* Other */
+    code span.pp { color: #ad0000; } /* Preprocessor */
+    code span.sc { color: #5e5e5e; } /* SpecialChar */
+    code span.ss { color: #20794d; } /* SpecialString */
+    code span.st { color: #20794d; } /* String */
+    code span.va { color: #111111; } /* Variable */
+    code span.vs { color: #20794d; } /* VerbatimString */
+    code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
+    /* CSS for citations */
+    div.csl-bib-body { }
+    div.csl-entry {
+      clear: both;
+    }
+    .hanging-indent div.csl-entry {
+      margin-left:2em;
+      text-indent:-2em;
+    }
+    div.csl-left-margin {
+      min-width:2em;
+      float:left;
+    }
+    div.csl-right-inline {
+      margin-left:2em;
+      padding-left:1em;
+    }
+    div.csl-indent {
+      margin-left: 2em;
+    }  </style>
+  <link rel="stylesheet" href="../../site_libs/revealjs/dist/theme/quarto-a4600e1819527496f6d5d2c0393a9742.css">
+  <link href="../../site_libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
+  <link href="../../site_libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
+  <link href="../../site_libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
+  <link href="../../site_libs/revealjs/plugin/reveal-chalkboard/font-awesome/css/all.css" rel="stylesheet">
+  <link href="../../site_libs/revealjs/plugin/reveal-chalkboard/style.css" rel="stylesheet">
+  <link href="../../site_libs/revealjs/plugin/quarto-support/footer.css" rel="stylesheet">
+  <style type="text/css">
+    .reveal div.sourceCode {
+      margin: 0;
+      overflow: auto;
+    }
+    .reveal div.hanging-indent {
+      margin-left: 1em;
+      text-indent: -1em;
+    }
+    .reveal .slide:not(.center) {
+      height: 100%;
+    }
+    .reveal .slide.scrollable {
+      overflow-y: auto;
+    }
+    .reveal .footnotes {
+      height: 100%;
+      overflow-y: auto;
+    }
+    .reveal .slide .absolute {
+      position: absolute;
+      display: block;
+    }
+    .reveal .footnotes ol {
+      counter-reset: ol;
+      list-style-type: none; 
+      margin-left: 0;
+    }
+    .reveal .footnotes ol li:before {
+      counter-increment: ol;
+      content: counter(ol) ". "; 
+    }
+    .reveal .footnotes ol li > p:first-child {
+      display: inline-block;
+    }
+    .reveal .slide ul,
+    .reveal .slide ol {
+      margin-bottom: 0.5em;
+    }
+    .reveal .slide ul li,
+    .reveal .slide ol li {
+      margin-top: 0.4em;
+      margin-bottom: 0.2em;
+    }
+    .reveal .slide ul[role="tablist"] li {
+      margin-bottom: 0;
+    }
+    .reveal .slide ul li > *:first-child,
+    .reveal .slide ol li > *:first-child {
+      margin-block-start: 0;
+    }
+    .reveal .slide ul li > *:last-child,
+    .reveal .slide ol li > *:last-child {
+      margin-block-end: 0;
+    }
+    .reveal .slide .columns:nth-child(3) {
+      margin-block-start: 0.8em;
+    }
+    .reveal blockquote {
+      box-shadow: none;
+    }
+    .reveal .tippy-content>* {
+      margin-top: 0.2em;
+      margin-bottom: 0.7em;
+    }
+    .reveal .tippy-content>*:last-child {
+      margin-bottom: 0.2em;
+    }
+    .reveal .slide > img.stretch.quarto-figure-center,
+    .reveal .slide > img.r-stretch.quarto-figure-center {
+      display: block;
+      margin-left: auto;
+      margin-right: auto; 
+    }
+    .reveal .slide > img.stretch.quarto-figure-left,
+    .reveal .slide > img.r-stretch.quarto-figure-left  {
+      display: block;
+      margin-left: 0;
+      margin-right: auto; 
+    }
+    .reveal .slide > img.stretch.quarto-figure-right,
+    .reveal .slide > img.r-stretch.quarto-figure-right  {
+      display: block;
+      margin-left: auto;
+      margin-right: 0; 
+    }
+  </style>
+  <script src="../../site_libs/quarto-diagram/mermaid.min.js"></script>
+  <script src="../../site_libs/quarto-diagram/mermaid-init.js"></script>
+  <link href="../../site_libs/quarto-diagram/mermaid.css" rel="stylesheet">
+</head>
+<body class="quarto-light">
+  <div class="reveal">
+    <div class="slides">
+
+<section id="title-slide" class="quarto-title-block center">
+  <h1 class="title">Pruebas post hoc y corrección por comparaciones múltiples</h1>
+  <p class="subtitle">¿Entre qué grupos está la diferencia y cómo evitar falsos positivos?</p>
+
+<div class="quarto-title-authors">
+<div class="quarto-title-author">
+<div class="quarto-title-author-name">
+Edsaúl Emilio Pérez-Guerrero 
+</div>
+</div>
+</div>
+
+  <p class="date">2026-09-23</p>
+</section>
+<section id="objetivos-de-aprendizaje" class="slide level2">
+<h2>Objetivos de aprendizaje</h2>
+<ul>
+<li>Explicar <strong>qué</strong> son las pruebas post hoc y las correcciones por comparaciones múltiples;</li>
+<li>Justificar <strong>por qué</strong> hacer muchas pruebas sin corrección produce falsos positivos;</li>
+<li>Distinguir una <strong>prueba post hoc</strong> de una <strong>corrección del valor de <em>p</em></strong>;</li>
+<li>Elegir la prueba adecuada según el diseño y los supuestos;</li>
+<li>Ejecutar e interpretar cada prueba en <code>R</code>;</li>
+</ul>
+</section>
+<section id="una-nota-sobre-el-capítulo-18" class="slide level2 fe">
+<h2>Una nota sobre el capítulo 18</h2>
+<p>Esta presentación se basa en el capítulo 18 del libro <strong>Bioestadística en R para ciencias de la salud</strong>. Al revisarlo por enésima vez econtré: <strong>errores de fundamento, fórmulas e interpretación</strong>.</p>
+<p>A lo largo de la presentación hay:</p>
+<div class="errata">
+<p><strong>El capítulo dice:</strong> lo que aparece en el texto original.<br> <strong>Lo correcto:</strong> la versión corregida y, cuando se puede, la demostración en <code>R</code>.</p>
+</div>
+<div class="fragment">
+<div class="warning">
+<p>Al final hay una tabla con todas las correcciones.</p>
+</div>
+</div>
+</section>
+<section id="paquetes-y-datos-que-usaremos" class="slide level2">
+<h2>Paquetes y datos que usaremos</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="fu">c</span>(<span class="st">"MASS"</span>, <span class="st">"rstatix"</span>, <span class="st">"DescTools"</span>, <span class="st">"PMCMRplus"</span>,</span>
+<span id="cb1-2"><a aria-hidden="true" tabindex="-1"></a>                   <span class="st">"emmeans"</span>, <span class="st">"ggplot2"</span>, <span class="st">"dplyr"</span>, <span class="st">"tidyr"</span>))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div class="fragment">
+<div class="columns">
+<div class="column" style="width:50%;">
+<p><strong>Datos 1 · simulados.</strong> IL‑6 (pg/mL) en un grupo control y tres fármacos. Cumplen normalidad y varianzas iguales.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">2025</span>)</span>
+<span id="cb2-2"><a aria-hidden="true" tabindex="-1"></a>il6 <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb2-3"><a aria-hidden="true" tabindex="-1"></a>  <span class="at">grupo =</span> <span class="fu">factor</span>(<span class="fu">rep</span>(<span class="fu">c</span>(<span class="st">"Control"</span>, <span class="st">"Farmaco_A"</span>,</span>
+<span id="cb2-4"><a aria-hidden="true" tabindex="-1"></a>                       <span class="st">"Farmaco_B"</span>, <span class="st">"Farmaco_C"</span>),</span>
+<span id="cb2-5"><a aria-hidden="true" tabindex="-1"></a>                     <span class="at">each =</span> <span class="dv">15</span>)),</span>
+<span id="cb2-6"><a aria-hidden="true" tabindex="-1"></a>  <span class="at">IL6 =</span> <span class="fu">c</span>(<span class="fu">rnorm</span>(<span class="dv">15</span>, <span class="dv">40</span>, <span class="dv">6</span>), <span class="fu">rnorm</span>(<span class="dv">15</span>, <span class="dv">42</span>, <span class="dv">6</span>),</span>
+<span id="cb2-7"><a aria-hidden="true" tabindex="-1"></a>          <span class="fu">rnorm</span>(<span class="dv">15</span>, <span class="dv">50</span>, <span class="dv">6</span>), <span class="fu">rnorm</span>(<span class="dv">15</span>, <span class="dv">52</span>, <span class="dv">6</span>)))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div><div class="column" style="width:50%;">
+<p><strong>Datos 2 · reales.</strong> <code>Cushings</code> <span class="citation" data-cites="venables2002">(<a href="#/referencias" role="doc-biblioref" onclick="">1</a>)</span>: tetrahidrocortisona urinaria según el tipo de síndrome de Cushing (a = adenoma, b = hiperplasia bilateral, c = carcinoma, u = desconocido). <em>n</em> pequeño, asimetría y varianzas distintas.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(Cushings, <span class="at">package =</span> <span class="st">"MASS"</span>)</span>
+<span id="cb3-2"><a aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(Cushings<span class="sc">$</span>Type)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+ a  b  c  u 
+ 6 10  5  6 </code></pre>
+</div>
+</div>
+</div></div>
+</div>
+</section>
+<section>
+<section id="qué-son" class="title-slide slide level1 center">
+<h1>1. ¿Qué son?</h1>
+
+</section>
+<section id="el-punto-de-partida-una-prueba-ómnibus" class="slide level2">
+<h2>El punto de partida: una prueba ómnibus</h2>
+<p>El ANOVA y la prueba de Kruskal‑Wallis evalúan una hipótesis <strong>global</strong>:</p>
+<p><span class="math display">\[H_0:\ \mu_1 = \mu_2 = \dots = \mu_k \qquad H_A:\ \text{al menos una media es diferente}\]</span></p>
+<div class="fragment">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">aov</span>(IL6 <span class="sc">~</span> grupo, <span class="at">data =</span> il6) <span class="sc">|&gt;</span> <span class="fu">summary</span>()</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>            Df Sum Sq Mean Sq F value  Pr(&gt;F)    
+grupo        3   1378     459    13.2 1.3e-06 ***
+Residuals   56   1953      35                    
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
+</div>
+</div>
+</div>
+<div class="fragment">
+<div class="decision">
+<p>Un <em>p</em> &lt; 0.05 nos dice <strong>que</strong> hay diferencias, pero <strong>no entre qué grupos</strong>. Para eso necesitamos comparaciones por pares.</p>
+</div>
+</div>
+</section>
+<section id="visualmente" class="slide level2">
+<h2>Visualmente</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(il6, <span class="fu">aes</span>(grupo, IL6, <span class="at">fill =</span> grupo)) <span class="sc">+</span></span>
+<span id="cb7-2"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>(<span class="at">alpha =</span> <span class="fl">0.6</span>, <span class="at">outlier.shape =</span> <span class="cn">NA</span>, <span class="at">show.legend =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
+<span id="cb7-3"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_jitter</span>(<span class="at">width =</span> <span class="fl">0.12</span>, <span class="at">alpha =</span> <span class="fl">0.6</span>, <span class="at">show.legend =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
+<span id="cb7-4"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="cn">NULL</span>, <span class="at">y =</span> <span class="st">"IL-6 (pg/mL)"</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+
+</div>
+<img data-src="tema-04-pruebas_posthoc_files/figure-revealjs/unnamed-chunk-5-1.png" width="1020" class="r-stretch"><p>¿Control ≠ Fármaco A? ¿Fármaco B ≠ Fármaco C? La gráfica sugiere, <strong>la prueba decide</strong>.</p>
+</section>
+<section id="definiciones" class="slide level2">
+<h2>Definiciones</h2>
+<div class="columns">
+<div class="column" style="width:50%;">
+<p><span class="h3">Prueba post hoc</span></p>
+<p>Procedimiento diseñado para comparar grupos <strong>después</strong> de una prueba ómnibus (ANOVA o Kruskal‑Wallis). Tiene su <strong>propio estadístico y su propia distribución de referencia</strong>, que ya toma en cuenta cuántas comparaciones se hacen.</p>
+<p><em>Ejemplos:</em> Tukey, Dunnett, Scheffé, Games‑Howell, Dunn, Nemenyi.</p>
+</div><div class="column" style="width:50%;">
+<p><span class="h3">Corrección por comparaciones múltiples</span></p>
+<p>Regla que <strong>ajusta los valores de <em>p</em></strong> (o el umbral α) de un conjunto de pruebas que ya se hicieron, para controlar la tasa de falsos positivos.</p>
+<p>Sirve para <strong>cualquier</strong> conjunto de pruebas: pares de grupos, varios desenlaces, miles de genes.</p>
+<p><em>Ejemplos:</em> Bonferroni, Holm, Hochberg, Hommel, Benjamini‑Hochberg.</p>
+</div></div>
+</section></section>
+<section>
+<section id="por-qué-se-usan" class="title-slide slide level1 center">
+<h1>2. ¿Por qué se usan?</h1>
+
+</section>
+<section id="cuántas-comparaciones-hay" class="slide level2">
+<h2>¿Cuántas comparaciones hay?</h2>
+<p>Con <em>k</em> grupos, el número de comparaciones por pares es</p>
+<p><span class="math display">\[m = \frac{k(k-1)}{2}\]</span></p>
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th>Grupos (<em>k</em>)</th>
+<th>3</th>
+<th>4</th>
+<th>5</th>
+<th>6</th>
+<th>8</th>
+<th>10</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Comparaciones (<em>m</em>)</td>
+<td>3</td>
+<td>6</td>
+<td>10</td>
+<td>15</td>
+<td>28</td>
+<td>45</td>
+</tr>
+</tbody>
+</table>
+<p>Con 4 grupos (nuestros datos de IL‑6) hay <strong>6</strong> comparaciones: Control–A, Control–B, Control–C, A–B, A–C y B–C.</p>
+</section>
+<section id="la-inflación-del-error-tipo-i" class="slide level2">
+<h2>La inflación del error tipo I</h2>
+<p>Si cada prueba usa α = 0.05, la probabilidad de <strong>al menos un falso positivo</strong> en <em>m</em> pruebas independientes es la <strong>tasa de error por familia</strong> (<em>familywise error rate</em>, FWER):</p>
+<p><span class="math display">\[\text{FWER} = 1 - (1 - \alpha)^m\]</span></p>
+<div class="cell columns column-output-location">
+<div class="column">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a aria-hidden="true" tabindex="-1"></a>m <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">3</span>, <span class="dv">6</span>, <span class="dv">10</span>, <span class="dv">15</span>, <span class="dv">20</span>, <span class="dv">45</span>)</span>
+<span id="cb8-2"><a aria-hidden="true" tabindex="-1"></a><span class="fu">data.frame</span>(m, <span class="at">FWER =</span> <span class="dv">1</span> <span class="sc">-</span> (<span class="dv">1</span> <span class="sc">-</span> <span class="fl">0.05</span>)<span class="sc">^</span>m)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div><div class="column">
+<div class="cell-output cell-output-stdout">
+<pre><code>   m   FWER
+1  1 0.0500
+2  3 0.1426
+3  6 0.2649
+4 10 0.4013
+5 15 0.5367
+6 20 0.6415
+7 45 0.9006</code></pre>
+</div>
+</div></div>
+<div class="warning">
+<p>Con 15 comparaciones, la probabilidad de encontrar “algo” sin que exista nada supera el 50 %: es como lanzar una moneda.</p>
+</div>
+</section>
+<section id="comprobémoslo-con-una-simulación" class="slide level2">
+<h2>Comprobémoslo con una simulación</h2>
+<p>Cuatro grupos <strong>idénticos</strong> (H<sub>0</sub> verdadera). Hacemos las 6 pruebas <em>t</em> sin corregir y contamos cuántas veces aparece al menos un <em>p</em> &lt; 0.05.</p>
+<div class="cell columns column-output-location">
+<div class="column">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1</span>)</span>
+<span id="cb10-2"><a aria-hidden="true" tabindex="-1"></a>al_menos_uno <span class="ot">&lt;-</span> <span class="fu">replicate</span>(<span class="dv">2000</span>, {</span>
+<span id="cb10-3"><a aria-hidden="true" tabindex="-1"></a>  y <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(<span class="dv">40</span>)                   <span class="co"># sin diferencias reales</span></span>
+<span id="cb10-4"><a aria-hidden="true" tabindex="-1"></a>  g <span class="ot">&lt;-</span> <span class="fu">gl</span>(<span class="dv">4</span>, <span class="dv">10</span>)                   <span class="co"># 4 grupos de 10</span></span>
+<span id="cb10-5"><a aria-hidden="true" tabindex="-1"></a>  p <span class="ot">&lt;-</span> <span class="fu">pairwise.t.test</span>(y, g,</span>
+<span id="cb10-6"><a aria-hidden="true" tabindex="-1"></a>         <span class="at">p.adjust.method =</span> <span class="st">"none"</span>)<span class="sc">$</span>p.value</span>
+<span id="cb10-7"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">any</span>(p <span class="sc">&lt;</span> <span class="fl">0.05</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb10-8"><a aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb10-9"><a aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(al_menos_uno)  <span class="co"># FWER observado</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div><div class="column">
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.1945</code></pre>
+</div>
+</div></div>
+<div class="fragment">
+<p>El FWER real (~20 %) es menor que el teórico (26 %) porque las comparaciones comparten grupos y no son independientes; aun así, es <strong>cuatro veces</strong> el 5 % prometido.</p>
+</div>
+</section>
+<section id="qué-queremos-controlar" class="slide level2">
+<h2>¿Qué queremos controlar?</h2>
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th></th>
+<th>H<sub>0</sub> verdadera</th>
+<th>H<sub>0</sub> falsa</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>No rechazo</strong></td>
+<td>✔</td>
+<td>Error tipo II</td>
+</tr>
+<tr class="even">
+<td><strong>Rechazo</strong> (“descubrimiento”)</td>
+<td><strong>V</strong> = falsos positivos</td>
+<td>✔</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li><strong>FWER</strong> = P(V ≥ 1): probabilidad de cometer <strong>al menos un</strong> falso positivo. Estricto. Adecuado con pocas comparaciones y decisiones clínicas.</li>
+<li><strong>FDR</strong> (<em>false discovery rate</em>) = proporción esperada de falsos positivos <strong>entre los descubrimientos</strong>. Más permisivo. Adecuado con cientos o miles de pruebas (genes, SNPs, metabolitos) <span class="citation" data-cites="benjamini1995">(<a href="#/referencias" role="doc-biblioref" onclick="">2</a>)</span>.</li>
+</ul>
+</section>
+<section id="el-precio-la-potencia" class="slide level2">
+<h2>El precio: la potencia</h2>
+<div class="columns">
+<div class="column" style="width:55%;">
+<p>Controlar el error tipo I <strong>exige umbrales más estrictos</strong>, lo que aumenta el error tipo II (no detectar diferencias reales).</p>
+<p>Todas las pruebas que veremos buscan el mismo equilibrio:</p>
+<blockquote>
+<p>controlar los falsos positivos <strong>perdiendo la menor potencia posible</strong>.</p>
+</blockquote>
+<p>La elección correcta depende de <strong>cuántas</strong> y <strong>cuáles</strong> comparaciones nos interesan realmente.</p>
+</div><div class="column" style="width:45%;">
+<div class="decision">
+<p><strong>Regla práctica:</strong> define las comparaciones de interés <strong>antes</strong> de ver los datos. Menos comparaciones = más potencia.</p>
+</div>
+</div></div>
+</section></section>
+<section>
+<section id="post-hoc-vs.-corrección" class="title-slide slide level1 center">
+<h1>3. Post hoc vs.&nbsp;corrección</h1>
+
+</section>
+<section id="diferencias-clave" class="slide level2">
+<h2>Diferencias clave</h2>
+<table class="caption-top">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th></th>
+<th>Prueba post hoc</th>
+<th>Corrección de <em>p</em></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Qué hace</strong></td>
+<td>Calcula un estadístico propio para cada par</td>
+<td>Ajusta <em>p</em> ya calculados</td>
+</tr>
+<tr class="even">
+<td><strong>Distribución</strong></td>
+<td>Específica (rango estudentizado, Dunnett, <em>F</em>)</td>
+<td>La de la prueba original</td>
+</tr>
+<tr class="odd">
+<td><strong>Varianza</strong></td>
+<td>Suele usar la varianza común del modelo (MSE)</td>
+<td>No la necesita</td>
+</tr>
+<tr class="even">
+<td><strong>Contexto</strong></td>
+<td>Después de ANOVA / Kruskal‑Wallis</td>
+<td>Cualquier familia de pruebas</td>
+</tr>
+<tr class="odd">
+<td><strong>Controla</strong></td>
+<td>FWER</td>
+<td>FWER (Bonferroni, Holm…) o FDR (BH)</td>
+</tr>
+<tr class="even">
+<td><strong>Ejemplos</strong></td>
+<td>Tukey, Dunnett, Scheffé, Games‑Howell, Dunn</td>
+<td>Bonferroni, Holm, Hochberg, BH</td>
+</tr>
+</tbody>
+</table>
+<div class="fragment">
+<div class="decision">
+<p>En la práctica se combinan: por ejemplo, la prueba de Dunn calcula un <em>z</em> por par y <strong>después</strong> aplica Bonferroni, Holm o BH.</p>
+</div>
+</div>
+</section>
+<section id="hace-falta-que-el-anova-sea-significativo" class="slide level2">
+<h2>¿Hace falta que el ANOVA sea significativo?</h2>
+<ul>
+<li>Tradicionalmente se enseña: <em>primero ANOVA significativo, después post hoc</em>.</li>
+<li>Tukey, Dunnett y Games‑Howell <strong>controlan el FWER por sí mismos</strong>; no requieren formalmente un <em>F</em> significativo.</li>
+<li>Pueden ocurrir discrepancias:
+<ul>
+<li><em>F</em> significativo y ningún par significativo (la diferencia está en un contraste complejo);</li>
+<li><em>F</em> no significativo y un par significativo.</li>
+</ul></li>
+</ul>
+<div class="errata">
+<p>El capítulo atribuye estas discrepancias a que “ambos requieren un patrón gaussiano”. La razón real es que <strong>prueban hipótesis distintas</strong>: una <em>F</em> significativa garantiza que algún <strong>contraste</strong> sea significativo (Scheffé), no necesariamente un par.</p>
+</div>
+<div class="warning">
+<p>Lo que <strong>no</strong> es válido es probar varios métodos y reportar el que “sí dio”. La prueba se elige por el diseño y los supuestos, <strong>antes</strong> del análisis.</p>
+</div>
+</section>
+<section id="guía-de-decisión" class="slide level2">
+<h2>Guía de decisión</h2>
+<div class="cell" data-reveal="true" data-fig-width="11" data-layout-align="default">
+<div class="cell-output-display">
+<div>
+<p></p><figure class=""><p></p>
+<div>
+<pre class="mermaid mermaid-js">flowchart LR
+  A["¿Datos aproximadamente&lt;br/&gt;normales?"] --&gt;|Sí| B["¿Varianzas&lt;br/&gt;homogéneas?"]
+  A --&gt;|No| N["Kruskal-Wallis"]
+  N --&gt; N1["Dunn + Holm/BH&lt;br/&gt;Nemenyi (n iguales)"]
+  B --&gt;|Sí| C["¿Qué comparaciones?"]
+  B --&gt;|No| H["Games-Howell&lt;br/&gt;Dunnett T3 (n pequeños)"]
+  C --&gt;|"Todos contra todos"| T["Tukey HSD"]
+  C --&gt;|"Todos contra un control"| D["Dunnett"]
+  C --&gt;|"Contrastes complejos&lt;br/&gt;no planeados"| S["Scheffé"]
+  C --&gt;|"Pocas, planeadas"| BH["t por pares + Holm"]
+</pre>
+</div>
+<p></p></figure><p></p>
+</div>
+</div>
+</div>
+<p>Una guía, no una ley <span class="citation" data-cites="lee2018 kim2015">(<a href="#/referencias" role="doc-biblioref" onclick="">3</a>,<a href="#/referencias" role="doc-biblioref" onclick="">4</a>)</span>. Covariables, proporciones y medidas repetidas: sección 5.</p>
+</section></section>
+<section>
+<section id="principales-pruebas" class="title-slide slide level1 center">
+<h1>4. Principales pruebas</h1>
+
+</section>
+<section id="mapa-de-las-pruebas" class="slide level2">
+<h2>Mapa de las pruebas</h2>
+<div class="small">
+<table class="caption-top">
+<colgroup>
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Prueba</th>
+<th>Tipo</th>
+<th>Comparaciones</th>
+<th>Varianzas iguales</th>
+<th>Normalidad</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Tukey HSD</strong></td>
+<td>Post hoc</td>
+<td>Todos vs.&nbsp;todos</td>
+<td>Sí</td>
+<td>Sí</td>
+</tr>
+<tr class="even">
+<td><strong>Dunnett</strong></td>
+<td>Post hoc</td>
+<td>Todos vs.&nbsp;control</td>
+<td>Sí</td>
+<td>Sí</td>
+</tr>
+<tr class="odd">
+<td><strong>Scheffé</strong></td>
+<td>Post hoc</td>
+<td>Cualquier contraste</td>
+<td>Sí</td>
+<td>Sí</td>
+</tr>
+<tr class="even">
+<td><strong>Games‑Howell</strong></td>
+<td>Post hoc</td>
+<td>Todos vs.&nbsp;todos</td>
+<td><strong>No</strong></td>
+<td>Sí</td>
+</tr>
+<tr class="odd">
+<td><strong>Dunnett T3</strong></td>
+<td>Post hoc</td>
+<td>Todos vs.&nbsp;todos</td>
+<td><strong>No</strong></td>
+<td>Sí</td>
+</tr>
+<tr class="even">
+<td><strong>Dunn</strong></td>
+<td>Post hoc no paramétrica</td>
+<td>Todos vs.&nbsp;todos</td>
+<td>—</td>
+<td><strong>No</strong></td>
+</tr>
+<tr class="odd">
+<td><strong>Nemenyi</strong></td>
+<td>Post hoc no paramétrica</td>
+<td>Todos vs.&nbsp;todos</td>
+<td>—</td>
+<td><strong>No</strong></td>
+</tr>
+<tr class="even">
+<td><strong>Bonferroni / Holm</strong></td>
+<td>Corrección (FWER)</td>
+<td>Cualquiera</td>
+<td>Depende de la prueba</td>
+<td>Depende</td>
+</tr>
+<tr class="odd">
+<td><strong>Hochberg / Hommel</strong></td>
+<td>Corrección (FWER)</td>
+<td>Cualquiera</td>
+<td>Depende</td>
+<td>Depende</td>
+</tr>
+<tr class="even">
+<td><strong>Benjamini‑Hochberg</strong></td>
+<td>Corrección (FDR)</td>
+<td>Muchas pruebas</td>
+<td>Depende</td>
+<td>Depende</td>
+</tr>
+<tr class="odd">
+<td><strong>Fisher LSD protegida</strong></td>
+<td>Post hoc</td>
+<td>Todos vs.&nbsp;todos (<em>k</em> = 3)</td>
+<td>Sí</td>
+<td>Sí</td>
+</tr>
+<tr class="even">
+<td><strong>emmeans</strong></td>
+<td>Post hoc sobre un modelo</td>
+<td>Pares, vs.&nbsp;control, contrastes</td>
+<td>Según el modelo</td>
+<td>Según el modelo</td>
+</tr>
+<tr class="odd">
+<td><strong>Proporciones por pares</strong></td>
+<td><em>z</em>/χ² + corrección</td>
+<td>Todos vs.&nbsp;todos</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr class="even">
+<td><strong>Friedman + Wilcoxon pareado</strong></td>
+<td>Post hoc no paramétrica pareada</td>
+<td>Todos vs.&nbsp;todos</td>
+<td>—</td>
+<td><strong>No</strong></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Las cuatro últimas filas son pruebas <strong>nuevas</strong> respecto al capítulo 18.</p>
+</section></section>
+<section>
+<section id="tukey-hsd" class="title-slide slide level1 center" data-background-color="#0b3c49">
+<h1>Tukey HSD</h1>
+
+</section>
+<section id="tukey-hsd-fundamento-y-supuestos" class="slide level2">
+<h2>Tukey HSD · fundamento y supuestos</h2>
+<div class="columns">
+<div class="column" style="width:58%;">
+<p><em>Honestly Significant Difference</em> <span class="citation" data-cites="tukey1949 kramer1956">(<a href="#/referencias" role="doc-biblioref" onclick="">5</a>,<a href="#/referencias" role="doc-biblioref" onclick="">6</a>)</span>. Compara <strong>todos los pares</strong> usando la distribución del <strong>rango estudentizado</strong> (<em>q</em>): la distribución de la diferencia <strong>más grande</strong> entre <em>k</em> medias. Si controlamos la mayor diferencia, controlamos todas.</p>
+<p>Diferencia mínima significativa (Tukey‑Kramer):</p>
+<div class="formula">
+<p><span class="math display">\[\text{HSD}_{ij} = q_{\alpha,\,k,\,N-k}\ \sqrt{\frac{MSE}{2}\left(\frac{1}{n_i}+\frac{1}{n_j}\right)}\]</span></p>
+</div>
+<p>Si <span class="math inline">\(|\bar x_i - \bar x_j| &gt; \text{HSD}_{ij}\)</span> → diferencia significativa.</p>
+</div><div class="column" style="width:42%;">
+<p><span class="h3">Supuestos</span></p>
+<ul>
+<li>Observaciones independientes</li>
+<li>Normalidad de los residuos</li>
+<li><strong>Homogeneidad de varianzas</strong></li>
+<li><em>n</em> iguales es lo ideal; con <em>n</em> distintos se usa la versión Tukey‑Kramer (la que implementa <code>R</code>)</li>
+</ul>
+</div></div>
+</section>
+<section id="tukey-a-mano-tabaquismo-y-peso-al-nacer" class="slide level2">
+<h2>Tukey a mano: tabaquismo y peso al nacer</h2>
+<p>Peso medio al nacer (kg) según la duración del tabaquismo materno. MSE = 0.022.</p>
+<div class="cell columns column-output-location">
+<div class="column">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a aria-hidden="true" tabindex="-1"></a>medias <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="at">menos18 =</span> <span class="fl">3.44</span>, <span class="at">s18_31 =</span> <span class="fl">3.39</span>, <span class="at">mas32 =</span> <span class="fl">3.27</span>)</span>
+<span id="cb12-2"><a aria-hidden="true" tabindex="-1"></a>n      <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">34</span>, <span class="dv">24</span>, <span class="dv">77</span>)</span>
+<span id="cb12-3"><a aria-hidden="true" tabindex="-1"></a>MSE    <span class="ot">&lt;-</span> <span class="fl">0.022</span></span>
+<span id="cb12-4"><a aria-hidden="true" tabindex="-1"></a>k <span class="ot">&lt;-</span> <span class="dv">3</span>; N <span class="ot">&lt;-</span> <span class="fu">sum</span>(n)</span>
+<span id="cb12-5"><a aria-hidden="true" tabindex="-1"></a>q <span class="ot">&lt;-</span> <span class="fu">qtukey</span>(<span class="fl">0.95</span>, <span class="at">nmeans =</span> k, <span class="at">df =</span> N <span class="sc">-</span> k)  <span class="co"># 3.35</span></span>
+<span id="cb12-6"><a aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-7"><a aria-hidden="true" tabindex="-1"></a>pares <span class="ot">&lt;-</span> <span class="fu">combn</span>(<span class="dv">3</span>, <span class="dv">2</span>)</span>
+<span id="cb12-8"><a aria-hidden="true" tabindex="-1"></a><span class="fu">data.frame</span>(</span>
+<span id="cb12-9"><a aria-hidden="true" tabindex="-1"></a>  <span class="at">par  =</span> <span class="fu">paste</span>(<span class="fu">names</span>(medias)[pares[<span class="dv">1</span>, ]],</span>
+<span id="cb12-10"><a aria-hidden="true" tabindex="-1"></a>               <span class="fu">names</span>(medias)[pares[<span class="dv">2</span>, ]], <span class="at">sep =</span> <span class="st">" vs "</span>),</span>
+<span id="cb12-11"><a aria-hidden="true" tabindex="-1"></a>  <span class="at">dif  =</span> <span class="fu">abs</span>(medias[pares[<span class="dv">1</span>, ]] <span class="sc">-</span> medias[pares[<span class="dv">2</span>, ]]),</span>
+<span id="cb12-12"><a aria-hidden="true" tabindex="-1"></a>  <span class="at">HSD  =</span> q <span class="sc">*</span> <span class="fu">sqrt</span>(MSE <span class="sc">/</span> <span class="dv">2</span> <span class="sc">*</span></span>
+<span id="cb12-13"><a aria-hidden="true" tabindex="-1"></a>          (<span class="dv">1</span> <span class="sc">/</span> n[pares[<span class="dv">1</span>, ]] <span class="sc">+</span> <span class="dv">1</span> <span class="sc">/</span> n[pares[<span class="dv">2</span>, ]]))) <span class="sc">|&gt;</span></span>
+<span id="cb12-14"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">signif =</span> dif <span class="sc">&gt;</span> HSD)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div><div class="column">
+<div class="cell-output cell-output-stdout">
+<pre><code>                par  dif     HSD signif
+1 menos18 vs s18_31 0.05 0.09374  FALSE
+2  menos18 vs mas32 0.17 0.07240   TRUE
+3   s18_31 vs mas32 0.12 0.08220   TRUE</code></pre>
+</div>
+</div></div>
+<div class="fragment">
+<p>Sólo <strong>&lt;18 vs.&nbsp;18–31 semanas</strong> no difiere: 0.05 kg &lt; 0.094 kg.</p>
+</div>
+</section>
+<section id="tukey-hsd-en-r" class="slide level2 demo">
+<h2>Tukey HSD · en R</h2>
+<div class="cell columns column-output-location">
+<div class="column">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a aria-hidden="true" tabindex="-1"></a>modelo <span class="ot">&lt;-</span> <span class="fu">aov</span>(IL6 <span class="sc">~</span> grupo, <span class="at">data =</span> il6)</span>
+<span id="cb14-2"><a aria-hidden="true" tabindex="-1"></a><span class="fu">TukeyHSD</span>(modelo)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div><div class="column">
+<div class="cell-output cell-output-stdout">
+<pre><code>  Tukey multiple comparisons of means
+    95% family-wise confidence level
+
+Fit: aov(formula = IL6 ~ grupo, data = il6)
+
+$grupo
+                      diff     lwr    upr  p adj
+Farmaco_A-Control    2.206 -3.5039  7.917 0.7367
+Farmaco_B-Control    8.515  2.8051 14.226 0.0012
+Farmaco_C-Control   11.964  6.2536 17.674 0.0000
+Farmaco_B-Farmaco_A  6.309  0.5986 12.019 0.0248
+Farmaco_C-Farmaco_A  9.758  4.0472 15.468 0.0002
+Farmaco_C-Farmaco_B  3.449 -2.2618  9.159 0.3875</code></pre>
+</div>
+</div></div>
+<p><code>diff</code> = diferencia de medias; <code>lwr</code>–<code>upr</code> = IC 95 % <strong>ajustado</strong>; <code>p adj</code> = <em>p</em> ajustado por Tukey. Si el IC no incluye el 0, la diferencia es significativa.</p>
+</section>
+<section id="tukey-hsd-gráfica-de-intervalos" class="slide level2 demo">
+<h2>Tukey HSD · gráfica de intervalos</h2>
+<div class="cell columns column-output-location">
+<div class="column">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">tukey_hsd</span>(il6, IL6 <span class="sc">~</span> grupo) <span class="sc">|&gt;</span></span>
+<span id="cb16-2"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">par =</span> <span class="fu">paste</span>(group2, <span class="st">"-"</span>, group1)) <span class="sc">|&gt;</span></span>
+<span id="cb16-3"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(estimate,</span>
+<span id="cb16-4"><a aria-hidden="true" tabindex="-1"></a>             <span class="fu">reorder</span>(par, estimate))) <span class="sc">+</span></span>
+<span id="cb16-5"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="dv">0</span>,</span>
+<span id="cb16-6"><a aria-hidden="true" tabindex="-1"></a>             <span class="at">linetype =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
+<span id="cb16-7"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_pointrange</span>(<span class="fu">aes</span>(<span class="at">xmin =</span> conf.low,</span>
+<span id="cb16-8"><a aria-hidden="true" tabindex="-1"></a>                      <span class="at">xmax =</span> conf.high)) <span class="sc">+</span></span>
+<span id="cb16-9"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Diferencia de medias</span><span class="sc">\n</span><span class="st">(IC 95 % Tukey)"</span>,</span>
+<span id="cb16-10"><a aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="cn">NULL</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div><div class="column">
+<div class="cell-output-display">
+<div>
+<figure>
+<p><img data-src="tema-04-pruebas_posthoc_files/figure-revealjs/unnamed-chunk-11-1.png" width="720"></p>
+</figure>
+</div>
+</div>
+</div></div>
+<p><code>tukey_hsd()</code> (paquete <code>rstatix</code>) devuelve lo mismo en formato <em>tibble</em>, útil para graficar o exportar.</p>
+</section>
+<section id="tukey-hsd-ventajas-y-desventajas" class="slide level2">
+<h2>Tukey HSD · ventajas y desventajas</h2>
+<div class="columns">
+<div class="column" style="width:50%;">
+<div class="pro">
+<p><span class="h3">Ventajas</span></p>
+<ul>
+<li>Controla exactamente el FWER para todas las comparaciones por pares.</li>
+<li>Más potente que Bonferroni cuando se hacen todas las comparaciones.</li>
+<li>Da intervalos de confianza ajustados, no sólo <em>p</em>.</li>
+<li>Disponible en R base (<code>TukeyHSD</code>).</li>
+</ul>
+</div>
+</div><div class="column" style="width:50%;">
+<div class="con">
+<p><span class="h3">Desventajas</span></p>
+<ul>
+<li>Sensible a varianzas desiguales, sobre todo con <em>n</em> distintos.</li>
+<li>Sensible a valores atípicos.</li>
+<li>Si sólo interesan algunas comparaciones (p.&nbsp;ej., contra un control) pierde potencia.</li>
+<li>No sirve para contrastes complejos.</li>
+</ul>
+</div>
+</div></div>
+</section>
+<section id="tukey-fe-de-erratas" class="slide level2 fe">
+<h2>Tukey · fe de erratas</h2>
+<table class="caption-top">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>El capítulo dice</th>
+<th>Lo correcto</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Ejemplo: <span class="math inline">\(|\bar x_1-\bar x_2| = 0.10 &gt; 0.094\)</span> → se rechaza H<sub>0</sub></td>
+<td>3.44 − 3.39 = <strong>0.05</strong> &lt; 0.094 → <strong>no</strong> se rechaza H<sub>0</sub></td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(|\bar x_1-\bar x_3| = 0.001 &lt; 0.0726\)</span> → “se acepta” H<sub>0</sub></td>
+<td>3.44 − 3.27 = <strong>0.17</strong> &gt; 0.0726 → <strong>sí</strong> se rechaza H<sub>0</sub>. Además, H<sub>0</sub> nunca se “acepta”: <strong>no se rechaza</strong></td>
+</tr>
+<tr class="odd">
+<td><span class="math inline">\(v = 126\)</span> grados de libertad</td>
+<td><span class="math inline">\(v = N - k = 135 - 3 = 132\)</span> (<em>q</em> = 3.35)</td>
+</tr>
+<tr class="even">
+<td>Supuesto: “<em>n</em> igual para los grupos”</td>
+<td>No es necesario: <code>TukeyHSD()</code> usa Tukey‑Kramer, que admite <em>n</em> distintos</td>
+</tr>
+<tr class="odd">
+<td>Ventaja: “requiere pocos supuestos y es robusta”</td>
+<td>Requiere normalidad y homocedasticidad (la misma tabla lo dice como desventaja)</td>
+</tr>
+<tr class="even">
+<td>Desventaja: “computacionalmente intensivo”</td>
+<td>Se calcula al instante en cualquier software</td>
+</tr>
+</tbody>
+</table>
+</section></section>
+<section>
+<section id="dunnett" class="title-slide slide level1 center" data-background-color="#0b3c49">
+<h1>Dunnett</h1>
+
+</section>
+<section id="dunnett-fundamento-y-supuestos" class="slide level2">
+<h2>Dunnett · fundamento y supuestos</h2>
+<div class="columns">
+<div class="column" style="width:58%;">
+<p>Compara <strong>cada tratamiento contra un grupo control</strong> <span class="citation" data-cites="dunnett1955">(<a href="#/referencias" role="doc-biblioref" onclick="">7</a>)</span>. Sólo hay <em>k</em> − 1 comparaciones (no <em>k</em>(<em>k</em>−1)/2), así que <strong>gana potencia</strong> frente a Tukey.</p>
+<div class="formula">
+<p><span class="math display">\[t_i = \frac{\bar x_i - \bar x_c}{\sqrt{MSE\left(\dfrac{1}{n_i}+\dfrac{1}{n_c}\right)}}\]</span></p>
+</div>
+<p>El valor crítico proviene de la <strong>distribución de Dunnett</strong> (una <em>t</em> multivariada), que considera que todas las comparaciones comparten el mismo control y, por tanto, están correlacionadas.</p>
+</div><div class="column" style="width:42%;">
+<p><span class="h3">Supuestos</span></p>
+<ul>
+<li>Independencia</li>
+<li>Normalidad de los residuos</li>
+<li>Homogeneidad de varianzas</li>
+<li>Un control <strong>definido antes</strong> del análisis</li>
+</ul>
+<div class="decision">
+<p><strong>Diseño:</strong> conviene que el control tenga más sujetos: <span class="math inline">\(n_c \approx n\sqrt{k-1}\)</span>.</p>
+</div>
+</div></div>
+</section>
+<section id="dunnett-en-r" class="slide level2 demo">
+<h2>Dunnett · en R</h2>
+<div class="cell columns column-output-location">
+<div class="column">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">DunnettTest</span>(IL6 <span class="sc">~</span> grupo, <span class="at">data =</span> il6,</span>
+<span id="cb17-2"><a aria-hidden="true" tabindex="-1"></a>            <span class="at">control =</span> <span class="st">"Control"</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div><div class="column">
+<div class="cell-output cell-output-stdout">
+<pre><code>
+  Dunnett's test for comparing several treatments with a control :  
+    95% family-wise confidence level
+
+$Control
+                    diff lwr.ci upr.ci    pval    
+Farmaco_A-Control  2.206 -3.001  7.414 0.61140    
+Farmaco_B-Control  8.515  3.308 13.723 0.00064 ***
+Farmaco_C-Control 11.964  6.757 17.171 2.2e-06 ***
+
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
+</div>
+</div></div>
+<p>Por defecto <code>DunnettTest</code> usa el <strong>primer nivel</strong> del factor como control; conviene declararlo con <code>control =</code>.</p>
+<div class="fragment">
+<p><strong>Lectura:</strong> los fármacos B y C elevan significativamente la IL‑6 respecto al control; el fármaco A no.</p>
+</div>
+</section>
+<section id="dunnett-ventajas-y-desventajas" class="slide level2">
+<h2>Dunnett · ventajas y desventajas</h2>
+<div class="columns">
+<div class="column" style="width:50%;">
+<div class="pro">
+<p><span class="h3">Ventajas</span></p>
+<ul>
+<li>La opción más potente cuando la pregunta es “¿qué tratamientos difieren del control?”.</li>
+<li>Menos comparaciones → menor penalización.</li>
+<li>Muy común en farmacología, toxicología y ensayos de dosis.</li>
+</ul>
+</div>
+</div><div class="column" style="width:50%;">
+<div class="con">
+<p><span class="h3">Desventajas</span></p>
+<ul>
+<li>No compara los tratamientos entre sí.</li>
+<li>Requiere normalidad y varianzas iguales.</li>
+<li>El control debe elegirse <em>a priori</em>; cambiarlo después de ver los datos invalida la prueba.</li>
+<li>No confundir con la prueba de <strong>Dunn</strong> (no paramétrica).</li>
+</ul>
+</div>
+</div></div>
+</section>
+<section id="dunnett-fe-de-erratas" class="slide level2 fe">
+<h2>Dunnett · fe de erratas</h2>
+<div class="columns">
+<div class="column" style="width:55%;">
+<div class="errata">
+<p><strong>El capítulo dice:</strong> <span class="math display">\[D = \frac{\bar x_i - \bar x_c}{\sqrt{2 \times MSE \left(\frac{1}{n_i}+\frac{1}{n_c}\right)}}\]</span></p>
+<p><strong>Lo correcto:</strong> <span class="math display">\[t_i = \frac{\bar x_i - \bar x_c}{\sqrt{MSE \left(\frac{1}{n_i}+\frac{1}{n_c}\right)}}\]</span></p>
+</div>
+</div><div class="column" style="width:45%;">
+<p>El “2” sólo aparece cuando <span class="math inline">\(n_i = n_c = n\)</span>, porque <span class="math inline">\(\frac{1}{n}+\frac{1}{n} = \frac{2}{n}\)</span>. Poner <strong>ambos</strong> duplica la varianza y hace la prueba demasiado conservadora.</p>
+<p>Otras precisiones:</p>
+<ul>
+<li>El nombre es <strong>Dunnett</strong> (Charles W. Dunnett), no “Dunnet”. Problema de edición.</li>
+<li>“Más poderosa que pruebas <em>t</em> individuales” es impreciso: las <em>t</em> sin corregir tienen más potencia porque <strong>no controlan</strong> el FWER. La comparación justa es con Tukey o Bonferroni.</li>
+</ul>
+</div></div>
+</section></section>
+<section>
+<section id="scheffé" class="title-slide slide level1 center" data-background-color="#0b3c49">
+<h1>Scheffé</h1>
+
+</section>
+<section id="scheffé-fundamento-y-supuestos" class="slide level2">
+<h2>Scheffé · fundamento y supuestos</h2>
+<div class="columns">
+<div class="column" style="width:58%;">
+<p>Controla el FWER para <strong>todos los contrastes posibles</strong>, incluidos los complejos <span class="citation" data-cites="scheffe1953">(<a href="#/referencias" role="doc-biblioref" onclick="">8</a>)</span>. Un contraste es una combinación de medias con coeficientes que suman cero, por ejemplo:</p>
+<p><span class="math display">\[L = \bar x_{\text{Control}} - \tfrac{1}{3}(\bar x_A + \bar x_B + \bar x_C)\]</span></p>
+<p>Es significativo si</p>
+<div class="formula">
+<p><span class="math display">\[|L| &gt; \sqrt{(k-1)\,F_{\alpha;\,k-1,\,N-k}}\ \sqrt{MSE\sum \frac{c_i^2}{n_i}}\]</span></p>
+</div>
+</div><div class="column" style="width:42%;">
+<p><span class="h3">Supuestos</span></p>
+<ul>
+<li>Independencia</li>
+<li>Normalidad de los residuos</li>
+<li>Homogeneidad de varianzas</li>
+<li>Admite <em>n</em> distintos</li>
+</ul>
+<div class="decision">
+<p>Es coherente con la <em>F</em>: si el ANOVA no es significativo, <strong>ningún</strong> contraste de Scheffé lo será.</p>
+</div>
+</div></div>
+</section>
+<section id="scheffé-en-r" class="slide level2 demo">
+<h2>Scheffé · en R</h2>
+<div class="columns">
+<div class="column" style="width:50%;">
+<p><strong>Todos los pares</strong></p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">ScheffeTest</span>(modelo)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+  Posthoc multiple comparisons of means: Scheffe Test 
+    95% family-wise confidence level
+
+$grupo
+                      diff   lwr.ci upr.ci    pval    
+Farmaco_A-Control    2.206 -4.00970  8.423 0.79006    
+Farmaco_B-Control    8.515  2.29930 14.732 0.00308 ** 
+Farmaco_C-Control   11.964  5.74781 18.180 1.8e-05 ***
+Farmaco_B-Farmaco_A  6.309  0.09288 12.525 0.04531 *  
+Farmaco_C-Farmaco_A  9.758  3.54139 15.974 0.00053 ***
+Farmaco_C-Farmaco_B  3.449 -2.76762  9.665 0.47125    
+
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
+</div>
+</div>
+</div><div class="column" style="width:50%;">
+<p><strong>Contraste complejo:</strong> control vs.&nbsp;promedio de los fármacos</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a aria-hidden="true" tabindex="-1"></a>contraste <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">c</span>(<span class="dv">1</span>, <span class="sc">-</span><span class="dv">1</span><span class="sc">/</span><span class="dv">3</span>, <span class="sc">-</span><span class="dv">1</span><span class="sc">/</span><span class="dv">3</span>, <span class="sc">-</span><span class="dv">1</span><span class="sc">/</span><span class="dv">3</span>),</span>
+<span id="cb21-2"><a aria-hidden="true" tabindex="-1"></a>  <span class="at">dimnames =</span> <span class="fu">list</span>(<span class="fu">levels</span>(il6<span class="sc">$</span>grupo),</span>
+<span id="cb21-3"><a aria-hidden="true" tabindex="-1"></a>                  <span class="st">"Control vs Farmacos"</span>))</span>
+<span id="cb21-4"><a aria-hidden="true" tabindex="-1"></a><span class="fu">ScheffeTest</span>(modelo, <span class="at">contrasts =</span> contraste)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+  Posthoc multiple comparisons of means: Scheffe Test 
+    95% family-wise confidence level
+
+$grupo
+                                        diff lwr.ci upr.ci   pval    
+Control-Farmaco_A,Farmaco_B,Farmaco_C -7.562 -12.64 -2.486 0.0011 ** 
+
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
+</div>
+</div>
+</div></div>
+</section>
+<section id="scheffé-ventajas-y-desventajas" class="slide level2">
+<h2>Scheffé · ventajas y desventajas</h2>
+<div class="columns">
+<div class="column" style="width:50%;">
+<div class="pro">
+<p><span class="h3">Ventajas</span></p>
+<ul>
+<li>Permite probar <strong>cualquier</strong> contraste, incluso los que se nos ocurren al ver los datos.</li>
+<li>No hay que definir los contrastes de antemano.</li>
+<li>Admite grupos de distinto tamaño.</li>
+<li>Útil en análisis exploratorios.</li>
+</ul>
+</div>
+</div><div class="column" style="width:50%;">
+<div class="con">
+<p><span class="h3">Desventajas</span></p>
+<ul>
+<li>La más <strong>conservadora</strong> para comparaciones por pares: IC amplios y poca potencia.</li>
+<li>Si sólo interesan pares, Tukey es mejor.</li>
+<li>Requiere normalidad y varianzas iguales.</li>
+</ul>
+</div>
+</div></div>
+</section>
+<section id="scheffé-fe-de-erratas" class="slide level2 fe">
+<h2>Scheffé · fe de erratas</h2>
+<table class="caption-top">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>El capítulo dice</th>
+<th>Lo correcto</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>“No requiere estrictamente varianzas homogéneas ni normalidad”</td>
+<td>Tiene los <strong>mismos supuestos que el ANOVA</strong></td>
+</tr>
+<tr class="even">
+<td>“Requiere grupos de igual tamaño”</td>
+<td>Admite <em>n</em> distintos sin problema</td>
+</tr>
+<tr class="odd">
+<td>“Más sujeto a errores de tipo I que otras pruebas post hoc”</td>
+<td>Es la <strong>más conservadora</strong>: comete <strong>menos</strong> errores tipo I</td>
+</tr>
+<tr class="even">
+<td>“Riesgo reducido de errores de tipo II” y “prueba relativamente poderosa”</td>
+<td>Lo contrario: es la de <strong>menor potencia</strong> para comparar pares (la misma tabla lo dice en su última fila)</td>
+</tr>
+<tr class="odd">
+<td>“<code>scheffe.test</code> no da un valor de <em>p</em>”</td>
+<td>Con <code>group = FALSE</code> sí lo da; <code>DescTools::ScheffeTest()</code> también</td>
+</tr>
+</tbody>
+</table>
+<div class="decision">
+<p>La tabla original mezcla ventajas de Tukey con desventajas de Scheffé. Regla fácil: <strong>más flexible = menos potente</strong>.</p>
+</div>
+</section></section>
+<section>
+<section id="gameshowell-y-dunnett-t3" class="title-slide slide level1 center" data-background-color="#0b3c49">
+<h1>Games‑Howell y Dunnett T3</h1>
+
+</section>
+<section id="cuando-las-varianzas-son-distintas" class="slide level2">
+<h2>Cuando las varianzas son distintas</h2>
+<div class="columns">
+<div class="column" style="width:55%;">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a aria-hidden="true" tabindex="-1"></a>Cushings <span class="sc">|&gt;</span></span>
+<span id="cb23-2"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(Type) <span class="sc">|&gt;</span></span>
+<span id="cb23-3"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">n =</span> <span class="fu">n</span>(),</span>
+<span id="cb23-4"><a aria-hidden="true" tabindex="-1"></a>            <span class="at">media =</span> <span class="fu">mean</span>(Tetrahydrocortisone),</span>
+<span id="cb23-5"><a aria-hidden="true" tabindex="-1"></a>            <span class="at">DE =</span> <span class="fu">sd</span>(Tetrahydrocortisone))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 4 × 4
+  Type      n media     DE
+  &lt;fct&gt; &lt;int&gt; &lt;dbl&gt;  &lt;dbl&gt;
+1 a         6  2.97  0.924
+2 b        10  8.18  3.79 
+3 c         5 19.7  19.2  
+4 u         6 14.0  10.1  </code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">levene_test</span>(Cushings, Tetrahydrocortisone <span class="sc">~</span> Type)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 4
+    df1   df2 statistic     p
+  &lt;int&gt; &lt;int&gt;     &lt;dbl&gt; &lt;dbl&gt;
+1     3    23      1.46 0.251</code></pre>
+</div>
+</div>
+</div><div class="column" style="width:45%;">
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure>
+<p><img data-src="tema-04-pruebas_posthoc_files/figure-revealjs/unnamed-chunk-16-1.png" width="600"></p>
+</figure>
+</div>
+</div>
+</div>
+</div></div>
+<div class="small">
+<p>Las DE van de 0.9 a 19. Levene no lo detecta porque con <em>n</em> tan pequeños tiene poca potencia. Tukey no es apropiado aquí.</p>
+</div>
+</section>
+<section id="gameshowell-fundamento-y-supuestos" class="slide level2">
+<h2>Games‑Howell · fundamento y supuestos</h2>
+<div class="columns">
+<div class="column" style="width:58%;">
+<p>Para cada par calcula una <em>t</em> <strong>tipo Welch</strong>, con la varianza de cada grupo (no la MSE común) y grados de libertad propios <span class="citation" data-cites="games1976">(<a href="#/referencias" role="doc-biblioref" onclick="">9</a>)</span>:</p>
+<div class="formula">
+<p><span class="math display">\[t_{ij} = \frac{\bar x_i - \bar x_j}{\sqrt{\dfrac{s_i^2}{n_i} + \dfrac{s_j^2}{n_j}}}\]</span></p>
+</div>
+<p>El <em>p</em> se obtiene de la distribución del rango estudentizado (<span class="math inline">\(q = t\sqrt 2\)</span>), igual que en Tukey. Es, en esencia, un <strong>Tukey para varianzas desiguales</strong>.</p>
+</div><div class="column" style="width:42%;">
+<p><span class="h3">Supuestos</span></p>
+<ul>
+<li>Independencia</li>
+<li>Normalidad (aproximada) en cada grupo</li>
+<li><strong>No</strong> requiere varianzas iguales</li>
+<li><strong>No</strong> requiere <em>n</em> iguales</li>
+<li>Funciona mejor con <em>n</em> ≥ 6 por grupo</li>
+</ul>
+<div class="warning">
+<p>Es una prueba <strong>paramétrica</strong>: no sustituye a Dunn cuando los datos no son normales.</p>
+</div>
+</div></div>
+</section>
+<section id="gameshowell-en-r" class="slide level2 demo">
+<h2>Games‑Howell · en R</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">games_howell_test</span>(Cushings, Tetrahydrocortisone <span class="sc">~</span> Type) <span class="sc">|&gt;</span></span>
+<span id="cb27-2"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(group1, group2, estimate, conf.low, conf.high, p.adj, p.adj.signif)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 7
+  group1 group2 estimate conf.low conf.high p.adj p.adj.signif
+  &lt;chr&gt;  &lt;chr&gt;     &lt;dbl&gt;    &lt;dbl&gt;     &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;       
+1 a      b          5.21     1.41      9.01 0.008 **          
+2 a      c         16.8    -18.2      51.7  0.339 ns          
+3 a      u         11.0     -4.12     26.2  0.143 ns          
+4 b      c         11.5    -23.2      46.2  0.593 ns          
+5 b      u          5.84    -9.14     20.8  0.564 ns          
+6 c      u         -5.70   -39.1      27.7  0.929 ns          </code></pre>
+</div>
+</div>
+<div class="fragment">
+<p>Sólo <strong>a vs.&nbsp;b</strong> es significativa. Tukey, que usa una varianza común, da una conclusión <strong>distinta</strong> (a vs.&nbsp;c):</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">tukey_hsd</span>(Cushings, Tetrahydrocortisone <span class="sc">~</span> Type) <span class="sc">|&gt;</span></span>
+<span id="cb29-2"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(group1, group2, estimate, p.adj, p.adj.signif)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 5
+  group1 group2 estimate  p.adj p.adj.signif
+  &lt;chr&gt;  &lt;chr&gt;     &lt;dbl&gt;  &lt;dbl&gt; &lt;chr&gt;       
+1 a      b          5.21 0.722  ns          
+2 a      c         16.8  0.0394 *           
+3 a      u         11.0  0.22   ns          
+4 b      c         11.5  0.155  ns          
+5 b      u          5.84 0.647  ns          
+6 c      u         -5.70 0.762  ns          </code></pre>
+</div>
+</div>
+</div>
+</section>
+<section id="dunnett-t3-fundamento-y-en-r" class="slide level2 demo">
+<h2>Dunnett T3 · fundamento y en R</h2>
+<div class="columns">
+<div class="column" style="width:45%;">
+<p>También usa <em>t</em> tipo Welch para <strong>todos los pares</strong>, pero toma el valor crítico de la distribución del <strong>módulo máximo estudentizado</strong> <span class="citation" data-cites="dunnett1980">(<a href="#/referencias" role="doc-biblioref" onclick="">10</a>)</span>. Con grupos pequeños controla mejor el error tipo I que Games‑Howell.</p>
+<div class="warning">
+<p>A pesar del nombre, <strong>no</strong> compara contra un control y <strong>no</strong> es no paramétrica.</p>
+</div>
+<p><strong>Supuestos:</strong> independencia y normalidad; varianzas y <em>n</em> pueden ser distintos.</p>
+</div><div class="column" style="width:55%;">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">dunnettT3Test</span>(Tetrahydrocortisone <span class="sc">~</span> Type,</span>
+<span id="cb31-2"><a aria-hidden="true" tabindex="-1"></a>              <span class="at">data =</span> Cushings)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  a     b     c    
+b 0.009 -     -    
+c 0.422 0.714 -    
+u 0.184 0.692 0.986</code></pre>
+</div>
+</div>
+<p>Útil aquí: el carcinoma tiene sólo <em>n</em> = 5. Coincide con Games‑Howell: sólo a vs.&nbsp;b.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(Cushings<span class="sc">$</span>Type)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+ a  b  c  u 
+ 6 10  5  6 </code></pre>
+</div>
+</div>
+</div></div>
+</section>
+<section id="gameshowell-y-t3-ventajas-y-desventajas" class="slide level2">
+<h2>Games‑Howell y T3 · ventajas y desventajas</h2>
+<div class="columns">
+<div class="column" style="width:50%;">
+<div class="pro">
+<p><span class="h3">Ventajas</span></p>
+<ul>
+<li>Válidas con varianzas <strong>y</strong> tamaños de muestra distintos, lo habitual en estudios clínicos.</li>
+<li>Games‑Howell: buena potencia con <em>n</em> moderados.</li>
+<li>T3: más conservadora y fiable con <em>n</em> pequeños.</li>
+<li>En la duda sobre homocedasticidad, son una opción segura.</li>
+</ul>
+</div>
+</div><div class="column" style="width:50%;">
+<div class="con">
+<p><span class="h3">Desventajas</span></p>
+<ul>
+<li>Siguen requiriendo normalidad aproximada.</li>
+<li>Games‑Howell puede ser algo liberal con <em>n</em> &lt; 6 por grupo.</li>
+<li>Si las varianzas sí son iguales, pierden un poco de potencia frente a Tukey.</li>
+<li>T3 no está en R base (<code>PMCMRplus</code>).</li>
+</ul>
+</div>
+</div></div>
+</section>
+<section id="gameshowell-y-t3-fe-de-erratas" class="slide level2 fe">
+<h2>Games‑Howell y T3 · fe de erratas</h2>
+<table class="caption-top">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Prueba</th>
+<th>El capítulo dice</th>
+<th>Lo correcto</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Games‑Howell</td>
+<td>“Prueba post hoc <strong>no paramétrica</strong>”</td>
+<td>Es <strong>paramétrica</strong>: compara medias, usa varianzas y supone normalidad. Sólo relaja la igualdad de varianzas</td>
+</tr>
+<tr class="even">
+<td>Games‑Howell</td>
+<td>“Compara si los intervalos de confianza se solapan”</td>
+<td>Compara cada diferencia con un valor crítico del rango estudentizado. Mirar si los IC individuales se solapan <strong>no</strong> es una prueba válida</td>
+</tr>
+<tr class="odd">
+<td>Dunnett T3</td>
+<td>“Equivalente <strong>no paramétrico</strong> de Dunnett”</td>
+<td>Es paramétrica (<em>t</em> de Welch)</td>
+</tr>
+<tr class="even">
+<td>Dunnett T3</td>
+<td>“Determina si la media de un <strong>control</strong> difiere de dos o más condiciones”</td>
+<td>Compara <strong>todos los pares</strong>; no hay grupo control (véase la salida de <code>dunnettT3Test()</code>)</td>
+</tr>
+<tr class="odd">
+<td>Dunnett T3</td>
+<td>“Prueba de comparación <strong>a priori</strong>”</td>
+<td>Es una prueba post hoc por pares</td>
+</tr>
+</tbody>
+</table>
+<div class="warning">
+<p>El nombre engaña: “Dunnett T3” viene del autor (Dunnett, 1980), no de la prueba contra un control (Dunnett, 1955).</p>
+</div>
+</section></section>
+<section>
+<section id="dunn" class="title-slide slide level1 center" data-background-color="#0b3c49">
+<h1>Dunn</h1>
+
+</section>
+<section id="dunn-fundamento-y-supuestos" class="slide level2">
+<h2>Dunn · fundamento y supuestos</h2>
+<div class="columns">
+<div class="column" style="width:58%;">
+<p>Post hoc <strong>no paramétrica</strong> tras Kruskal‑Wallis <span class="citation" data-cites="dunn1964 dinno2015">(<a href="#/referencias" role="doc-biblioref" onclick="">11</a>,<a href="#/referencias" role="doc-biblioref" onclick="">12</a>)</span>. Usa los <strong>mismos rangos conjuntos</strong> del Kruskal‑Wallis y compara los rangos medios de cada par:</p>
+<div class="formula">
+<p><span class="math display">\[z_{ij} = \frac{\bar R_i - \bar R_j}{\sqrt{\dfrac{N(N+1)}{12}\left(\dfrac{1}{n_i}+\dfrac{1}{n_j}\right)}}\]</span></p>
+</div>
+<p>(con corrección por empates). Después se ajustan los <em>p</em> con Bonferroni, Holm o BH.</p>
+</div><div class="column" style="width:42%;">
+<p><span class="h3">Supuestos</span></p>
+<ul>
+<li>Muestras independientes</li>
+<li>Variable al menos ordinal</li>
+<li>No requiere normalidad ni varianzas iguales</li>
+<li>Para hablar de <strong>medianas</strong>, las distribuciones deben tener forma similar</li>
+</ul>
+<div class="decision">
+<p>Hacer varias U de Mann‑Whitney <strong>no</strong> es equivalente: cada par se clasificaría por separado.</p>
+</div>
+</div></div>
+</section>
+<section id="dunn-en-r" class="slide level2 demo">
+<h2>Dunn · en R</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">kruskal_test</span>(Cushings, Tetrahydrocortisone <span class="sc">~</span> Type)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 6
+  .y.                     n statistic    df       p method        
+* &lt;chr&gt;               &lt;int&gt;     &lt;dbl&gt; &lt;int&gt;   &lt;dbl&gt; &lt;chr&gt;         
+1 Tetrahydrocortisone    27      13.5     3 0.00366 Kruskal-Wallis</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">dunn_test</span>(Cushings, Tetrahydrocortisone <span class="sc">~</span> Type,</span>
+<span id="cb37-2"><a aria-hidden="true" tabindex="-1"></a>          <span class="at">p.adjust.method =</span> <span class="st">"holm"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb37-3"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(group1, group2, statistic, p, p.adj, p.adj.signif)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 6
+  group1 group2 statistic        p   p.adj p.adj.signif
+  &lt;chr&gt;  &lt;chr&gt;      &lt;dbl&gt;    &lt;dbl&gt;   &lt;dbl&gt; &lt;chr&gt;       
+1 a      b          2.31  0.0209   0.0835  ns          
+2 a      c          3.42  0.000634 0.00380 **          
+3 a      u          2.82  0.00481  0.0240  *           
+4 b      c          1.60  0.110    0.329   ns          
+5 b      u          0.842 0.400    0.800   ns          
+6 c      u         -0.728 0.466    0.800   ns          </code></pre>
+</div>
+</div>
+<p><code>p</code> = sin ajustar; <code>p.adj</code> = ajustado por Holm. Diferencias: a vs.&nbsp;c y a vs.&nbsp;u. Note que a vs.&nbsp;b era significativa <strong>sin</strong> ajustar (<em>p</em> = 0.02) y deja de serlo tras la corrección.</p>
+</section>
+<section id="dunn-ventajas-y-desventajas" class="slide level2">
+<h2>Dunn · ventajas y desventajas</h2>
+<div class="columns">
+<div class="column" style="width:50%;">
+<div class="pro">
+<p><span class="h3">Ventajas</span></p>
+<ul>
+<li>No requiere normalidad ni homocedasticidad.</li>
+<li>Adecuada para escalas ordinales (dolor, EVA, puntajes clínicos).</li>
+<li>Robusta ante valores atípicos.</li>
+<li>Admite <em>n</em> distintos y cualquier método de ajuste de <em>p</em>.</li>
+</ul>
+</div>
+</div><div class="column" style="width:50%;">
+<div class="con">
+<p><span class="h3">Desventajas</span></p>
+<ul>
+<li>Menor potencia que las pruebas paramétricas cuando sus supuestos se cumplen.</li>
+<li>El resultado cambia según el ajuste elegido (declárelo siempre).</li>
+<li>Compara rangos medios, no medias; la interpretación como medianas exige distribuciones de forma similar.</li>
+</ul>
+</div>
+</div></div>
+</section>
+<section id="dunn-contra-un-grupo-control" class="slide level2 demo">
+<h2>Dunn contra un grupo control</h2>
+<div class="columns">
+<div class="column" style="width:45%;">
+<p>¿Y si el interés es comparar varios grupos contra un <strong>control</strong> con datos no normales?</p>
+<p>Dunnett <strong>no</strong> sirve (es paramétrica). La opción es Dunn <strong>muchos‑contra‑uno</strong>: sólo <em>k</em> − 1 comparaciones, así que la corrección penaliza menos.</p>
+<p>Aquí, el adenoma (a) como referencia.</p>
+</div><div class="column" style="width:55%;">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">kwManyOneDunnTest</span>(Tetrahydrocortisone <span class="sc">~</span> Type,</span>
+<span id="cb39-2"><a aria-hidden="true" tabindex="-1"></a>                  <span class="at">data =</span> Cushings,</span>
+<span id="cb39-3"><a aria-hidden="true" tabindex="-1"></a>                  <span class="at">p.adjust.method =</span> <span class="st">"holm"</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  a     
+b 0.0209
+c 0.0019
+u 0.0096</code></pre>
+</div>
+</div>
+</div></div>
+</section>
+<section id="dunn-fe-de-erratas-12-el-ejemplo-en-r" class="slide level2 fe">
+<h2>Dunn · fe de erratas (1/2): el ejemplo en R</h2>
+<div class="columns">
+<div class="column" style="width:52%;">
+<div class="errata">
+<p><strong>El capítulo usa</strong> <code>dunn.test(datos$Dolor, datos$Tratamiento, kw = T)</code> y lee <em>p</em> = 0.0104 como significativo.</p>
+<p><strong>Pero</strong> <code>dunn.test()</code> por defecto:</p>
+<ol type="1">
+<li><strong>No ajusta</strong> los <em>p</em> (<code>method = "none"</code>).</li>
+<li>Reporta <em>p</em> de <strong>una cola</strong>: se rechaza si <em>p</em> ≤ α/2 = 0.025.</li>
+</ol>
+</div>
+<p><code>kw = TRUE</code> no indica “que viene de un ANOVA”: sólo imprime el Kruskal‑Wallis.</p>
+</div><div class="column" style="width:48%;">
+<p>Uso correcto:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a aria-hidden="true" tabindex="-1"></a>dunn.test<span class="sc">::</span><span class="fu">dunn.test</span>(x, g,</span>
+<span id="cb41-2"><a aria-hidden="true" tabindex="-1"></a>  <span class="at">method =</span> <span class="st">"holm"</span>,  <span class="co"># ajustar</span></span>
+<span id="cb41-3"><a aria-hidden="true" tabindex="-1"></a>  <span class="at">altp   =</span> <span class="cn">TRUE</span>)    <span class="co"># p de dos colas</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>El <em>p</em> de una cola es la mitad del de dos colas:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">dunn_test</span>(Cushings, Tetrahydrocortisone <span class="sc">~</span> Type,</span>
+<span id="cb42-2"><a aria-hidden="true" tabindex="-1"></a>          <span class="at">p.adjust.method =</span> <span class="st">"none"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb42-3"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">p_una_cola =</span> p <span class="sc">/</span> <span class="dv">2</span>) <span class="sc">|&gt;</span></span>
+<span id="cb42-4"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(group1, group2, p, p_una_cola) <span class="sc">|&gt;</span></span>
+<span id="cb42-5"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">head</span>(<span class="dv">3</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 3 × 4
+  group1 group2        p p_una_cola
+  &lt;chr&gt;  &lt;chr&gt;     &lt;dbl&gt;      &lt;dbl&gt;
+1 a      b      0.0209     0.0104  
+2 a      c      0.000634   0.000317
+3 a      u      0.00481    0.00240 </code></pre>
+</div>
+</div>
+</div></div>
+</section>
+<section id="dunn-fe-de-erratas-22" class="slide level2 fe">
+<h2>Dunn · fe de erratas (2/2)</h2>
+<table class="caption-top">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>El capítulo dice</th>
+<th>Lo correcto</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>“<code>rstatix</code> da resultados distintos porque el ajuste es distinto”</td>
+<td>La diferencia real: <code>dunn.test</code> <strong>sin ajuste y a una cola</strong> vs.&nbsp;<code>rstatix</code> <strong>Holm y dos colas</strong></td>
+</tr>
+<tr class="even">
+<td>Desventaja: “sólo para dos grupos”</td>
+<td>Se diseñó para <em>k</em> grupos: <em>Multiple comparisons using rank sums</em> <span class="citation" data-cites="dunn1964">(<a href="#/referencias" role="doc-biblioref" onclick="">11</a>)</span></td>
+</tr>
+<tr class="odd">
+<td>Desventaja: “incrementa el riesgo de error tipo I”</td>
+<td>Con un ajuste (Bonferroni, Holm, BH) <strong>controla</strong> el error tipo I; ése es su propósito</td>
+</tr>
+<tr class="even">
+<td>“Si se compara con un control, Dunnett o T3 de Dunnett serían más apropiadas”</td>
+<td>Ambas son paramétricas. Para datos no normales use Dunn muchos‑contra‑uno (diapositiva anterior)</td>
+</tr>
+<tr class="odd">
+<td>Hipótesis alternativa: “diferencias entre las medianas <strong>de al menos dos grupos</strong>”</td>
+<td>Ésa es la H<sub>A</sub> del Kruskal‑Wallis. En Dunn, cada par tiene su propia H<sub>0</sub>: la distribución del grupo <em>i</em> = la del grupo <em>j</em></td>
+</tr>
+</tbody>
+</table>
+</section></section>
+<section>
+<section id="nemenyi" class="title-slide slide level1 center" data-background-color="#0b3c49">
+<h1>Nemenyi</h1>
+
+</section>
+<section id="nemenyi-fundamento-supuestos-y-r" class="slide level2 demo">
+<h2>Nemenyi · fundamento, supuestos y R</h2>
+<div class="columns">
+<div class="column" style="width:45%;">
+<p>Es el <strong>análogo de Tukey con rangos</strong> <span class="citation" data-cites="nemenyi1963">(<a href="#/referencias" role="doc-biblioref" onclick="">13</a>)</span>: compara las diferencias de rangos medios contra la distribución del rango estudentizado. Se usa tras Kruskal‑Wallis (y también tras Friedman en diseños pareados).</p>
+<p><strong>Supuestos:</strong> independencia, variable ordinal o continua; pensada para <em>n</em> <strong>iguales</strong>.</p>
+<p><strong>Ventaja:</strong> sencilla y directa.<br> <strong>Desventaja:</strong> conservadora; con <em>n</em> distintos, Dunn suele ser preferible.</p>
+</div><div class="column" style="width:55%;">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">NemenyiTest</span>(Tetrahydrocortisone <span class="sc">~</span> Type,</span>
+<span id="cb44-2"><a aria-hidden="true" tabindex="-1"></a>            <span class="at">data =</span> Cushings)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+ Nemenyi's test of multiple comparisons for independent samples (tukey)  
+
+    mean.rank.diff   pval    
+b-a          9.467 0.0958 .  
+c-a         16.417 0.0036 ** 
+u-a         12.917 0.0249 *  
+c-b          6.950 0.3793    
+u-b          3.450 0.8345    
+u-c         -3.500 0.8858    
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
+</div>
+</div>
+<p>Aquí coincide con Dunn + Holm: a vs.&nbsp;c y a vs.&nbsp;u.</p>
+</div></div>
+</section>
+<section id="nemenyi-fe-de-erratas" class="slide level2 fe">
+<h2>Nemenyi · fe de erratas</h2>
+<div class="columns">
+<div class="column" style="width:55%;">
+<div class="errata">
+<p><strong>El capítulo dice:</strong> <span class="math display">\[s.e. = \sqrt{\frac{k(n+1)}{12}}\]</span></p>
+<p><strong>Lo correcto</strong> (tras Kruskal‑Wallis, <em>N</em> = total): <span class="math display">\[s.e. = \sqrt{\frac{N(N+1)}{12}\left(\frac{1}{n_i}+\frac{1}{n_j}\right)}\]</span></p>
+</div>
+</div><div class="column" style="width:45%;">
+<p>La fórmula del capítulo parece una mezcla con la del post hoc de <strong>Friedman</strong> (medidas repetidas), donde el error estándar es <span class="math inline">\(\sqrt{k(k+1)/(6n)}\)</span>, con <em>n</em> = número de bloques.</p>
+<p>La prueba compara <span class="math inline">\(|\bar R_i - \bar R_j| / s.e.\)</span> contra <span class="math inline">\(q/\sqrt 2\)</span> del rango estudentizado.</p>
+</div></div>
+</section></section>
+<section>
+<section id="correcciones-del-valor-de-p" class="title-slide slide level1 center" data-background-color="#0b3c49">
+<h1>Correcciones del valor de <em>p</em></h1>
+
+</section>
+<section id="bonferroni-fundamento" class="slide level2">
+<h2>Bonferroni · fundamento</h2>
+<div class="columns">
+<div class="column" style="width:55%;">
+<p>La corrección más simple: dividir α entre el número de comparaciones <em>m</em>, o, de forma equivalente, multiplicar cada <em>p</em>:</p>
+<div class="formula">
+<p><span class="math display">\[\alpha^* = \frac{\alpha}{m} \qquad\Longleftrightarrow\qquad p_{\text{ajustado}} = \min(1,\ m \cdot p)\]</span></p>
+</div>
+<p>Con 6 comparaciones: α* = 0.05 / 6 = 0.0083.</p>
+<p><strong>Supuestos:</strong> ninguno sobre la dependencia entre pruebas; los de la prueba original (<em>t</em>, <em>z</em>, etc.) sí aplican.</p>
+</div><div class="column" style="width:45%;">
+<div class="pro">
+<p><strong>Ventajas:</strong> simple, universal, válida con cualquier dependencia; razonable con pocas comparaciones planeadas.</p>
+</div>
+<div class="con">
+<p><strong>Desventajas:</strong> muy conservadora; la potencia cae rápido conforme crece <em>m</em>. Siempre hay una alternativa igual de válida y más potente: <strong>Holm</strong> <span class="citation" data-cites="armstrong2014">(<a href="#/referencias" role="doc-biblioref" onclick="">14</a>)</span>.</p>
+</div>
+</div></div>
+</section>
+<section id="holm-el-bonferroni-secuencial" class="slide level2">
+<h2>Holm · el Bonferroni secuencial</h2>
+<div class="columns">
+<div class="column" style="width:55%;">
+<p>Método <strong>escalonado descendente</strong> <span class="citation" data-cites="holm1979">(<a href="#/referencias" role="doc-biblioref" onclick="">15</a>)</span>:</p>
+<ol type="1">
+<li>Ordenar los <em>p</em> de menor a mayor: <span class="math inline">\(p_{(1)} \le \dots \le p_{(m)}\)</span>.</li>
+<li>Comparar <span class="math inline">\(p_{(i)}\)</span> con <span class="math inline">\(\alpha/(m - i + 1)\)</span>.</li>
+<li>Rechazar mientras se cumpla; <strong>detenerse</strong> en el primero que no.</li>
+</ol>
+<p>El más pequeño se compara con α/<em>m</em> (igual que Bonferroni), el siguiente con α/(<em>m</em>−1)… cada paso es menos estricto.</p>
+</div><div class="column" style="width:45%;">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fl">0.004</span>, <span class="fl">0.010</span>, <span class="fl">0.015</span>, <span class="fl">0.30</span>)</span>
+<span id="cb46-2"><a aria-hidden="true" tabindex="-1"></a><span class="fu">data.frame</span>(p,</span>
+<span id="cb46-3"><a aria-hidden="true" tabindex="-1"></a>  <span class="at">umbral =</span> <span class="fl">0.05</span> <span class="sc">/</span> (<span class="dv">4</span><span class="sc">:</span><span class="dv">1</span>),</span>
+<span id="cb46-4"><a aria-hidden="true" tabindex="-1"></a>  <span class="at">Bonf   =</span> <span class="fu">p.adjust</span>(p, <span class="st">"bonferroni"</span>),</span>
+<span id="cb46-5"><a aria-hidden="true" tabindex="-1"></a>  <span class="at">Holm   =</span> <span class="fu">p.adjust</span>(p, <span class="st">"holm"</span>))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>      p  umbral  Bonf  Holm
+1 0.004 0.01250 0.016 0.016
+2 0.010 0.01667 0.040 0.030
+3 0.015 0.02500 0.060 0.030
+4 0.300 0.05000 1.000 0.300</code></pre>
+</div>
+</div>
+<p>Bonferroni rechaza 2; Holm rechaza 3.</p>
+</div></div>
+<div class="decision">
+<p>Holm controla el FWER igual que Bonferroni, sin supuestos adicionales, y <strong>siempre</strong> tiene igual o más potencia. Es el método por defecto en <code>pairwise.t.test()</code> y <code>rstatix</code>.</p>
+</div>
+</section>
+<section id="holm-y-bonferroni-fe-de-erratas" class="slide level2 fe">
+<h2>Holm y Bonferroni · fe de erratas</h2>
+<table class="caption-top">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>El capítulo dice</th>
+<th>Lo correcto</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>“Bonferroni compara todas las combinaciones posibles; Holm sólo las que son significativas”</td>
+<td><strong>Ambos</strong> evalúan todas las comparaciones. La diferencia es el umbral: Bonferroni usa α/<em>m</em> para todas; Holm usa α/<em>m</em>, α/(<em>m</em>−1), … de forma escalonada</td>
+</tr>
+<tr class="even">
+<td>Nombre: “Holms”</td>
+<td><strong>Holm</strong> (Sture Holm, 1979)</td>
+</tr>
+<tr class="odd">
+<td>Función <code>pairs.t.test()</code></td>
+<td>La función es <code>pairwise.t.test()</code></td>
+</tr>
+<tr class="even">
+<td>Bonferroni: “<span class="math inline">\(H\)</span> no excede el número de comparaciones de interés” como ventaja</td>
+<td>Es una recomendación de uso: definir <em>a priori</em> sólo las comparaciones de interés reduce <em>m</em></td>
+</tr>
+<tr class="odd">
+<td>Hommel: no menciona supuestos</td>
+<td>Hochberg y Hommel requieren independencia o dependencia positiva entre pruebas; Holm no</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="hochberg-y-hommel" class="slide level2">
+<h2>Hochberg y Hommel</h2>
+<div class="columns">
+<div class="column" style="width:55%;">
+<p><strong>Hochberg</strong> <span class="citation" data-cites="hochberg1988">(<a href="#/referencias" role="doc-biblioref" onclick="">16</a>)</span>: escalonado <strong>ascendente</strong>. Empieza por el <em>p</em> más grande; en cuanto uno cumple <span class="math inline">\(p_{(i)} \le \alpha/(m-i+1)\)</span>, se rechazan ese y todos los menores.</p>
+<p><strong>Hommel</strong> <span class="citation" data-cites="hommel1988">(<a href="#/referencias" role="doc-biblioref" onclick="">17</a>)</span>: basado en la prueba de Simes; algo más potente que Hochberg, pero de cálculo más complejo.</p>
+<p>Potencia: Bonferroni &lt; Holm &lt; Hochberg &lt; Hommel.</p>
+</div><div class="column" style="width:45%;">
+<div class="warning">
+<p><strong>Supuesto adicional:</strong> las pruebas deben ser independientes o tener dependencia positiva. Si no está seguro, use Holm.</p>
+</div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">p.adjust</span>(p, <span class="st">"hochberg"</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.016 0.030 0.030 0.300</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">p.adjust</span>(p, <span class="st">"hommel"</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.0160 0.0225 0.0300 0.3000</code></pre>
+</div>
+</div>
+</div></div>
+</section>
+<section id="benjaminihochberg-fdr-fundamento" class="slide level2">
+<h2>Benjamini‑Hochberg (FDR) · fundamento</h2>
+<div class="columns">
+<div class="column" style="width:55%;">
+<p>Controla la <strong>tasa de falsos descubrimientos</strong> en lugar del FWER <span class="citation" data-cites="benjamini1995">(<a href="#/referencias" role="doc-biblioref" onclick="">2</a>)</span>:</p>
+<ol type="1">
+<li>Ordenar los <em>m</em> valores <em>p</em> de menor a mayor y asignar su rango <em>i</em>.</li>
+<li>Calcular el umbral <span class="math inline">\(\dfrac{i}{m}\,Q\)</span> (Q = FDR aceptada, p.&nbsp;ej., 0.05).</li>
+<li>Buscar el <strong>mayor</strong> <em>i</em> con <span class="math inline">\(p_{(i)} \le \frac{i}{m}Q\)</span>; se rechazan esa y todas las hipótesis con <em>p</em> menor.</li>
+</ol>
+<p><strong>Supuestos:</strong> independencia o dependencia positiva (para dependencia arbitraria existe Benjamini‑Yekutieli, <code>"BY"</code>).</p>
+</div><div class="column" style="width:45%;">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a aria-hidden="true" tabindex="-1"></a>p8 <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="at">A =</span> .<span class="dv">001</span>, <span class="at">B =</span> .<span class="dv">008</span>, <span class="at">C =</span> .<span class="dv">039</span>, <span class="at">D =</span> .<span class="dv">041</span>,</span>
+<span id="cb52-2"><a aria-hidden="true" tabindex="-1"></a>        <span class="at">E =</span> .<span class="dv">042</span>, <span class="at">F =</span> .<span class="dv">060</span>, <span class="at">G =</span> .<span class="dv">074</span>, <span class="at">H =</span> .<span class="dv">205</span>)</span>
+<span id="cb52-3"><a aria-hidden="true" tabindex="-1"></a><span class="fu">data.frame</span>(<span class="at">p =</span> p8, <span class="at">rango =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">8</span>,</span>
+<span id="cb52-4"><a aria-hidden="true" tabindex="-1"></a>           <span class="at">umbral =</span> (<span class="dv">1</span><span class="sc">:</span><span class="dv">8</span>) <span class="sc">/</span> <span class="dv">8</span> <span class="sc">*</span> <span class="fl">0.05</span>,</span>
+<span id="cb52-5"><a aria-hidden="true" tabindex="-1"></a>           <span class="at">p_BH =</span> <span class="fu">p.adjust</span>(p8, <span class="st">"BH"</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb52-6"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">rechaza =</span> p_BH <span class="sc">&lt;</span> <span class="fl">0.05</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>      p rango  umbral    p_BH rechaza
+A 0.001     1 0.00625 0.00800    TRUE
+B 0.008     2 0.01250 0.03200    TRUE
+C 0.039     3 0.01875 0.06720   FALSE
+D 0.041     4 0.02500 0.06720   FALSE
+E 0.042     5 0.03125 0.06720   FALSE
+F 0.060     6 0.03750 0.08000   FALSE
+G 0.074     7 0.04375 0.08457   FALSE
+H 0.205     8 0.05000 0.20500   FALSE</code></pre>
+</div>
+</div>
+<p>Con Q = 0.05, sólo A y B son descubrimientos.</p>
+</div></div>
+</section>
+<section id="benjaminihochberg-fe-de-erratas" class="slide level2 fe">
+<h2>Benjamini‑Hochberg · fe de erratas</h2>
+<div class="columns">
+<div class="column" style="width:50%;">
+<div class="errata">
+<p><strong>El capítulo dice:</strong> con 8 pruebas y Q = 25 %, “solamente la comparación del grupo A sería significativa”.</p>
+<p><strong>Lo correcto:</strong> con Q = 25 %, <strong>las 8</strong> son significativas. El mayor <em>i</em> que cumple <span class="math inline">\(p_{(i)} \le \frac{i}{m}Q\)</span> es <em>i</em> = 8 (0.205 ≤ 0.25), y se rechazan esa y todas las de <em>p</em> menor.</p>
+</div>
+<p>Con Q = 0.05 (diapositiva anterior) son significativas A y B.</p>
+</div><div class="column" style="width:50%;">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb54"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a aria-hidden="true" tabindex="-1"></a>p8 <span class="sc">&lt;=</span> (<span class="dv">1</span><span class="sc">:</span><span class="dv">8</span>) <span class="sc">/</span> <span class="dv">8</span> <span class="sc">*</span> <span class="fl">0.25</span>        <span class="co"># regla BH</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   A    B    C    D    E    F    G    H 
+TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE </code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb56"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">p.adjust</span>(p8, <span class="st">"BH"</span>) <span class="sc">&lt;</span> <span class="fl">0.25</span>     <span class="co"># igual con p ajustados</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   A    B    C    D    E    F    G    H 
+TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE </code></pre>
+</div>
+</div>
+<div class="decision">
+<p>BH es <strong>escalonado ascendente</strong>: no se detiene en el primer <em>p</em> que no cumple, como Holm; busca el <strong>último</strong> que sí cumple.</p>
+</div>
+</div></div>
+</section>
+<section id="bh-por-qué-importa-en-genética" class="slide level2">
+<h2>BH · por qué importa en genética</h2>
+<p>Simulamos 1000 genes: 100 con expresión diferencial real y 900 sin efecto.</p>
+<div class="cell columns column-output-location">
+<div class="column">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb58"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb58-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">42</span>)</span>
+<span id="cb58-2"><a aria-hidden="true" tabindex="-1"></a>real <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="fu">c</span>(<span class="cn">TRUE</span>, <span class="cn">FALSE</span>), <span class="fu">c</span>(<span class="dv">100</span>, <span class="dv">900</span>))</span>
+<span id="cb58-3"><a aria-hidden="true" tabindex="-1"></a>p_genes <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(real,</span>
+<span id="cb58-4"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">rbeta</span>(<span class="dv">1000</span>, <span class="fl">0.1</span>, <span class="dv">10</span>), <span class="co"># efecto real: p pequeños</span></span>
+<span id="cb58-5"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">runif</span>(<span class="dv">1000</span>))          <span class="co"># H0 verdadera: p uniformes</span></span>
+<span id="cb58-6"><a aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb58-7"><a aria-hidden="true" tabindex="-1"></a>metodos <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"none"</span>, <span class="st">"bonferroni"</span>, <span class="st">"holm"</span>, <span class="st">"BH"</span>)</span>
+<span id="cb58-8"><a aria-hidden="true" tabindex="-1"></a><span class="fu">sapply</span>(metodos, <span class="cf">function</span>(m) {</span>
+<span id="cb58-9"><a aria-hidden="true" tabindex="-1"></a>  sig <span class="ot">&lt;-</span> <span class="fu">p.adjust</span>(p_genes, m) <span class="sc">&lt;</span> <span class="fl">0.05</span></span>
+<span id="cb58-10"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">c</span>(<span class="at">descubrimientos =</span> <span class="fu">sum</span>(sig),</span>
+<span id="cb58-11"><a aria-hidden="true" tabindex="-1"></a>    <span class="at">verdaderos =</span> <span class="fu">sum</span>(sig <span class="sc">&amp;</span> real),</span>
+<span id="cb58-12"><a aria-hidden="true" tabindex="-1"></a>    <span class="at">falsos     =</span> <span class="fu">sum</span>(sig <span class="sc">&amp;</span> <span class="sc">!</span>real))</span>
+<span id="cb58-13"><a aria-hidden="true" tabindex="-1"></a>})</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div><div class="column">
+<div class="cell-output cell-output-stdout">
+<pre><code>                none bonferroni holm BH
+descubrimientos  155         48   48 76
+verdaderos        93         48   48 72
+falsos            62          0    0  4</code></pre>
+</div>
+</div></div>
+<div class="fragment">
+<p>Sin corrección: 62 falsos positivos (¡más de un tercio de los “hallazgos”!). Bonferroni y Holm: 0 falsos, pero pierden la mitad de los genes reales. BH: recupera 72 de 100 con sólo 4 falsos (~5 % de los descubrimientos).</p>
+</div>
+</section>
+<section id="correcciones-ventajas-y-desventajas" class="slide level2">
+<h2>Correcciones · ventajas y desventajas</h2>
+<table class="caption-top">
+<colgroup>
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Método</th>
+<th>Controla</th>
+<th>Ventajas</th>
+<th>Desventajas</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Bonferroni</strong></td>
+<td>FWER</td>
+<td>Simple; válida con cualquier dependencia</td>
+<td>Muy conservadora</td>
+</tr>
+<tr class="even">
+<td><strong>Holm</strong></td>
+<td>FWER</td>
+<td>Siempre ≥ potencia que Bonferroni, mismos supuestos</td>
+<td>Sigue siendo estricta con <em>m</em> grande</td>
+</tr>
+<tr class="odd">
+<td><strong>Hochberg</strong></td>
+<td>FWER</td>
+<td>Más potente que Holm</td>
+<td>Requiere independencia o dependencia positiva</td>
+</tr>
+<tr class="even">
+<td><strong>Hommel</strong></td>
+<td>FWER</td>
+<td>La más potente de las FWER clásicas</td>
+<td>Cálculo complejo; mismo supuesto que Hochberg</td>
+</tr>
+<tr class="odd">
+<td><strong>BH</strong></td>
+<td>FDR</td>
+<td>Gran potencia con cientos o miles de pruebas</td>
+<td>Tolera algunos falsos positivos; no apta para decisiones confirmatorias con pocas pruebas</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="todas-en-r-con-una-sola-función" class="slide level2 demo">
+<h2>Todas en R con una sola función</h2>
+<div class="columns">
+<div class="column" style="width:50%;">
+<p><strong>R base</strong> (varianza agrupada)</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb60"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb60-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">pairwise.t.test</span>(il6<span class="sc">$</span>IL6, il6<span class="sc">$</span>grupo,</span>
+<span id="cb60-2"><a aria-hidden="true" tabindex="-1"></a>                <span class="at">p.adjust.method =</span> <span class="st">"holm"</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    Pairwise comparisons using t tests with pooled SD 
+
+data:  il6$IL6 and il6$grupo 
+
+          Control Farmaco_A Farmaco_B
+Farmaco_A 0.31    -         -        
+Farmaco_B 9e-04   0.01      -        
+Farmaco_C 5e-06   2e-04     0.23     
+
+P value adjustment method: holm </code></pre>
+</div>
+</div>
+</div><div class="column" style="width:50%;">
+<p><strong>rstatix</strong> (formato <em>tidy</em>)</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb62"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb62-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">pairwise_t_test</span>(il6, IL6 <span class="sc">~</span> grupo,</span>
+<span id="cb62-2"><a aria-hidden="true" tabindex="-1"></a>                <span class="at">p.adjust.method =</span> <span class="st">"BH"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb62-3"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(group1, group2, p.adj, p.adj.signif)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 4
+  group1    group2        p.adj p.adj.signif
+  &lt;chr&gt;     &lt;chr&gt;         &lt;dbl&gt; &lt;chr&gt;       
+1 Control   Farmaco_A 0.311     ns          
+2 Control   Farmaco_B 0.000444  ***         
+3 Farmaco_A Farmaco_B 0.00744   **          
+4 Control   Farmaco_C 0.0000049 ****        
+5 Farmaco_A Farmaco_C 0.0000959 ****        
+6 Farmaco_B Farmaco_C 0.139     ns          </code></pre>
+</div>
+</div>
+</div></div>
+<div class="small">
+<p>Métodos: <code>"bonferroni"</code>, <code>"holm"</code>, <code>"hochberg"</code>, <code>"hommel"</code>, <code>"BH"</code> (= <code>"fdr"</code>), <code>"BY"</code>, <code>"none"</code>. Para comparar métodos sobre los mismos <em>p</em>: <code>p.adjust(p, method = ...)</code>.</p>
+</div>
+</section></section>
+<section>
+<section id="otras-pruebas-útiles" class="title-slide slide level1 center">
+<h1>5. Otras pruebas útiles</h1>
+
+</section>
+<section id="qué-pasa-fuera-del-anova-de-una-vía" class="slide level2">
+<h2>¿Qué pasa fuera del ANOVA de una vía?</h2>
+<p>En ciencias de la salud muchos diseños no son “<em>k</em> grupos independientes con una variable continua”:</p>
+<table class="caption-top">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Situación</th>
+<th>Prueba nueva</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Tres grupos y comparaciones simples</td>
+<td><strong>Fisher LSD protegida</strong></td>
+</tr>
+<tr class="even">
+<td>Ajustar por covariables (edad, sexo) o varios factores</td>
+<td><strong>Medias marginales con <code>emmeans</code></strong></td>
+</tr>
+<tr class="odd">
+<td>Desenlace binario (respuesta sí/no, mortalidad)</td>
+<td><strong>Comparación de proporciones por pares</strong></td>
+</tr>
+<tr class="even">
+<td>Mismos sujetos medidos varias veces</td>
+<td><strong>Friedman + Wilcoxon pareado</strong></td>
+</tr>
+</tbody>
+</table>
+</section></section>
+<section>
+<section id="fisher-lsd-protegida" class="title-slide slide level1 center" data-background-color="#0b3c49">
+<h1>Fisher LSD protegida</h1>
+
+</section>
+<section id="fisher-lsd-protegida-1" class="slide level2 demo">
+<h2>Fisher LSD protegida</h2>
+<div class="columns">
+<div class="column" style="width:50%;">
+<p><strong>Fundamento:</strong> <em>Least Significant Difference</em> <span class="citation" data-cites="fisher1935">(<a href="#/referencias" role="doc-biblioref" onclick="">18</a>)</span>. Dos pasos:</p>
+<ol type="1">
+<li>ANOVA. Si <em>F</em> <strong>no</strong> es significativa, se detiene.</li>
+<li>Si lo es, pruebas <em>t</em> por pares con la MSE común, <strong>sin</strong> ajustar.</li>
+</ol>
+<p><strong>Supuestos:</strong> los del ANOVA.</p>
+<div class="pro">
+<p><strong>Ventaja:</strong> la más potente; con <strong>exactamente 3 grupos</strong> controla el FWER <span class="citation" data-cites="levin1994">(<a href="#/referencias" role="doc-biblioref" onclick="">19</a>)</span>.</p>
+</div>
+<div class="con">
+<p><strong>Desventaja:</strong> con 4 o más grupos <strong>no</strong> controla el FWER.</p>
+</div>
+</div><div class="column" style="width:50%;">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb64"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb64-1"><a aria-hidden="true" tabindex="-1"></a><span class="co"># Paso 2 (el ANOVA ya fue significativo)</span></span>
+<span id="cb64-2"><a aria-hidden="true" tabindex="-1"></a><span class="fu">pairwise.t.test</span>(il6<span class="sc">$</span>IL6, il6<span class="sc">$</span>grupo,</span>
+<span id="cb64-3"><a aria-hidden="true" tabindex="-1"></a>                <span class="at">p.adjust.method =</span> <span class="st">"none"</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    Pairwise comparisons using t tests with pooled SD 
+
+data:  il6$IL6 and il6$grupo 
+
+          Control Farmaco_A Farmaco_B
+Farmaco_A 0.311   -         -        
+Farmaco_B 2e-04   0.005     -        
+Farmaco_C 8e-07   3e-05     0.115    
+
+P value adjustment method: none </code></pre>
+</div>
+</div>
+<p>Compare con Tukey: A vs.&nbsp;B da <em>p</em> = 0.005 aquí y 0.025 con Tukey. Con 4 grupos, LSD es <strong>demasiado liberal</strong>.</p>
+</div></div>
+</section></section>
+<section>
+<section id="emmeans" class="title-slide slide level1 center" data-background-color="#0b3c49">
+<h1>emmeans</h1>
+
+</section>
+<section id="emmeans-fundamento-y-supuestos" class="slide level2">
+<h2>emmeans · fundamento y supuestos</h2>
+<div class="columns">
+<div class="column" style="width:58%;">
+<p>Las pruebas anteriores comparan <strong>medias crudas</strong>. Si el modelo incluye covariables u otros factores, hay que comparar <strong>medias marginales estimadas</strong> (EMM): la media predicha de cada grupo con las demás variables fijas <span class="citation" data-cites="lenth2024">(<a href="#/referencias" role="doc-biblioref" onclick="">20</a>)</span>.</p>
+<p><code>emmeans</code> hace el post hoc <strong>sobre cualquier modelo</strong>: ANCOVA, ANOVA de dos vías, modelos mixtos, regresión logística…</p>
+<p>Y aplica el ajuste que elijamos: Tukey, Dunnett, Holm, Bonferroni, Scheffé…</p>
+</div><div class="column" style="width:42%;">
+<p><span class="h3">Supuestos</span></p>
+<ul>
+<li>Los del modelo ajustado (para <code>lm</code>: independencia, normalidad de residuos, homocedasticidad, linealidad)</li>
+<li>Un modelo bien especificado</li>
+</ul>
+<div class="decision">
+<p>Es la forma moderna de hacer un post hoc cuando hay <strong>más de un factor</strong> o <strong>covariables</strong>.</p>
+</div>
+</div></div>
+</section>
+<section id="emmeans-en-r" class="slide level2 demo">
+<h2>emmeans · en R</h2>
+<p>¿El peso al nacer difiere por grupo étnico, <strong>ajustando por tabaquismo</strong>? (<code>MASS::birthwt</code>)</p>
+<div class="columns">
+<div class="column" style="width:50%;">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb66"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb66-1"><a aria-hidden="true" tabindex="-1"></a>bw <span class="ot">&lt;-</span> birthwt <span class="sc">|&gt;</span></span>
+<span id="cb66-2"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">raza =</span> <span class="fu">factor</span>(race, <span class="at">labels =</span></span>
+<span id="cb66-3"><a aria-hidden="true" tabindex="-1"></a>           <span class="fu">c</span>(<span class="st">"Blanca"</span>, <span class="st">"Negra"</span>, <span class="st">"Otra"</span>)),</span>
+<span id="cb66-4"><a aria-hidden="true" tabindex="-1"></a>         <span class="at">fuma =</span> <span class="fu">factor</span>(smoke, <span class="at">labels =</span></span>
+<span id="cb66-5"><a aria-hidden="true" tabindex="-1"></a>           <span class="fu">c</span>(<span class="st">"No"</span>, <span class="st">"Sí"</span>)))</span>
+<span id="cb66-6"><a aria-hidden="true" tabindex="-1"></a>modelo_bw <span class="ot">&lt;-</span> <span class="fu">lm</span>(bwt <span class="sc">~</span> raza <span class="sc">+</span> fuma, <span class="at">data =</span> bw)</span>
+<span id="cb66-7"><a aria-hidden="true" tabindex="-1"></a>emm <span class="ot">&lt;-</span> <span class="fu">emmeans</span>(modelo_bw, <span class="sc">~</span> raza)</span>
+<span id="cb66-8"><a aria-hidden="true" tabindex="-1"></a>emm</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> raza   emmean    SE  df lower.CL upper.CL
+ Blanca   3121  70.4 185     2982     3259
+ Negra    2670 136.0 185     2403     2938
+ Otra     2668  91.1 185     2488     2847
+
+Results are averaged over the levels of: fuma 
+Confidence level used: 0.95 </code></pre>
+</div>
+</div>
+</div><div class="column" style="width:50%;">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb68"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb68-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">pairs</span>(emm, <span class="at">adjust =</span> <span class="st">"tukey"</span>)      <span class="co"># todos vs. todos</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> contrast       estimate  SE  df t.ratio p.value
+ Blanca - Negra    450.4 153 185   2.941  0.0103
+ Blanca - Otra     452.9 116 185   3.888  0.0004
+ Negra - Otra        2.5 161 185   0.016  0.9999
+
+Results are averaged over the levels of: fuma 
+P value adjustment: tukey method for comparing a family of 3 estimates </code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb70"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb70-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">contrast</span>(emm, <span class="st">"trt.vs.ctrl"</span>,      <span class="co"># vs. referencia</span></span>
+<span id="cb70-2"><a aria-hidden="true" tabindex="-1"></a>         <span class="at">ref =</span> <span class="st">"Blanca"</span>)          <span class="co"># (Dunnett)</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> contrast       estimate  SE  df t.ratio p.value
+ Negra - Blanca     -450 153 185  -2.941  0.0072
+ Otra - Blanca      -453 116 185  -3.888  0.0003
+
+Results are averaged over the levels of: fuma 
+P value adjustment: dunnettx method for 2 tests </code></pre>
+</div>
+</div>
+</div></div>
+</section>
+<section id="emmeans-ventajas-y-desventajas" class="slide level2">
+<h2>emmeans · ventajas y desventajas</h2>
+<div class="columns">
+<div class="column" style="width:50%;">
+<div class="pro">
+<p><span class="h3">Ventajas</span> - Un solo marco para casi cualquier modelo. - Compara medias <strong>ajustadas</strong>, no crudas. - Permite pares, vs.&nbsp;control, contrastes a la medida e interacciones (<code>~ fuma | raza</code>). - Da estimaciones con IC, no sólo <em>p</em>.</p>
+</div>
+</div><div class="column" style="width:50%;">
+<div class="con">
+<p><span class="h3">Desventajas</span> - Hay que ajustar y validar primero el modelo. - Con interacciones, las medias marginales promediadas pueden ser engañosas. - Curva de aprendizaje mayor que <code>TukeyHSD()</code>.</p>
+</div>
+</div></div>
+</section></section>
+<section>
+<section id="proporciones-por-pares" class="title-slide slide level1 center" data-background-color="#0b3c49">
+<h1>Proporciones por pares</h1>
+
+</section>
+<section id="proporciones-fundamento-y-en-r" class="slide level2 demo">
+<h2>Proporciones · fundamento y en R</h2>
+<div class="columns">
+<div class="column" style="width:48%;">
+<p><strong>Fundamento:</strong> tras un χ² significativo en una tabla 2 × <em>k</em>, se compara cada par de proporciones (prueba <em>z</em> o χ² de 2 × 2) y se ajustan los <em>p</em> (Holm, BH…).</p>
+<p><strong>Supuestos:</strong> observaciones independientes; frecuencias esperadas ≥ 5. Si no se cumple, use <code>pairwise_fisher_test()</code> de <code>rstatix</code>.</p>
+<p>Ejemplo: respuesta clínica en 4 esquemas de tratamiento (50 pacientes por esquema).</p>
+</div><div class="column" style="width:52%;">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb72"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb72-1"><a aria-hidden="true" tabindex="-1"></a>responden <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="at">E1 =</span> <span class="dv">15</span>, <span class="at">E2 =</span> <span class="dv">18</span>, <span class="at">E3 =</span> <span class="dv">28</span>, <span class="at">E4 =</span> <span class="dv">31</span>)</span>
+<span id="cb72-2"><a aria-hidden="true" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="dv">50</span>, <span class="dv">4</span>)</span>
+<span id="cb72-3"><a aria-hidden="true" tabindex="-1"></a><span class="fu">chisq.test</span>(<span class="fu">rbind</span>(responden, n <span class="sc">-</span> responden))<span class="sc">$</span>p.value</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.002487</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb74"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb74-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">pairwise.prop.test</span>(responden, n,</span>
+<span id="cb74-2"><a aria-hidden="true" tabindex="-1"></a>                   <span class="at">p.adjust.method =</span> <span class="st">"holm"</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    Pairwise comparisons using Pairwise comparison of proportions 
+
+data:  responden out of n 
+
+   E1   E2   E3  
+E2 1.00 -    -   
+E3 0.08 0.21 -   
+E4 0.02 0.08 1.00
+
+P value adjustment method: holm </code></pre>
+</div>
+</div>
+<p>El χ² global es significativo, pero sólo <strong>E1 vs.&nbsp;E4</strong> lo es tras ajustar.</p>
+</div></div>
+</section>
+<section id="proporciones-ventajas-y-desventajas" class="slide level2">
+<h2>Proporciones · ventajas y desventajas</h2>
+<div class="columns">
+<div class="column" style="width:50%;">
+<div class="pro">
+<p><span class="h3">Ventajas</span> - Responde la pregunta clínica típica: ¿qué tratamiento tiene mayor tasa de respuesta? - Se hace con R base. - Admite cualquier ajuste de <code>p.adjust()</code>.</p>
+</div>
+</div><div class="column" style="width:50%;">
+<div class="con">
+<p><span class="h3">Desventajas</span> - No ajusta por covariables (para eso: regresión logística + <code>emmeans</code>). - Con conteos pequeños la aproximación falla (use Fisher). - Reporte también diferencias de riesgo o <em>odds ratios</em> con IC.</p>
+</div>
+</div></div>
+</section></section>
+<section>
+<section id="medidas-repetidas-no-paramétricas" class="title-slide slide level1 center" data-background-color="#0b3c49">
+<h1>Medidas repetidas no paramétricas</h1>
+
+</section>
+<section id="friedman-post-hoc-fundamento" class="slide level2">
+<h2>Friedman + post hoc · fundamento</h2>
+<div class="columns">
+<div class="column" style="width:55%;">
+<p>Cuando los <strong>mismos pacientes</strong> se miden en varios momentos, los grupos no son independientes: Kruskal‑Wallis, Dunn, Tukey y Games‑Howell <strong>no</strong> son válidos.</p>
+<ul>
+<li><strong>Ómnibus:</strong> prueba de Friedman <span class="citation" data-cites="friedman1937">(<a href="#/referencias" role="doc-biblioref" onclick="">21</a>)</span>. Ordena los valores <strong>dentro de cada paciente</strong>.</li>
+<li><strong>Post hoc:</strong>
+<ul>
+<li>Wilcoxon de rangos con signo <strong>pareado</strong> por cada par + Holm; o</li>
+<li>Nemenyi para Friedman (bloques completos).</li>
+</ul></li>
+</ul>
+</div><div class="column" style="width:45%;">
+<p><span class="h3">Supuestos</span></p>
+<ul>
+<li>Pacientes (bloques) independientes entre sí</li>
+<li>Variable al menos ordinal</li>
+<li>Diseño completo: cada paciente medido en todos los tiempos</li>
+<li>Wilcoxon pareado: diferencias aproximadamente simétricas</li>
+</ul>
+</div></div>
+</section>
+<section id="friedman-post-hoc-en-r" class="slide level2 demo">
+<h2>Friedman + post hoc · en R</h2>
+<p>Dolor (EVA 0–100) en 12 pacientes: basal, semana 1 y semana 4.</p>
+<div class="columns">
+<div class="column" style="width:45%;">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb76"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb76-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">7</span>)</span>
+<span id="cb76-2"><a aria-hidden="true" tabindex="-1"></a>base <span class="ot">&lt;-</span> <span class="fu">round</span>(<span class="fu">runif</span>(<span class="dv">12</span>, <span class="dv">55</span>, <span class="dv">80</span>))</span>
+<span id="cb76-3"><a aria-hidden="true" tabindex="-1"></a>dolor <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb76-4"><a aria-hidden="true" tabindex="-1"></a>  <span class="at">id =</span> <span class="fu">factor</span>(<span class="fu">rep</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">12</span>, <span class="dv">3</span>)),</span>
+<span id="cb76-5"><a aria-hidden="true" tabindex="-1"></a>  <span class="at">tiempo =</span> <span class="fu">factor</span>(<span class="fu">rep</span>(<span class="fu">c</span>(<span class="st">"Basal"</span>, <span class="st">"Semana_1"</span>,</span>
+<span id="cb76-6"><a aria-hidden="true" tabindex="-1"></a>                        <span class="st">"Semana_4"</span>), <span class="at">each =</span> <span class="dv">12</span>)),</span>
+<span id="cb76-7"><a aria-hidden="true" tabindex="-1"></a>  <span class="at">EVA =</span> <span class="fu">c</span>(base,</span>
+<span id="cb76-8"><a aria-hidden="true" tabindex="-1"></a>          base <span class="sc">-</span> <span class="fu">round</span>(<span class="fu">rnorm</span>(<span class="dv">12</span>, <span class="dv">6</span>, <span class="dv">6</span>)),</span>
+<span id="cb76-9"><a aria-hidden="true" tabindex="-1"></a>          base <span class="sc">-</span> <span class="fu">round</span>(<span class="fu">rnorm</span>(<span class="dv">12</span>, <span class="dv">15</span>, <span class="dv">7</span>))))</span>
+<span id="cb76-10"><a aria-hidden="true" tabindex="-1"></a><span class="fu">friedman_test</span>(dolor, EVA <span class="sc">~</span> tiempo <span class="sc">|</span> id)<span class="sc">$</span>p</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 1.537e-05</code></pre>
+</div>
+</div>
+</div><div class="column" style="width:55%;">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb78"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb78-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">wilcox_test</span>(dolor, EVA <span class="sc">~</span> tiempo, <span class="at">paired =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb78-2"><a aria-hidden="true" tabindex="-1"></a>            <span class="at">p.adjust.method =</span> <span class="st">"holm"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb78-3"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(group1, group2, p, p.adj)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 3 × 4
+  group1   group2       p p.adj
+  &lt;chr&gt;    &lt;chr&gt;    &lt;dbl&gt; &lt;dbl&gt;
+1 Basal    Semana_1 0.003 0.008
+2 Basal    Semana_4 0.003 0.008
+3 Semana_1 Semana_4 0.034 0.034</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb80"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb80-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">frdAllPairsNemenyiTest</span>(EVA <span class="sc">~</span> tiempo <span class="sc">|</span> id,</span>
+<span id="cb80-2"><a aria-hidden="true" tabindex="-1"></a>                       <span class="at">data =</span> dolor)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>         Basal Semana_1
+Semana_1 0.022 -       
+Semana_4 8e-06 0.102   </code></pre>
+</div>
+</div>
+</div></div>
+</section>
+<section id="friedman-post-hoc-ventajas-y-desventajas" class="slide level2">
+<h2>Friedman + post hoc · ventajas y desventajas</h2>
+<div class="columns">
+<div class="column" style="width:50%;">
+<div class="pro">
+<p><span class="h3">Ventajas</span> - Respeta el diseño pareado: cada paciente es su propio control. - No requiere normalidad. - Wilcoxon + Holm es sencillo y potente con pocas mediciones.</p>
+</div>
+</div><div class="column" style="width:50%;">
+<div class="con">
+<p><span class="h3">Desventajas</span> - Pierde a los pacientes con alguna medición faltante. - No incorpora covariables ni tiempos desiguales (para eso: modelos mixtos + <code>emmeans</code>). - Nemenyi es conservadora: aquí no detecta Semana 1 vs.&nbsp;Semana 4, y Wilcoxon + Holm sí.</p>
+</div>
+</div></div>
+</section></section>
+<section>
+<section id="resumen" class="title-slide slide level1 center">
+<h1>Resumen</h1>
+
+</section>
+<section id="guía-rápida" class="slide level2">
+<h2>Guía rápida</h2>
+<table class="caption-top">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Situación</th>
+<th>Opción recomendada</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>ANOVA, varianzas iguales, todos vs.&nbsp;todos</td>
+<td><strong>Tukey HSD</strong></td>
+</tr>
+<tr class="even">
+<td>ANOVA, cada tratamiento vs.&nbsp;un control</td>
+<td><strong>Dunnett</strong></td>
+</tr>
+<tr class="odd">
+<td>Contrastes complejos o no planeados</td>
+<td><strong>Scheffé</strong></td>
+</tr>
+<tr class="even">
+<td>Varianzas desiguales</td>
+<td><strong>Games‑Howell</strong> (T3 si <em>n</em> pequeños)</td>
+</tr>
+<tr class="odd">
+<td>Kruskal‑Wallis</td>
+<td><strong>Dunn</strong> + Holm o BH (Nemenyi si <em>n</em> iguales)</td>
+</tr>
+<tr class="even">
+<td>Pocas comparaciones planeadas</td>
+<td>Prueba <em>t</em> por pares + <strong>Holm</strong></td>
+</tr>
+<tr class="odd">
+<td>Muchas pruebas (genes, SNPs, biomarcadores)</td>
+<td><strong>Benjamini‑Hochberg</strong></td>
+</tr>
+<tr class="even">
+<td>Covariables o varios factores</td>
+<td>Modelo + <strong><code>emmeans</code></strong></td>
+</tr>
+<tr class="odd">
+<td>Proporciones en varios grupos</td>
+<td>χ² + <strong><code>pairwise.prop.test()</code></strong> con Holm</td>
+</tr>
+<tr class="even">
+<td>Medidas repetidas, datos no normales</td>
+<td><strong>Friedman</strong> + Wilcoxon pareado con Holm</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="errores-frecuentes" class="slide level2">
+<h2>Errores frecuentes</h2>
+<ul>
+<li>Hacer varias pruebas <em>t</em> o U de Mann‑Whitney <strong>sin corrección</strong>.</li>
+<li>Probar varios métodos y reportar el que “sí dio” (<em>p‑hacking</em>).</li>
+<li>Usar Tukey con varianzas claramente distintas.</li>
+<li>Confundir <strong>Dunn</strong> (no paramétrica) con <strong>Dunnett</strong> (vs.&nbsp;control).</li>
+<li>Usar pruebas para grupos independientes cuando los datos son <strong>pareados</strong>.</li>
+<li>Aceptar los valores por defecto de una función sin leer su ayuda (véase <code>dunn.test</code>).</li>
+<li>Reportar sólo “<em>p</em> &lt; 0.05”, sin diferencias de medias ni intervalos de confianza.</li>
+<li>No declarar en métodos qué prueba post hoc o qué ajuste se usó.</li>
+</ul>
+</section>
+<section id="cómo-reportarlo" class="slide level2">
+<h2>¿Cómo reportarlo?</h2>
+<blockquote>
+<p>“Los niveles de IL‑6 difirieron entre grupos (ANOVA de una vía, F(3, 56) = …, <em>p</em> &lt; 0.001). Las comparaciones contra el control se realizaron con la prueba de Dunnett. Los fármacos B y C aumentaron la IL‑6 (diferencia de medias = … pg/mL, IC 95 % …, <em>p</em> ajustado &lt; 0.001), mientras que el fármaco A no mostró diferencia (<em>p</em> ajustado = …).”</p>
+</blockquote>
+<div class="decision">
+<p>Incluya siempre: prueba ómnibus, prueba post hoc o corrección utilizada, diferencia con su IC y <em>p</em> ajustado.</p>
+</div>
+</section>
+<section id="fe-de-erratas-del-capítulo-18-resumen-12" class="slide level2 fe">
+<h2>Fe de erratas del capítulo 18: resumen (1/2)</h2>
+<table class="caption-top">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Sección</th>
+<th>Error</th>
+<th>Corrección</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Bonferroni</td>
+<td>Función <code>pairs.t.test()</code></td>
+<td><code>pairwise.t.test()</code></td>
+</tr>
+<tr class="even">
+<td>Tukey</td>
+<td>Interpretación del ejemplo invertida (0.10 y 0.001)</td>
+<td>0.05 (no significativa) y 0.17 (significativa)</td>
+</tr>
+<tr class="odd">
+<td>Tukey</td>
+<td><em>v</em> = 126; “se acepta H<sub>0</sub>”</td>
+<td><em>v</em> = 132; “no se rechaza H<sub>0</sub>”</td>
+</tr>
+<tr class="even">
+<td>Tukey</td>
+<td>Requiere <em>n</em> iguales; “pocos supuestos”; “computacionalmente intensivo”</td>
+<td>Tukey‑Kramer admite <em>n</em> distintos; requiere normalidad y homocedasticidad; es inmediato</td>
+</tr>
+<tr class="odd">
+<td>Dunnett</td>
+<td>Fórmula con 2 × MSE × (1/<em>n</em><sub>i</sub> + 1/<em>n</em><sub>c</sub>)</td>
+<td>Sin el 2: MSE × (1/<em>n</em><sub>i</sub> + 1/<em>n</em><sub>c</sub>)</td>
+</tr>
+<tr class="even">
+<td>Scheffé</td>
+<td>No requiere normalidad ni homocedasticidad; requiere <em>n</em> iguales</td>
+<td>Mismos supuestos que el ANOVA; admite <em>n</em> distintos</td>
+</tr>
+<tr class="odd">
+<td>Scheffé</td>
+<td>“Más errores tipo I”, “menos tipo II”, “relativamente poderosa”</td>
+<td>La más conservadora y la menos potente para pares</td>
+</tr>
+<tr class="even">
+<td>Games‑Howell</td>
+<td>No paramétrica; compara solapamiento de IC</td>
+<td>Paramétrica; usa el rango estudentizado</td>
+</tr>
+<tr class="odd">
+<td>Dunnett T3</td>
+<td>No paramétrica; compara contra un control; a priori</td>
+<td>Paramétrica; todos los pares; post hoc</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="fe-de-erratas-del-capítulo-18-resumen-22" class="slide level2 fe">
+<h2>Fe de erratas del capítulo 18: resumen (2/2)</h2>
+<table class="caption-top">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Sección</th>
+<th>Error</th>
+<th>Corrección</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Dunn</td>
+<td><code>dunn.test()</code> sin ajuste y <em>p</em> de una cola leídos como ajustados</td>
+<td>Usar <code>method = "holm"</code> y <code>altp = TRUE</code></td>
+</tr>
+<tr class="even">
+<td>Dunn</td>
+<td><code>kw = TRUE</code> “indica que viene de un ANOVA”</td>
+<td>Sólo imprime el Kruskal‑Wallis</td>
+</tr>
+<tr class="odd">
+<td>Dunn</td>
+<td>“Sólo para dos grupos”; “incrementa el error tipo I”</td>
+<td>Diseñada para <em>k</em> grupos; con ajuste lo controla</td>
+</tr>
+<tr class="even">
+<td>Dunn</td>
+<td>Contra un control: Dunnett o T3</td>
+<td>Dunn muchos‑contra‑uno (no paramétrica)</td>
+</tr>
+<tr class="odd">
+<td>Nemenyi</td>
+<td>s.e. = √(<em>k</em>(<em>n</em>+1)/12)</td>
+<td>s.e. = √(<em>N</em>(<em>N</em>+1)/12 · (1/<em>n</em><sub>i</sub> + 1/<em>n</em><sub>j</sub>))</td>
+</tr>
+<tr class="even">
+<td>Holm</td>
+<td>“Bonferroni compara todas; Holm sólo las significativas”</td>
+<td>Ambos evalúan todas; Holm usa umbrales escalonados</td>
+</tr>
+<tr class="odd">
+<td>Hommel</td>
+<td>Sin supuestos</td>
+<td>Requiere independencia o dependencia positiva</td>
+</tr>
+<tr class="even">
+<td>BH</td>
+<td>Con Q = 25 %, sólo A es significativa</td>
+<td>Las 8 son significativas</td>
+</tr>
+<tr class="odd">
+<td>Comentarios finales</td>
+<td>“Los procedimientos sólo son válidos para comparaciones planificadas”</td>
+<td>Al revés: las post hoc están diseñadas para comparaciones <strong>no</strong> planeadas</td>
+</tr>
+<tr class="even">
+<td>Comentarios finales</td>
+<td><em>F</em> significativa sin pares significativos “porque requieren patrón gaussiano”</td>
+<td>Prueban hipótesis distintas: una <em>F</em> significativa garantiza algún <strong>contraste</strong> significativo (Scheffé), no necesariamente un par</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="ejercicio" class="slide level2 exercise">
+<h2>Ejercicio</h2>
+<p>Con la base <code>Cushings</code> (paquete <code>MASS</code>), analice <strong>Pregnanetriol</strong> según <code>Type</code>:</p>
+<ol type="1">
+<li>Explore los datos (gráfica y estadísticos por grupo) y evalúe normalidad y homogeneidad de varianzas.</li>
+<li>Decida entre ANOVA y Kruskal‑Wallis y justifique.</li>
+<li>Aplique la prueba post hoc adecuada según la guía de decisión.</li>
+<li>Compare los <em>p</em> ajustados con Bonferroni, Holm y BH usando <code>pairwise.t.test()</code>.</li>
+<li>Considere el tipo <strong>a</strong> como referencia y aplique Dunnett. ¿Cambian sus conclusiones?</li>
+<li>Redacte un párrafo de resultados como el del ejemplo anterior.</li>
+<li>Busque en el capítulo 18 una afirmación que <strong>no</strong> hayamos corregido y evalúela con una simulación en <code>R</code>.</li>
+</ol>
+</section>
+<section id="referencias" class="slide level2 smaller scrollable">
+<h2>Referencias</h2>
+<div id="refs" class="tiny references csl-bib-body" role="list">
+<div id="ref-venables2002" class="csl-entry" role="listitem">
+<div class="csl-left-margin">1. </div><div class="csl-right-inline">W. N. Venables, B. D. Ripley. Modern Applied Statistics with <span>S</span>. 4.ª ed. New York: Springer; 2002.</div>
+</div>
+<div id="ref-benjamini1995" class="csl-entry" role="listitem">
+<div class="csl-left-margin">2. </div><div class="csl-right-inline">Yoav Benjamini, Yosef Hochberg. Controlling the false discovery rate: a practical and powerful approach to multiple testing. Journal of the Royal Statistical Society: Series B (Methodological). 1995;57(1):289-300. doi:<a href="https://doi.org/10.1111/j.2517-6161.1995.tb02031.x">10.1111/j.2517-6161.1995.tb02031.x</a></div>
+</div>
+<div id="ref-lee2018" class="csl-entry" role="listitem">
+<div class="csl-left-margin">3. </div><div class="csl-right-inline">Sangseok Lee, Dong Kyu Lee. What is the proper way to apply the multiple comparison test? Korean Journal of Anesthesiology. 2018;71(5):353-60. doi:<a href="https://doi.org/10.4097/kja.d.18.00242">10.4097/kja.d.18.00242</a></div>
+</div>
+<div id="ref-kim2015" class="csl-entry" role="listitem">
+<div class="csl-left-margin">4. </div><div class="csl-right-inline">Hae-Young Kim. Statistical notes for clinical researchers: post-hoc multiple comparisons. Restorative Dentistry &amp; Endodontics. 2015;40(2):172-6. doi:<a href="https://doi.org/10.5395/rde.2015.40.2.172">10.5395/rde.2015.40.2.172</a></div>
+</div>
+<div id="ref-tukey1949" class="csl-entry" role="listitem">
+<div class="csl-left-margin">5. </div><div class="csl-right-inline">John W. Tukey. Comparing individual means in the analysis of variance. Biometrics. 1949;5(2):99-114. doi:<a href="https://doi.org/10.2307/3001913">10.2307/3001913</a></div>
+</div>
+<div id="ref-kramer1956" class="csl-entry" role="listitem">
+<div class="csl-left-margin">6. </div><div class="csl-right-inline">Clyde Young Kramer. Extension of multiple range tests to group means with unequal numbers of replications. Biometrics. 1956;12(3):307-10. doi:<a href="https://doi.org/10.2307/3001469">10.2307/3001469</a></div>
+</div>
+<div id="ref-dunnett1955" class="csl-entry" role="listitem">
+<div class="csl-left-margin">7. </div><div class="csl-right-inline">Charles W. Dunnett. A multiple comparison procedure for comparing several treatments with a control. Journal of the American Statistical Association. 1955;50(272):1096-121. doi:<a href="https://doi.org/10.1080/01621459.1955.10501294">10.1080/01621459.1955.10501294</a></div>
+</div>
+<div id="ref-scheffe1953" class="csl-entry" role="listitem">
+<div class="csl-left-margin">8. </div><div class="csl-right-inline">Henry Scheffé. A method for judging all contrasts in the analysis of variance. Biometrika. 1953;40(1-2):87-110. doi:<a href="https://doi.org/10.1093/biomet/40.1-2.87">10.1093/biomet/40.1-2.87</a></div>
+</div>
+<div id="ref-games1976" class="csl-entry" role="listitem">
+<div class="csl-left-margin">9. </div><div class="csl-right-inline">Paul A. Games, John F. Howell. Pairwise multiple comparison procedures with unequal <span>N</span>’s and/or variances: a <span>M</span>onte <span>C</span>arlo study. Journal of Educational Statistics. 1976;1(2):113-25. doi:<a href="https://doi.org/10.3102/10769986001002113">10.3102/10769986001002113</a></div>
+</div>
+<div id="ref-dunnett1980" class="csl-entry" role="listitem">
+<div class="csl-left-margin">10. </div><div class="csl-right-inline">Charles W. Dunnett. Pairwise multiple comparisons in the unequal variance case. Journal of the American Statistical Association. 1980;75(372):796-800. doi:<a href="https://doi.org/10.1080/01621459.1980.10477552">10.1080/01621459.1980.10477552</a></div>
+</div>
+<div id="ref-dunn1964" class="csl-entry" role="listitem">
+<div class="csl-left-margin">11. </div><div class="csl-right-inline">Olive Jean Dunn. Multiple comparisons using rank sums. Technometrics. 1964;6(3):241-52. doi:<a href="https://doi.org/10.1080/00401706.1964.10490181">10.1080/00401706.1964.10490181</a></div>
+</div>
+<div id="ref-dinno2015" class="csl-entry" role="listitem">
+<div class="csl-left-margin">12. </div><div class="csl-right-inline">Alexis Dinno. Nonparametric pairwise multiple comparisons in independent groups using <span>D</span>unn’s test. The Stata Journal. 2015;15(1):292-300. doi:<a href="https://doi.org/10.1177/1536867X1501500117">10.1177/1536867X1501500117</a></div>
+</div>
+<div id="ref-nemenyi1963" class="csl-entry" role="listitem">
+<div class="csl-left-margin">13. </div><div class="csl-right-inline">Peter B. Nemenyi. Distribution-free multiple comparisons [Tesis doctoral]. Princeton University; 1963.</div>
+</div>
+<div id="ref-armstrong2014" class="csl-entry" role="listitem">
+<div class="csl-left-margin">14. </div><div class="csl-right-inline">Richard A. Armstrong. When to use the <span>B</span>onferroni correction. Ophthalmic and Physiological Optics. 2014;34(5):502-8. doi:<a href="https://doi.org/10.1111/opo.12131">10.1111/opo.12131</a></div>
+</div>
+<div id="ref-holm1979" class="csl-entry" role="listitem">
+<div class="csl-left-margin">15. </div><div class="csl-right-inline">Sture Holm. A simple sequentially rejective multiple test procedure. Scandinavian Journal of Statistics. 1979;6(2):65-70.</div>
+</div>
+<div id="ref-hochberg1988" class="csl-entry" role="listitem">
+<div class="csl-left-margin">16. </div><div class="csl-right-inline">Yosef Hochberg. A sharper <span>B</span>onferroni procedure for multiple tests of significance. Biometrika. 1988;75(4):800-2. doi:<a href="https://doi.org/10.1093/biomet/75.4.800">10.1093/biomet/75.4.800</a></div>
+</div>
+<div id="ref-hommel1988" class="csl-entry" role="listitem">
+<div class="csl-left-margin">17. </div><div class="csl-right-inline">Gerhard Hommel. A stagewise rejective multiple test procedure based on a modified <span>B</span>onferroni test. Biometrika. 1988;75(2):383-6. doi:<a href="https://doi.org/10.1093/biomet/75.2.383">10.1093/biomet/75.2.383</a></div>
+</div>
+<div id="ref-fisher1935" class="csl-entry" role="listitem">
+<div class="csl-left-margin">18. </div><div class="csl-right-inline">Ronald A. Fisher. The Design of Experiments. Edinburgh: Oliver; Boyd; 1935.</div>
+</div>
+<div id="ref-levin1994" class="csl-entry" role="listitem">
+<div class="csl-left-margin">19. </div><div class="csl-right-inline">Joel R. Levin, Ronald C. Serlin, Michael A. Seaman. A controlled, powerful multiple-comparison strategy for several situations. Psychological Bulletin. 1994;115(1):153-9. doi:<a href="https://doi.org/10.1037/0033-2909.115.1.153">10.1037/0033-2909.115.1.153</a></div>
+</div>
+<div id="ref-lenth2024" class="csl-entry" role="listitem">
+<div class="csl-left-margin">20. </div><div class="csl-right-inline">Russell V. Lenth. emmeans: Estimated Marginal Means, aka Least-Squares Means [Internet]. 2024. Disponible en: <a href="https://CRAN.R-project.org/package=emmeans">https://CRAN.R-project.org/package=emmeans</a></div>
+</div>
+<div id="ref-friedman1937" class="csl-entry" role="listitem">
+<div class="csl-left-margin">21. </div><div class="csl-right-inline">Milton Friedman. The use of ranks to avoid the assumption of normality implicit in the analysis of variance. Journal of the American Statistical Association. 1937;32(200):675-701. doi:<a href="https://doi.org/10.1080/01621459.1937.10503522">10.1080/01621459.1937.10503522</a></div>
+</div>
+</div>
+
+
+</section></section>
+    </div>
+  <div class="quarto-auto-generated-content" style="display: none;">
+<div class="footer footer-default">
+<p>Pruebas post hoc y comparaciones múltiples</p>
+</div>
+</div></div>
+
+  <script>window.backupDefine = window.define; window.define = undefined;</script>
+  <script src="../../site_libs/revealjs/dist/reveal.js"></script>
+  <!-- reveal.js plugins -->
+  <script src="../../site_libs/revealjs/plugin/quarto-line-highlight/line-highlight.js"></script>
+  <script src="../../site_libs/revealjs/plugin/pdf-export/pdfexport.js"></script>
+  <script src="../../site_libs/revealjs/plugin/reveal-menu/menu.js"></script>
+  <script src="../../site_libs/revealjs/plugin/reveal-menu/quarto-menu.js"></script>
+  <script src="../../site_libs/revealjs/plugin/reveal-chalkboard/plugin.js"></script>
+  <script src="../../site_libs/revealjs/plugin/quarto-support/support.js"></script>
+  
+
+  <script src="../../site_libs/revealjs/plugin/notes/notes.js"></script>
+  <script src="../../site_libs/revealjs/plugin/search/search.js"></script>
+  <script src="../../site_libs/revealjs/plugin/zoom/zoom.js"></script>
+  <script src="../../site_libs/revealjs/plugin/math/math.js"></script>
+  <script>window.define = window.backupDefine; window.backupDefine = undefined;</script>
+
+  <script>
+
+      // Full list of configuration options available at:
+      // https://revealjs.com/config/
+      Reveal.initialize({
+'controlsAuto': true,
+'previewLinksAuto': true,
+'pdfSeparateFragments': false,
+'autoAnimateEasing': "ease",
+'autoAnimateDuration': 1,
+'autoAnimateUnmatched': true,
+'jumpToSlide': true,
+'menu': {"side":"left","useTextContentForMissingTitles":true,"markers":false,"loadIcons":false,"custom":[{"title":"Tools","icon":"<i class=\"fas fa-gear\"></i>","content":"<ul class=\"slide-menu-items\">\n<li class=\"slide-tool-item active\" data-item=\"0\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.fullscreen(event)\"><kbd>f</kbd> Fullscreen</a></li>\n<li class=\"slide-tool-item\" data-item=\"1\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.speakerMode(event)\"><kbd>s</kbd> Speaker View</a></li>\n<li class=\"slide-tool-item\" data-item=\"2\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.overview(event)\"><kbd>o</kbd> Slide Overview</a></li>\n<li class=\"slide-tool-item\" data-item=\"3\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.togglePdfExport(event)\"><kbd>e</kbd> PDF Export Mode</a></li>\n<li class=\"slide-tool-item\" data-item=\"4\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.toggleScrollView(event)\"><kbd>r</kbd> Scroll View Mode</a></li>\n<li class=\"slide-tool-item\" data-item=\"5\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.toggleChalkboard(event)\"><kbd>b</kbd> Toggle Chalkboard</a></li>\n<li class=\"slide-tool-item\" data-item=\"6\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.toggleNotesCanvas(event)\"><kbd>c</kbd> Toggle Notes Canvas</a></li>\n<li class=\"slide-tool-item\" data-item=\"7\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.downloadDrawings(event)\"><kbd>d</kbd> Download Drawings</a></li>\n<li class=\"slide-tool-item\" data-item=\"8\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.keyboardHelp(event)\"><kbd>?</kbd> Keyboard Help</a></li>\n</ul>"}],"openButton":true},
+'chalkboard': {"buttons":true},
+'smaller': false,
+ 
+        // Display controls in the bottom right corner
+        controls: false,
+
+        // Help the user learn the controls by providing hints, for example by
+        // bouncing the down arrow when they first encounter a vertical slide
+        controlsTutorial: false,
+
+        // Determines where controls appear, "edges" or "bottom-right"
+        controlsLayout: 'edges',
+
+        // Visibility rule for backwards navigation arrows; "faded", "hidden"
+        // or "visible"
+        controlsBackArrows: 'faded',
+
+        // Display a presentation progress bar
+        progress: true,
+
+        // Display the page number of the current slide
+        slideNumber: 'c/t',
+
+        // 'all', 'print', or 'speaker'
+        showSlideNumber: 'all',
+
+        // Add the current slide number to the URL hash so that reloading the
+        // page/copying the URL will return you to the same slide
+        hash: true,
+
+        // Start with 1 for the hash rather than 0
+        hashOneBasedIndex: false,
+
+        // Flags if we should monitor the hash and change slides accordingly
+        respondToHashChanges: true,
+
+        // Push each slide change to the browser history
+        history: true,
+
+        // Enable keyboard shortcuts for navigation
+        keyboard: true,
+
+        // Enable the slide overview mode
+        overview: true,
+
+        // Disables the default reveal.js slide layout (scaling and centering)
+        // so that you can use custom CSS layout
+        disableLayout: false,
+
+        // Vertical centering of slides
+        center: false,
+
+        // Enables touch navigation on devices with touch input
+        touch: true,
+
+        // Loop the presentation
+        loop: false,
+
+        // Change the presentation direction to be RTL
+        rtl: false,
+
+        // see https://revealjs.com/vertical-slides/#navigation-mode
+        navigationMode: 'linear',
+
+        // Randomizes the order of slides each time the presentation loads
+        shuffle: false,
+
+        // Turns fragments on and off globally
+        fragments: true,
+
+        // Flags whether to include the current fragment in the URL,
+        // so that reloading brings you to the same fragment position
+        fragmentInURL: false,
+
+        // Flags if the presentation is running in an embedded mode,
+        // i.e. contained within a limited portion of the screen
+        embedded: false,
+
+        // Flags if we should show a help overlay when the questionmark
+        // key is pressed
+        help: true,
+
+        // Flags if it should be possible to pause the presentation (blackout)
+        pause: true,
+
+        // Flags if speaker notes should be visible to all viewers
+        showNotes: false,
+
+        // Global override for autoplaying embedded media (null/true/false)
+        autoPlayMedia: null,
+
+        // Global override for preloading lazy-loaded iframes (null/true/false)
+        preloadIframes: null,
+
+        // Number of milliseconds between automatically proceeding to the
+        // next slide, disabled when set to 0, this value can be overwritten
+        // by using a data-autoslide attribute on your slides
+        autoSlide: 0,
+
+        // Stop auto-sliding after user input
+        autoSlideStoppable: true,
+
+        // Use this method for navigation when auto-sliding
+        autoSlideMethod: null,
+
+        // Specify the average time in seconds that you think you will spend
+        // presenting each slide. This is used to show a pacing timer in the
+        // speaker view
+        defaultTiming: null,
+
+        // Enable slide navigation via mouse wheel
+        mouseWheel: false,
+
+        // The display mode that will be used to show slides
+        display: 'block',
+
+        // Hide cursor if inactive
+        hideInactiveCursor: true,
+
+        // Time before the cursor is hidden (in ms)
+        hideCursorTime: 5000,
+
+        // Opens links in an iframe preview overlay
+        previewLinks: false,
+
+        // Transition style (none/fade/slide/convex/concave/zoom)
+        transition: 'fade',
+
+        // Transition speed (default/fast/slow)
+        transitionSpeed: 'default',
+
+        // Transition style for full page slide backgrounds
+        // (none/fade/slide/convex/concave/zoom)
+        backgroundTransition: 'none',
+
+        // Number of slides away from the current that are visible
+        viewDistance: 3,
+
+        // Number of slides away from the current that are visible on mobile
+        // devices. It is advisable to set this to a lower number than
+        // viewDistance in order to save resources.
+        mobileViewDistance: 2,
+
+        // The "normal" size of the presentation, aspect ratio will be preserved
+        // when the presentation is scaled to fit different resolutions. Can be
+        // specified using percentage units.
+        width: 1280,
+
+        height: 720,
+
+        // Factor of the display size that should remain empty around the content
+        margin: 7.0e-2,
+
+        math: {
+          mathjax: 'https://cdn.jsdelivr.net/npm/mathjax@2.7.9/MathJax.js',
+          config: 'TeX-AMS_HTML-full',
+          tex2jax: {
+            inlineMath: [['\\(','\\)']],
+            displayMath: [['\\[','\\]']],
+            balanceBraces: true,
+            processEscapes: false,
+            processRefs: true,
+            processEnvironments: true,
+            preview: 'TeX',
+            skipTags: ['script','noscript','style','textarea','pre','code'],
+            ignoreClass: 'tex2jax_ignore',
+            processClass: 'tex2jax_process'
+          },
+        },
+
+        // reveal.js plugins
+        plugins: [QuartoLineHighlight, PdfExport, RevealMenu, RevealChalkboard, QuartoSupport,
+
+          RevealMath,
+          RevealNotes,
+          RevealSearch,
+          RevealZoom
+        ]
+      });
+    </script>
+    
+    <script>
+      // htmlwidgets need to know to resize themselves when slides are shown/hidden.
+      // Fire the "slideenter" event (handled by htmlwidgets.js) when the current
+      // slide changes (different for each slide format).
+      (function () {
+        // dispatch for htmlwidgets
+        function fireSlideEnter() {
+          const event = window.document.createEvent("Event");
+          event.initEvent("slideenter", true, true);
+          window.document.dispatchEvent(event);
+        }
+
+        function fireSlideChanged(previousSlide, currentSlide) {
+          fireSlideEnter();
+
+          // dispatch for shiny
+          if (window.jQuery) {
+            if (previousSlide) {
+              window.jQuery(previousSlide).trigger("hidden");
+            }
+            if (currentSlide) {
+              window.jQuery(currentSlide).trigger("shown");
+            }
+          }
+        }
+
+        // hookup for slidy
+        if (window.w3c_slidy) {
+          window.w3c_slidy.add_observer(function (slide_num) {
+            // slide_num starts at position 1
+            fireSlideChanged(null, w3c_slidy.slides[slide_num - 1]);
+          });
+        }
+
+      })();
+    </script>
+
+    <script id="quarto-html-after-body" type="application/javascript">
+      window.document.addEventListener("DOMContentLoaded", function (event) {
+        const tabsets =  window.document.querySelectorAll(".panel-tabset-tabby")
+        tabsets.forEach(function(tabset) {
+          const tabby = new Tabby('#' + tabset.id);
+        });
+        const isCodeAnnotation = (el) => {
+          for (const clz of el.classList) {
+            if (clz.startsWith('code-annotation-')) {                     
+              return true;
+            }
+          }
+          return false;
+        }
+        const onCopySuccess = function(e) {
+          // button target
+          const button = e.trigger;
+          // don't keep focus
+          button.blur();
+          // flash "checked"
+          button.classList.add('code-copy-button-checked');
+          var currentTitle = button.getAttribute("title");
+          button.setAttribute("title", "Copiado");
+          let tooltip;
+          if (window.bootstrap) {
+            button.setAttribute("data-bs-toggle", "tooltip");
+            button.setAttribute("data-bs-placement", "left");
+            button.setAttribute("data-bs-title", "Copiado");
+            tooltip = new bootstrap.Tooltip(button, 
+              { trigger: "manual", 
+                customClass: "code-copy-button-tooltip",
+                offset: [0, -8]});
+            tooltip.show();    
+          }
+          setTimeout(function() {
+            if (tooltip) {
+              tooltip.hide();
+              button.removeAttribute("data-bs-title");
+              button.removeAttribute("data-bs-toggle");
+              button.removeAttribute("data-bs-placement");
+            }
+            button.setAttribute("title", currentTitle);
+            button.classList.remove('code-copy-button-checked');
+          }, 1000);
+          // clear code selection
+          e.clearSelection();
+        }
+        const getTextToCopy = function(trigger) {
+          const outerScaffold = trigger.parentElement.cloneNode(true);
+          const codeEl = outerScaffold.querySelector('code');
+          for (const childEl of codeEl.children) {
+            if (isCodeAnnotation(childEl)) {
+              childEl.remove();
+            }
+          }
+          return codeEl.innerText;
+        }
+        const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+          text: getTextToCopy
+        });
+        clipboard.on('success', onCopySuccess);
+        if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+          const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+            text: getTextToCopy,
+            container: window.document.getElementById('quarto-embedded-source-code-modal')
+          });
+          clipboardModal.on('success', onCopySuccess);
+        }
+          var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+          var mailtoRegex = new RegExp(/^mailto:/);
+            var filterRegex = new RegExp('/' + window.location.host + '/');
+          var isInternal = (href) => {
+              return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+          }
+          // Inspect non-navigation links and adorn them if external
+         var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+          for (var i=0; i<links.length; i++) {
+            const link = links[i];
+            if (!isInternal(link.href)) {
+              // undo the damage that might have been done by quarto-nav.js in the case of
+              // links that we want to consider external
+              if (link.dataset.originalHref !== undefined) {
+                link.href = link.dataset.originalHref;
+              }
+            }
+          }
+        function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+          const config = {
+            allowHTML: true,
+            maxWidth: 500,
+            delay: 100,
+            arrow: false,
+            appendTo: function(el) {
+                return el.closest('section.slide') || el.parentElement;
+            },
+            interactive: true,
+            interactiveBorder: 10,
+            theme: 'light-border',
+            placement: 'bottom-start',
+          };
+          if (contentFn) {
+            config.content = contentFn;
+          }
+          if (onTriggerFn) {
+            config.onTrigger = onTriggerFn;
+          }
+          if (onUntriggerFn) {
+            config.onUntrigger = onUntriggerFn;
+          }
+            config['offset'] = [0,0];
+            config['maxWidth'] = 700;
+          window.tippy(el, config); 
+        }
+        const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+        for (var i=0; i<noterefs.length; i++) {
+          const ref = noterefs[i];
+          tippyHover(ref, function() {
+            // use id or data attribute instead here
+            let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+            try { href = new URL(href).hash; } catch {}
+            const id = href.replace(/^#\/?/, "");
+            const note = window.document.getElementById(id);
+            if (note) {
+              return note.innerHTML;
+            } else {
+              return "";
+            }
+          });
+        }
+        const findCites = (el) => {
+          const parentEl = el.parentElement;
+          if (parentEl) {
+            const cites = parentEl.dataset.cites;
+            if (cites) {
+              return {
+                el,
+                cites: cites.split(' ')
+              };
+            } else {
+              return findCites(el.parentElement)
+            }
+          } else {
+            return undefined;
+          }
+        };
+        var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+        for (var i=0; i<bibliorefs.length; i++) {
+          const ref = bibliorefs[i];
+          const citeInfo = findCites(ref);
+          if (citeInfo) {
+            tippyHover(citeInfo.el, function() {
+              var popup = window.document.createElement('div');
+              citeInfo.cites.forEach(function(cite) {
+                var citeDiv = window.document.createElement('div');
+                citeDiv.classList.add('hanging-indent');
+                citeDiv.classList.add('csl-entry');
+                var biblioDiv = window.document.getElementById('ref-' + cite);
+                if (biblioDiv) {
+                  citeDiv.innerHTML = biblioDiv.innerHTML;
+                }
+                popup.appendChild(citeDiv);
+              });
+              return popup.innerHTML;
+            });
+          }
+        }
+      });
+      </script>
+    
+
+</body></html>

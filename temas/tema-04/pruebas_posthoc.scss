@@ -1,0 +1,105 @@
+/*-- scss:defaults --*/
+$body-bg: #f7f6f1;
+$body-color: #17212b;
+$link-color: #006d77;
+$presentation-heading-color: #0b3c49;
+$font-family-sans-serif: "Aptos", "Helvetica Neue", Arial, sans-serif;
+$presentation-font-size-root: 31px;
+$presentation-heading-font-weight: 650;
+$presentation-h1-font-size: 2.15em;
+$presentation-h2-font-size: 1.45em;
+$code-block-font-size: 0.60em;
+
+/*-- scss:rules --*/
+.reveal .slides { text-align: left; }
+.reveal h1, .reveal h2 { letter-spacing: -0.02em; }
+.reveal h2 { border-bottom: 4px solid #e09f3e; padding-bottom: 0.18em; }
+.reveal .title-slide h1 { max-width: 900px; }
+.reveal .subtitle { color: #46636b; max-width: 900px; }
+.reveal strong { color: #9b4d24; }
+.reveal blockquote {
+  border-left: 7px solid #e09f3e;
+  padding: 0.35em 0.7em;
+  background: rgba(255,255,255,0.55);
+  box-shadow: none;
+  width: 88%;
+}
+.reveal .decision {
+  border-left: 8px solid #006d77;
+  padding: 0.45em 0.8em;
+  background: #e5f2f1;
+}
+.reveal .warning {
+  border-left: 8px solid #c14953;
+  padding: 0.45em 0.8em;
+  background: #f8e8e8;
+}
+.reveal .demo h2::after {
+  content: "  ·  EN R";
+  color: #9b4d24;
+  font-size: 0.48em;
+  letter-spacing: 0.06em;
+}
+.reveal .exercise h2::after {
+  content: "  ·  EJERCICIO";
+  color: #006d77;
+  font-size: 0.48em;
+  letter-spacing: 0.06em;
+}
+/* Etiqueta de la prueba en cada diapositiva de una sección */
+.reveal .pro, .reveal .con {
+  padding: 0.35em 0.7em;
+  border-radius: 4px;
+  font-size: 0.82em;
+}
+.reveal .pro { background: #e5f2f1; border-top: 6px solid #006d77; }
+.reveal .con { background: #f8e8e8; border-top: 6px solid #c14953; }
+.reveal .pro h3, .reveal .con h3 { margin-top: 0.1em; font-size: 0.95em; }
+.reveal .formula {
+  background: rgba(255,255,255,0.7);
+  border: 1px solid #d9d4c7;
+  padding: 0.2em 0.6em;
+  border-radius: 4px;
+}
+.reveal .small { font-size: 0.75em; }
+.reveal .tiny { font-size: 0.58em; }
+.reveal table { font-size: 0.69em; }
+.reveal .slide-number { color: #46636b; }
+.reveal .footer { color: #60767b; font-size: 0.42em; }
+.reveal .cell-output-stdout pre code { font-size: 0.85em; }
+#title-slide .subtitle { margin-left: auto; margin-right: auto; }
+/* Fe de erratas del capítulo 18 */
+.reveal .errata {
+  border-left: 8px solid #6a4c93;
+  padding: 0.45em 0.8em;
+  background: #efeaf6;
+  font-size: 0.85em;
+}
+.reveal .errata::before {
+  content: "FE DE ERRATAS · CAPÍTULO 18";
+  display: block;
+  color: #6a4c93;
+  font-size: 0.6em;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  margin-bottom: 0.2em;
+}
+.reveal .fe h2 { border-bottom-color: #6a4c93; }
+.reveal .fe h2::after {
+  content: "  ·  FE DE ERRATAS";
+  color: #6a4c93;
+  font-size: 0.48em;
+  letter-spacing: 0.06em;
+}
+.reveal .fe table th { color: #6a4c93; }
+/* Subtítulos dentro de columnas (sin crear secciones anidadas) */
+.reveal .h3 {
+  display: block;
+  font-size: 1.1em;
+  font-weight: 650;
+  color: #0b3c49;
+  margin: 0.1em 0 0.3em 0;
+}
+.reveal .pro .h3, .reveal .con .h3 { font-size: 1.05em; }
+.reveal .fe table { font-size: 0.6em; }
+.reveal .fe table td, .reveal .fe table th { padding: 0.25em 0.4em; }
