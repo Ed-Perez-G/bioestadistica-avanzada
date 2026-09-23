@@ -153,10 +153,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <a class="dropdown-item" href="../../temas/tema-03/index.html">
  <span class="dropdown-text">Tema 3: Repaso inferencia estadística</span></a>
   </li>  
-        <li>
-    <a class="dropdown-item" href="../../temas/tema-04/index.html">
- <span class="dropdown-text">Tema 4: Pos hoc y comparaciones múltiples</span></a>
-  </li>  
     </ul>
   </li>
 </ul>
@@ -2562,7 +2558,7 @@ lwt            1.048845    7.80937</code></pre>
     }
       var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
       var mailtoRegex = new RegExp(/^mailto:/);
-        var filterRegex = new RegExp("https:\/\/Ed-Perez-G\.github\.io\/bioestadistica-avanzada\/");
+        var filterRegex = new RegExp('/' + window.location.host + '/');
       var isInternal = (href) => {
           return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
       }
