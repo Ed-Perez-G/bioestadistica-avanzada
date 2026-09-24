@@ -59,7 +59,7 @@ options(digits = 4, pillar.sigfig = 3)
 
 ## Una nota sobre el capítulo 18 {.fe}
 
-Esta presentación se basa en el capítulo 18 del libro **Bioestadística en R para ciencias de la salud**. Al revisarlo por enésima vez econtré: **errores de fundamento, fórmulas e interpretación**. 
+Esta presentación se basa en el capítulo 18 del libro **Bioestadística en R para ciencias de la salud**. Al revisarlo por enésima vez econtré: **errores de fundamento, fórmulas e interpretación**.[@perezguerrero2024bioestadistica]
 
 A lo largo de la presentación hay:
 
