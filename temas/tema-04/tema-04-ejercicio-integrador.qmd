@@ -1,0 +1,508 @@
+---
+title: "Ejercicio integrador"
+subtitle: "Temas del 1 al 4"
+author: "Sustituya por su nombre"
+lang: es
+format:
+  html:
+    toc: true
+    toc-depth: 2
+    code-fold: false
+    code-tools: true
+    embed-resources: true
+execute:
+  warning: false
+  message: false
+editor: source
+---
+
+# Paquetes y datos
+
+```{r}
+library(survival)    # contiene la base pbc
+library(dplyr)
+library(ggplot2)
+library(rstatix)     # pruebas en formato tidy
+library(effectsize)  # tamaños del efecto con IC 95 % (cárguelo después de rstatix)
+library(ggstatsplot)
+```
+
+Usaremos la base `pbc` (*Primary Biliary Cholangitis*, Mayo Clinic, 1974–1984). Incluye 418 pacientes con cirrosis biliar primaria. Nos interesan estas variables:
+
+- `stage`: estadio histológico de la enfermedad (1 a 4).
+- `albumin`: albúmina sérica (g/dL).
+- `bili`: bilirrubina sérica (mg/dL).
+- `edema`: 0 = sin edema, 0.5 = edema sin diuréticos o resuelto, 1 = edema pese a diuréticos.
+- `status`: 0 = censurado, 1 = trasplante, 2 = muerte.
+
+Preparamos los datos: convertimos a factores y eliminamos los pacientes sin estadio.
+
+```{r}
+datos <- pbc |>
+  filter(!is.na(stage)) |>
+  mutate(
+    estadio = factor(stage),
+    edema   = factor(edema, levels = c(0, 0.5, 1),
+                     labels = c("Sin edema", "Edema leve", "Edema grave")),
+    muerte  = factor(if_else(status == 2, "Sí", "No"), levels = c("Sí", "No"))
+  )
+
+datos |> count(estadio)
+```
+
+
+```{r}
+glimpse(datos)
+```
+
+Puede crear una EDA por estadio con:
+
+```{r eval=FALSE}
+DataExplorer::create_report(datos, y = "estadio")
+```
+
+
+# Caso 1 · Albúmina y estadio (ruta paramétrica)
+
+## Paso 1. Pregunta e hipótesis
+
+> **¿La albúmina sérica difiere entre los estadios histológicos de la enfermedad?**
+
+- H₀: la albúmina media es igual en los cuatro estadios.
+- H₁: al menos un estadio tiene una media distinta.
+
+## Paso 2. Gráfico y descriptivos
+
+```{r}
+ggplot(datos, aes(x = estadio, y = albumin, fill = estadio)) +
+  geom_boxplot(alpha = 0.6, outlier.shape = NA) +
+  geom_jitter(width = 0.15, alpha = 0.3) +
+  labs(x = "Estadio histológico", y = "Albúmina (g/dL)") +
+  theme_minimal() +
+  theme(legend.position = "none")
+```
+
+La opción `type = "mean_ci"` nos da la media de cada grupo con su IC 95 %:
+
+```{r}
+datos |>
+  group_by(estadio) |>
+  get_summary_stats(albumin, type = "mean_ci")
+```
+
+¿qué tendencia observa en la gráfica?
+
+## Paso 3. Supuestos y selección de la prueba
+
+Instale:
+
+```{r eval=FALSE}
+install.packages('ggrain')
+```
+
+y luego
+
+```{r}
+library(ggrain)
+```
+
+
+```{r}
+datos |> ggplot(mapping = aes(x= 1, y = albumin))+
+  geom_rain()+
+  facet_grid(~estadio)
+```
+
+
+```{r}
+# Normalidad dentro de cada grupo
+datos |>
+  group_by(estadio) |>
+  shapiro_test(albumin)
+
+# Homogeneidad de varianzas
+datos |> levene_test(albumin ~ estadio)
+```
+
+**Decisión:** si la normalidad es razonable (revise también el gráfico) y Levene no es significativa → **ANOVA** + **Tukey**. Si las varianzas difieren → **ANOVA de Welch** + **Games-Howell**.
+
+Suponga que los datos siguen distrbución normal en todos los grupos. 
+
+## Paso 4. Prueba global
+
+```{r}
+datos |> anova_test(albumin ~ estadio)
+```
+
+Alternativa si las varianzas no son iguales:
+
+```{r}
+datos |> welch_anova_test(albumin ~ estadio)
+# De rstatix no asume homegenidad de varianzas 
+```
+
+## Paso 5. Tamaño del efecto con IC 95 %
+
+```{r}
+modelo <- aov(albumin ~ estadio, data = datos)
+eta <- effectsize::eta_squared(modelo, alternative = "two.sided")
+eta
+
+interpret_eta_squared(eta$Eta2)   # pequeño, mediano o grande
+```
+
+```{r}
+datos |> 
+  ggbetweenstats(x = estadio, y = albumin, type = "p")
+```
+
+## Paso 6. Prueba pos hoc
+
+```{r}
+datos |> tukey_hsd(albumin ~ estadio)
+```
+
+Cada fila muestra la **diferencia de medias** (`estimate`), su **IC 95 %** (`conf.low`, `conf.high`) y el valor *p* ajustado. Si las varianzas no fueran iguales, use:
+
+```{r}
+datos |> games_howell_test(albumin ~ estadio)
+```
+
+## Conclusión (plantilla)
+
+> La albúmina sérica difirió entre estadios (ANOVA, F = ___, p = ___), con un tamaño del efecto ___ (η² = ___, IC 95 % ___ a ___). La prueba de Tukey mostró que ___ difiere de ___ (diferencia = ___ g/dL, IC 95 % ___ a ___).
+
+# Caso 2 · Bilirrubina y estadio (ruta no paramétrica)
+
+## Paso 1. Pregunta e hipótesis
+
+> **¿La bilirrubina sérica difiere entre los estadios histológicos?**
+
+- H₀: la distribución de bilirrubina es igual en los cuatro estadios.
+- H₁: al menos un estadio tiene una distribución distinta.
+
+## Paso 2. Gráfico y descriptivos
+
+```{r}
+ggplot(datos, aes(x = estadio, y = bili, fill = estadio)) +
+  geom_boxplot(alpha = 0.6, outlier.shape = NA) +
+  geom_jitter(width = 0.15, alpha = 0.3) +
+  labs(x = "Estadio histológico", y = "Bilirrubina (mg/dL)") +
+  theme_minimal() +
+  theme(legend.position = "none")
+```
+
+
+```{r}
+datos |> ggplot(mapping = aes(x= 1, y = bili))+
+  geom_rain()+
+  facet_grid(~estadio)
+```
+
+```{r}
+datos |>
+  group_by(estadio) |>
+  get_summary_stats(bili, type = "median_iqr")
+```
+
+cómo es la forma de la distribución? ¿Qué medida de tendencia central es mejor aquí?
+
+## Paso 3. Supuestos y selección de la prueba
+
+```{r}
+datos |>
+  group_by(estadio) |>
+  shapiro_test(bili)
+```
+
+**Decisión:** la bilirrubina es muy asimétrica y no es normal → **Kruskal-Wallis** + **Dunn**.
+
+## Paso 4. Prueba global
+
+```{r}
+datos |> kruskal_test(bili ~ estadio)
+```
+
+## Paso 5. Tamaño del efecto con IC 95 %
+
+```{r}
+epsilon <- rank_epsilon_squared(bili ~ estadio, data = datos, alternative = "two.sided")
+epsilon
+
+interpret_epsilon_squared(epsilon$rank_epsilon_squared)
+```
+
+## Paso 6. Prueba pos hoc
+
+```{r}
+datos |> dunn_test(bili ~ estadio, p.adjust.method = "holm")
+```
+
+```{r}
+datos |> 
+  ggbetweenstats(x = estadio, y = bili, type = 'np')
+```
+
+## Conclusión (plantilla)
+
+> La bilirrubina difirió entre estadios (Kruskal-Wallis, H = ___, gl = ___, p = ___; ε² = ___, IC 95 % ___ a ___). La prueba de Dunn con ajuste de Holm mostró diferencias entre ___.
+
+# Caso 3 · Edema y muerte (variables categóricas)
+
+## Paso 1. Pregunta e hipótesis
+
+> **¿La proporción de pacientes que fallecen depende del grado de edema?**
+
+- H₀: edema y muerte son independientes.
+- H₁: edema y muerte están asociados.
+
+## Paso 2. Gráfico y tabla
+
+```{r}
+ggplot(datos, aes(x = edema, fill = muerte)) +
+  geom_bar(position = "fill") +
+  labs(x = "Edema", y = "Proporción", fill = "Muerte") +
+  theme_minimal()
+```
+
+```{r}
+tabla <- table(datos$edema, datos$muerte)
+tabla
+```
+
+## Paso 3. Supuestos y selección de la prueba
+
+```{r}
+chisq.test(tabla)$expected
+```
+
+**Decisión:** si todas las frecuencias esperadas son ≥ 5 → **χ²**. Si no → prueba exacta de Fisher (`fisher_test(tabla)`).
+
+## Paso 4. Prueba global
+
+```{r}
+chisq_test(tabla)
+```
+
+## Paso 5. Tamaño del efecto con IC 95 %
+
+```{r}
+v <- cramers_v(tabla, alternative = "two.sided")
+v
+
+interpret_cramers_v(v$Cramers_v_adjusted)
+```
+
+## Paso 6. Prueba pos hoc
+
+Comparamos la proporción de muertes entre cada par de grupos de edema:
+
+```{r}
+pairwise_prop_test(tabla, p.adjust.method = "holm")
+```
+
+```{r}
+datos |> 
+  ggbarstats(x = muerte, y = edema)
+```
+
+
+## Conclusión (plantilla)
+
+> La muerte se asoció al grado de edema (χ² = ___, gl = ___, p = ___; V de Cramér = ___, IC 95 % ___ a ___). Las comparaciones por pares mostraron que ___.
+
+# Caso 4 · Expresión génica y comparaciones múltiples (FDR)
+
+En genómica no se hace **una** prueba, se hacen **miles** (una por gen). Si usa α = 0.05 en cada una, esperará muchos falsos positivos solo por azar. En este caso aprenderá a controlarlos con la **tasa de falsos descubrimientos** (*False Discovery Rate*, FDR).
+
+Usaremos datos **simulados**, lo que tiene una ventaja: sabemos qué genes cambian de verdad y podemos contar cuántos errores comete cada método.
+
+## Paso 1. Pregunta e hipótesis
+
+> **¿Qué genes cambian su expresión entre controles sanos, pacientes con artritis reumatoide (AR) y pacientes con T-LGLL?**
+
+Para **cada gen**:
+
+- H₀: la expresión media es igual en los tres grupos.
+- H₁: al menos un grupo tiene una media distinta.
+
+## Simulación de los datos
+
+- 2000 genes y 30 muestras (10 por grupo).
+- La expresión está en escala log₂, con media 8 y DE 1.
+- **Solo los primeros 200 genes** están realmente sobreexpresados en T-LGLL (+1.5 unidades log₂). Los otros 1800 no cambian.
+
+```{r}
+library(tidyr)
+
+set.seed(2026)
+n_genes <- 2000
+grupos  <- rep(c("Control", "AR", "T-LGLL"), each = 10)
+
+# Matriz de expresión: filas = genes, columnas = muestras
+expresion <- matrix(rnorm(n_genes * 30, mean = 8, sd = 1), nrow = n_genes)
+rownames(expresion) <- paste0("gen_", 1:n_genes)
+
+# Los genes 1 a 200 aumentan su expresión en T-LGLL
+expresion[1:200, grupos == "T-LGLL"] <- expresion[1:200, grupos == "T-LGLL"] + 1.5
+
+genes_reales <- paste0("gen_", 1:200)
+```
+
+Pasamos la matriz a formato largo (una fila por gen y muestra), como en el tema 1:
+
+```{r}
+expr_larga <- as.data.frame(expresion) |>
+  mutate(gen = rownames(expresion)) |>
+  pivot_longer(-gen, names_to = "muestra", values_to = "expresion") |>
+  mutate(grupo = factor(rep(grupos, n_genes),
+                        levels = c("Control", "AR", "T-LGLL")))
+
+head(expr_larga)
+```
+
+## Paso 2. Gráfico de un gen
+
+Antes de analizar 2000 genes, observe dos de ellos: uno que sí cambia (`gen_1`) y uno que no (`gen_1500`).
+
+```{r}
+expr_larga |>
+  filter(gen %in% c("gen_1", "gen_1500")) |>
+  ggplot(aes(x = grupo, y = expresion, fill = grupo)) +
+  geom_boxplot(alpha = 0.6, outlier.shape = NA) +
+  geom_jitter(width = 0.15, alpha = 0.5) +
+  facet_wrap(~ gen) +
+  labs(x = NULL, y = "Expresión (log2)") +
+  theme_minimal() +
+  theme(legend.position = "none")
+```
+
+## Paso 3. Selección de la prueba
+
+Los datos de expresión en escala log₂ se aproximan a la normal y simulamos varianzas iguales, así que usamos **ANOVA de una vía** en cada gen.
+
+::: {.callout-note}
+En estudios reales de RNA-seq o microarreglos se usan paquetes especializados (`limma`, `DESeq2`, `edgeR`). Hacen pruebas más potentes, pero la lógica del FDR es exactamente la misma.
+:::
+
+## Paso 4. Una prueba por gen
+
+`group_by(gen)` repite la prueba en cada gen. Guardamos también el **log₂ fold change** (T-LGLL vs. Control), que en genómica se usa como tamaño del efecto:
+
+```{r}
+resultados <- expr_larga |>
+  group_by(gen) |>
+  summarise(
+    p      = oneway.test(expresion ~ grupo, var.equal = TRUE)$p.value,
+    log2FC = mean(expresion[grupo == "T-LGLL"]) - mean(expresion[grupo == "Control"])
+  )
+
+head(resultados)
+```
+
+El histograma de valores *p* es un diagnóstico clásico en genómica. Si ningún gen cambiara, sería plano, porque bajo H₀ los valores *p* son uniformes. El pico cerca de 0 corresponde a los genes que sí cambian.
+
+```{r}
+ggplot(resultados, aes(x = p)) +
+  geom_histogram(breaks = seq(0, 1, 0.05), fill = "grey70", color = "white") +
+  labs(x = "Valor p", y = "Número de genes") +
+  theme_minimal()
+```
+
+### El problema: ¿cuántos genes son "significativos"?
+
+Ajustamos los valores *p* con dos métodos:
+
+- **Bonferroni**: controla la probabilidad de cometer **al menos un** falso positivo (FWER). Es muy estricto.
+- **Benjamini-Hochberg (FDR)**: controla la **proporción** de falsos positivos **entre los genes que declara significativos**. Con FDR < 0.05, se espera que alrededor del 5 % de sus "descubrimientos" sean falsos.
+
+```{r}
+resultados <- resultados |>
+  mutate(
+    p_bonf = p.adjust(p, method = "bonferroni"),
+    p_fdr  = p.adjust(p, method = "BH"),
+    real   = gen %in% genes_reales
+  )
+```
+
+Como conocemos la verdad, podemos contar aciertos y errores:
+
+```{r}
+resultados |>
+  group_by(real) |>
+  summarise(
+    sin_correccion = sum(p < 0.05),
+    bonferroni     = sum(p_bonf < 0.05),
+    fdr            = sum(p_fdr < 0.05)
+  )
+```
+
+La fila `real = FALSE` son los **falsos positivos** (genes que no cambian pero salieron significativos) y la fila `real = TRUE` son los **verdaderos positivos** (de 200 posibles).
+
+**Preguntas para usted:**
+
+- Sin corrección, ¿cuántos falsos positivos obtuvo? Compárelo con lo esperado: 1800 × 0.05 = 90.
+- ¿Cuántos genes reales pierde Bonferroni?
+- ¿Qué proporción de los genes que declara el FDR son falsos? ¿Se acerca al 5 %?
+
+### Gráfico de volcán
+
+Es la figura típica de un análisis de expresión diferencial: tamaño del efecto (log₂FC) en el eje x y evidencia (−log₁₀ *p*) en el eje y.
+
+```{r}
+ggplot(resultados, aes(x = log2FC, y = -log10(p), color = p_fdr < 0.05)) +
+  geom_point(alpha = 0.6) +
+  scale_color_manual(values = c("grey70", "firebrick"),
+                     labels = c("No significativo", "FDR < 0.05")) +
+  labs(x = "log2 fold change (T-LGLL vs. Control)", y = "-log10(p)", color = NULL) +
+  theme_minimal()
+```
+
+## Paso 5. Tamaño del efecto con IC 95 % (un gen)
+
+Tome el gen con el menor valor *p* ajustado y calcule η² con su IC, igual que en el Caso 1:
+
+```{r}
+top_gen <- resultados |> arrange(p_fdr) |> slice(1) |> pull(gen)
+top_gen
+
+modelo_gen <- aov(expresion ~ grupo, data = filter(expr_larga, gen == top_gen))
+effectsize::eta_squared(modelo_gen, alternative = "two.sided")
+```
+
+## Paso 6. Prueba pos hoc en los genes significativos
+
+La prueba pos hoc se aplica **solo a los genes que pasaron el FDR**. Así se responde qué grupos difieren en cada gen:
+
+```{r}
+genes_sig <- resultados |> filter(p_fdr < 0.05) |> pull(gen)
+
+posthoc <- expr_larga |>
+  filter(gen %in% genes_sig) |>
+  group_by(gen) |>
+  tukey_hsd(expresion ~ grupo)
+
+# ¿Qué comparación explica las diferencias?
+posthoc |>
+  filter(p.adj < 0.05) |>
+  count(group1, group2)
+```
+
+**Pregunta para usted:** ¿qué comparaciones aparecen con más frecuencia? ¿Coincide con cómo se simularon los datos?
+
+## Conclusión (plantilla)
+
+> De 2000 genes evaluados, ___ tuvieron *p* < 0.05 sin corrección, ___ tras Bonferroni y ___ con FDR < 0.05 (Benjamini-Hochberg). En la mayoría de los genes significativos, la prueba de Tukey mostró que la diferencia se debe a ___ vs. ___, con log₂FC de ___.
+
+# Ejercicios 
+
+Resuelva cada pregunta siguiendo los **seis pasos**. Justifique por escrito la prueba que eligió.
+
+1. ¿El conteo de plaquetas (`platelet`) difiere entre los estadios histológicos?
+2. ¿El colesterol sérico (`chol`) difiere según el grado de edema?
+3. ¿La presencia de hepatomegalia (`hepato`) se asocia al estadio histológico?
+4. **Reflexión:** en los tres casos resueltos el valor *p* fue muy pequeño. Compare los tamaños del efecto y sus IC 95 %: ¿cuál asociación es más fuerte? ¿Qué información le da el IC que no le da el valor *p*?
+5. **Genómica:** repita el Caso 4 cambiando el efecto simulado de `+ 1.5` a `+ 0.8`. ¿Qué pasa con el número de genes detectados por Bonferroni y por FDR? ¿Y con la proporción de falsos positivos del FDR?
+
+
+

@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Tema 4: Pruebas pos hoc y comparaciones múltiples – Bioestadística avanzada</title>
+<title>Tema 3: Inferencia estadística – Bioestadística avanzada</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -69,6 +69,35 @@ ul.task-list li input[type="checkbox"] {
   }
 }</script>
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 <link rel="stylesheet" href="../../styles.css">
 </head>
@@ -117,10 +146,6 @@ ul.task-list li input[type="checkbox"] {
     <a class="dropdown-item" href="../../temas/tema-03/index.html">
  <span class="dropdown-text">Tema 3: Repaso inferencia estadística</span></a>
   </li>  
-        <li>
-    <a class="dropdown-item" href="../../temas/tema-04/index.html">
- <span class="dropdown-text">Tema 4: Pos hoc y comparaciones múltiples</span></a>
-  </li>  
     </ul>
   </li>
 </ul>
@@ -150,7 +175,7 @@ ul.task-list li input[type="checkbox"] {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Tema 4: Pruebas pos hoc y comparaciones múltiples</h1>
+<h1 class="title">Tema 3: Inferencia estadística</h1>
 </div>
 
 
@@ -169,19 +194,21 @@ ul.task-list li input[type="checkbox"] {
 
 <section id="objetivo" class="level2">
 <h2 class="anchored" data-anchor-id="objetivo">Objetivo</h2>
-<p>Conocer, seleccionar y aplicar las principales pruebas post hoc y pruebas de correciones múltiples.</p>
+<p>Objetivo: Interpretar estimaciones, intervalos de confianza, tamaños del efecto y valores <span class="math inline">\(p\)</span>.</p>
 </section>
 <section id="contenidos" class="level2">
 <h2 class="anchored" data-anchor-id="contenidos">Contenidos</h2>
 <ul>
-<li>Presntación con los fundamentos</li>
-<li>Ejercicio integrador</li>
+<li>Repaso de inferencia estadística</li>
+<li>Generaliades sobre <code>rstatix</code></li>
+<li>Uso básico de <code>ggstatsplot</code></li>
 </ul>
 </section>
 <section id="material-de-clase" class="level2">
 <h2 class="anchored" data-anchor-id="material-de-clase">Material de clase</h2>
-<p><a href="../../temas/tema-04/tema-04-pruebas_posthoc.html">Presentacion pruebas pos hoc y comparaciones múltiples</a></p>
-<p><a href="../../descargas/tema-04-ejercicio-integrador.qmd" download="tema-04-ejercicio-integrador.qmd">Ejercicio integrador</a></p>
+<p><a href="../../temas/tema-03/tema-03-inferencia-presentacion.html">Parte 1 - Ver la presentación: conceptos básicos de inferencia estadística</a></p>
+<p><a href="../../descargas/ttema-03-plantilla_bioestadistica_rstatix.qmd" download="tema-03-plantilla_bioestadistica_rstatix.qmd">Parte 2 — Plantilla de quarto para pruebas de hipótesis</a></p>
+<p><a href="../../temas/tema-03/tema-03-plantilla_bioestadistica_rstatix.html">Parte 3 - Visualizar plantilla</a></p>
 
 
 </section>
@@ -260,7 +287,7 @@ ul.task-list li input[type="checkbox"] {
     }
       var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
       var mailtoRegex = new RegExp(/^mailto:/);
-        var filterRegex = new RegExp('/' + window.location.host + '/');
+        var filterRegex = new RegExp("https:\/\/Ed-Perez-G\.github\.io\/bioestadistica-avanzada\/");
       var isInternal = (href) => {
           return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
       }

@@ -375,7 +375,7 @@
     "href": "temas/tema-04/tema-04-pruebas_posthoc.html#fisher-lsd-protegida-1",
     "title": "Pruebas post hoc y corrección por comparaciones múltiples",
     "section": "Fisher LSD protegida",
-    "text": "Fisher LSD protegida\n\n\nFundamento: Least Significant Difference (18). Dos pasos:\n\nANOVA. Si F no es significativa, se detiene.\nSi lo es, pruebas t por pares con la MSE común, sin ajustar.\n\nSupuestos: los del ANOVA.\n\nVentaja: la más potente; con exactamente 3 grupos controla el FWER (19).\n\n\nDesventaja: con 4 o más grupos no controla el FWER.\n\n\n\n# Paso 2 (el ANOVA ya fue significativo)\npairwise.t.test(il6$IL6, il6$grupo,\n                p.adjust.method = \"none\")\n\n\n    Pairwise comparisons using t tests with pooled SD \n\ndata:  il6$IL6 and il6$grupo \n\n          Control Farmaco_A Farmaco_B\nFarmaco_A 0.311   -         -        \nFarmaco_B 2e-04   0.005     -        \nFarmaco_C 8e-07   3e-05     0.115    \n\nP value adjustment method: none \n\n\nCompare con Tukey: A vs. B da p = 0.005 aquí y 0.025 con Tukey. Con 4 grupos, LSD es demasiado liberal."
+    "text": "Fisher LSD protegida\n\n\nFundamento: Least Significant Difference (18). Dos pasos:\n\nANOVA. Si F no es significativa, se detiene.\nSi lo es, pruebas t por pares con la MSE común, sin ajustar.\nNo se utiliza en la práctica\n\nSupuestos: los del ANOVA.\n\nVentaja: la más potente; con exactamente 3 grupos controla el FWER (19).\n\n\nDesventaja: con 4 o más grupos no controla el FWER.\n\n\n\n# Paso 2 (el ANOVA ya fue significativo)\npairwise.t.test(il6$IL6, il6$grupo,\n                p.adjust.method = \"none\")\n\n\n    Pairwise comparisons using t tests with pooled SD \n\ndata:  il6$IL6 and il6$grupo \n\n          Control Farmaco_A Farmaco_B\nFarmaco_A 0.311   -         -        \nFarmaco_B 2e-04   0.005     -        \nFarmaco_C 8e-07   3e-05     0.115    \n\nP value adjustment method: none \n\n\nCompare con Tukey: A vs. B da p = 0.005 aquí y 0.025 con Tukey. Con 4 grupos, LSD es demasiado liberal. No usar!"
   },
   {
     "objectID": "temas/tema-04/tema-04-pruebas_posthoc.html#emmeans-fundamento-y-supuestos",
@@ -396,7 +396,7 @@
     "href": "temas/tema-04/tema-04-pruebas_posthoc.html#emmeans-ventajas-y-desventajas",
     "title": "Pruebas post hoc y corrección por comparaciones múltiples",
     "section": "emmeans · ventajas y desventajas",
-    "text": "emmeans · ventajas y desventajas\n\n\n\nVentajas - Un solo marco para casi cualquier modelo. - Compara medias ajustadas, no crudas. - Permite pares, vs. control, contrastes a la medida e interacciones (~ fuma | raza). - Da estimaciones con IC, no sólo p.\n\n\n\nDesventajas - Hay que ajustar y validar primero el modelo. - Con interacciones, las medias marginales promediadas pueden ser engañosas. - Curva de aprendizaje mayor que TukeyHSD()."
+    "text": "emmeans · ventajas y desventajas\n\n\n\nVentajas\n\nUn solo marco para casi cualquier modelo.\nCompara medias ajustadas, no crudas.\nPermite pares, vs. control, contrastes a la medida e interacciones (~ fuma | raza).\nDa estimaciones con IC, no sólo p.\n\n\n\n\nDesventajas\n\nHay que ajustar y validar primero el modelo.\nCon interacciones, las medias marginales promediadas pueden ser engañosas.\nCurva de aprendizaje mayor que TukeyHSD()."
   },
   {
     "objectID": "temas/tema-04/tema-04-pruebas_posthoc.html#proporciones-fundamento-y-en-r",
@@ -410,7 +410,7 @@
     "href": "temas/tema-04/tema-04-pruebas_posthoc.html#proporciones-ventajas-y-desventajas",
     "title": "Pruebas post hoc y corrección por comparaciones múltiples",
     "section": "Proporciones · ventajas y desventajas",
-    "text": "Proporciones · ventajas y desventajas\n\n\n\nVentajas - Responde la pregunta clínica típica: ¿qué tratamiento tiene mayor tasa de respuesta? - Se hace con R base. - Admite cualquier ajuste de p.adjust().\n\n\n\nDesventajas - No ajusta por covariables (para eso: regresión logística + emmeans). - Con conteos pequeños la aproximación falla (use Fisher). - Reporte también diferencias de riesgo o odds ratios con IC."
+    "text": "Proporciones · ventajas y desventajas\n\n\n\nVentajas\n\nResponde la pregunta clínica típica: ¿qué tratamiento tiene mayor tasa de respuesta?\nSe hace con R base.\nAdmite cualquier ajuste de p.adjust().\n\n\n\n\nDesventajas\n\nNo ajusta por covariables (para eso: regresión logística + emmeans).\nCon conteos pequeños la aproximación falla (use Fisher).\nReporte también diferencias de riesgo o odds ratios con IC."
   },
   {
     "objectID": "temas/tema-04/tema-04-pruebas_posthoc.html#friedman-post-hoc-fundamento",
@@ -2426,13 +2426,237 @@
     "href": "temas/tema-04/index.html#contenidos",
     "title": "Tema 4: Pruebas pos hoc y comparaciones múltiples",
     "section": "Contenidos",
-    "text": "Contenidos"
+    "text": "Contenidos\n\nPresntación con los fundamentos\nEjercicio integrador"
   },
   {
     "objectID": "temas/tema-04/index.html#material-de-clase",
     "href": "temas/tema-04/index.html#material-de-clase",
     "title": "Tema 4: Pruebas pos hoc y comparaciones múltiples",
     "section": "Material de clase",
-    "text": "Material de clase\nPresentacion pruebas pos hoc y comparaciones múltiples"
+    "text": "Material de clase\nPresentacion pruebas pos hoc y comparaciones múltiples\nEjercicio integrador"
+  },
+  {
+    "objectID": "temas/tema-04/tema-04-ejercicio-integrador.html",
+    "href": "temas/tema-04/tema-04-ejercicio-integrador.html",
+    "title": "Ejercicio integrador",
+    "section": "",
+    "text": "library(survival)    # contiene la base pbc\nlibrary(dplyr)\nlibrary(ggplot2)\nlibrary(rstatix)     # pruebas en formato tidy\nlibrary(effectsize)  # tamaños del efecto con IC 95 % (cárguelo después de rstatix)\nlibrary(ggstatsplot)\n\nUsaremos la base pbc (Primary Biliary Cholangitis, Mayo Clinic, 1974–1984). Incluye 418 pacientes con cirrosis biliar primaria. Nos interesan estas variables:\n\nstage: estadio histológico de la enfermedad (1 a 4).\nalbumin: albúmina sérica (g/dL).\nbili: bilirrubina sérica (mg/dL).\nedema: 0 = sin edema, 0.5 = edema sin diuréticos o resuelto, 1 = edema pese a diuréticos.\nstatus: 0 = censurado, 1 = trasplante, 2 = muerte.\n\nPreparamos los datos: convertimos a factores y eliminamos los pacientes sin estadio.\n\ndatos &lt;- pbc |&gt;\n  filter(!is.na(stage)) |&gt;\n  mutate(\n    estadio = factor(stage),\n    edema   = factor(edema, levels = c(0, 0.5, 1),\n                     labels = c(\"Sin edema\", \"Edema leve\", \"Edema grave\")),\n    muerte  = factor(if_else(status == 2, \"Sí\", \"No\"), levels = c(\"Sí\", \"No\"))\n  )\n\ndatos |&gt; count(estadio)\n\n  estadio   n\n1       1  21\n2       2  92\n3       3 155\n4       4 144\n\n\n\nglimpse(datos)\n\nRows: 412\nColumns: 22\n$ id       &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18…\n$ time     &lt;int&gt; 400, 4500, 1012, 1925, 1504, 2503, 1832, 2466, 2400, 51, 3762…\n$ status   &lt;int&gt; 2, 0, 2, 2, 1, 2, 0, 2, 2, 2, 2, 2, 0, 2, 2, 0, 2, 2, 0, 2, 0…\n$ trt      &lt;int&gt; 1, 1, 1, 1, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 1, 2, 2, 1, 1, 2, 2…\n$ age      &lt;dbl&gt; 58.76523, 56.44627, 70.07255, 54.74059, 38.10541, 66.25873, 5…\n$ sex      &lt;fct&gt; f, f, m, f, f, f, f, f, f, f, f, f, f, m, f, f, f, f, f, f, m…\n$ ascites  &lt;int&gt; 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0…\n$ hepato   &lt;int&gt; 1, 1, 0, 1, 1, 1, 1, 0, 0, 0, 1, 0, 0, 1, 0, 0, 1, 1, 1, 1, 1…\n$ spiders  &lt;int&gt; 1, 1, 0, 1, 1, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1…\n$ edema    &lt;fct&gt; Edema grave, Sin edema, Edema leve, Edema leve, Sin edema, Si…\n$ bili     &lt;dbl&gt; 14.5, 1.1, 1.4, 1.8, 3.4, 0.8, 1.0, 0.3, 3.2, 12.6, 1.4, 3.6,…\n$ chol     &lt;int&gt; 261, 302, 176, 244, 279, 248, 322, 280, 562, 200, 259, 236, 2…\n$ albumin  &lt;dbl&gt; 2.60, 4.14, 3.48, 2.54, 3.53, 3.98, 4.09, 4.00, 3.08, 2.74, 4…\n$ copper   &lt;int&gt; 156, 54, 210, 64, 143, 50, 52, 52, 79, 140, 46, 94, 40, 43, 1…\n$ alk.phos &lt;dbl&gt; 1718.0, 7394.8, 516.0, 6121.8, 671.0, 944.0, 824.0, 4651.2, 2…\n$ ast      &lt;dbl&gt; 137.95, 113.52, 96.10, 60.63, 113.15, 93.00, 60.45, 28.38, 14…\n$ trig     &lt;int&gt; 172, 88, 55, 92, 72, 63, 213, 189, 88, 143, 79, 95, 130, NA, …\n$ platelet &lt;int&gt; 190, 221, 151, 183, 136, NA, 204, 373, 251, 302, 258, 71, 244…\n$ protime  &lt;dbl&gt; 12.2, 10.6, 12.0, 10.3, 10.9, 11.0, 9.7, 11.0, 11.0, 11.5, 12…\n$ stage    &lt;int&gt; 4, 3, 4, 4, 3, 3, 3, 3, 2, 4, 4, 4, 3, 4, 3, 3, 4, 4, 3, 4, 4…\n$ estadio  &lt;fct&gt; 4, 3, 4, 4, 3, 3, 3, 3, 2, 4, 4, 4, 3, 4, 3, 3, 4, 4, 3, 4, 4…\n$ muerte   &lt;fct&gt; Sí, No, Sí, Sí, No, Sí, No, Sí, Sí, Sí, Sí, Sí, No, Sí, Sí, N…\n\n\nPuede crear una EDA por estadio con:\n\nDataExplorer::create_report(datos, y = \"estadio\")"
+  },
+  {
+    "objectID": "temas/tema-04/tema-04-ejercicio-integrador.html#paso-1.-pregunta-e-hipótesis",
+    "href": "temas/tema-04/tema-04-ejercicio-integrador.html#paso-1.-pregunta-e-hipótesis",
+    "title": "Ejercicio integrador",
+    "section": "Paso 1. Pregunta e hipótesis",
+    "text": "Paso 1. Pregunta e hipótesis\n\n¿La albúmina sérica difiere entre los estadios histológicos de la enfermedad?\n\n\nH₀: la albúmina media es igual en los cuatro estadios.\nH₁: al menos un estadio tiene una media distinta."
+  },
+  {
+    "objectID": "temas/tema-04/tema-04-ejercicio-integrador.html#paso-2.-gráfico-y-descriptivos",
+    "href": "temas/tema-04/tema-04-ejercicio-integrador.html#paso-2.-gráfico-y-descriptivos",
+    "title": "Ejercicio integrador",
+    "section": "Paso 2. Gráfico y descriptivos",
+    "text": "Paso 2. Gráfico y descriptivos\n\nggplot(datos, aes(x = estadio, y = albumin, fill = estadio)) +\n  geom_boxplot(alpha = 0.6, outlier.shape = NA) +\n  geom_jitter(width = 0.15, alpha = 0.3) +\n  labs(x = \"Estadio histológico\", y = \"Albúmina (g/dL)\") +\n  theme_minimal() +\n  theme(legend.position = \"none\")\n\n\n\n\n\n\n\n\nLa opción type = \"mean_ci\" nos da la media de cada grupo con su IC 95 %:\n\ndatos |&gt;\n  group_by(estadio) |&gt;\n  get_summary_stats(albumin, type = \"mean_ci\")\n\n# A tibble: 4 × 5\n  estadio variable     n  mean    ci\n  &lt;fct&gt;   &lt;fct&gt;    &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;\n1 1       albumin     21  3.70 0.159\n2 2       albumin     92  3.61 0.08 \n3 3       albumin    155  3.59 0.06 \n4 4       albumin    144  3.30 0.072\n\n\n¿qué tendencia observa en la gráfica?"
+  },
+  {
+    "objectID": "temas/tema-04/tema-04-ejercicio-integrador.html#paso-3.-supuestos-y-selección-de-la-prueba",
+    "href": "temas/tema-04/tema-04-ejercicio-integrador.html#paso-3.-supuestos-y-selección-de-la-prueba",
+    "title": "Ejercicio integrador",
+    "section": "Paso 3. Supuestos y selección de la prueba",
+    "text": "Paso 3. Supuestos y selección de la prueba\nInstale:\n\ninstall.packages('ggrain')\n\ny luego\n\nlibrary(ggrain)\n\n\ndatos |&gt; ggplot(mapping = aes(x= 1, y = albumin))+\n  geom_rain()+\n  facet_grid(~estadio)\n\n\n\n\n\n\n\n\n\n# Normalidad dentro de cada grupo\ndatos |&gt;\n  group_by(estadio) |&gt;\n  shapiro_test(albumin)\n\n# A tibble: 4 × 4\n  estadio variable statistic      p\n  &lt;fct&gt;   &lt;chr&gt;        &lt;dbl&gt;  &lt;dbl&gt;\n1 1       albumin      0.915 0.0706\n2 2       albumin      0.992 0.830 \n3 3       albumin      0.992 0.522 \n4 4       albumin      0.981 0.0410\n\n# Homogeneidad de varianzas\ndatos |&gt; levene_test(albumin ~ estadio)\n\n# A tibble: 1 × 4\n    df1   df2 statistic     p\n  &lt;int&gt; &lt;int&gt;     &lt;dbl&gt; &lt;dbl&gt;\n1     3   408     0.837 0.474\n\n\nDecisión: si la normalidad es razonable (revise también el gráfico) y Levene no es significativa → ANOVA + Tukey. Si las varianzas difieren → ANOVA de Welch + Games-Howell.\nSuponga que los datos siguen distrbución normal en todos los grupos."
+  },
+  {
+    "objectID": "temas/tema-04/tema-04-ejercicio-integrador.html#paso-4.-prueba-global",
+    "href": "temas/tema-04/tema-04-ejercicio-integrador.html#paso-4.-prueba-global",
+    "title": "Ejercicio integrador",
+    "section": "Paso 4. Prueba global",
+    "text": "Paso 4. Prueba global\n\ndatos |&gt; anova_test(albumin ~ estadio)\n\nANOVA Table (type II tests)\n\n   Effect DFn DFd     F        p p&lt;.05  ges\n1 estadio   3 408 18.59 2.54e-11     * 0.12\n\n\nAlternativa si las varianzas no son iguales:\n\ndatos |&gt; welch_anova_test(albumin ~ estadio)\n\n# A tibble: 1 × 7\n  .y.         n statistic   DFn   DFd             p method     \n* &lt;chr&gt;   &lt;int&gt;     &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;         &lt;dbl&gt; &lt;chr&gt;      \n1 albumin   412      17.1     3  89.4 0.00000000739 Welch ANOVA\n\n# De rstatix no asume homegenidad de varianzas"
+  },
+  {
+    "objectID": "temas/tema-04/tema-04-ejercicio-integrador.html#paso-5.-tamaño-del-efecto-con-ic-95",
+    "href": "temas/tema-04/tema-04-ejercicio-integrador.html#paso-5.-tamaño-del-efecto-con-ic-95",
+    "title": "Ejercicio integrador",
+    "section": "Paso 5. Tamaño del efecto con IC 95 %",
+    "text": "Paso 5. Tamaño del efecto con IC 95 %\n\nmodelo &lt;- aov(albumin ~ estadio, data = datos)\neta &lt;- effectsize::eta_squared(modelo, alternative = \"two.sided\")\neta\n\n# Effect Size for ANOVA\n\nParameter | Eta2 |       95% CI\n-------------------------------\nestadio   | 0.12 | [0.06, 0.18]\n\ninterpret_eta_squared(eta$Eta2)   # pequeño, mediano o grande\n\n[1] \"medium\"\n(Rules: field2013)\n\n\n\ndatos |&gt; \n  ggbetweenstats(x = estadio, y = albumin, type = \"p\")"
+  },
+  {
+    "objectID": "temas/tema-04/tema-04-ejercicio-integrador.html#paso-6.-prueba-pos-hoc",
+    "href": "temas/tema-04/tema-04-ejercicio-integrador.html#paso-6.-prueba-pos-hoc",
+    "title": "Ejercicio integrador",
+    "section": "Paso 6. Prueba pos hoc",
+    "text": "Paso 6. Prueba pos hoc\n\ndatos |&gt; tukey_hsd(albumin ~ estadio)\n\n# A tibble: 6 × 9\n  term    group1 group2 null.value estimate conf.low conf.high         p.adj\n* &lt;chr&gt;   &lt;chr&gt;  &lt;chr&gt;       &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;     &lt;dbl&gt;         &lt;dbl&gt;\n1 estadio 1      2               0  -0.0982   -0.347     0.151 0.74         \n2 estadio 1      3               0  -0.113    -0.352     0.127 0.617        \n3 estadio 1      4               0  -0.403    -0.643    -0.162 0.000115     \n4 estadio 2      3               0  -0.0147   -0.150     0.121 0.992        \n5 estadio 2      4               0  -0.305    -0.442    -0.167 0.000000124  \n6 estadio 3      4               0  -0.290    -0.409    -0.171 0.00000000527\n# ℹ 1 more variable: p.adj.signif &lt;chr&gt;\n\n\nCada fila muestra la diferencia de medias (estimate), su IC 95 % (conf.low, conf.high) y el valor p ajustado. Si las varianzas no fueran iguales, use:\n\ndatos |&gt; games_howell_test(albumin ~ estadio)\n\n# A tibble: 6 × 8\n  .y.     group1 group2 estimate conf.low conf.high       p.adj p.adj.signif\n* &lt;chr&gt;   &lt;chr&gt;  &lt;chr&gt;     &lt;dbl&gt;    &lt;dbl&gt;     &lt;dbl&gt;       &lt;dbl&gt; &lt;chr&gt;       \n1 albumin 1      2       -0.0982   -0.331     0.135 0.668       ns          \n2 albumin 1      3       -0.113    -0.337     0.112 0.524       ns          \n3 albumin 1      4       -0.403    -0.632    -0.173 0.000249    ***         \n4 albumin 2      3       -0.0147   -0.145     0.115 0.991       ns          \n5 albumin 2      4       -0.305    -0.445    -0.164 0.000000346 ****        \n6 albumin 3      4       -0.290    -0.412    -0.168 0.000000018 ****"
+  },
+  {
+    "objectID": "temas/tema-04/tema-04-ejercicio-integrador.html#conclusión-plantilla",
+    "href": "temas/tema-04/tema-04-ejercicio-integrador.html#conclusión-plantilla",
+    "title": "Ejercicio integrador",
+    "section": "Conclusión (plantilla)",
+    "text": "Conclusión (plantilla)\n\nLa albúmina sérica difirió entre estadios (ANOVA, F = , p = ), con un tamaño del efecto ___ (η² = , IC 95 %  a ). La prueba de Tukey mostró que  difiere de ___ (diferencia = ___ g/dL, IC 95 % ___ a ___)."
+  },
+  {
+    "objectID": "temas/tema-04/tema-04-ejercicio-integrador.html#paso-1.-pregunta-e-hipótesis-1",
+    "href": "temas/tema-04/tema-04-ejercicio-integrador.html#paso-1.-pregunta-e-hipótesis-1",
+    "title": "Ejercicio integrador",
+    "section": "Paso 1. Pregunta e hipótesis",
+    "text": "Paso 1. Pregunta e hipótesis\n\n¿La bilirrubina sérica difiere entre los estadios histológicos?\n\n\nH₀: la distribución de bilirrubina es igual en los cuatro estadios.\nH₁: al menos un estadio tiene una distribución distinta."
+  },
+  {
+    "objectID": "temas/tema-04/tema-04-ejercicio-integrador.html#paso-2.-gráfico-y-descriptivos-1",
+    "href": "temas/tema-04/tema-04-ejercicio-integrador.html#paso-2.-gráfico-y-descriptivos-1",
+    "title": "Ejercicio integrador",
+    "section": "Paso 2. Gráfico y descriptivos",
+    "text": "Paso 2. Gráfico y descriptivos\n\nggplot(datos, aes(x = estadio, y = bili, fill = estadio)) +\n  geom_boxplot(alpha = 0.6, outlier.shape = NA) +\n  geom_jitter(width = 0.15, alpha = 0.3) +\n  labs(x = \"Estadio histológico\", y = \"Bilirrubina (mg/dL)\") +\n  theme_minimal() +\n  theme(legend.position = \"none\")\n\n\n\n\n\n\n\n\n\ndatos |&gt; ggplot(mapping = aes(x= 1, y = bili))+\n  geom_rain()+\n  facet_grid(~estadio)\n\n\n\n\n\n\n\n\n\ndatos |&gt;\n  group_by(estadio) |&gt;\n  get_summary_stats(bili, type = \"median_iqr\")\n\n# A tibble: 4 × 5\n  estadio variable     n median   iqr\n  &lt;fct&gt;   &lt;fct&gt;    &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt;\n1 1       bili        21   0.8   0.5 \n2 2       bili        92   0.95  1.5 \n3 3       bili       155   1.3   2.1 \n4 4       bili       144   2.55  4.58\n\n\ncómo es la forma de la distribución? ¿Qué medida de tendencia central es mejor aquí?"
+  },
+  {
+    "objectID": "temas/tema-04/tema-04-ejercicio-integrador.html#paso-3.-supuestos-y-selección-de-la-prueba-1",
+    "href": "temas/tema-04/tema-04-ejercicio-integrador.html#paso-3.-supuestos-y-selección-de-la-prueba-1",
+    "title": "Ejercicio integrador",
+    "section": "Paso 3. Supuestos y selección de la prueba",
+    "text": "Paso 3. Supuestos y selección de la prueba\n\ndatos |&gt;\n  group_by(estadio) |&gt;\n  shapiro_test(bili)\n\n# A tibble: 4 × 4\n  estadio variable statistic        p\n  &lt;fct&gt;   &lt;chr&gt;        &lt;dbl&gt;    &lt;dbl&gt;\n1 1       bili         0.487 1.55e- 7\n2 2       bili         0.506 4.63e-16\n3 3       bili         0.560 1.10e-19\n4 4       bili         0.755 3.15e-14\n\n\nDecisión: la bilirrubina es muy asimétrica y no es normal → Kruskal-Wallis + Dunn."
+  },
+  {
+    "objectID": "temas/tema-04/tema-04-ejercicio-integrador.html#paso-4.-prueba-global-1",
+    "href": "temas/tema-04/tema-04-ejercicio-integrador.html#paso-4.-prueba-global-1",
+    "title": "Ejercicio integrador",
+    "section": "Paso 4. Prueba global",
+    "text": "Paso 4. Prueba global\n\ndatos |&gt; kruskal_test(bili ~ estadio)\n\n# A tibble: 1 × 6\n  .y.       n statistic    df        p method        \n* &lt;chr&gt; &lt;int&gt;     &lt;dbl&gt; &lt;int&gt;    &lt;dbl&gt; &lt;chr&gt;         \n1 bili    412      46.6     3 4.15e-10 Kruskal-Wallis"
+  },
+  {
+    "objectID": "temas/tema-04/tema-04-ejercicio-integrador.html#paso-5.-tamaño-del-efecto-con-ic-95-1",
+    "href": "temas/tema-04/tema-04-ejercicio-integrador.html#paso-5.-tamaño-del-efecto-con-ic-95-1",
+    "title": "Ejercicio integrador",
+    "section": "Paso 5. Tamaño del efecto con IC 95 %",
+    "text": "Paso 5. Tamaño del efecto con IC 95 %\n\nepsilon &lt;- rank_epsilon_squared(bili ~ estadio, data = datos, alternative = \"two.sided\")\nepsilon\n\nEpsilon2 (rank) |       95% CI\n------------------------------\n0.11            | [0.07, 0.18]\n\ninterpret_epsilon_squared(epsilon$rank_epsilon_squared)\n\n[1] \"medium\"\n(Rules: field2013)"
+  },
+  {
+    "objectID": "temas/tema-04/tema-04-ejercicio-integrador.html#paso-6.-prueba-pos-hoc-1",
+    "href": "temas/tema-04/tema-04-ejercicio-integrador.html#paso-6.-prueba-pos-hoc-1",
+    "title": "Ejercicio integrador",
+    "section": "Paso 6. Prueba pos hoc",
+    "text": "Paso 6. Prueba pos hoc\n\ndatos |&gt; dunn_test(bili ~ estadio, p.adjust.method = \"holm\")\n\n# A tibble: 6 × 9\n  .y.   group1 group2    n1    n2 statistic            p      p.adj p.adj.signif\n* &lt;chr&gt; &lt;chr&gt;  &lt;chr&gt;  &lt;int&gt; &lt;int&gt;     &lt;dbl&gt;        &lt;dbl&gt;      &lt;dbl&gt; &lt;chr&gt;       \n1 bili  1      2         21    92      1.43 0.152           1.52e-1 ns          \n2 bili  1      3         21   155      2.66 0.00773         2.32e-2 *           \n3 bili  1      4         21   144      4.74 0.00000214      1.07e-5 ****        \n4 bili  2      3         92   155      2.07 0.0383          7.65e-2 ns          \n5 bili  2      4         92   144      5.70 0.0000000122    7.32e-8 ****        \n6 bili  3      4        155   144      4.21 0.0000252       1.01e-4 ***         \n\n\n\ndatos |&gt; \n  ggbetweenstats(x = estadio, y = bili, type = 'np')"
+  },
+  {
+    "objectID": "temas/tema-04/tema-04-ejercicio-integrador.html#conclusión-plantilla-1",
+    "href": "temas/tema-04/tema-04-ejercicio-integrador.html#conclusión-plantilla-1",
+    "title": "Ejercicio integrador",
+    "section": "Conclusión (plantilla)",
+    "text": "Conclusión (plantilla)\n\nLa bilirrubina difirió entre estadios (Kruskal-Wallis, H = , gl = , p = ; ε² = , IC 95 % ___ a ). La prueba de Dunn con ajuste de Holm mostró diferencias entre ."
+  },
+  {
+    "objectID": "temas/tema-04/tema-04-ejercicio-integrador.html#paso-1.-pregunta-e-hipótesis-2",
+    "href": "temas/tema-04/tema-04-ejercicio-integrador.html#paso-1.-pregunta-e-hipótesis-2",
+    "title": "Ejercicio integrador",
+    "section": "Paso 1. Pregunta e hipótesis",
+    "text": "Paso 1. Pregunta e hipótesis\n\n¿La proporción de pacientes que fallecen depende del grado de edema?\n\n\nH₀: edema y muerte son independientes.\nH₁: edema y muerte están asociados."
+  },
+  {
+    "objectID": "temas/tema-04/tema-04-ejercicio-integrador.html#paso-2.-gráfico-y-tabla",
+    "href": "temas/tema-04/tema-04-ejercicio-integrador.html#paso-2.-gráfico-y-tabla",
+    "title": "Ejercicio integrador",
+    "section": "Paso 2. Gráfico y tabla",
+    "text": "Paso 2. Gráfico y tabla\n\nggplot(datos, aes(x = edema, fill = muerte)) +\n  geom_bar(position = \"fill\") +\n  labs(x = \"Edema\", y = \"Proporción\", fill = \"Muerte\") +\n  theme_minimal()\n\n\n\n\n\n\n\n\n\ntabla &lt;- table(datos$edema, datos$muerte)\ntabla\n\n             \n               Sí  No\n  Sin edema   112 236\n  Edema leve   26  18\n  Edema grave  19   1"
+  },
+  {
+    "objectID": "temas/tema-04/tema-04-ejercicio-integrador.html#paso-3.-supuestos-y-selección-de-la-prueba-2",
+    "href": "temas/tema-04/tema-04-ejercicio-integrador.html#paso-3.-supuestos-y-selección-de-la-prueba-2",
+    "title": "Ejercicio integrador",
+    "section": "Paso 3. Supuestos y selección de la prueba",
+    "text": "Paso 3. Supuestos y selección de la prueba\n\nchisq.test(tabla)$expected\n\n             \n                      Sí        No\n  Sin edema   132.611650 215.38835\n  Edema leve   16.766990  27.23301\n  Edema grave   7.621359  12.37864\n\n\nDecisión: si todas las frecuencias esperadas son ≥ 5 → χ². Si no → prueba exacta de Fisher (fisher_test(tabla))."
+  },
+  {
+    "objectID": "temas/tema-04/tema-04-ejercicio-integrador.html#paso-4.-prueba-global-2",
+    "href": "temas/tema-04/tema-04-ejercicio-integrador.html#paso-4.-prueba-global-2",
+    "title": "Ejercicio integrador",
+    "section": "Paso 4. Prueba global",
+    "text": "Paso 4. Prueba global\n\nchisq_test(tabla)\n\n# A tibble: 1 × 6\n      n statistic             p    df method          p.signif\n* &lt;int&gt;     &lt;dbl&gt;         &lt;dbl&gt; &lt;int&gt; &lt;chr&gt;           &lt;chr&gt;   \n1   412      40.8 0.00000000136     2 Chi-square test ****"
+  },
+  {
+    "objectID": "temas/tema-04/tema-04-ejercicio-integrador.html#paso-5.-tamaño-del-efecto-con-ic-95-2",
+    "href": "temas/tema-04/tema-04-ejercicio-integrador.html#paso-5.-tamaño-del-efecto-con-ic-95-2",
+    "title": "Ejercicio integrador",
+    "section": "Paso 5. Tamaño del efecto con IC 95 %",
+    "text": "Paso 5. Tamaño del efecto con IC 95 %\n\nv &lt;- cramers_v(tabla, alternative = \"two.sided\")\nv\n\nCramer's V (adj.) |       95% CI\n--------------------------------\n0.31              | [0.20, 0.40]\n\ninterpret_cramers_v(v$Cramers_v_adjusted)\n\n[1] \"large\"\n(Rules: funder2019)"
+  },
+  {
+    "objectID": "temas/tema-04/tema-04-ejercicio-integrador.html#paso-6.-prueba-pos-hoc-2",
+    "href": "temas/tema-04/tema-04-ejercicio-integrador.html#paso-6.-prueba-pos-hoc-2",
+    "title": "Ejercicio integrador",
+    "section": "Paso 6. Prueba pos hoc",
+    "text": "Paso 6. Prueba pos hoc\nComparamos la proporción de muertes entre cada par de grupos de edema:\n\npairwise_prop_test(tabla, p.adjust.method = \"holm\")\n\n# A tibble: 3 × 5\n  group1     group2                 p       p.adj p.adj.signif\n* &lt;chr&gt;      &lt;chr&gt;              &lt;dbl&gt;       &lt;dbl&gt; &lt;chr&gt;       \n1 Sin edema  Edema leve  0.000798     0.0016      **          \n2 Sin edema  Edema grave 0.0000000462 0.000000139 ****        \n3 Edema leve Edema grave 0.00881      0.00881     **          \n\n\n\ndatos |&gt; \n  ggbarstats(x = muerte, y = edema)"
+  },
+  {
+    "objectID": "temas/tema-04/tema-04-ejercicio-integrador.html#conclusión-plantilla-2",
+    "href": "temas/tema-04/tema-04-ejercicio-integrador.html#conclusión-plantilla-2",
+    "title": "Ejercicio integrador",
+    "section": "Conclusión (plantilla)",
+    "text": "Conclusión (plantilla)\n\nLa muerte se asoció al grado de edema (χ² = , gl = , p = ; V de Cramér = , IC 95 % ___ a ). Las comparaciones por pares mostraron que ."
+  },
+  {
+    "objectID": "temas/tema-04/tema-04-ejercicio-integrador.html#paso-1.-pregunta-e-hipótesis-3",
+    "href": "temas/tema-04/tema-04-ejercicio-integrador.html#paso-1.-pregunta-e-hipótesis-3",
+    "title": "Ejercicio integrador",
+    "section": "Paso 1. Pregunta e hipótesis",
+    "text": "Paso 1. Pregunta e hipótesis\n\n¿Qué genes cambian su expresión entre controles sanos, pacientes con artritis reumatoide (AR) y pacientes con T-LGLL?\n\nPara cada gen:\n\nH₀: la expresión media es igual en los tres grupos.\nH₁: al menos un grupo tiene una media distinta."
+  },
+  {
+    "objectID": "temas/tema-04/tema-04-ejercicio-integrador.html#simulación-de-los-datos",
+    "href": "temas/tema-04/tema-04-ejercicio-integrador.html#simulación-de-los-datos",
+    "title": "Ejercicio integrador",
+    "section": "Simulación de los datos",
+    "text": "Simulación de los datos\n\n2000 genes y 30 muestras (10 por grupo).\nLa expresión está en escala log₂, con media 8 y DE 1.\nSolo los primeros 200 genes están realmente sobreexpresados en T-LGLL (+1.5 unidades log₂). Los otros 1800 no cambian.\n\n\nlibrary(tidyr)\n\nset.seed(2026)\nn_genes &lt;- 2000\ngrupos  &lt;- rep(c(\"Control\", \"AR\", \"T-LGLL\"), each = 10)\n\n# Matriz de expresión: filas = genes, columnas = muestras\nexpresion &lt;- matrix(rnorm(n_genes * 30, mean = 8, sd = 1), nrow = n_genes)\nrownames(expresion) &lt;- paste0(\"gen_\", 1:n_genes)\n\n# Los genes 1 a 200 aumentan su expresión en T-LGLL\nexpresion[1:200, grupos == \"T-LGLL\"] &lt;- expresion[1:200, grupos == \"T-LGLL\"] + 1.5\n\ngenes_reales &lt;- paste0(\"gen_\", 1:200)\n\nPasamos la matriz a formato largo (una fila por gen y muestra), como en el tema 1:\n\nexpr_larga &lt;- as.data.frame(expresion) |&gt;\n  mutate(gen = rownames(expresion)) |&gt;\n  pivot_longer(-gen, names_to = \"muestra\", values_to = \"expresion\") |&gt;\n  mutate(grupo = factor(rep(grupos, n_genes),\n                        levels = c(\"Control\", \"AR\", \"T-LGLL\")))\n\nhead(expr_larga)\n\n# A tibble: 6 × 4\n  gen   muestra expresion grupo  \n  &lt;chr&gt; &lt;chr&gt;       &lt;dbl&gt; &lt;fct&gt;  \n1 gen_1 V1           8.52 Control\n2 gen_1 V2           8.20 Control\n3 gen_1 V3           9.23 Control\n4 gen_1 V4           8.11 Control\n5 gen_1 V5           8.29 Control\n6 gen_1 V6           7.58 Control"
+  },
+  {
+    "objectID": "temas/tema-04/tema-04-ejercicio-integrador.html#paso-2.-gráfico-de-un-gen",
+    "href": "temas/tema-04/tema-04-ejercicio-integrador.html#paso-2.-gráfico-de-un-gen",
+    "title": "Ejercicio integrador",
+    "section": "Paso 2. Gráfico de un gen",
+    "text": "Paso 2. Gráfico de un gen\nAntes de analizar 2000 genes, observe dos de ellos: uno que sí cambia (gen_1) y uno que no (gen_1500).\n\nexpr_larga |&gt;\n  filter(gen %in% c(\"gen_1\", \"gen_1500\")) |&gt;\n  ggplot(aes(x = grupo, y = expresion, fill = grupo)) +\n  geom_boxplot(alpha = 0.6, outlier.shape = NA) +\n  geom_jitter(width = 0.15, alpha = 0.5) +\n  facet_wrap(~ gen) +\n  labs(x = NULL, y = \"Expresión (log2)\") +\n  theme_minimal() +\n  theme(legend.position = \"none\")"
+  },
+  {
+    "objectID": "temas/tema-04/tema-04-ejercicio-integrador.html#paso-3.-selección-de-la-prueba",
+    "href": "temas/tema-04/tema-04-ejercicio-integrador.html#paso-3.-selección-de-la-prueba",
+    "title": "Ejercicio integrador",
+    "section": "Paso 3. Selección de la prueba",
+    "text": "Paso 3. Selección de la prueba\nLos datos de expresión en escala log₂ se aproximan a la normal y simulamos varianzas iguales, así que usamos ANOVA de una vía en cada gen.\n\n\n\n\n\n\nNota\n\n\n\nEn estudios reales de RNA-seq o microarreglos se usan paquetes especializados (limma, DESeq2, edgeR). Hacen pruebas más potentes, pero la lógica del FDR es exactamente la misma."
+  },
+  {
+    "objectID": "temas/tema-04/tema-04-ejercicio-integrador.html#paso-4.-una-prueba-por-gen",
+    "href": "temas/tema-04/tema-04-ejercicio-integrador.html#paso-4.-una-prueba-por-gen",
+    "title": "Ejercicio integrador",
+    "section": "Paso 4. Una prueba por gen",
+    "text": "Paso 4. Una prueba por gen\ngroup_by(gen) repite la prueba en cada gen. Guardamos también el log₂ fold change (T-LGLL vs. Control), que en genómica se usa como tamaño del efecto:\n\nresultados &lt;- expr_larga |&gt;\n  group_by(gen) |&gt;\n  summarise(\n    p      = oneway.test(expresion ~ grupo, var.equal = TRUE)$p.value,\n    log2FC = mean(expresion[grupo == \"T-LGLL\"]) - mean(expresion[grupo == \"Control\"])\n  )\n\nhead(resultados)\n\n# A tibble: 6 × 3\n  gen             p log2FC\n  &lt;chr&gt;       &lt;dbl&gt;  &lt;dbl&gt;\n1 gen_1    0.000338  1.39 \n2 gen_10   0.00135   1.68 \n3 gen_100  0.274     0.736\n4 gen_1000 0.0794   -0.357\n5 gen_1001 0.262    -0.495\n6 gen_1002 0.261     0.461\n\n\nEl histograma de valores p es un diagnóstico clásico en genómica. Si ningún gen cambiara, sería plano, porque bajo H₀ los valores p son uniformes. El pico cerca de 0 corresponde a los genes que sí cambian.\n\nggplot(resultados, aes(x = p)) +\n  geom_histogram(breaks = seq(0, 1, 0.05), fill = \"grey70\", color = \"white\") +\n  labs(x = \"Valor p\", y = \"Número de genes\") +\n  theme_minimal()\n\n\n\n\n\n\n\n\n\nEl problema: ¿cuántos genes son “significativos”?\nAjustamos los valores p con dos métodos:\n\nBonferroni: controla la probabilidad de cometer al menos un falso positivo (FWER). Es muy estricto.\nBenjamini-Hochberg (FDR): controla la proporción de falsos positivos entre los genes que declara significativos. Con FDR &lt; 0.05, se espera que alrededor del 5 % de sus “descubrimientos” sean falsos.\n\n\nresultados &lt;- resultados |&gt;\n  mutate(\n    p_bonf = p.adjust(p, method = \"bonferroni\"),\n    p_fdr  = p.adjust(p, method = \"BH\"),\n    real   = gen %in% genes_reales\n  )\n\nComo conocemos la verdad, podemos contar aciertos y errores:\n\nresultados |&gt;\n  group_by(real) |&gt;\n  summarise(\n    sin_correccion = sum(p &lt; 0.05),\n    bonferroni     = sum(p_bonf &lt; 0.05),\n    fdr            = sum(p_fdr &lt; 0.05)\n  )\n\n# A tibble: 2 × 4\n  real  sin_correccion bonferroni   fdr\n  &lt;lgl&gt;          &lt;int&gt;      &lt;int&gt; &lt;int&gt;\n1 FALSE             85          0     5\n2 TRUE             182         23   103\n\n\nLa fila real = FALSE son los falsos positivos (genes que no cambian pero salieron significativos) y la fila real = TRUE son los verdaderos positivos (de 200 posibles).\nPreguntas para usted:\n\nSin corrección, ¿cuántos falsos positivos obtuvo? Compárelo con lo esperado: 1800 × 0.05 = 90.\n¿Cuántos genes reales pierde Bonferroni?\n¿Qué proporción de los genes que declara el FDR son falsos? ¿Se acerca al 5 %?\n\n\n\nGráfico de volcán\nEs la figura típica de un análisis de expresión diferencial: tamaño del efecto (log₂FC) en el eje x y evidencia (−log₁₀ p) en el eje y.\n\nggplot(resultados, aes(x = log2FC, y = -log10(p), color = p_fdr &lt; 0.05)) +\n  geom_point(alpha = 0.6) +\n  scale_color_manual(values = c(\"grey70\", \"firebrick\"),\n                     labels = c(\"No significativo\", \"FDR &lt; 0.05\")) +\n  labs(x = \"log2 fold change (T-LGLL vs. Control)\", y = \"-log10(p)\", color = NULL) +\n  theme_minimal()"
+  },
+  {
+    "objectID": "temas/tema-04/tema-04-ejercicio-integrador.html#paso-5.-tamaño-del-efecto-con-ic-95-un-gen",
+    "href": "temas/tema-04/tema-04-ejercicio-integrador.html#paso-5.-tamaño-del-efecto-con-ic-95-un-gen",
+    "title": "Ejercicio integrador",
+    "section": "Paso 5. Tamaño del efecto con IC 95 % (un gen)",
+    "text": "Paso 5. Tamaño del efecto con IC 95 % (un gen)\nTome el gen con el menor valor p ajustado y calcule η² con su IC, igual que en el Caso 1:\n\ntop_gen &lt;- resultados |&gt; arrange(p_fdr) |&gt; slice(1) |&gt; pull(gen)\ntop_gen\n\n[1] \"gen_198\"\n\nmodelo_gen &lt;- aov(expresion ~ grupo, data = filter(expr_larga, gen == top_gen))\neffectsize::eta_squared(modelo_gen, alternative = \"two.sided\")\n\n# Effect Size for ANOVA\n\nParameter | Eta2 |       95% CI\n-------------------------------\ngrupo     | 0.68 | [0.44, 0.80]"
+  },
+  {
+    "objectID": "temas/tema-04/tema-04-ejercicio-integrador.html#paso-6.-prueba-pos-hoc-en-los-genes-significativos",
+    "href": "temas/tema-04/tema-04-ejercicio-integrador.html#paso-6.-prueba-pos-hoc-en-los-genes-significativos",
+    "title": "Ejercicio integrador",
+    "section": "Paso 6. Prueba pos hoc en los genes significativos",
+    "text": "Paso 6. Prueba pos hoc en los genes significativos\nLa prueba pos hoc se aplica solo a los genes que pasaron el FDR. Así se responde qué grupos difieren en cada gen:\n\ngenes_sig &lt;- resultados |&gt; filter(p_fdr &lt; 0.05) |&gt; pull(gen)\n\nposthoc &lt;- expr_larga |&gt;\n  filter(gen %in% genes_sig) |&gt;\n  group_by(gen) |&gt;\n  tukey_hsd(expresion ~ grupo)\n\n# ¿Qué comparación explica las diferencias?\nposthoc |&gt;\n  filter(p.adj &lt; 0.05) |&gt;\n  count(group1, group2)\n\n# A tibble: 3 × 3\n  group1  group2     n\n  &lt;chr&gt;   &lt;chr&gt;  &lt;int&gt;\n1 AR      T-LGLL   103\n2 Control AR         5\n3 Control T-LGLL   104\n\n\nPregunta para usted: ¿qué comparaciones aparecen con más frecuencia? ¿Coincide con cómo se simularon los datos?"
+  },
+  {
+    "objectID": "temas/tema-04/tema-04-ejercicio-integrador.html#conclusión-plantilla-3",
+    "href": "temas/tema-04/tema-04-ejercicio-integrador.html#conclusión-plantilla-3",
+    "title": "Ejercicio integrador",
+    "section": "Conclusión (plantilla)",
+    "text": "Conclusión (plantilla)\n\nDe 2000 genes evaluados, ___ tuvieron p &lt; 0.05 sin corrección, ___ tras Bonferroni y ___ con FDR &lt; 0.05 (Benjamini-Hochberg). En la mayoría de los genes significativos, la prueba de Tukey mostró que la diferencia se debe a ___ vs. , con log₂FC de ."
+  },
+  {
+    "objectID": "temas/tema-04/index.html",
+    "href": "temas/tema-04/index.html",
+    "title": "Tema 4: Pruebas pos hoc y comparaciones múltiples",
+    "section": "",
+    "text": "Conocer, seleccionar y aplicar las principales pruebas post hoc y pruebas de correciones múltiples."
+  },
+  {
+    "objectID": "temas/tema-04/index.html#objetivo",
+    "href": "temas/tema-04/index.html#objetivo",
+    "title": "Tema 4: Pruebas pos hoc y comparaciones múltiples",
+    "section": "",
+    "text": "Conocer, seleccionar y aplicar las principales pruebas post hoc y pruebas de correciones múltiples."
   }
 ]

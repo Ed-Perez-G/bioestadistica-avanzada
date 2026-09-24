@@ -1188,6 +1188,7 @@ En ciencias de la salud muchos diseños no son “*k* grupos independientes con 
 
 1. ANOVA. Si *F* **no** es significativa, se detiene.
 2. Si lo es, pruebas *t* por pares con la MSE común, **sin** ajustar.
+3. No se utiliza en la práctica
 
 **Supuestos:** los del ANOVA.
 
@@ -1207,7 +1208,7 @@ pairwise.t.test(il6$IL6, il6$grupo,
                 p.adjust.method = "none")
 ```
 
-Compare con Tukey: A vs. B da *p* = 0.005 aquí y 0.025 con Tukey. Con 4 grupos, LSD es **demasiado liberal**.
+Compare con Tukey: A vs. B da *p* = 0.005 aquí y 0.025 con Tukey. Con 4 grupos, LSD es **demasiado liberal**. No usar!
 :::
 :::
 
@@ -1269,6 +1270,7 @@ contrast(emm, "trt.vs.ctrl",      # vs. referencia
 ::: {.column width="50%"}
 ::: {.pro}
 [Ventajas]{.h3}
+
 - Un solo marco para casi cualquier modelo.
 - Compara medias **ajustadas**, no crudas.
 - Permite pares, vs. control, contrastes a la medida e interacciones (`~ fuma | raza`).
@@ -1279,6 +1281,7 @@ contrast(emm, "trt.vs.ctrl",      # vs. referencia
 ::: {.column width="50%"}
 ::: {.con}
 [Desventajas]{.h3}
+
 - Hay que ajustar y validar primero el modelo.
 - Con interacciones, las medias marginales promediadas pueden ser engañosas.
 - Curva de aprendizaje mayor que `TukeyHSD()`.
@@ -1318,6 +1321,7 @@ El χ² global es significativo, pero sólo **E1 vs. E4** lo es tras ajustar.
 ::: {.column width="50%"}
 ::: {.pro}
 [Ventajas]{.h3}
+
 - Responde la pregunta clínica típica: ¿qué tratamiento tiene mayor tasa de respuesta?
 - Se hace con R base.
 - Admite cualquier ajuste de `p.adjust()`.
@@ -1327,6 +1331,7 @@ El χ² global es significativo, pero sólo **E1 vs. E4** lo es tras ajustar.
 ::: {.column width="50%"}
 ::: {.con}
 [Desventajas]{.h3}
+
 - No ajusta por covariables (para eso: regresión logística + `emmeans`).
 - Con conteos pequeños la aproximación falla (use Fisher).
 - Reporte también diferencias de riesgo o *odds ratios* con IC.
@@ -1447,34 +1452,6 @@ frdAllPairsNemenyiTest(EVA ~ tiempo | id,
 Incluya siempre: prueba ómnibus, prueba post hoc o corrección utilizada, diferencia con su IC y *p* ajustado.
 :::
 
-## Fe de erratas del capítulo 18: resumen (1/2) {.fe}
-
-| Sección | Error | Corrección |
-|---|---|---|
-| Bonferroni | Función `pairs.t.test()` | `pairwise.t.test()` |
-| Tukey | Interpretación del ejemplo invertida (0.10 y 0.001) | 0.05 (no significativa) y 0.17 (significativa) |
-| Tukey | *v* = 126; “se acepta H~0~” | *v* = 132; “no se rechaza H~0~” |
-| Tukey | Requiere *n* iguales; “pocos supuestos”; “computacionalmente intensivo” | Tukey‑Kramer admite *n* distintos; requiere normalidad y homocedasticidad; es inmediato |
-| Dunnett | Fórmula con 2 × MSE × (1/*n*~i~ + 1/*n*~c~) | Sin el 2: MSE × (1/*n*~i~ + 1/*n*~c~) |
-| Scheffé | No requiere normalidad ni homocedasticidad; requiere *n* iguales | Mismos supuestos que el ANOVA; admite *n* distintos |
-| Scheffé | “Más errores tipo I”, “menos tipo II”, “relativamente poderosa” | La más conservadora y la menos potente para pares |
-| Games‑Howell | No paramétrica; compara solapamiento de IC | Paramétrica; usa el rango estudentizado |
-| Dunnett T3 | No paramétrica; compara contra un control; a priori | Paramétrica; todos los pares; post hoc |
-
-## Fe de erratas del capítulo 18: resumen (2/2) {.fe}
-
-| Sección | Error | Corrección |
-|---|---|---|
-| Dunn | `dunn.test()` sin ajuste y *p* de una cola leídos como ajustados | Usar `method = "holm"` y `altp = TRUE` |
-| Dunn | `kw = TRUE` “indica que viene de un ANOVA” | Sólo imprime el Kruskal‑Wallis |
-| Dunn | “Sólo para dos grupos”; “incrementa el error tipo I” | Diseñada para *k* grupos; con ajuste lo controla |
-| Dunn | Contra un control: Dunnett o T3 | Dunn muchos‑contra‑uno (no paramétrica) |
-| Nemenyi | s.e. = √(*k*(*n*+1)/12) | s.e. = √(*N*(*N*+1)/12 · (1/*n*~i~ + 1/*n*~j~)) |
-| Holm | “Bonferroni compara todas; Holm sólo las significativas” | Ambos evalúan todas; Holm usa umbrales escalonados |
-| Hommel | Sin supuestos | Requiere independencia o dependencia positiva |
-| BH | Con Q = 25 %, sólo A es significativa | Las 8 son significativas |
-| Comentarios finales | “Los procedimientos sólo son válidos para comparaciones planificadas” | Al revés: las post hoc están diseñadas para comparaciones **no** planeadas |
-| Comentarios finales | *F* significativa sin pares significativos “porque requieren patrón gaussiano” | Prueban hipótesis distintas: una *F* significativa garantiza algún **contraste** significativo (Scheffé), no necesariamente un par |
 
 ## Ejercicio {.exercise}
 

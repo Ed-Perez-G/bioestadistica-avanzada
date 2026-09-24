@@ -10,7 +10,7 @@
   <meta name="generator" content="quarto-1.8.25">
 
   <meta name="author" content="Edsaúl Emilio Pérez-Guerrero">
-  <meta name="dcterms.date" content="2026-09-23">
+  <meta name="dcterms.date" content="2026-09-24">
   <title>Bioestadística avanzada – Pruebas post hoc y corrección por comparaciones múltiples</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -229,7 +229,7 @@ Edsaúl Emilio Pérez-Guerrero
 </div>
 </div>
 
-  <p class="date">2026-09-23</p>
+  <p class="date">2026-09-24</p>
 </section>
 <section id="objetivos-de-aprendizaje" class="slide level2">
 <h2>Objetivos de aprendizaje</h2>
@@ -1889,6 +1889,7 @@ P value adjustment method: holm </code></pre>
 <ol type="1">
 <li>ANOVA. Si <em>F</em> <strong>no</strong> es significativa, se detiene.</li>
 <li>Si lo es, pruebas <em>t</em> por pares con la MSE común, <strong>sin</strong> ajustar.</li>
+<li>No se utiliza en la práctica</li>
 </ol>
 <p><strong>Supuestos:</strong> los del ANOVA.</p>
 <div class="pro">
@@ -1916,7 +1917,7 @@ Farmaco_C 8e-07   3e-05     0.115
 P value adjustment method: none </code></pre>
 </div>
 </div>
-<p>Compare con Tukey: A vs.&nbsp;B da <em>p</em> = 0.005 aquí y 0.025 con Tukey. Con 4 grupos, LSD es <strong>demasiado liberal</strong>.</p>
+<p>Compare con Tukey: A vs.&nbsp;B da <em>p</em> = 0.005 aquí y 0.025 con Tukey. Con 4 grupos, LSD es <strong>demasiado liberal</strong>. No usar!</p>
 </div></div>
 </section></section>
 <section>
@@ -1996,11 +1997,22 @@ P value adjustment: dunnettx method for 2 tests </code></pre>
 <div class="columns">
 <div class="column" style="width:50%;">
 <div class="pro">
-<p><span class="h3">Ventajas</span> - Un solo marco para casi cualquier modelo. - Compara medias <strong>ajustadas</strong>, no crudas. - Permite pares, vs.&nbsp;control, contrastes a la medida e interacciones (<code>~ fuma | raza</code>). - Da estimaciones con IC, no sólo <em>p</em>.</p>
+<p><span class="h3">Ventajas</span></p>
+<ul>
+<li>Un solo marco para casi cualquier modelo.</li>
+<li>Compara medias <strong>ajustadas</strong>, no crudas.</li>
+<li>Permite pares, vs.&nbsp;control, contrastes a la medida e interacciones (<code>~ fuma | raza</code>).</li>
+<li>Da estimaciones con IC, no sólo <em>p</em>.</li>
+</ul>
 </div>
 </div><div class="column" style="width:50%;">
 <div class="con">
-<p><span class="h3">Desventajas</span> - Hay que ajustar y validar primero el modelo. - Con interacciones, las medias marginales promediadas pueden ser engañosas. - Curva de aprendizaje mayor que <code>TukeyHSD()</code>.</p>
+<p><span class="h3">Desventajas</span></p>
+<ul>
+<li>Hay que ajustar y validar primero el modelo.</li>
+<li>Con interacciones, las medias marginales promediadas pueden ser engañosas.</li>
+<li>Curva de aprendizaje mayor que <code>TukeyHSD()</code>.</li>
+</ul>
 </div>
 </div></div>
 </section></section>
@@ -2048,11 +2060,21 @@ P value adjustment method: holm </code></pre>
 <div class="columns">
 <div class="column" style="width:50%;">
 <div class="pro">
-<p><span class="h3">Ventajas</span> - Responde la pregunta clínica típica: ¿qué tratamiento tiene mayor tasa de respuesta? - Se hace con R base. - Admite cualquier ajuste de <code>p.adjust()</code>.</p>
+<p><span class="h3">Ventajas</span></p>
+<ul>
+<li>Responde la pregunta clínica típica: ¿qué tratamiento tiene mayor tasa de respuesta?</li>
+<li>Se hace con R base.</li>
+<li>Admite cualquier ajuste de <code>p.adjust()</code>.</li>
+</ul>
 </div>
 </div><div class="column" style="width:50%;">
 <div class="con">
-<p><span class="h3">Desventajas</span> - No ajusta por covariables (para eso: regresión logística + <code>emmeans</code>). - Con conteos pequeños la aproximación falla (use Fisher). - Reporte también diferencias de riesgo o <em>odds ratios</em> con IC.</p>
+<p><span class="h3">Desventajas</span></p>
+<ul>
+<li>No ajusta por covariables (para eso: regresión logística + <code>emmeans</code>).</li>
+<li>Con conteos pequeños la aproximación falla (use Fisher).</li>
+<li>Reporte también diferencias de riesgo o <em>odds ratios</em> con IC.</li>
+</ul>
 </div>
 </div></div>
 </section></section>
@@ -2223,139 +2245,6 @@ Semana_4 8e-06 0.102   </code></pre>
 <div class="decision">
 <p>Incluya siempre: prueba ómnibus, prueba post hoc o corrección utilizada, diferencia con su IC y <em>p</em> ajustado.</p>
 </div>
-</section>
-<section id="fe-de-erratas-del-capítulo-18-resumen-12" class="slide level2 fe">
-<h2>Fe de erratas del capítulo 18: resumen (1/2)</h2>
-<table class="caption-top">
-<colgroup>
-<col style="width: 33%">
-<col style="width: 33%">
-<col style="width: 33%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Sección</th>
-<th>Error</th>
-<th>Corrección</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>Bonferroni</td>
-<td>Función <code>pairs.t.test()</code></td>
-<td><code>pairwise.t.test()</code></td>
-</tr>
-<tr class="even">
-<td>Tukey</td>
-<td>Interpretación del ejemplo invertida (0.10 y 0.001)</td>
-<td>0.05 (no significativa) y 0.17 (significativa)</td>
-</tr>
-<tr class="odd">
-<td>Tukey</td>
-<td><em>v</em> = 126; “se acepta H<sub>0</sub>”</td>
-<td><em>v</em> = 132; “no se rechaza H<sub>0</sub>”</td>
-</tr>
-<tr class="even">
-<td>Tukey</td>
-<td>Requiere <em>n</em> iguales; “pocos supuestos”; “computacionalmente intensivo”</td>
-<td>Tukey‑Kramer admite <em>n</em> distintos; requiere normalidad y homocedasticidad; es inmediato</td>
-</tr>
-<tr class="odd">
-<td>Dunnett</td>
-<td>Fórmula con 2 × MSE × (1/<em>n</em><sub>i</sub> + 1/<em>n</em><sub>c</sub>)</td>
-<td>Sin el 2: MSE × (1/<em>n</em><sub>i</sub> + 1/<em>n</em><sub>c</sub>)</td>
-</tr>
-<tr class="even">
-<td>Scheffé</td>
-<td>No requiere normalidad ni homocedasticidad; requiere <em>n</em> iguales</td>
-<td>Mismos supuestos que el ANOVA; admite <em>n</em> distintos</td>
-</tr>
-<tr class="odd">
-<td>Scheffé</td>
-<td>“Más errores tipo I”, “menos tipo II”, “relativamente poderosa”</td>
-<td>La más conservadora y la menos potente para pares</td>
-</tr>
-<tr class="even">
-<td>Games‑Howell</td>
-<td>No paramétrica; compara solapamiento de IC</td>
-<td>Paramétrica; usa el rango estudentizado</td>
-</tr>
-<tr class="odd">
-<td>Dunnett T3</td>
-<td>No paramétrica; compara contra un control; a priori</td>
-<td>Paramétrica; todos los pares; post hoc</td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="fe-de-erratas-del-capítulo-18-resumen-22" class="slide level2 fe">
-<h2>Fe de erratas del capítulo 18: resumen (2/2)</h2>
-<table class="caption-top">
-<colgroup>
-<col style="width: 33%">
-<col style="width: 33%">
-<col style="width: 33%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Sección</th>
-<th>Error</th>
-<th>Corrección</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>Dunn</td>
-<td><code>dunn.test()</code> sin ajuste y <em>p</em> de una cola leídos como ajustados</td>
-<td>Usar <code>method = "holm"</code> y <code>altp = TRUE</code></td>
-</tr>
-<tr class="even">
-<td>Dunn</td>
-<td><code>kw = TRUE</code> “indica que viene de un ANOVA”</td>
-<td>Sólo imprime el Kruskal‑Wallis</td>
-</tr>
-<tr class="odd">
-<td>Dunn</td>
-<td>“Sólo para dos grupos”; “incrementa el error tipo I”</td>
-<td>Diseñada para <em>k</em> grupos; con ajuste lo controla</td>
-</tr>
-<tr class="even">
-<td>Dunn</td>
-<td>Contra un control: Dunnett o T3</td>
-<td>Dunn muchos‑contra‑uno (no paramétrica)</td>
-</tr>
-<tr class="odd">
-<td>Nemenyi</td>
-<td>s.e. = √(<em>k</em>(<em>n</em>+1)/12)</td>
-<td>s.e. = √(<em>N</em>(<em>N</em>+1)/12 · (1/<em>n</em><sub>i</sub> + 1/<em>n</em><sub>j</sub>))</td>
-</tr>
-<tr class="even">
-<td>Holm</td>
-<td>“Bonferroni compara todas; Holm sólo las significativas”</td>
-<td>Ambos evalúan todas; Holm usa umbrales escalonados</td>
-</tr>
-<tr class="odd">
-<td>Hommel</td>
-<td>Sin supuestos</td>
-<td>Requiere independencia o dependencia positiva</td>
-</tr>
-<tr class="even">
-<td>BH</td>
-<td>Con Q = 25 %, sólo A es significativa</td>
-<td>Las 8 son significativas</td>
-</tr>
-<tr class="odd">
-<td>Comentarios finales</td>
-<td>“Los procedimientos sólo son válidos para comparaciones planificadas”</td>
-<td>Al revés: las post hoc están diseñadas para comparaciones <strong>no</strong> planeadas</td>
-</tr>
-<tr class="even">
-<td>Comentarios finales</td>
-<td><em>F</em> significativa sin pares significativos “porque requieren patrón gaussiano”</td>
-<td>Prueban hipótesis distintas: una <em>F</em> significativa garantiza algún <strong>contraste</strong> significativo (Scheffé), no necesariamente un par</td>
-</tr>
-</tbody>
-</table>
 </section>
 <section id="ejercicio" class="slide level2 exercise">
 <h2>Ejercicio</h2>
@@ -2765,7 +2654,7 @@ Semana_4 8e-06 0.102   </code></pre>
         }
           var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
           var mailtoRegex = new RegExp(/^mailto:/);
-            var filterRegex = new RegExp("https:\/\/Ed-Perez-G\.github\.io\/bioestadistica-avanzada\/");
+            var filterRegex = new RegExp('/' + window.location.host + '/');
           var isInternal = (href) => {
               return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
           }
