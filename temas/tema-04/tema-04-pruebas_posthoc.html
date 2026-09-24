@@ -10,7 +10,7 @@
   <meta name="generator" content="quarto-1.8.25">
 
   <meta name="author" content="Edsaúl Emilio Pérez-Guerrero">
-  <meta name="dcterms.date" content="2026-09-23">
+  <meta name="dcterms.date" content="2026-09-24">
   <title>Bioestadística avanzada – Pruebas post hoc y corrección por comparaciones múltiples</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -229,7 +229,7 @@ Edsaúl Emilio Pérez-Guerrero
 </div>
 </div>
 
-  <p class="date">2026-09-23</p>
+  <p class="date">2026-09-24</p>
 </section>
 <section id="objetivos-de-aprendizaje" class="slide level2">
 <h2>Objetivos de aprendizaje</h2>
@@ -243,7 +243,7 @@ Edsaúl Emilio Pérez-Guerrero
 </section>
 <section id="una-nota-sobre-el-capítulo-18" class="slide level2 fe">
 <h2>Una nota sobre el capítulo 18</h2>
-<p>Esta presentación se basa en el capítulo 18 del libro <strong>Bioestadística en R para ciencias de la salud</strong>. Al revisarlo por enésima vez econtré: <strong>errores de fundamento, fórmulas e interpretación</strong>.</p>
+<p>Esta presentación se basa en el capítulo 18 del libro <strong>Bioestadística en R para ciencias de la salud</strong>. Al revisarlo por enésima vez econtré: <strong>errores de fundamento, fórmulas e interpretación</strong>.<span class="citation" data-cites="perezguerrero2024bioestadistica">(<a href="#/referencias" role="doc-biblioref" onclick="">1</a>)</span></p>
 <p>A lo largo de la presentación hay:</p>
 <div class="errata">
 <p><strong>El capítulo dice:</strong> lo que aparece en el texto original.<br> <strong>Lo correcto:</strong> la versión corregida y, cuando se puede, la demostración en <code>R</code>.</p>
@@ -274,7 +274,7 @@ Edsaúl Emilio Pérez-Guerrero
 <span id="cb2-7"><a aria-hidden="true" tabindex="-1"></a>          <span class="fu">rnorm</span>(<span class="dv">15</span>, <span class="dv">50</span>, <span class="dv">6</span>), <span class="fu">rnorm</span>(<span class="dv">15</span>, <span class="dv">52</span>, <span class="dv">6</span>)))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div><div class="column" style="width:50%;">
-<p><strong>Datos 2 · reales.</strong> <code>Cushings</code> <span class="citation" data-cites="venables2002">(<a href="#/referencias" role="doc-biblioref" onclick="">1</a>)</span>: tetrahidrocortisona urinaria según el tipo de síndrome de Cushing (a = adenoma, b = hiperplasia bilateral, c = carcinoma, u = desconocido). <em>n</em> pequeño, asimetría y varianzas distintas.</p>
+<p><strong>Datos 2 · reales.</strong> <code>Cushings</code> <span class="citation" data-cites="venables2002">(<a href="#/referencias" role="doc-biblioref" onclick="">2</a>)</span>: tetrahidrocortisona urinaria según el tipo de síndrome de Cushing (a = adenoma, b = hiperplasia bilateral, c = carcinoma, u = desconocido). <em>n</em> pequeño, asimetría y varianzas distintas.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(Cushings, <span class="at">package =</span> <span class="st">"MASS"</span>)</span>
 <span id="cb3-2"><a aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(Cushings<span class="sc">$</span>Type)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
@@ -446,7 +446,7 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 </table>
 <ul>
 <li><strong>FWER</strong> = P(V ≥ 1): probabilidad de cometer <strong>al menos un</strong> falso positivo. Estricto. Adecuado con pocas comparaciones y decisiones clínicas.</li>
-<li><strong>FDR</strong> (<em>false discovery rate</em>) = proporción esperada de falsos positivos <strong>entre los descubrimientos</strong>. Más permisivo. Adecuado con cientos o miles de pruebas (genes, SNPs, metabolitos) <span class="citation" data-cites="benjamini1995">(<a href="#/referencias" role="doc-biblioref" onclick="">2</a>)</span>.</li>
+<li><strong>FDR</strong> (<em>false discovery rate</em>) = proporción esperada de falsos positivos <strong>entre los descubrimientos</strong>. Más permisivo. Adecuado con cientos o miles de pruebas (genes, SNPs, metabolitos) <span class="citation" data-cites="benjamini1995">(<a href="#/referencias" role="doc-biblioref" onclick="">3</a>)</span>.</li>
 </ul>
 </section>
 <section id="el-precio-la-potencia" class="slide level2">
@@ -565,7 +565,7 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 </div>
 </div>
 </div>
-<p>Una guía, no una ley <span class="citation" data-cites="lee2018 kim2015">(<a href="#/referencias" role="doc-biblioref" onclick="">3</a>,<a href="#/referencias" role="doc-biblioref" onclick="">4</a>)</span>. Covariables, proporciones y medidas repetidas: sección 5.</p>
+<p>Una guía, no una ley <span class="citation" data-cites="lee2018 kim2015">(<a href="#/referencias" role="doc-biblioref" onclick="">4</a>,<a href="#/referencias" role="doc-biblioref" onclick="">5</a>)</span>. Covariables, proporciones y medidas repetidas: sección 5.</p>
 </section></section>
 <section>
 <section id="principales-pruebas" class="title-slide slide level1 center">
@@ -705,7 +705,7 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 <h2>Tukey HSD · fundamento y supuestos</h2>
 <div class="columns">
 <div class="column" style="width:58%;">
-<p><em>Honestly Significant Difference</em> <span class="citation" data-cites="tukey1949 kramer1956">(<a href="#/referencias" role="doc-biblioref" onclick="">5</a>,<a href="#/referencias" role="doc-biblioref" onclick="">6</a>)</span>. Compara <strong>todos los pares</strong> usando la distribución del <strong>rango estudentizado</strong> (<em>q</em>): la distribución de la diferencia <strong>más grande</strong> entre <em>k</em> medias. Si controlamos la mayor diferencia, controlamos todas.</p>
+<p><em>Honestly Significant Difference</em> <span class="citation" data-cites="tukey1949 kramer1956">(<a href="#/referencias" role="doc-biblioref" onclick="">6</a>,<a href="#/referencias" role="doc-biblioref" onclick="">7</a>)</span>. Compara <strong>todos los pares</strong> usando la distribución del <strong>rango estudentizado</strong> (<em>q</em>): la distribución de la diferencia <strong>más grande</strong> entre <em>k</em> medias. Si controlamos la mayor diferencia, controlamos todas.</p>
 <p>Diferencia mínima significativa (Tukey‑Kramer):</p>
 <div class="formula">
 <p><span class="math display">\[\text{HSD}_{ij} = q_{\alpha,\,k,\,N-k}\ \sqrt{\frac{MSE}{2}\left(\frac{1}{n_i}+\frac{1}{n_j}\right)}\]</span></p>
@@ -877,7 +877,7 @@ Farmaco_C-Farmaco_B  3.449 -2.2618  9.159 0.3875</code></pre>
 <h2>Dunnett · fundamento y supuestos</h2>
 <div class="columns">
 <div class="column" style="width:58%;">
-<p>Compara <strong>cada tratamiento contra un grupo control</strong> <span class="citation" data-cites="dunnett1955">(<a href="#/referencias" role="doc-biblioref" onclick="">7</a>)</span>. Sólo hay <em>k</em> − 1 comparaciones (no <em>k</em>(<em>k</em>−1)/2), así que <strong>gana potencia</strong> frente a Tukey.</p>
+<p>Compara <strong>cada tratamiento contra un grupo control</strong> <span class="citation" data-cites="dunnett1955">(<a href="#/referencias" role="doc-biblioref" onclick="">8</a>)</span>. Sólo hay <em>k</em> − 1 comparaciones (no <em>k</em>(<em>k</em>−1)/2), así que <strong>gana potencia</strong> frente a Tukey.</p>
 <div class="formula">
 <p><span class="math display">\[t_i = \frac{\bar x_i - \bar x_c}{\sqrt{MSE\left(\dfrac{1}{n_i}+\dfrac{1}{n_c}\right)}}\]</span></p>
 </div>
@@ -972,7 +972,7 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 <h2>Scheffé · fundamento y supuestos</h2>
 <div class="columns">
 <div class="column" style="width:58%;">
-<p>Controla el FWER para <strong>todos los contrastes posibles</strong>, incluidos los complejos <span class="citation" data-cites="scheffe1953">(<a href="#/referencias" role="doc-biblioref" onclick="">8</a>)</span>. Un contraste es una combinación de medias con coeficientes que suman cero, por ejemplo:</p>
+<p>Controla el FWER para <strong>todos los contrastes posibles</strong>, incluidos los complejos <span class="citation" data-cites="scheffe1953">(<a href="#/referencias" role="doc-biblioref" onclick="">9</a>)</span>. Un contraste es una combinación de medias con coeficientes que suman cero, por ejemplo:</p>
 <p><span class="math display">\[L = \bar x_{\text{Control}} - \tfrac{1}{3}(\bar x_A + \bar x_B + \bar x_C)\]</span></p>
 <p>Es significativo si</p>
 <div class="formula">
@@ -1153,7 +1153,7 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 <h2>Games‑Howell · fundamento y supuestos</h2>
 <div class="columns">
 <div class="column" style="width:58%;">
-<p>Para cada par calcula una <em>t</em> <strong>tipo Welch</strong>, con la varianza de cada grupo (no la MSE común) y grados de libertad propios <span class="citation" data-cites="games1976">(<a href="#/referencias" role="doc-biblioref" onclick="">9</a>)</span>:</p>
+<p>Para cada par calcula una <em>t</em> <strong>tipo Welch</strong>, con la varianza de cada grupo (no la MSE común) y grados de libertad propios <span class="citation" data-cites="games1976">(<a href="#/referencias" role="doc-biblioref" onclick="">10</a>)</span>:</p>
 <div class="formula">
 <p><span class="math display">\[t_{ij} = \frac{\bar x_i - \bar x_j}{\sqrt{\dfrac{s_i^2}{n_i} + \dfrac{s_j^2}{n_j}}}\]</span></p>
 </div>
@@ -1212,7 +1212,7 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 <h2>Dunnett T3 · fundamento y en R</h2>
 <div class="columns">
 <div class="column" style="width:45%;">
-<p>También usa <em>t</em> tipo Welch para <strong>todos los pares</strong>, pero toma el valor crítico de la distribución del <strong>módulo máximo estudentizado</strong> <span class="citation" data-cites="dunnett1980">(<a href="#/referencias" role="doc-biblioref" onclick="">10</a>)</span>. Con grupos pequeños controla mejor el error tipo I que Games‑Howell.</p>
+<p>También usa <em>t</em> tipo Welch para <strong>todos los pares</strong>, pero toma el valor crítico de la distribución del <strong>módulo máximo estudentizado</strong> <span class="citation" data-cites="dunnett1980">(<a href="#/referencias" role="doc-biblioref" onclick="">11</a>)</span>. Con grupos pequeños controla mejor el error tipo I que Games‑Howell.</p>
 <div class="warning">
 <p>A pesar del nombre, <strong>no</strong> compara contra un control y <strong>no</strong> es no paramétrica.</p>
 </div>
@@ -1320,7 +1320,7 @@ u 0.184 0.692 0.986</code></pre>
 <h2>Dunn · fundamento y supuestos</h2>
 <div class="columns">
 <div class="column" style="width:58%;">
-<p>Post hoc <strong>no paramétrica</strong> tras Kruskal‑Wallis <span class="citation" data-cites="dunn1964 dinno2015">(<a href="#/referencias" role="doc-biblioref" onclick="">11</a>,<a href="#/referencias" role="doc-biblioref" onclick="">12</a>)</span>. Usa los <strong>mismos rangos conjuntos</strong> del Kruskal‑Wallis y compara los rangos medios de cada par:</p>
+<p>Post hoc <strong>no paramétrica</strong> tras Kruskal‑Wallis <span class="citation" data-cites="dunn1964 dinno2015">(<a href="#/referencias" role="doc-biblioref" onclick="">12</a>,<a href="#/referencias" role="doc-biblioref" onclick="">13</a>)</span>. Usa los <strong>mismos rangos conjuntos</strong> del Kruskal‑Wallis y compara los rangos medios de cada par:</p>
 <div class="formula">
 <p><span class="math display">\[z_{ij} = \frac{\bar R_i - \bar R_j}{\sqrt{\dfrac{N(N+1)}{12}\left(\dfrac{1}{n_i}+\dfrac{1}{n_j}\right)}}\]</span></p>
 </div>
@@ -1470,7 +1470,7 @@ u 0.0096</code></pre>
 </tr>
 <tr class="even">
 <td>Desventaja: “sólo para dos grupos”</td>
-<td>Se diseñó para <em>k</em> grupos: <em>Multiple comparisons using rank sums</em> <span class="citation" data-cites="dunn1964">(<a href="#/referencias" role="doc-biblioref" onclick="">11</a>)</span></td>
+<td>Se diseñó para <em>k</em> grupos: <em>Multiple comparisons using rank sums</em> <span class="citation" data-cites="dunn1964">(<a href="#/referencias" role="doc-biblioref" onclick="">12</a>)</span></td>
 </tr>
 <tr class="odd">
 <td>Desventaja: “incrementa el riesgo de error tipo I”</td>
@@ -1496,7 +1496,7 @@ u 0.0096</code></pre>
 <h2>Nemenyi · fundamento, supuestos y R</h2>
 <div class="columns">
 <div class="column" style="width:45%;">
-<p>Es el <strong>análogo de Tukey con rangos</strong> <span class="citation" data-cites="nemenyi1963">(<a href="#/referencias" role="doc-biblioref" onclick="">13</a>)</span>: compara las diferencias de rangos medios contra la distribución del rango estudentizado. Se usa tras Kruskal‑Wallis (y también tras Friedman en diseños pareados).</p>
+<p>Es el <strong>análogo de Tukey con rangos</strong> <span class="citation" data-cites="nemenyi1963">(<a href="#/referencias" role="doc-biblioref" onclick="">14</a>)</span>: compara las diferencias de rangos medios contra la distribución del rango estudentizado. Se usa tras Kruskal‑Wallis (y también tras Friedman en diseños pareados).</p>
 <p><strong>Supuestos:</strong> independencia, variable ordinal o continua; pensada para <em>n</em> <strong>iguales</strong>.</p>
 <p><strong>Ventaja:</strong> sencilla y directa.<br> <strong>Desventaja:</strong> conservadora; con <em>n</em> distintos, Dunn suele ser preferible.</p>
 </div><div class="column" style="width:55%;">
@@ -1554,7 +1554,7 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 <p><strong>Ventajas:</strong> simple, universal, válida con cualquier dependencia; razonable con pocas comparaciones planeadas.</p>
 </div>
 <div class="con">
-<p><strong>Desventajas:</strong> muy conservadora; la potencia cae rápido conforme crece <em>m</em>. Siempre hay una alternativa igual de válida y más potente: <strong>Holm</strong> <span class="citation" data-cites="armstrong2014">(<a href="#/referencias" role="doc-biblioref" onclick="">14</a>)</span>.</p>
+<p><strong>Desventajas:</strong> muy conservadora; la potencia cae rápido conforme crece <em>m</em>. Siempre hay una alternativa igual de válida y más potente: <strong>Holm</strong> <span class="citation" data-cites="armstrong2014">(<a href="#/referencias" role="doc-biblioref" onclick="">15</a>)</span>.</p>
 </div>
 </div></div>
 </section>
@@ -1562,7 +1562,7 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 <h2>Holm · el Bonferroni secuencial</h2>
 <div class="columns">
 <div class="column" style="width:55%;">
-<p>Método <strong>escalonado descendente</strong> <span class="citation" data-cites="holm1979">(<a href="#/referencias" role="doc-biblioref" onclick="">15</a>)</span>:</p>
+<p>Método <strong>escalonado descendente</strong> <span class="citation" data-cites="holm1979">(<a href="#/referencias" role="doc-biblioref" onclick="">16</a>)</span>:</p>
 <ol type="1">
 <li>Ordenar los <em>p</em> de menor a mayor: <span class="math inline">\(p_{(1)} \le \dots \le p_{(m)}\)</span>.</li>
 <li>Comparar <span class="math inline">\(p_{(i)}\)</span> con <span class="math inline">\(\alpha/(m - i + 1)\)</span>.</li>
@@ -1631,8 +1631,8 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 <h2>Hochberg y Hommel</h2>
 <div class="columns">
 <div class="column" style="width:55%;">
-<p><strong>Hochberg</strong> <span class="citation" data-cites="hochberg1988">(<a href="#/referencias" role="doc-biblioref" onclick="">16</a>)</span>: escalonado <strong>ascendente</strong>. Empieza por el <em>p</em> más grande; en cuanto uno cumple <span class="math inline">\(p_{(i)} \le \alpha/(m-i+1)\)</span>, se rechazan ese y todos los menores.</p>
-<p><strong>Hommel</strong> <span class="citation" data-cites="hommel1988">(<a href="#/referencias" role="doc-biblioref" onclick="">17</a>)</span>: basado en la prueba de Simes; algo más potente que Hochberg, pero de cálculo más complejo.</p>
+<p><strong>Hochberg</strong> <span class="citation" data-cites="hochberg1988">(<a href="#/referencias" role="doc-biblioref" onclick="">17</a>)</span>: escalonado <strong>ascendente</strong>. Empieza por el <em>p</em> más grande; en cuanto uno cumple <span class="math inline">\(p_{(i)} \le \alpha/(m-i+1)\)</span>, se rechazan ese y todos los menores.</p>
+<p><strong>Hommel</strong> <span class="citation" data-cites="hommel1988">(<a href="#/referencias" role="doc-biblioref" onclick="">18</a>)</span>: basado en la prueba de Simes; algo más potente que Hochberg, pero de cálculo más complejo.</p>
 <p>Potencia: Bonferroni &lt; Holm &lt; Hochberg &lt; Hommel.</p>
 </div><div class="column" style="width:45%;">
 <div class="warning">
@@ -1654,7 +1654,7 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 <h2>Benjamini‑Hochberg (FDR) · fundamento</h2>
 <div class="columns">
 <div class="column" style="width:55%;">
-<p>Controla la <strong>tasa de falsos descubrimientos</strong> en lugar del FWER <span class="citation" data-cites="benjamini1995">(<a href="#/referencias" role="doc-biblioref" onclick="">2</a>)</span>:</p>
+<p>Controla la <strong>tasa de falsos descubrimientos</strong> en lugar del FWER <span class="citation" data-cites="benjamini1995">(<a href="#/referencias" role="doc-biblioref" onclick="">3</a>)</span>:</p>
 <ol type="1">
 <li>Ordenar los <em>m</em> valores <em>p</em> de menor a mayor y asignar su rango <em>i</em>.</li>
 <li>Calcular el umbral <span class="math inline">\(\dfrac{i}{m}\,Q\)</span> (Q = FDR aceptada, p.&nbsp;ej., 0.05).</li>
@@ -1885,14 +1885,15 @@ P value adjustment method: holm </code></pre>
 <h2>Fisher LSD protegida</h2>
 <div class="columns">
 <div class="column" style="width:50%;">
-<p><strong>Fundamento:</strong> <em>Least Significant Difference</em> <span class="citation" data-cites="fisher1935">(<a href="#/referencias" role="doc-biblioref" onclick="">18</a>)</span>. Dos pasos:</p>
+<p><strong>Fundamento:</strong> <em>Least Significant Difference</em> <span class="citation" data-cites="fisher1935">(<a href="#/referencias" role="doc-biblioref" onclick="">19</a>)</span>. Dos pasos:</p>
 <ol type="1">
 <li>ANOVA. Si <em>F</em> <strong>no</strong> es significativa, se detiene.</li>
 <li>Si lo es, pruebas <em>t</em> por pares con la MSE común, <strong>sin</strong> ajustar.</li>
+<li>No se utiliza en la práctica</li>
 </ol>
 <p><strong>Supuestos:</strong> los del ANOVA.</p>
 <div class="pro">
-<p><strong>Ventaja:</strong> la más potente; con <strong>exactamente 3 grupos</strong> controla el FWER <span class="citation" data-cites="levin1994">(<a href="#/referencias" role="doc-biblioref" onclick="">19</a>)</span>.</p>
+<p><strong>Ventaja:</strong> la más potente; con <strong>exactamente 3 grupos</strong> controla el FWER <span class="citation" data-cites="levin1994">(<a href="#/referencias" role="doc-biblioref" onclick="">20</a>)</span>.</p>
 </div>
 <div class="con">
 <p><strong>Desventaja:</strong> con 4 o más grupos <strong>no</strong> controla el FWER.</p>
@@ -1916,7 +1917,7 @@ Farmaco_C 8e-07   3e-05     0.115
 P value adjustment method: none </code></pre>
 </div>
 </div>
-<p>Compare con Tukey: A vs.&nbsp;B da <em>p</em> = 0.005 aquí y 0.025 con Tukey. Con 4 grupos, LSD es <strong>demasiado liberal</strong>.</p>
+<p>Compare con Tukey: A vs.&nbsp;B da <em>p</em> = 0.005 aquí y 0.025 con Tukey. Con 4 grupos, LSD es <strong>demasiado liberal</strong>. No usar!</p>
 </div></div>
 </section></section>
 <section>
@@ -1928,7 +1929,7 @@ P value adjustment method: none </code></pre>
 <h2>emmeans · fundamento y supuestos</h2>
 <div class="columns">
 <div class="column" style="width:58%;">
-<p>Las pruebas anteriores comparan <strong>medias crudas</strong>. Si el modelo incluye covariables u otros factores, hay que comparar <strong>medias marginales estimadas</strong> (EMM): la media predicha de cada grupo con las demás variables fijas <span class="citation" data-cites="lenth2024">(<a href="#/referencias" role="doc-biblioref" onclick="">20</a>)</span>.</p>
+<p>Las pruebas anteriores comparan <strong>medias crudas</strong>. Si el modelo incluye covariables u otros factores, hay que comparar <strong>medias marginales estimadas</strong> (EMM): la media predicha de cada grupo con las demás variables fijas <span class="citation" data-cites="lenth2024">(<a href="#/referencias" role="doc-biblioref" onclick="">21</a>)</span>.</p>
 <p><code>emmeans</code> hace el post hoc <strong>sobre cualquier modelo</strong>: ANCOVA, ANOVA de dos vías, modelos mixtos, regresión logística…</p>
 <p>Y aplica el ajuste que elijamos: Tukey, Dunnett, Holm, Bonferroni, Scheffé…</p>
 </div><div class="column" style="width:42%;">
@@ -1996,11 +1997,22 @@ P value adjustment: dunnettx method for 2 tests </code></pre>
 <div class="columns">
 <div class="column" style="width:50%;">
 <div class="pro">
-<p><span class="h3">Ventajas</span> - Un solo marco para casi cualquier modelo. - Compara medias <strong>ajustadas</strong>, no crudas. - Permite pares, vs.&nbsp;control, contrastes a la medida e interacciones (<code>~ fuma | raza</code>). - Da estimaciones con IC, no sólo <em>p</em>.</p>
+<p><span class="h3">Ventajas</span></p>
+<ul>
+<li>Un solo marco para casi cualquier modelo.</li>
+<li>Compara medias <strong>ajustadas</strong>, no crudas.</li>
+<li>Permite pares, vs.&nbsp;control, contrastes a la medida e interacciones (<code>~ fuma | raza</code>).</li>
+<li>Da estimaciones con IC, no sólo <em>p</em>.</li>
+</ul>
 </div>
 </div><div class="column" style="width:50%;">
 <div class="con">
-<p><span class="h3">Desventajas</span> - Hay que ajustar y validar primero el modelo. - Con interacciones, las medias marginales promediadas pueden ser engañosas. - Curva de aprendizaje mayor que <code>TukeyHSD()</code>.</p>
+<p><span class="h3">Desventajas</span></p>
+<ul>
+<li>Hay que ajustar y validar primero el modelo.</li>
+<li>Con interacciones, las medias marginales promediadas pueden ser engañosas.</li>
+<li>Curva de aprendizaje mayor que <code>TukeyHSD()</code>.</li>
+</ul>
 </div>
 </div></div>
 </section></section>
@@ -2048,11 +2060,21 @@ P value adjustment method: holm </code></pre>
 <div class="columns">
 <div class="column" style="width:50%;">
 <div class="pro">
-<p><span class="h3">Ventajas</span> - Responde la pregunta clínica típica: ¿qué tratamiento tiene mayor tasa de respuesta? - Se hace con R base. - Admite cualquier ajuste de <code>p.adjust()</code>.</p>
+<p><span class="h3">Ventajas</span></p>
+<ul>
+<li>Responde la pregunta clínica típica: ¿qué tratamiento tiene mayor tasa de respuesta?</li>
+<li>Se hace con R base.</li>
+<li>Admite cualquier ajuste de <code>p.adjust()</code>.</li>
+</ul>
 </div>
 </div><div class="column" style="width:50%;">
 <div class="con">
-<p><span class="h3">Desventajas</span> - No ajusta por covariables (para eso: regresión logística + <code>emmeans</code>). - Con conteos pequeños la aproximación falla (use Fisher). - Reporte también diferencias de riesgo o <em>odds ratios</em> con IC.</p>
+<p><span class="h3">Desventajas</span></p>
+<ul>
+<li>No ajusta por covariables (para eso: regresión logística + <code>emmeans</code>).</li>
+<li>Con conteos pequeños la aproximación falla (use Fisher).</li>
+<li>Reporte también diferencias de riesgo o <em>odds ratios</em> con IC.</li>
+</ul>
 </div>
 </div></div>
 </section></section>
@@ -2067,7 +2089,7 @@ P value adjustment method: holm </code></pre>
 <div class="column" style="width:55%;">
 <p>Cuando los <strong>mismos pacientes</strong> se miden en varios momentos, los grupos no son independientes: Kruskal‑Wallis, Dunn, Tukey y Games‑Howell <strong>no</strong> son válidos.</p>
 <ul>
-<li><strong>Ómnibus:</strong> prueba de Friedman <span class="citation" data-cites="friedman1937">(<a href="#/referencias" role="doc-biblioref" onclick="">21</a>)</span>. Ordena los valores <strong>dentro de cada paciente</strong>.</li>
+<li><strong>Ómnibus:</strong> prueba de Friedman <span class="citation" data-cites="friedman1937">(<a href="#/referencias" role="doc-biblioref" onclick="">22</a>)</span>. Ordena los valores <strong>dentro de cada paciente</strong>.</li>
 <li><strong>Post hoc:</strong>
 <ul>
 <li>Wilcoxon de rangos con signo <strong>pareado</strong> por cada par + Holm; o</li>
@@ -2224,139 +2246,6 @@ Semana_4 8e-06 0.102   </code></pre>
 <p>Incluya siempre: prueba ómnibus, prueba post hoc o corrección utilizada, diferencia con su IC y <em>p</em> ajustado.</p>
 </div>
 </section>
-<section id="fe-de-erratas-del-capítulo-18-resumen-12" class="slide level2 fe">
-<h2>Fe de erratas del capítulo 18: resumen (1/2)</h2>
-<table class="caption-top">
-<colgroup>
-<col style="width: 33%">
-<col style="width: 33%">
-<col style="width: 33%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Sección</th>
-<th>Error</th>
-<th>Corrección</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>Bonferroni</td>
-<td>Función <code>pairs.t.test()</code></td>
-<td><code>pairwise.t.test()</code></td>
-</tr>
-<tr class="even">
-<td>Tukey</td>
-<td>Interpretación del ejemplo invertida (0.10 y 0.001)</td>
-<td>0.05 (no significativa) y 0.17 (significativa)</td>
-</tr>
-<tr class="odd">
-<td>Tukey</td>
-<td><em>v</em> = 126; “se acepta H<sub>0</sub>”</td>
-<td><em>v</em> = 132; “no se rechaza H<sub>0</sub>”</td>
-</tr>
-<tr class="even">
-<td>Tukey</td>
-<td>Requiere <em>n</em> iguales; “pocos supuestos”; “computacionalmente intensivo”</td>
-<td>Tukey‑Kramer admite <em>n</em> distintos; requiere normalidad y homocedasticidad; es inmediato</td>
-</tr>
-<tr class="odd">
-<td>Dunnett</td>
-<td>Fórmula con 2 × MSE × (1/<em>n</em><sub>i</sub> + 1/<em>n</em><sub>c</sub>)</td>
-<td>Sin el 2: MSE × (1/<em>n</em><sub>i</sub> + 1/<em>n</em><sub>c</sub>)</td>
-</tr>
-<tr class="even">
-<td>Scheffé</td>
-<td>No requiere normalidad ni homocedasticidad; requiere <em>n</em> iguales</td>
-<td>Mismos supuestos que el ANOVA; admite <em>n</em> distintos</td>
-</tr>
-<tr class="odd">
-<td>Scheffé</td>
-<td>“Más errores tipo I”, “menos tipo II”, “relativamente poderosa”</td>
-<td>La más conservadora y la menos potente para pares</td>
-</tr>
-<tr class="even">
-<td>Games‑Howell</td>
-<td>No paramétrica; compara solapamiento de IC</td>
-<td>Paramétrica; usa el rango estudentizado</td>
-</tr>
-<tr class="odd">
-<td>Dunnett T3</td>
-<td>No paramétrica; compara contra un control; a priori</td>
-<td>Paramétrica; todos los pares; post hoc</td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="fe-de-erratas-del-capítulo-18-resumen-22" class="slide level2 fe">
-<h2>Fe de erratas del capítulo 18: resumen (2/2)</h2>
-<table class="caption-top">
-<colgroup>
-<col style="width: 33%">
-<col style="width: 33%">
-<col style="width: 33%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Sección</th>
-<th>Error</th>
-<th>Corrección</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>Dunn</td>
-<td><code>dunn.test()</code> sin ajuste y <em>p</em> de una cola leídos como ajustados</td>
-<td>Usar <code>method = "holm"</code> y <code>altp = TRUE</code></td>
-</tr>
-<tr class="even">
-<td>Dunn</td>
-<td><code>kw = TRUE</code> “indica que viene de un ANOVA”</td>
-<td>Sólo imprime el Kruskal‑Wallis</td>
-</tr>
-<tr class="odd">
-<td>Dunn</td>
-<td>“Sólo para dos grupos”; “incrementa el error tipo I”</td>
-<td>Diseñada para <em>k</em> grupos; con ajuste lo controla</td>
-</tr>
-<tr class="even">
-<td>Dunn</td>
-<td>Contra un control: Dunnett o T3</td>
-<td>Dunn muchos‑contra‑uno (no paramétrica)</td>
-</tr>
-<tr class="odd">
-<td>Nemenyi</td>
-<td>s.e. = √(<em>k</em>(<em>n</em>+1)/12)</td>
-<td>s.e. = √(<em>N</em>(<em>N</em>+1)/12 · (1/<em>n</em><sub>i</sub> + 1/<em>n</em><sub>j</sub>))</td>
-</tr>
-<tr class="even">
-<td>Holm</td>
-<td>“Bonferroni compara todas; Holm sólo las significativas”</td>
-<td>Ambos evalúan todas; Holm usa umbrales escalonados</td>
-</tr>
-<tr class="odd">
-<td>Hommel</td>
-<td>Sin supuestos</td>
-<td>Requiere independencia o dependencia positiva</td>
-</tr>
-<tr class="even">
-<td>BH</td>
-<td>Con Q = 25 %, sólo A es significativa</td>
-<td>Las 8 son significativas</td>
-</tr>
-<tr class="odd">
-<td>Comentarios finales</td>
-<td>“Los procedimientos sólo son válidos para comparaciones planificadas”</td>
-<td>Al revés: las post hoc están diseñadas para comparaciones <strong>no</strong> planeadas</td>
-</tr>
-<tr class="even">
-<td>Comentarios finales</td>
-<td><em>F</em> significativa sin pares significativos “porque requieren patrón gaussiano”</td>
-<td>Prueban hipótesis distintas: una <em>F</em> significativa garantiza algún <strong>contraste</strong> significativo (Scheffé), no necesariamente un par</td>
-</tr>
-</tbody>
-</table>
-</section>
 <section id="ejercicio" class="slide level2 exercise">
 <h2>Ejercicio</h2>
 <p>Con la base <code>Cushings</code> (paquete <code>MASS</code>), analice <strong>Pregnanetriol</strong> según <code>Type</code>:</p>
@@ -2373,68 +2262,71 @@ Semana_4 8e-06 0.102   </code></pre>
 <section id="referencias" class="slide level2 smaller scrollable">
 <h2>Referencias</h2>
 <div id="refs" class="tiny references csl-bib-body" role="list">
+<div id="ref-perezguerrero2024bioestadistica" class="csl-entry" role="listitem">
+<div class="csl-left-margin">1. </div><div class="csl-right-inline">Edsaúl Emilio Pérez Guerrero. Bioestadística en R para ciencias de la salud: Guía práctica [Internet]. 1.ª ed. Zapopan, Jalisco, México: Editorial Innovación Educativa; 2024. Disponible en: <a href="https://www.cucs.udg.mx/libros/lectura_cucs.php?libro=Bioestadistica_enR_digital">https://www.cucs.udg.mx/libros/lectura_cucs.php?libro=Bioestadistica_enR_digital</a></div>
+</div>
 <div id="ref-venables2002" class="csl-entry" role="listitem">
-<div class="csl-left-margin">1. </div><div class="csl-right-inline">W. N. Venables, B. D. Ripley. Modern Applied Statistics with <span>S</span>. 4.ª ed. New York: Springer; 2002.</div>
+<div class="csl-left-margin">2. </div><div class="csl-right-inline">W. N. Venables, B. D. Ripley. Modern Applied Statistics with <span>S</span>. 4.ª ed. New York: Springer; 2002.</div>
 </div>
 <div id="ref-benjamini1995" class="csl-entry" role="listitem">
-<div class="csl-left-margin">2. </div><div class="csl-right-inline">Yoav Benjamini, Yosef Hochberg. Controlling the false discovery rate: a practical and powerful approach to multiple testing. Journal of the Royal Statistical Society: Series B (Methodological). 1995;57(1):289-300. doi:<a href="https://doi.org/10.1111/j.2517-6161.1995.tb02031.x">10.1111/j.2517-6161.1995.tb02031.x</a></div>
+<div class="csl-left-margin">3. </div><div class="csl-right-inline">Yoav Benjamini, Yosef Hochberg. Controlling the false discovery rate: a practical and powerful approach to multiple testing. Journal of the Royal Statistical Society: Series B (Methodological). 1995;57(1):289-300. doi:<a href="https://doi.org/10.1111/j.2517-6161.1995.tb02031.x">10.1111/j.2517-6161.1995.tb02031.x</a></div>
 </div>
 <div id="ref-lee2018" class="csl-entry" role="listitem">
-<div class="csl-left-margin">3. </div><div class="csl-right-inline">Sangseok Lee, Dong Kyu Lee. What is the proper way to apply the multiple comparison test? Korean Journal of Anesthesiology. 2018;71(5):353-60. doi:<a href="https://doi.org/10.4097/kja.d.18.00242">10.4097/kja.d.18.00242</a></div>
+<div class="csl-left-margin">4. </div><div class="csl-right-inline">Sangseok Lee, Dong Kyu Lee. What is the proper way to apply the multiple comparison test? Korean Journal of Anesthesiology. 2018;71(5):353-60. doi:<a href="https://doi.org/10.4097/kja.d.18.00242">10.4097/kja.d.18.00242</a></div>
 </div>
 <div id="ref-kim2015" class="csl-entry" role="listitem">
-<div class="csl-left-margin">4. </div><div class="csl-right-inline">Hae-Young Kim. Statistical notes for clinical researchers: post-hoc multiple comparisons. Restorative Dentistry &amp; Endodontics. 2015;40(2):172-6. doi:<a href="https://doi.org/10.5395/rde.2015.40.2.172">10.5395/rde.2015.40.2.172</a></div>
+<div class="csl-left-margin">5. </div><div class="csl-right-inline">Hae-Young Kim. Statistical notes for clinical researchers: post-hoc multiple comparisons. Restorative Dentistry &amp; Endodontics. 2015;40(2):172-6. doi:<a href="https://doi.org/10.5395/rde.2015.40.2.172">10.5395/rde.2015.40.2.172</a></div>
 </div>
 <div id="ref-tukey1949" class="csl-entry" role="listitem">
-<div class="csl-left-margin">5. </div><div class="csl-right-inline">John W. Tukey. Comparing individual means in the analysis of variance. Biometrics. 1949;5(2):99-114. doi:<a href="https://doi.org/10.2307/3001913">10.2307/3001913</a></div>
+<div class="csl-left-margin">6. </div><div class="csl-right-inline">John W. Tukey. Comparing individual means in the analysis of variance. Biometrics. 1949;5(2):99-114. doi:<a href="https://doi.org/10.2307/3001913">10.2307/3001913</a></div>
 </div>
 <div id="ref-kramer1956" class="csl-entry" role="listitem">
-<div class="csl-left-margin">6. </div><div class="csl-right-inline">Clyde Young Kramer. Extension of multiple range tests to group means with unequal numbers of replications. Biometrics. 1956;12(3):307-10. doi:<a href="https://doi.org/10.2307/3001469">10.2307/3001469</a></div>
+<div class="csl-left-margin">7. </div><div class="csl-right-inline">Clyde Young Kramer. Extension of multiple range tests to group means with unequal numbers of replications. Biometrics. 1956;12(3):307-10. doi:<a href="https://doi.org/10.2307/3001469">10.2307/3001469</a></div>
 </div>
 <div id="ref-dunnett1955" class="csl-entry" role="listitem">
-<div class="csl-left-margin">7. </div><div class="csl-right-inline">Charles W. Dunnett. A multiple comparison procedure for comparing several treatments with a control. Journal of the American Statistical Association. 1955;50(272):1096-121. doi:<a href="https://doi.org/10.1080/01621459.1955.10501294">10.1080/01621459.1955.10501294</a></div>
+<div class="csl-left-margin">8. </div><div class="csl-right-inline">Charles W. Dunnett. A multiple comparison procedure for comparing several treatments with a control. Journal of the American Statistical Association. 1955;50(272):1096-121. doi:<a href="https://doi.org/10.1080/01621459.1955.10501294">10.1080/01621459.1955.10501294</a></div>
 </div>
 <div id="ref-scheffe1953" class="csl-entry" role="listitem">
-<div class="csl-left-margin">8. </div><div class="csl-right-inline">Henry Scheffé. A method for judging all contrasts in the analysis of variance. Biometrika. 1953;40(1-2):87-110. doi:<a href="https://doi.org/10.1093/biomet/40.1-2.87">10.1093/biomet/40.1-2.87</a></div>
+<div class="csl-left-margin">9. </div><div class="csl-right-inline">Henry Scheffé. A method for judging all contrasts in the analysis of variance. Biometrika. 1953;40(1-2):87-110. doi:<a href="https://doi.org/10.1093/biomet/40.1-2.87">10.1093/biomet/40.1-2.87</a></div>
 </div>
 <div id="ref-games1976" class="csl-entry" role="listitem">
-<div class="csl-left-margin">9. </div><div class="csl-right-inline">Paul A. Games, John F. Howell. Pairwise multiple comparison procedures with unequal <span>N</span>’s and/or variances: a <span>M</span>onte <span>C</span>arlo study. Journal of Educational Statistics. 1976;1(2):113-25. doi:<a href="https://doi.org/10.3102/10769986001002113">10.3102/10769986001002113</a></div>
+<div class="csl-left-margin">10. </div><div class="csl-right-inline">Paul A. Games, John F. Howell. Pairwise multiple comparison procedures with unequal <span>N</span>’s and/or variances: a <span>M</span>onte <span>C</span>arlo study. Journal of Educational Statistics. 1976;1(2):113-25. doi:<a href="https://doi.org/10.3102/10769986001002113">10.3102/10769986001002113</a></div>
 </div>
 <div id="ref-dunnett1980" class="csl-entry" role="listitem">
-<div class="csl-left-margin">10. </div><div class="csl-right-inline">Charles W. Dunnett. Pairwise multiple comparisons in the unequal variance case. Journal of the American Statistical Association. 1980;75(372):796-800. doi:<a href="https://doi.org/10.1080/01621459.1980.10477552">10.1080/01621459.1980.10477552</a></div>
+<div class="csl-left-margin">11. </div><div class="csl-right-inline">Charles W. Dunnett. Pairwise multiple comparisons in the unequal variance case. Journal of the American Statistical Association. 1980;75(372):796-800. doi:<a href="https://doi.org/10.1080/01621459.1980.10477552">10.1080/01621459.1980.10477552</a></div>
 </div>
 <div id="ref-dunn1964" class="csl-entry" role="listitem">
-<div class="csl-left-margin">11. </div><div class="csl-right-inline">Olive Jean Dunn. Multiple comparisons using rank sums. Technometrics. 1964;6(3):241-52. doi:<a href="https://doi.org/10.1080/00401706.1964.10490181">10.1080/00401706.1964.10490181</a></div>
+<div class="csl-left-margin">12. </div><div class="csl-right-inline">Olive Jean Dunn. Multiple comparisons using rank sums. Technometrics. 1964;6(3):241-52. doi:<a href="https://doi.org/10.1080/00401706.1964.10490181">10.1080/00401706.1964.10490181</a></div>
 </div>
 <div id="ref-dinno2015" class="csl-entry" role="listitem">
-<div class="csl-left-margin">12. </div><div class="csl-right-inline">Alexis Dinno. Nonparametric pairwise multiple comparisons in independent groups using <span>D</span>unn’s test. The Stata Journal. 2015;15(1):292-300. doi:<a href="https://doi.org/10.1177/1536867X1501500117">10.1177/1536867X1501500117</a></div>
+<div class="csl-left-margin">13. </div><div class="csl-right-inline">Alexis Dinno. Nonparametric pairwise multiple comparisons in independent groups using <span>D</span>unn’s test. The Stata Journal. 2015;15(1):292-300. doi:<a href="https://doi.org/10.1177/1536867X1501500117">10.1177/1536867X1501500117</a></div>
 </div>
 <div id="ref-nemenyi1963" class="csl-entry" role="listitem">
-<div class="csl-left-margin">13. </div><div class="csl-right-inline">Peter B. Nemenyi. Distribution-free multiple comparisons [Tesis doctoral]. Princeton University; 1963.</div>
+<div class="csl-left-margin">14. </div><div class="csl-right-inline">Peter B. Nemenyi. Distribution-free multiple comparisons [Tesis doctoral]. Princeton University; 1963.</div>
 </div>
 <div id="ref-armstrong2014" class="csl-entry" role="listitem">
-<div class="csl-left-margin">14. </div><div class="csl-right-inline">Richard A. Armstrong. When to use the <span>B</span>onferroni correction. Ophthalmic and Physiological Optics. 2014;34(5):502-8. doi:<a href="https://doi.org/10.1111/opo.12131">10.1111/opo.12131</a></div>
+<div class="csl-left-margin">15. </div><div class="csl-right-inline">Richard A. Armstrong. When to use the <span>B</span>onferroni correction. Ophthalmic and Physiological Optics. 2014;34(5):502-8. doi:<a href="https://doi.org/10.1111/opo.12131">10.1111/opo.12131</a></div>
 </div>
 <div id="ref-holm1979" class="csl-entry" role="listitem">
-<div class="csl-left-margin">15. </div><div class="csl-right-inline">Sture Holm. A simple sequentially rejective multiple test procedure. Scandinavian Journal of Statistics. 1979;6(2):65-70.</div>
+<div class="csl-left-margin">16. </div><div class="csl-right-inline">Sture Holm. A simple sequentially rejective multiple test procedure. Scandinavian Journal of Statistics. 1979;6(2):65-70.</div>
 </div>
 <div id="ref-hochberg1988" class="csl-entry" role="listitem">
-<div class="csl-left-margin">16. </div><div class="csl-right-inline">Yosef Hochberg. A sharper <span>B</span>onferroni procedure for multiple tests of significance. Biometrika. 1988;75(4):800-2. doi:<a href="https://doi.org/10.1093/biomet/75.4.800">10.1093/biomet/75.4.800</a></div>
+<div class="csl-left-margin">17. </div><div class="csl-right-inline">Yosef Hochberg. A sharper <span>B</span>onferroni procedure for multiple tests of significance. Biometrika. 1988;75(4):800-2. doi:<a href="https://doi.org/10.1093/biomet/75.4.800">10.1093/biomet/75.4.800</a></div>
 </div>
 <div id="ref-hommel1988" class="csl-entry" role="listitem">
-<div class="csl-left-margin">17. </div><div class="csl-right-inline">Gerhard Hommel. A stagewise rejective multiple test procedure based on a modified <span>B</span>onferroni test. Biometrika. 1988;75(2):383-6. doi:<a href="https://doi.org/10.1093/biomet/75.2.383">10.1093/biomet/75.2.383</a></div>
+<div class="csl-left-margin">18. </div><div class="csl-right-inline">Gerhard Hommel. A stagewise rejective multiple test procedure based on a modified <span>B</span>onferroni test. Biometrika. 1988;75(2):383-6. doi:<a href="https://doi.org/10.1093/biomet/75.2.383">10.1093/biomet/75.2.383</a></div>
 </div>
 <div id="ref-fisher1935" class="csl-entry" role="listitem">
-<div class="csl-left-margin">18. </div><div class="csl-right-inline">Ronald A. Fisher. The Design of Experiments. Edinburgh: Oliver; Boyd; 1935.</div>
+<div class="csl-left-margin">19. </div><div class="csl-right-inline">Ronald A. Fisher. The Design of Experiments. Edinburgh: Oliver; Boyd; 1935.</div>
 </div>
 <div id="ref-levin1994" class="csl-entry" role="listitem">
-<div class="csl-left-margin">19. </div><div class="csl-right-inline">Joel R. Levin, Ronald C. Serlin, Michael A. Seaman. A controlled, powerful multiple-comparison strategy for several situations. Psychological Bulletin. 1994;115(1):153-9. doi:<a href="https://doi.org/10.1037/0033-2909.115.1.153">10.1037/0033-2909.115.1.153</a></div>
+<div class="csl-left-margin">20. </div><div class="csl-right-inline">Joel R. Levin, Ronald C. Serlin, Michael A. Seaman. A controlled, powerful multiple-comparison strategy for several situations. Psychological Bulletin. 1994;115(1):153-9. doi:<a href="https://doi.org/10.1037/0033-2909.115.1.153">10.1037/0033-2909.115.1.153</a></div>
 </div>
 <div id="ref-lenth2024" class="csl-entry" role="listitem">
-<div class="csl-left-margin">20. </div><div class="csl-right-inline">Russell V. Lenth. emmeans: Estimated Marginal Means, aka Least-Squares Means [Internet]. 2024. Disponible en: <a href="https://CRAN.R-project.org/package=emmeans">https://CRAN.R-project.org/package=emmeans</a></div>
+<div class="csl-left-margin">21. </div><div class="csl-right-inline">Russell V. Lenth. emmeans: Estimated Marginal Means, aka Least-Squares Means [Internet]. 2024. Disponible en: <a href="https://CRAN.R-project.org/package=emmeans">https://CRAN.R-project.org/package=emmeans</a></div>
 </div>
 <div id="ref-friedman1937" class="csl-entry" role="listitem">
-<div class="csl-left-margin">21. </div><div class="csl-right-inline">Milton Friedman. The use of ranks to avoid the assumption of normality implicit in the analysis of variance. Journal of the American Statistical Association. 1937;32(200):675-701. doi:<a href="https://doi.org/10.1080/01621459.1937.10503522">10.1080/01621459.1937.10503522</a></div>
+<div class="csl-left-margin">22. </div><div class="csl-right-inline">Milton Friedman. The use of ranks to avoid the assumption of normality implicit in the analysis of variance. Journal of the American Statistical Association. 1937;32(200):675-701. doi:<a href="https://doi.org/10.1080/01621459.1937.10503522">10.1080/01621459.1937.10503522</a></div>
 </div>
 </div>
 
