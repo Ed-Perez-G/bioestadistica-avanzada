@@ -1,0 +1,41 @@
+/* Estilos para la presentación de modelos lineales */
+:root {
+  --naranja: #F0A05B;
+  --azul: #1f4e79;
+  --verde: #6aa84f;
+}
+
+.reveal h1, .reveal h2, .reveal h3 { color: var(--azul); }
+
+.reveal .slide-number { font-size: 0.55em; }
+
+/* Caja de mensaje clave */
+.clave {
+  border-left: 6px solid var(--naranja);
+  background: #fff6ee;
+  padding: 0.4em 0.8em;
+  margin: 0.4em 0;
+  font-size: 0.9em;
+}
+
+/* Caja de advertencia */
+.alerta {
+  border-left: 6px solid #c0392b;
+  background: #fdecea;
+  padding: 0.4em 0.8em;
+  margin: 0.4em 0;
+  font-size: 0.9em;
+}
+
+/* Caja de pregunta para el grupo */
+.pregunta {
+  border-left: 6px solid var(--verde);
+  background: #eef6ea;
+  padding: 0.4em 0.8em;
+  margin: 0.4em 0;
+  font-size: 0.9em;
+}
+
+.reveal table { font-size: 0.7em; }
+.reveal .small { font-size: 0.7em; }
+.reveal pre code { max-height: 520px; }

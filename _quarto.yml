@@ -30,6 +30,8 @@ website:
             text: "Tema 3: Repaso inferencia estadística"
           - href: temas/tema-04/index.qmd
             text: "Tema 4: Pos hoc y comparaciones múltiples"
+          - href: temas/tema-05/index-05.qmd
+            text: "Tema 4: Modelos lineales"
 
   page-footer:
     left: "© 2026 Edsaúl E. Pérez-Guerrero"

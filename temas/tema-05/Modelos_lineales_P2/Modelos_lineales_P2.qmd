@@ -1,0 +1,941 @@
+---
+title: "Modelos lineales II"
+subtitle: "Regresión lineal múltiple · Variables *dummy* · ANOVA · Diagnóstico · Colinealidad · Confusión · Selección de variables"
+author: "Edsaúl Emilio Pérez-Guerrero"
+date: today
+lang: es
+format:
+  revealjs:
+    theme: simple
+    css: estilos.css
+    slide-number: true
+    progress: true
+    chalkboard: true
+    code-copy: true
+    code-line-numbers: false
+    code-overflow: wrap
+    highlight-style: github
+    fig-align: center
+    fig-width: 8
+    fig-height: 4.5
+    fig-dpi: 150
+    transition: fade
+    footer: "Bioestadística con R · Modelos lineales — Parte 2"
+    width: 1600
+    height: 900
+execute:
+  echo: true
+  warning: false
+  message: false
+bibliography: referencias.bib
+nocite: |
+  @*
+---
+
+```{r}
+#| label: setup
+#| include: false
+library(ggplot2)
+library(patchwork)
+library(performance)
+library(see)
+options(scipen = 999, digits = 5)
+theme_set(theme_linedraw(base_size = 14))
+colores_fuma <- c("No fuma" = "#6aa84f", "Ex-fumador" = "#F0A05B", "Fumador" = "#c0392b")
+
+# Función auxiliar (solo para dibujar diagramas causales sencillos)
+dag <- function(titulo, flechas, nodos) {
+  ggplot() +
+    geom_segment(data = flechas, aes(x = x, y = y, xend = xend, yend = yend),
+                 arrow = arrow(length = unit(0.25, "cm"), type = "closed"),
+                 linewidth = 1, col = "grey30") +
+    geom_label(data = nodos, aes(x = x, y = y, label = nombre, fill = tipo),
+               size = 5, label.padding = unit(0.4, "lines"), show.legend = FALSE) +
+    scale_fill_manual(values = c(x = "#dbe8f5", y = "#dbe8f5", z = "#fff1e0")) +
+    xlim(-0.3, 2.3) + ylim(-0.3, 1.3) + labs(title = titulo) +
+    theme_void(base_size = 14) + theme(plot.title = element_text(hjust = 0.5))
+}
+```
+
+## Objetivos de la sesión
+
+Al terminar la sesión, usted podrá:
+
+1.  Justificar **estadísticamente** por qué un modelo necesita más de un predictor.
+2.  Incluir **variables cualitativas** mediante variables *dummy* e interpretar sus coeficientes.
+3.  Ajustar e **interpretar** un modelo de regresión lineal múltiple y su **ANOVA**.
+4.  **Diagnosticar** el modelo, incluida la **colinealidad** (VIF).
+5.  Reconocer **confusores**, mediadores y colisionadores, y decidir cuándo ajustar.
+6.  Construir un modelo **manualmente** con criterios explícitos.
+
+::: notes
+Tiempo total ≈ 120 min. ¿Por qué ajustar? (20) · Usos (5) · Dummy (15) · Modelo e interpretación (15) · ANOVA (10) · Diagnóstico (10) · Colinealidad (15) · ¿Por qué no todas? (5) · Confusores (10) · Selección manual (10) · Cierre (5).
+:::
+
+## ¿Dónde nos quedamos?
+
+::: columns
+::: {.column width="55%"}
+Parte 1: regresión lineal simple
+
+$$
+\widehat{TA} = 74.84 + 0.0204 \cdot \text{Sal}
+$$
+
+-   $R^2 = 0.699$
+-   Diagnóstico sin problemas
+
+**Pero** la base tiene más variables:
+
+| Variable | Tipo |
+|----------------|-----------------------------------|
+| `Sexo` | Cualitativa (Hombre, Mujer) |
+| `Comorbilidades` | Cualitativa (0 = No, 1 = Sí) |
+| `Fuma` | Cualitativa (0 = No fuma, 1 = Ex-fumador, 2 = Fumador) |
+| `Edad` | Cuantitativa (años) |
+:::
+
+::: {.column width="45%"}
+::: pregunta
+¿El 0.0204 mmHg por mg de sal es el efecto **de la sal**... o también de otras cosas que acompañan a la sal?
+:::
+:::
+:::
+
+## Preparar la base (como en el libro)
+
+```{r}
+#| label: datos
+df <- read.csv("Bases/sal_tension_arterial.csv", stringsAsFactors = TRUE)
+
+# Convertir los códigos numéricos en factores con etiquetas
+df$Comorbilidades <- factor(df$Comorbilidades, labels = c("No", "Si"))
+df$Fuma <- factor(df$Fuma, labels = c("No fuma", "Ex-fumador", "Fumador"))
+
+str(df)
+```
+
+::: alerta
+En regresión es **indispensable** que las variables cualitativas sean `factor` y que sus niveles estén en el orden correcto: el **primer nivel** será la categoría de referencia.
+:::
+
+# 1. ¿Por qué ajustar por otras variables? {background-color="#1f4e79"}
+
+## La tensión arterial cambia según otras variables
+
+```{r}
+#| label: fig-boxplots-ta
+#| fig-height: 4.3
+g1 <- ggplot(df, aes(x = Fuma, y = Tension_Arterial, fill = Fuma)) +
+  geom_boxplot(show.legend = FALSE) + scale_fill_manual(values = colores_fuma) +
+  labs(x = NULL, y = "TA sistólica (mmHg)")
+g2 <- ggplot(df, aes(x = Comorbilidades, y = Tension_Arterial)) +
+  geom_boxplot(fill = "#dbe8f5") + labs(y = NULL)
+g3 <- ggplot(df, aes(x = Sexo, y = Tension_Arterial)) +
+  geom_boxplot(fill = "#dbe8f5") + labs(y = NULL)
+g1 + g2 + g3 + plot_layout(widths = c(2, 1, 1))   # patchwork une las gráficas
+```
+
+## Pruebas de hipótesis: ¿qué se asocia con la TA?
+
+```{r}
+#| label: pruebas-ta
+summary(aov(Tension_Arterial ~ Fuma, data = df))           # ANOVA de una vía
+t.test(Tension_Arterial ~ Comorbilidades, data = df)$p.value
+t.test(Tension_Arterial ~ Sexo, data = df)$p.value
+cor.test(~ Tension_Arterial + Edad, data = df)$p.value
+```
+
+| Variable | Asociación con la TA |
+|-----------------|------------------------------------------------|
+| Fuma | **Fuerte** (F = 64.1, *p* \< 0.001) |
+| Comorbilidades | Débil, no significativa (*p* = 0.11) |
+| Sexo | No (*p* = 0.75) |
+| Edad | No (*p* = 0.81) |
+
+## La pregunta clave: ¿se asocian también con la **sal**?
+
+```{r}
+#| label: fig-sal-fuma
+#| fig-height: 4
+ggplot(df, aes(x = Fuma, y = Consumo_Sal, fill = Fuma)) +
+  geom_boxplot(show.legend = FALSE) + scale_fill_manual(values = colores_fuma) +
+  labs(x = NULL, y = "Consumo de sal (mg/24h)")
+```
+
+```{r}
+#| label: prueba-sal-fuma
+summary(aov(Consumo_Sal ~ Fuma, data = df))
+```
+
+## Los fumadores consumen más sal **y** tienen mayor TA
+
+```{r}
+#| label: fig-scatter-fuma
+#| fig-height: 4.6
+ggplot(df, aes(x = Consumo_Sal, y = Tension_Arterial, col = Fuma)) +
+  geom_point(size = 3, alpha = 0.85) +
+  scale_color_manual(values = colores_fuma) +
+  labs(x = "Consumo de sal (mg/24h)", y = "Tensión arterial sistólica (mmHg)")
+```
+
+::: pregunta
+Si ignoramos el tabaquismo, ¿a quién le "atribuimos" la TA alta de los fumadores?
+:::
+
+## Resumen estadístico: ¿quién podría distorsionar el efecto de la sal?
+
+| Variable | ¿Asociada con la **TA**? | ¿Asociada con la **sal**? | Implicación |
+|-----------------|-----------------|-----------------|----------------------|
+| **Fuma** | Sí (*p* \< 0.001) | Sí (*p* \< 0.001) | Posible **confusor** |
+| **Comorbilidades** | *p* = 0.11 | No (*p* = 0.35) | Puede **mejorar la precisión** |
+| Sexo | No (*p* = 0.75) | No (*p* = 0.96) | Poco aporte estadístico |
+| Edad | No (*p* = 0.81) | No (*p* = 0.80) | Poco aporte estadístico |
+
+```{r}
+#| label: pruebas-sal
+#| eval: false
+t.test(Consumo_Sal ~ Comorbilidades, data = df)   # p = 0.35
+t.test(Consumo_Sal ~ Sexo, data = df)             # p = 0.96
+cor.test(~ Consumo_Sal + Edad, data = df)         # p = 0.80
+```
+
+::: small
+La **plausibilidad biológica** decide qué variables *deben* considerarse; las pruebas solo describen lo que ocurre en esta muestra.
+:::
+
+## El efecto de la sal cambia al ajustar
+
+```{r}
+#| label: cambio-beta
+crudo    <- lm(Tension_Arterial ~ Consumo_Sal, data = df)
+ajustado <- lm(Tension_Arterial ~ Consumo_Sal + Fuma, data = df)
+
+coef(crudo)["Consumo_Sal"]
+coef(ajustado)["Consumo_Sal"]
+
+# Cambio porcentual del coeficiente de la sal
+(coef(crudo)["Consumo_Sal"] - coef(ajustado)["Consumo_Sal"]) /
+  coef(crudo)["Consumo_Sal"] * 100
+```
+
+::: clave
+Al ajustar por tabaquismo, el coeficiente de la sal **baja 30 %** (0.0204 → 0.0143). Parte de lo que atribuíamos a la sal era en realidad del tabaquismo.
+:::
+
+## Visualmente: pendiente cruda vs. ajustada
+
+```{r}
+#| label: fig-crudo-ajustado
+#| echo: false
+#| fig-height: 4.8
+df$pred_aj <- predict(ajustado)
+ggplot(df, aes(Consumo_Sal, Tension_Arterial)) +
+  geom_point(aes(col = Fuma), size = 3, alpha = 0.7) +
+  geom_smooth(method = "lm", se = FALSE, col = "black", linetype = "dashed", linewidth = 1.2) +
+  geom_line(aes(y = pred_aj, col = Fuma), linewidth = 1.3) +
+  scale_color_manual(values = colores_fuma) +
+  labs(x = "Consumo de sal (mg/24h)", y = "Tensión arterial sistólica (mmHg)",
+       caption = "Negra punteada: modelo crudo (pendiente 0.0204) · Color: modelo ajustado por Fuma (pendiente 0.0143, rectas paralelas)")
+```
+
+::: small
+El modelo ajustado estima **una pendiente común** dentro de cada grupo de tabaquismo. Si las pendientes pudieran ser distintas por grupo → **interacción** (parte 3).
+:::
+
+## Y las comorbilidades se "descubren" al ajustar
+
+```{r}
+#| label: comorb-ajuste
+coef(lm(Tension_Arterial ~ Comorbilidades, data = df))["ComorbilidadesSi"]
+coef(lm(Tension_Arterial ~ Comorbilidades + Consumo_Sal, data = df))["ComorbilidadesSi"]
+```
+
+-   Sin ajustar: 4.0 mmHg, *p* = 0.11. Ajustando por sal: 6.1 mmHg, *p* \< 0.001.
+-   ¿Por qué? (1) Los pacientes con comorbilidades consumían **un poco menos** de sal (2 465 vs. 2 562 mg), lo que **enmascaraba** su efecto; (2) al explicar la variabilidad debida a la sal, el **error residual se reduce** y la estimación se vuelve más precisa.
+
+::: clave
+Ajustar no solo **corrige sesgos**; también puede **aumentar la precisión** y revelar asociaciones ocultas.
+:::
+
+# 2. ¿Para qué sirve la regresión múltiple? {background-color="#1f4e79"}
+
+## El modelo
+
+$$
+y_i = \beta_0 + \beta_1 x_{1i} + \beta_2 x_{2i} + \cdots + \beta_k x_{ki} + \varepsilon_i, \qquad \varepsilon_i \sim N(0, \sigma^2)
+$$
+
+-   $\beta_1, \dots, \beta_k$ son **coeficientes de regresión parcial**: el cambio esperado en *y* por una unidad de $x_j$ **manteniendo constantes** los demás predictores [@denis2020univariate].
+-   Se estima igual que antes: $\hat{\boldsymbol\beta} = (X^TX)^{-1}X^T\mathbf{y}$, ahora con más columnas en $X$.
+-   Geométricamente ya no es una recta: con 2 predictores numéricos es un **plano**; con más, un **hiperplano**.
+
+## Usos de la regresión múltiple
+
+| Objetivo | Pregunta | Ejemplo |
+|-------------------|---------------------------|---------------------------|
+| **Aislar el efecto** de una variable | ¿Cuál es el efecto de *x* **independientemente** de *z*? | Efecto de la sal independiente del tabaquismo |
+| **Ajustar** por confusores | ¿El efecto crudo está sesgado? | Sal ajustada por tabaquismo |
+| **Efecto conjunto** de varias variables | ¿Cuánto explican **en conjunto**? | $R^2$ de sal + comorbilidades + tabaquismo |
+| **Predecir** | ¿Qué TA espero en un paciente con estas características? | Modelo pronóstico |
+| **Mejorar la precisión** | ¿Puedo reducir el error residual? | Comorbilidades |
+| Evaluar **modificación del efecto** | ¿El efecto de *x* cambia según *z*? | Interacciones (parte 3) |
+
+
+# 3. Variables cualitativas y variables *dummy* {background-color="#1f4e79"}
+
+## ¿Cómo entra una variable cualitativa a una ecuación?
+
+-   **Dicotómica** (Comorbilidades): se codifica 0 = No, 1 = Sí. Su $\beta$ es la **diferencia de medias** entre grupos (ajustada).
+-   **Tres o más niveles** (Fuma: No fuma, Ex-fumador, Fumador): ¿a quién le toca 0, 1 o 2?
+
+::: alerta
+Nunca meta `Fuma` como número 0/1/2. Eso obliga a que el efecto de pasar de "No fuma" a "Ex-fumador" sea **idéntico** al de pasar de "Ex-fumador" a "Fumador" (supuesto de linealidad entre categorías).
+:::
+
+**Solución**: crear $k - 1$ variables *dummy* (indicadoras) para una variable con $k$ niveles [@perezguerrero2024bioestadistica].
+
+## Variables *dummy*: el ejemplo del tabaquismo
+
+| Categoría | $x_1$ (Ex-fumador) | $x_2$ (Fumador) |
+|-----------------------|:---------------------:|:---------------------:|
+| **No fumador** (referencia) | 0 | 0 |
+| Ex-fumador | 1 | 0 |
+| Fumador | 0 | 1 |
+
+-   3 niveles → **2** variables *dummy*.
+-   La categoría con todos ceros es la **referencia** (estado basal): cada *dummy* compara su nivel **contra** ella.
+-   Las *dummy* solo tienen sentido **en conjunto**; nunca se analizan por separado ni fuera del modelo.
+
+## `R` crea las *dummy* 
+
+```{r}
+#| label: contrastes
+contrasts(df$Fuma)   # así codifica R el factor Fuma
+```
+
+```{r}
+#| label: matriz-diseno
+# Matriz de diseño X que usa lm() (primeras 6 filas)
+head(model.matrix(~ Consumo_Sal + Comorbilidades + Fuma + Edad, data = df))
+```
+
+::: small
+Por eso en la salida aparecen `ComorbilidadesSi`, `FumaEx-fumador` y `FumaFumador`: el nombre de la variable + el nivel comparado contra la referencia.
+:::
+
+## *Dummy* para la variable tabaquismo
+
+```{r}
+#| label: dummy-simple
+modelo_fuma <- lm(Tension_Arterial ~ Fuma, data = df)
+coef(modelo_fuma)
+tapply(df$Tension_Arterial, df$Fuma, mean)   # medias por grupo
+```
+
+| Coeficiente | Valor | Significado |
+|-----------------|-----------------|--------------------------------------|
+| $\hat\beta_0$ | 115.5 | Media de TA de los **no fumadores** (referencia) |
+| $\hat\beta_{Ex}$ | 7.2 | Ex-fumadores − no fumadores = 122.7 − 115.5 |
+| $\hat\beta_{Fum}$ | 20.0 | Fumadores − no fumadores = 135.5 − 115.5 |
+
+## Cambiar la categoría de referencia
+
+```{r}
+#| label: relevel
+df2 <- df
+df2$Fuma <- relevel(df2$Fuma, ref = "Fumador")   # ahora la referencia es "Fumador"
+coef(lm(Tension_Arterial ~ Consumo_Sal + Comorbilidades + Fuma + Edad, data = df2))
+```
+
+-   El modelo es **el mismo** ($R^2$, residuales, predicciones idénticos); solo cambia **qué comparación** se reporta.
+-   Elija la referencia por las **razones correctas** (grupo sin exposición, grupo más grande, grupo control).
+
+# 4. El modelo de para el consumo de sal ajustado {background-color="#1f4e79"}
+
+## Ajustar el modelo
+
+Cada variable se agrega con `+` y en el caso de interacciones con `*`:
+
+```{r}
+#| label: modelo-libro
+modelo <- lm(Tension_Arterial ~ Consumo_Sal + Comorbilidades + Fuma + Edad,
+             data = df)
+summary(modelo)
+```
+
+## Intervalos de confianza
+
+```{r}
+#| label: confint-libro
+confint(modelo) |> round(4)
+```
+
+| Término | $\hat\beta$ | EE | IC 95 % | *p* |
+|-----------------|-----------------|-----------------|-----------------|-----------------|
+| Intercepto | 79.733 | 5.398 | 68.978 a 90.489 | \< 0.001 |
+| Consumo de sal | 0.0153 | 0.0024 | 0.0106 a 0.0201 | \< 0.001 |
+| Comorbilidades (Sí) | 5.910 | 1.196 | 3.528 a 8.292 | \< 0.001 |
+| Ex-fumador | 2.715 | 1.803 | −0.877 a 6.308 | 0.136 |
+| Fumador | 7.105 | 2.505 | 2.113 a 12.097 | 0.006 |
+| Edad | 0.0153 | 0.0305 | −0.046 a 0.076 | 0.618 |
+
+## Interpretación de los coeficientes (1)
+
+1.  **Intercepto (79.73; IC 95 % 68.98 a 90.49)**: TA esperada cuando **todas** las variables valen cero (sal = 0 mg, sin comorbilidades, no fumador, 0 años). Necesario para la ecuación, **sin interpretación clínica**.
+
+2.  **Consumo de sal (0.0153; IC 95 % 0.0106 a 0.0201; *p* \< 0.001)**: por cada 1 mg/24 h adicional de sal, la TA aumenta en promedio **0.015 mmHg** (≈ **15.3 mmHg por gramo**), **manteniendo constantes** comorbilidades, tabaquismo y edad.
+
+3.  **Comorbilidades (5.91; IC 95 % 3.53 a 8.29; *p* \< 0.001)**: tener comorbilidades se asocia con una TA en promedio **5.9 mmHg mayor** que no tenerlas, manteniendo constantes las demás variables.
+
+## Interpretación de los coeficientes (2)
+
+4.  **Ex-fumador (2.72; IC 95 % −0.88 a 6.31; *p* = 0.136)**: comparado con **no fumadores**, ser ex-fumador no tuvo un efecto estadísticamente significativo; el IC **incluye 0**.
+
+5.  **Fumador (7.11; IC 95 % 2.11 a 12.10; *p* = 0.006)**: comparado con **no fumadores**, ser fumador se asocia con una TA en promedio **7.1 mmHg mayor**, manteniendo constantes las demás variables.
+
+6.  **Edad (0.015; IC 95 % −0.046 a 0.076; *p* = 0.618)**: no hay evidencia de asociación entre la edad y la TA en este modelo.
+
+::: clave
+**Conclusión**: sal, comorbilidades y ser fumador se asocian de forma independiente con la TA. El modelo explica ≈ **79.5 %** de la variabilidad ($R^2 = 0.795$; $R^2_{aj} = 0.781$).
+:::
+
+## Crudo vs. ajustado: la tabla que se reporta
+
+| Variable | $\hat\beta$ crudo (modelo simple) | $\hat\beta$ ajustado (modelo múltiple) |
+|-------------------|-------------------------|-------------------------|
+| Sal (por g/24 h) | 20.4 (17.4 a 23.4) | 15.3 (10.6 a 20.1) |
+| Comorbilidades (Sí) | 4.0 (−1.0 a 9.0) | 5.9 (3.5 a 8.3) |
+| Ex-fumador | 7.2 (3.0 a 11.4) | 2.7 (−0.9 a 6.3) |
+| Fumador | 20.0 (16.4 a 23.6) | 7.1 (2.1 a 12.1) |
+| Edad (por año) | 0.02 (−0.11 a 0.15) | 0.02 (−0.05 a 0.08) |
+
+::: small
+El efecto crudo del tabaquismo (20 mmHg) se reduce a 7.1 mmHg: buena parte se explicaba por el mayor consumo de sal de los fumadores. La confusión es **recíproca**.
+:::
+
+## $R^2$ ajustado
+
+$$
+R^2_{aj} = 1 - \frac{(1 - R^2)(n - 1)}{n - p - 1}
+$$
+
+-   $R^2$ **nunca disminuye** al agregar variables, aunque sean ruido.
+-   $R^2_{aj}$ **penaliza** cada predictor adicional: solo sube si la variable aporta más de lo que "cuesta".
+-   Úselo (o AIC/BIC) para **comparar** modelos con distinto número de predictores [@denis2020univariate].
+
+```{r}
+#| label: r2aj
+summary(modelo)$r.squared
+summary(modelo)$adj.r.squared
+```
+
+# 5. ANOVA del modelo múltiple {background-color="#1f4e79"}
+
+## *F* global: ¿el modelo sirve para algo?
+
+`F-statistic: 57.35 on 5 and 74 DF, p-value: < 2.2e-16`
+
+-   $H_0: \beta_1 = \beta_2 = \cdots = \beta_5 = 0$ (ningún predictor explica la TA).
+-   gl del numerador = **5** = número de coeficientes sin contar el intercepto (Fuma aporta 2).
+-   gl del denominador = $n - p - 1 = 80 - 5 - 1 = 74$.
+
+```{r}
+#| label: anova-global
+modelo_nulo <- lm(Tension_Arterial ~ 1, data = df)
+anova(modelo_nulo, modelo)   # mismo F global
+```
+
+## `anova()`: sumas de cuadrados **secuenciales** (tipo I)
+
+```{r}
+#| label: anova-seq
+anova(modelo)
+```
+
+-   Cada fila prueba la variable **dado lo que entró antes**: la sal entra sola (SC = 6 992), las comorbilidades se evalúan después de la sal, etc.
+-   La suma de todas las SC + residual = SST (10 003).
+
+## ¡El orden importa!
+
+```{r}
+#| label: anova-orden
+modelo_orden2 <- lm(Tension_Arterial ~ Edad + Fuma + Comorbilidades + Consumo_Sal,
+                    data = df)
+anova(modelo_orden2)
+```
+
+::: alerta
+Fuma pasa de SC = 231 a SC = 6 249 solo por entrar **antes** que la sal. Los coeficientes de `summary()` son idénticos en ambos órdenes; lo que cambia es la **pregunta** que responde cada fila de `anova()`.
+:::
+
+## SC tipo II: cada variable ajustada por las demás
+
+```{r}
+#| label: anova-tipo2
+car::Anova(modelo, type = 2)
+```
+
+-   Cada fila: ¿cuánto aporta la variable **después de todas las demás**? No depende del orden.
+-   Para variables numéricas o dicotómicas, *F* tipo II = $t^2$ de `summary()` (sal: $6.418^2 = 41.19$).
+-   **Fuma** se prueba **como un todo** (2 gl): *F* = 4.08, *p* = 0.021. ¿El tabaquismo aporta algo? Sí.
+
+::: small
+Las pruebas *t* de cada *dummy* comparan un nivel contra la referencia; la prueba *F* con 2 gl responde si la **variable completa** importa.
+:::
+
+## Comparar modelos anidados
+
+¿Las covariables, **en conjunto**, mejoran el modelo de solo sal?
+
+```{r}
+#| label: anova-anidados
+anova(crudo, modelo)
+```
+
+$$
+F = \frac{(SSE_{reducido} - SSE_{completo}) / (gl_{reducido} - gl_{completo})}{SSE_{completo} / gl_{completo}} = \frac{(3010.8 - 2052.0)/4}{2052.0/74} = 8.65
+$$
+
+::: clave
+Esta prueba será la **herramienta central** para construir modelos manualmente (sección 9).
+:::
+
+# 6. Diagnóstico {background-color="#1f4e79"}
+
+## Los mismos supuestos... y uno más
+
+| Supuesto | Herramienta en `performance` |
+|-------------------------|-----------------------------------------|
+| Linealidad | `check_model()` (panel *Linearity*) |
+| Independencia | `check_autocorrelation()` y el diseño del estudio |
+| Normalidad de residuales | `check_normality()` |
+| Homocedasticidad | `check_heteroscedasticity()` |
+| Observaciones influyentes | `check_outliers()` |
+| **Ausencia de colinealidad** | `check_collinearity()` (**nuevo**) |
+
+## `check_model()` del modelo múltiple
+
+```{r}
+#| label: check-model
+#| fig-height: 8
+#| fig-width: 10
+#| output-location: slide
+check_model(modelo)
+```
+
+## Pruebas individuales
+
+```{r}
+#| label: checks
+check_normality(modelo)
+check_heteroscedasticity(modelo)
+check_outliers(modelo)
+model_performance(modelo)
+```
+
+::: small
+Los supuestos se cumplen razonablemente. En regresión múltiple aparece un panel nuevo en `check_model()`: **colinealidad**.
+:::
+
+# 7. Colinealidad {background-color="#1f4e79"}
+
+## ¿Qué es la colinealidad?
+
+-   Dos o más **predictores** están altamente correlacionados entre sí (multicolinealidad si son varios).
+-   Recordemos: $\hat\beta_j$ es el efecto de $x_j$ **manteniendo constantes** los demás. Si $x_1$ y $x_2$ se mueven casi siempre juntos, ¿cómo "mantener constante" uno mientras cambia el otro?
+-   El modelo **no puede separar** sus efectos → estimaciones **inestables**.
+
+**Consecuencias**:
+
+-   Errores estándar **inflados** → IC anchos, *p* grandes.
+-   Coeficientes que **cambian bruscamente** (incluso de **signo**) al agregar o quitar una variable.
+-   El $R^2$ y las predicciones **no** se afectan; el problema es la **interpretación** de cada $\hat\beta$.
+
+## Caso extremo: colinealidad perfecta [@denis2020univariate]
+
+```{r}
+#| label: colin-perfecta
+p1 <- c(2, 4, 6, 8, 10)
+p2 <- c(4, 8, 12, 16, 20)   # p2 = 2 * p1: combinación lineal exacta
+y  <- c(12, 15, 8, 4, 1)
+
+coef(lm(y ~ p1 + p2))       # R elimina p2: NA
+```
+
+```{r}
+#| label: colin-casi
+p2 <- c(4, 8, 12, 16, 21)   # cambiamos un solo valor
+round(summary(lm(y ~ p1 + p2))$coefficients, 3)
+car::vif(lm(y ~ p1 + p2))
+```
+
+::: small
+Con solo `p1`: $\hat\beta = -1.65$ (*p* = 0.03). Con `p1` y `p2`: $\hat\beta_{p1} = 0.45$, EE = 10.7 → cambió de signo y perdió toda precisión.
+:::
+
+## Ejemplo con nuestros datos: sal y sodio urinario
+
+Supongamos que además medimos el **sodio urinario de 24 h**, un biomarcador casi idéntico al consumo de sal (lo simulamos):
+
+```{r}
+#| label: colin-sodio
+set.seed(2024)
+df$Sodio_orina <- df$Consumo_Sal * 0.39 + rnorm(80, mean = 0, sd = 15)
+cor(df$Consumo_Sal, df$Sodio_orina)   # correlación casi perfecta
+
+modelo_colineal <- lm(Tension_Arterial ~ Consumo_Sal + Sodio_orina +
+                        Comorbilidades + Fuma + Edad, data = df)
+round(summary(modelo_colineal)$coefficients[1:3, ], 4)
+```
+
+## ¿Qué pasó con la sal?
+
+| | Modelo del sal | + Sodio urinario |
+|------------------------|----------------------|----------------------|
+| $\hat\beta$ sal | **0.0153** | **−0.0100** (¡signo negativo!) |
+| EE sal | 0.0024 | 0.0151 (6 veces mayor) |
+| *p* sal | \< 0.001 | 0.51 |
+| $R^2$ | 0.795 | 0.803 |
+
+::: alerta
+Conclusión absurda: "la sal **disminuye** la TA y no es significativa". El modelo predice igual de bien ($R^2$ similar), pero los coeficientes individuales **ya no son interpretables**.
+:::
+
+::: small
+La solución aquí es sustantiva: sal y sodio urinario miden **el mismo constructo**; incluya solo uno.
+:::
+
+## Factor de inflación de la varianza (VIF)
+
+$$
+VIF_j = \frac{1}{1 - R_j^2}
+$$
+
+-   $R_j^2$: el $R^2$ de una regresión de $x_j$ **sobre los demás predictores**. ¿Qué tanto de $x_j$ ya está explicado por los otros?
+-   $\sqrt{VIF_j}$ = cuántas veces se **infla el error estándar** de $\hat\beta_j$ respecto a predictores no correlacionados.
+-   **Tolerancia** $= 1/VIF = 1 - R_j^2$.
+
+| VIF | Interpretación orientativa |
+|-----------------|--------------------------------------|
+| 1 | Sin correlación con los demás predictores |
+| 1 – 5 | Baja a moderada |
+| 5 – 10 | Alta: revisar |
+| \> 10 | Muy alta: problema serio |
+
+::: small
+Los puntos de corte son **orientativos**, no reglas rígidas [@obrien2007caution]. Con factores de más de 2 niveles se usa el **GVIF** [@fox1992generalized].
+:::
+
+## VIF en R
+
+```{r}
+#| label: vif
+check_collinearity(modelo)            # modelo del libro
+```
+
+```{r}
+#| label: vif-colineal
+check_collinearity(modelo_colineal)   # con sodio urinario
+```
+
+::: small
+En el modelo del libro sal y Fuma tienen VIF ≈ 3.5 (se relacionan: los fumadores consumen más sal), aceptable. Con el sodio urinario, VIF \> 140.
+:::
+
+## VIF "a mano"
+
+```{r}
+#| label: vif-mano
+# R^2 de la sal explicada por los demás predictores del modelo del libro
+r2_sal <- summary(lm(Consumo_Sal ~ Comorbilidades + Fuma + Edad, data = df))$r.squared
+1 / (1 - r2_sal)   # VIF de la sal
+```
+
+**¿Qué hacer ante colinealidad alta?**
+
+-   Preguntarse si ambas variables miden **lo mismo** → quedarse con una.
+-   Combinarlas en un índice o puntaje (p. ej., componentes principales).
+-   Centrar variables cuando la colinealidad viene de términos polinomiales o interacciones (parte 3).
+-   No eliminar automáticamente variables con VIF moderado si son confusores necesarios.
+
+# 8. ¿Por qué no incluir todas las variables? {background-color="#1f4e79"}
+
+## Más variables ≠ mejor modelo
+
+```{r}
+#| label: todas
+modelo_todas <- lm(Tension_Arterial ~ Consumo_Sal + Comorbilidades + Fuma + Edad + Sexo,
+                   data = df)
+compare_performance(crudo, modelo, modelo_todas)
+```
+
+-   $R^2$ sube (0.7953 vs. 0.7949), pero $R^2_{aj}$ **baja** y AIC **sube**: Sexo solo agrega ruido.
+
+## Razones para no meter todo
+
+1.  **Sobreajuste**: el modelo aprende el ruido de *esta* muestra y predice mal en otra. Regla orientativa: ≈ 10–15 observaciones por coeficiente estimado [@harrell2015regression]. Con *n* = 80, ≈ 5–8 coeficientes.
+2.  **Pérdida de precisión**: cada coeficiente cuesta 1 gl; variables irrelevantes inflan los EE.
+3.  **Colinealidad**: más variables → más probabilidad de predictores redundantes.
+4.  **Sesgo por sobreajuste causal**: ajustar por **mediadores** o **colisionadores** *introduce* sesgo [@schisterman2009overadjustment].
+5.  **Interpretabilidad** y **parsimonia**: entre dos modelos que explican lo mismo, el más simple es preferible (navaja de Occam) [@denis2020univariate].
+6.  **Comparaciones múltiples**: con muchas variables, algunas saldrán "significativas" por azar.
+
+# 9. Variables confusoras {background-color="#1f4e79"}
+
+## ¿Qué es un confusor?
+
+Una variable *Z* que distorsiona la asociación entre la exposición *X* y el desenlace *Y* porque:
+
+1.  Se asocia con la **exposición** (*X*).
+2.  Se asocia con el **desenlace** (*Y*) independientemente de *X*.
+3.  **No** está en la vía causal entre *X* y *Y* (no es consecuencia de *X*).
+
+```{r}
+#| label: dag-confusor
+#| echo: false
+#| fig-height: 3.2
+dag("Confusor: Tabaquismo → Sal y Tabaquismo → TA",
+    flechas = data.frame(x = c(0.85, 1.15, 0.2), y = c(0.9, 0.9, 0),
+                         xend = c(0.15, 1.85, 1.8), yend = c(0.1, 0.1, 0)),
+    nodos = data.frame(x = c(0, 2, 1), y = c(0, 0, 1),
+                       nombre = c("Sal (X)", "TA (Y)", "Tabaquismo (Z)"),
+                       tipo = c("x", "y", "z")))
+```
+
+::: small
+**Ajustar** por un confusor elimina (parcialmente) el sesgo. Recuerde el helado y los tiburones: la **temperatura** es el confusor.
+:::
+
+## Confusor, mediador y colisionador
+
+```{r}
+#| label: dag-tres
+#| echo: false
+#| fig-height: 3.3
+#| fig-width: 12
+f_conf <- data.frame(x = c(0.85, 1.15), y = c(0.9, 0.9), xend = c(0.15, 1.85), yend = c(0.1, 0.1))
+f_med  <- data.frame(x = c(0.15, 1.15), y = c(0.1, 0.9), xend = c(0.85, 1.85), yend = c(0.9, 0.1))
+f_col  <- data.frame(x = c(0.15, 1.85), y = c(0.1, 0.1), xend = c(0.85, 1.15), yend = c(0.9, 0.9))
+nod <- function(z) data.frame(x = c(0, 2, 1), y = c(0, 0, 1), nombre = c("X", "Y", z),
+                              tipo = c("x", "y", "z"))
+dag("Confusor", f_conf, nod("Z")) +
+  dag("Mediador", f_med, nod("M")) +
+  dag("Colisionador", f_col, nod("C"))
+```
+
+| | Confusor | Mediador | Colisionador |
+|-----------------|-----------------|-----------------|-----------------|
+| Estructura | X ← Z → Y | X → M → Y | X → C ← Y |
+| ¿Ajustar? | **Sí** | **No**, si busca el efecto total | **Nunca** |
+| Si ajusta... | Elimina sesgo | Elimina parte del efecto real | **Crea** una asociación falsa |
+
+## Simulación: ajustar por un mediador o un colisionador
+
+```{r}
+#| label: sim-med-col
+set.seed(1); n <- 500
+# Mediador: X -> M -> Y (efecto total de X sobre Y = 0.8 * 0.5 = 0.4)
+x <- rnorm(n); m <- 0.8 * x + rnorm(n); y <- 0.5 * m + rnorm(n)
+coef(lm(y ~ x))["x"]        # efecto total ≈ 0.35
+coef(lm(y ~ x + m))["x"]    # ¡el efecto "desaparece"!
+
+set.seed(2)
+# Colisionador: X -> C <- Y (X y Y NO están relacionadas)
+x <- rnorm(n); y <- rnorm(n); c <- x + y + rnorm(n)
+coef(lm(y ~ x))["x"]        # ≈ 0: sin asociación
+coef(lm(y ~ x + c))["x"]    # ≈ -0.55: ¡asociación falsa!
+```
+
+## ¿Cuándo incluir una variable y cuándo no?
+
+**Incluir** [@vanderweele2019principles]:
+
+-   Confusores conocidos o plausibles (causas de la exposición, del desenlace o de ambas).
+-   Variables fuertemente asociadas al desenlace aunque no a la exposición → **mejoran la precisión** (comorbilidades).
+-   Variables de diseño (estratificación, centro, lote).
+
+**No incluir**:
+
+-   **Mediadores** (si interesa el efecto total).
+-   **Colisionadores** y consecuencias del desenlace.
+-   Variables que miden lo mismo que la exposición (sodio urinario).
+-   Variables solo asociadas con la exposición (no mejoran nada y aumentan la varianza).
+
+::: clave
+La decisión de ajustar es **causal y sustantiva** (diagramas causales, DAG) antes que estadística [@greenland1999causal].
+:::
+
+## Criterio estadístico complementario: cambio en el estimador
+
+Una variable se considera confusora **en los datos** si su inclusión cambia el coeficiente de la exposición en ≥ 10 % [@mickey1989impact].
+
+```{r}
+#| label: cambio-estimador
+b_crudo <- coef(crudo)["Consumo_Sal"]
+
+# Cambio (%) del coeficiente de la sal al agregar cada variable por separado
+sapply(c("Fuma", "Comorbilidades", "Edad", "Sexo"), function(v) {
+  m <- lm(as.formula(paste("Tension_Arterial ~ Consumo_Sal +", v)), data = df)
+  round((coef(m)[["Consumo_Sal"]] - b_crudo) / b_crudo * 100, 1)
+})
+```
+
+::: small
+Solo el tabaquismo cumple el criterio (−29.8 %). Úselo como **apoyo**, nunca para "descubrir" confusores sin justificación teórica: un mediador o colisionador también cambia el estimador.
+:::
+
+# 10. ¿Cómo seleccionar variables? {background-color="#1f4e79"}
+
+## Opciones disponibles
+
+| Estrategia | Quién decide | Idea |
+|--------------------|--------------------|----------------------------------|
+| **Por conocimiento** (simultánea) | Investigador | Todas las variables justificadas entran a la vez [@denis2020univariate] |
+| **Jerárquica** (por bloques) | Investigador | Se agregan bloques en un orden teórico y se evalúa el $\Delta R^2$ |
+| **Manual / intencionada** (*purposeful*) | Investigador + criterios estadísticos | Tamizaje, modelo completo, eliminación paso a paso con control de confusión [@bursac2008purposeful] |
+| **Automática** (*forward*, *backward*, *stepwise*, mejor subconjunto) | Algoritmo | Maximizar un criterio (*p*, AIC) — **próxima sesión** |
+| **Penalizada** (LASSO, *ridge*) | Algoritmo | Encoge coeficientes; útil para predicción con muchas variables |
+
+::: small
+Ninguna estrategia es universalmente correcta. Para **explicar**, domina el conocimiento previo; para **predecir**, la validación [@heinze2018variable].
+:::
+
+## Estrategia jerárquica (por bloques)
+
+El investigador decide **el orden**: primero la exposición, luego variables clínicas, luego estilo de vida.
+
+```{r}
+#| label: jerarquica
+bloque1 <- lm(Tension_Arterial ~ Consumo_Sal, data = df)
+bloque2 <- lm(Tension_Arterial ~ Consumo_Sal + Comorbilidades, data = df)
+bloque3 <- lm(Tension_Arterial ~ Consumo_Sal + Comorbilidades + Fuma, data = df)
+
+anova(bloque1, bloque2, bloque3)   # ¿cada bloque mejora al anterior?
+c(summary(bloque1)$r.squared, summary(bloque2)$r.squared, summary(bloque3)$r.squared)
+```
+
+::: small
+Comorbilidades agrega $\Delta R^2 = 0.072$; el tabaquismo, $\Delta R^2 = 0.023$ adicional. Ambos bloques mejoran significativamente el modelo.
+:::
+
+## Selección manual: el procedimiento
+
+1.  **Análisis bivariado** de cada candidata con el desenlace. Pasan las que tienen *p* \< 0.20–0.25 **o** relevancia clínica (umbral laxo para no perder confusores) [@bursac2008purposeful].
+2.  **Modelo multivariable** con todas las que pasaron.
+3.  **Eliminar una a una** las no significativas (la de mayor *p* primero), comprobando:
+    -   que el modelo reducido no sea peor (`anova()` de modelos anidados, AIC, $R^2_{aj}$);
+    -   que los coeficientes de las variables que quedan **no cambien \> 10–20 %** (si cambian, la variable es confusora y **se queda**).
+4.  **Reintroducir** una a una las variables excluidas en el paso 1 para ver si aportan ajustadas.
+5.  **Diagnosticar** el modelo final (supuestos, VIF, influyentes) y valorar interacciones (parte 3).
+
+::: alerta
+Las variables que su **marco teórico** exige (confusores conocidos) se **fuerzan** en el modelo aunque no sean significativas.
+:::
+
+## Paso 1. Tamizaje bivariado
+
+```{r}
+#| label: manual-paso1
+candidatas <- c("Consumo_Sal", "Comorbilidades", "Fuma", "Edad", "Sexo")
+
+# Valor p de la F de cada modelo simple TA ~ variable
+sapply(candidatas, function(v) {
+  m <- lm(as.formula(paste("Tension_Arterial ~", v)), data = df)
+  round(anova(m)$`Pr(>F)`[1], 4)
+})
+```
+
+-   Pasan (*p* \< 0.25): **Consumo_Sal, Comorbilidades, Fuma**.
+-   No pasan: Edad (0.81) y Sexo (0.75). Si su marco teórico los exige (la edad es un factor de riesgo reconocido de hipertensión), **se fuerzan**. Aquí los evaluaremos para ilustrar.
+
+## Pasos 2 y 3. Modelo completo y eliminación
+
+```{r}
+#| label: manual-paso2
+completo <- lm(Tension_Arterial ~ Consumo_Sal + Comorbilidades + Fuma + Edad + Sexo,
+               data = df)
+drop1(completo, test = "F")   # F de quitar cada variable (tipo II)
+```
+
+Se elimina primero **Sexo** (mayor *p*):
+
+```{r}
+#| label: manual-paso3a
+sin_sexo <- update(completo, . ~ . - Sexo)   # quitar Sexo
+anova(sin_sexo, completo)                     # ¿empeora? No (p = 0.69)
+```
+
+## Paso 3 (cont.). Control del cambio en los coeficientes
+
+```{r}
+#| label: manual-paso3b
+sin_edad <- update(sin_sexo, . ~ . - Edad)    # ahora quitar Edad
+anova(sin_edad, sin_sexo)                     # ¿empeora? No (p = 0.62)
+
+# ¿Cambió el coeficiente de la sal al quitar variables?
+c(completo = coef(completo)["Consumo_Sal"],
+  sin_sexo = coef(sin_sexo)["Consumo_Sal"],
+  sin_edad = coef(sin_edad)["Consumo_Sal"])
+```
+
+::: small
+El coeficiente de la sal cambia \< 1 %: Sexo y Edad **no confunden** y no aportan. Tampoco cambian los de Comorbilidades y Fuma (compruébelo con `coef()`).
+:::
+
+## Pasos 4 y 5. Modelo final
+
+```{r}
+#| label: manual-final
+modelo_final <- sin_edad
+round(summary(modelo_final)$coefficients, 4)
+compare_performance(modelo, modelo_final)
+```
+
+-   Modelo final: **TA \~ Sal + Comorbilidades + Fuma** ($R^2_{aj} = 0.783$, menor AIC).
+-   Paso 5: `check_model(modelo_final)` y `check_collinearity(modelo_final)` antes de reportar.
+-   ¿Y la edad? Si es un confusor teórico, reporte el modelo **con** edad: los resultados son prácticamente iguales, y eso también es un hallazgo.
+
+## Estrategias manuales: ventajas y cuidados
+
+| Ventajas | Cuidados |
+|----------------------------------|----------------------------------|
+| El investigador controla cada decisión | Requiere documentar **todos** los pasos |
+| Integra conocimiento y criterios estadísticos | Los valores *p* del modelo final son optimistas (el modelo se eligió con los mismos datos) |
+| Protege a los confusores (criterio de cambio) | Umbrales (0.25, 10 %) arbitrarios; justifíquelos |
+| Transparente y reproducible | Con muchas candidatas se vuelve impráctico → algoritmos |
+
+::: clave
+Próxima sesión: **algoritmos de selección** (*forward*, *backward*, *stepwise*, mejor subconjunto) con `step()` / `MASS::stepAIC()`, y por qué son controvertidos [@denis2020univariate; @heinze2018variable].
+:::
+
+# Cierre {background-color="#1f4e79"}
+
+## Mensajes clave
+
+1.  El efecto crudo puede estar **distorsionado**: el tabaquismo explicaba 30 % del efecto aparente de la sal.
+2.  Los coeficientes múltiples son **parciales**: "manteniendo constantes las demás variables".
+3.  Variables cualitativas → $k - 1$ *dummy*; cada una se compara con la **referencia**; la variable completa se prueba con *F*.
+4.  `anova()` es **secuencial** (el orden importa); `car::Anova()` tipo II no; `anova(m1, m2)` compara modelos anidados.
+5.  La **colinealidad** no afecta la predicción pero destruye la interpretación; revise el VIF.
+6.  Ajuste por **confusores**, no por mediadores ni colisionadores; más variables no es mejor.
+7.  Seleccione variables con **teoría primero** y criterios estadísticos explícitos después.
+
+## Actividad en clase
+
+Pregunta: **¿el consumo de sal se asocia con la TA independientemente de las demás variables?**
+
+1.  Ajuste al menos **tres modelos alternativos** para la misma pregunta: (a) crudo, (b) ajustado solo por confusores que usted justifique, (c) modelo del libro.
+2.  Para cada uno: coeficiente de la sal (por **gramo**/24 h) con IC 95 %, $R^2_{aj}$ y AIC (`compare_performance()`).
+3.  Justifique **por escrito** cada covariable: ¿confusor, variable de precisión o ninguna? Dibuje el DAG.
+4.  Cambie la referencia de `Fuma` a "Fumador" y reinterprete los coeficientes.
+5.  Diagnostique su modelo preferido con `check_model()` y `check_collinearity()`.
+
+::: small
+Próxima sesión: algoritmos de selección de variables. Después: interacciones y modificación del efecto.
+:::
+
+## Referencias
+
+::: {#refs .small}
+:::
