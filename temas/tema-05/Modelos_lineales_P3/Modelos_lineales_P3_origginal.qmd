@@ -1,0 +1,545 @@
+---
+title: "Modelos lineales — Parte 3"
+subtitle: "Interacciones (modificación de efecto) en regresión lineal múltiple"
+author: "Edsaul Emilio Pérez Guerrero"
+date: today
+lang: es
+format:
+  revealjs:
+    theme: simple
+    slide-number: true
+    smaller: true
+    scrollable: true
+    code-overflow: wrap
+    fig-align: center
+execute:
+  echo: true
+  warning: false
+  message: false
+---
+
+```{r}
+#| label: setup
+#| include: false
+library(ggplot2)
+theme_set(theme_minimal(base_size = 14))
+data(birthwt, package = "MASS")
+data(Pima.tr,  package = "MASS")
+birthwt$smoke_f <- factor(birthwt$smoke, labels = c("No fuma", "Fuma"))
+```
+
+## Ruta de la sesión (60 min)
+
+| Bloque | Tema | Min |
+|---|---|---|
+| 1 | ¿Qué es una interacción? | 7 |
+| 2 | Confusión *vs* interacción | 10 |
+| 3 | ¿Por qué incluirla? ¿Qué pasa si la omito? | 10 |
+| 4 | ¿Qué indica una interacción significativa? ¿Cómo evaluarla? | 8 |
+| 5 | Efectos, gráficas e interpretación | 15 |
+| 6 | Ejercicios de práctica | 10 |
+
+Paquetes: solo `ggplot2` y los datos de `MASS` (`birthwt`, `Pima.tr`) + simulaciones.
+
+## Recordatorio: el modelo de regresión múltiple
+
+Celis (cap. 24) define el modelo general para *k* variables independientes:
+
+$$Y = \beta_0 + \beta_1X_1 + \beta_2X_2 + \dots + \beta_kX_k + \varepsilon$$
+
+Las $X$ pueden ser variables básicas **o funciones de ellas**: $\ln(X_1)$, $X_1^2$… o el **producto** $X_1X_2$. Celis plantea, entre los modelos candidatos:
+
+$$Y = \beta_0 + \beta_1X_1 + \beta_2X_2 + \beta_3X_1X_2 + \varepsilon$$
+
+Ese término $\beta_3X_1X_2$ es el **término de interacción** y es el tema de hoy.
+
+Supuestos (Celis): existencia, independencia, linealidad, homocedasticidad y normalidad — **siguen aplicando** al modelo con interacción.
+
+# 1. ¿Qué es una interacción?
+
+## Definición
+
+Existe **interacción** cuando el efecto de una variable independiente sobre $Y$ **depende del nivel** de otra variable independiente.
+
+Reordenando el modelo:
+
+$$Y = \beta_0 + \beta_2X_2 + \underbrace{(\beta_1 + \beta_3X_2)}_{\text{pendiente de } X_1}X_1 + \varepsilon$$
+
+- Sin interacción ($\beta_3 = 0$): la pendiente de $X_1$ es **la misma** para cualquier valor de $X_2$ → líneas **paralelas**.
+- Con interacción ($\beta_3 \neq 0$): la pendiente de $X_1$ **cambia** con $X_2$ → líneas **no paralelas**.
+
+Sinónimos según la disciplina: **modificación de efecto** (epidemiología), **moderación** (psicología), **heterogeneidad del efecto** (ensayos clínicos), **G×E / epistasis estadística** (genética).
+
+## Visualmente: aditivo *vs* interacción
+
+```{r}
+#| output-location: column
+#| fig-width: 5
+#| fig-height: 5
+g <- expand.grid(X1 = 0:10,
+                 X2 = factor(c("X2 = 0", "X2 = 1")))
+x2 <- as.numeric(g$X2) - 1
+g$Aditivo     <- 2 + 1*g$X1 + 3*x2
+g$Interaccion <- 2 + 1*g$X1 + 3*x2 + 1*g$X1*x2
+
+g_largo <- rbind(
+  data.frame(g[1:2], Y = g$Aditivo,     modelo = "Aditivo (β3 = 0)"),
+  data.frame(g[1:2], Y = g$Interaccion, modelo = "Con interacción (β3 = 1)"))
+
+ggplot(g_largo, aes(X1, Y, colour = X2)) +
+  geom_line(linewidth = 1.2) +
+  facet_wrap(~ modelo, ncol = 1) +
+  labs(colour = NULL) +
+  theme(legend.position = "top")
+```
+
+## Interacción en ciencias de la salud: ejemplos
+
+- **Farmacología:** el efecto de un antihipertensivo sobre la PAS depende de la ingesta de sodio.
+- **Epidemiología:** el efecto de la edad materna sobre el peso al nacer depende del tabaquismo (lo veremos con `birthwt`).
+- **Genética (G×E):** el efecto de un alelo de riesgo sobre el IMC se atenúa en personas físicamente activas.
+- **Clínica:** el efecto del IMC sobre la PAS es mayor en personas de mayor edad (simulación más adelante).
+
+::: callout-note
+La pregunta clave es siempre: **¿el efecto de X es el mismo para todos, o depende de quién es la persona?**
+:::
+
+# 2. Confusión *vs* interacción
+
+## Dos fenómenos distintos
+
+|  | **Confusión** | **Interacción (modificación de efecto)** |
+|---|---|---|
+| ¿Qué es? | Un **sesgo**: una tercera variable distorsiona la asociación X–Y | Un **fenómeno real**: el efecto de X difiere según Z |
+| Condición | Z se asocia con X **y** con Y, y no es intermedia | El efecto de X sobre Y cambia entre niveles de Z |
+| ¿Cómo se detecta? | Comparando $\beta_{crudo}$ vs $\beta_{ajustado}$ (cambio ≳ 10 %) | Término producto $X \times Z$ (o estratificando) |
+| Estimadores por estrato | **Similares** entre sí, pero distintos del crudo | **Diferentes** entre estratos |
+| ¿Qué hacer? | **Ajustar** (incluir Z) y reportar el efecto ajustado | **Describir**: reportar el efecto de X **en cada nivel** de Z |
+| Objetivo | Eliminarla | Entenderla y reportarla |
+
+Una misma variable puede ser confusora, modificadora, ambas o ninguna. **Primero** se evalúa la interacción; si no hay, **después** la confusión.
+
+## Simulación 1 — Confusión: café, tabaquismo y PAS
+
+El tabaquismo aumenta el consumo de café **y** la PAS. El café **no** tiene efecto real.
+
+```{r}
+set.seed(2026)
+n    <- 400
+fuma <- rbinom(n, 1, 0.3)
+cafe <- pmax(0, round(1 + 2 * fuma + rnorm(n, 0, 1), 1))   # tazas/día
+pas  <- 118 + 0 * cafe + 12 * fuma + rnorm(n, 0, 10)        # café: efecto real = 0
+d_conf <- data.frame(pas, cafe, fuma = factor(fuma, labels = c("No fuma", "Fuma")))
+
+crudo    <- lm(pas ~ cafe, data = d_conf)
+ajustado <- lm(pas ~ cafe + fuma, data = d_conf)
+interac  <- lm(pas ~ cafe * fuma, data = d_conf)
+
+c(crudo = coef(crudo)["cafe"], ajustado = coef(ajustado)["cafe"])
+summary(interac)$coefficients["cafe:fumaFuma", ]
+```
+
+- Crudo ≈ 3.3 mmHg/taza (¡"significativo"!) → ajustado ≈ 0.4: cambio ≫ 10 % → **confusión**.
+- Término `cafe:fumaFuma` no significativo → **no hay interacción**.
+
+## Así se ve la confusión
+
+```{r}
+#| output-location: column
+#| fig-width: 5
+#| fig-height: 5
+ggplot(d_conf, aes(cafe, pas)) +
+  geom_point(aes(colour = fuma), alpha = 0.4) +
+  geom_smooth(method = "lm", se = FALSE,
+              colour = "black", linetype = 2) +
+  geom_smooth(aes(colour = fuma),
+              method = "lm", se = FALSE) +
+  labs(x = "Café (tazas/día)", y = "PAS (mmHg)",
+       colour = NULL,
+       caption = "Línea punteada = modelo crudo") +
+  theme(legend.position = "top")
+```
+
+- Dentro de cada estrato las líneas son **planas y paralelas** (sin efecto, sin interacción).
+- La línea cruda sube solo porque los fumadores toman más café y tienen PAS más alta.
+
+## Guía de decisión
+
+```{mermaid}
+flowchart TD
+  A[Asociación X → Y<br/>¿tercera variable Z?] --> B[Ajustar modelo con X*Z]
+  B --> C{¿β3 de X:Z<br/>significativo y<br/>clínicamente relevante?}
+  C -- Sí --> D[INTERACCIÓN<br/>Reportar el efecto de X<br/>en cada nivel de Z]
+  C -- No --> E[Quitar X:Z<br/>comparar β crudo vs β ajustado por Z]
+  E --> F{¿Cambio ≥ 10 %?}
+  F -- Sí --> G[CONFUSIÓN<br/>Reportar efecto ajustado]
+  F -- No --> H[Z no confunde<br/>ni modifica]
+```
+
+# 3. ¿Por qué incluirla? ¿Qué pasa si la omito?
+
+## Omitir una interacción real sesga los efectos simples
+
+Si los datos se generan con $Y=\beta_0+\beta_1X+\beta_2Z+\beta_3XZ+\varepsilon$ y ajustamos solo $Y \sim X + Z$, Rimpler et al. (2025) muestran que lo que en realidad estimamos es:
+
+$$b_1 = \beta_1 + \beta_3\,\mu_Z \qquad\qquad b_2 = \beta_2 + \beta_3\,\mu_X$$
+
+El efecto "simple" absorbe la interacción multiplicada **por la media de la otra variable**. Consecuencias:
+
+- El efecto puede **inflarse** (interacción sinérgica).
+- Puede **desaparecer** ($b_1 \approx 0$) aunque $\beta_1 \neq 0$.
+- Puede **invertir su signo** (interacción antagónica).
+
+Además, los residuales ya no son independientes ni homocedásticos → los valores *p* del modelo mal especificado **no son confiables**.
+
+## Simulación 2 — reproduciendo a Rimpler et al. (Tabla 2)
+
+Verdad: $\beta_1 = \beta_2 = 1$, $\mu_X = 1$, $\mu_Z = 2$. Ajustamos el modelo **sin** interacción:
+
+```{r}
+set.seed(1)
+N <- 1e5
+X <- rnorm(N, mean = 1, sd = 1)
+Z <- rnorm(N, mean = 2, sd = 1)
+
+b3_verdad <- c(-1, -0.5, 0, 0.5, 1)
+tabla <- t(sapply(b3_verdad, function(b3) {
+  Y <- 1*X + 1*Z + b3*X*Z + rnorm(N)
+  coef(lm(Y ~ X + Z))          # modelo mal especificado
+}))
+data.frame(beta3 = b3_verdad, round(tabla, 2))
+```
+
+Con $\beta_3=-0.5$ el efecto de X "desaparece"; con $\beta_3=-1$ ¡**cambia de signo**! (verdad = +1 en ambos casos).
+
+## Forma de la interacción (Rimpler et al., 2025)
+
+| Tipo | Signos | Ejemplo en salud | Si la omito… |
+|---|---|---|---|
+| **Sinérgica** | $\beta_1, \beta_2, \beta_3$ mismo signo | Tabaquismo + exposición a asbesto → riesgo pulmonar mayor que la suma | Efectos simples inflados; el modelo simple "funciona" razonablemente |
+| **Amortiguadora** | $\beta_1$ y $\beta_2$ con signos opuestos | Estrés laboral (+PAS) amortiguado por actividad física (−PAS) | Sesgo intermedio |
+| **Antagónica** | Efectos simples opuestos a $\beta_3$ | Dos fármacos que bajan la PA, pero juntos menos que la suma (efecto techo) | Efectos que **desaparecen o se invierten** → conclusiones erróneas |
+
+::: callout-warning
+El caso más peligroso es el **antagónico**: el investigador puede concluir que un factor de riesgo es *protector*, y aumentar *n* o replicar el estudio **no lo corrige**.
+:::
+
+## Entonces… ¿siempre incluirla? El costo
+
+Rimpler et al. (55 millones de análisis simulados) encontraron:
+
+- El modelo con interacción **sobreajusta más** la muestra cuando *n* es pequeño o cuando no hay interacción real.
+- Pero, en la población, el modelo correcto (con interacción) **casi siempre generaliza mejor** cuando la interacción existe.
+- El modelo simple solo gana cuando la interacción es nula o sinérgica **y** *n* es pequeño.
+- Las interacciones suelen ser pequeñas: requieren **mucha más muestra** que los efectos principales.
+
+::: callout-tip
+**Regla práctica:** la decisión de evaluar una interacción debe venir de la **teoría / hipótesis biológica**, planearse *a priori* y justificarse — tanto si se incluye como si se excluye. No es para "pescar" todos los productos posibles.
+:::
+
+# 4. ¿Qué indica una interacción significativa? ¿Cómo evaluarla?
+
+## ¿Qué significa que $\beta_3$ sea significativo?
+
+$H_0: \beta_3 = 0$ (las pendientes son iguales; líneas paralelas)  
+$H_1: \beta_3 \neq 0$ (la pendiente de $X_1$ cambia con $X_2$)
+
+Si se rechaza $H_0$:
+
+1. **No existe un único efecto de $X_1$**: hay que reportarlo **condicionado** a $X_2$.
+2. Los coeficientes $\beta_1$ y $\beta_2$ **dejan de ser "efectos principales"**: son efectos **condicionales** cuando la otra variable vale **0**.
+3. Se respeta el **principio de jerarquía** (PSU STAT 462): si $X_1X_2$ está en el modelo, $X_1$ y $X_2$ también, **sean o no significativos**.
+
+Significancia estadística ≠ relevancia clínica: evalúe también la **magnitud** de la diferencia de pendientes y su IC 95 %.
+
+## Cómo evaluarla: pasos
+
+1. **Hipótesis a priori**: ¿hay razón biológica para que Z modifique el efecto de X?
+2. **Explorar**: gráfico de dispersión por estratos / líneas de regresión por grupo.
+3. **Ajustar** el modelo sin y con interacción: `y ~ x + z` vs `y ~ x * z`.
+4. **Probar**:
+   - Un solo término → prueba *t* de $\beta_3$.
+   - Varios términos (p. ej. factor con >2 niveles) → **prueba F parcial**: `anova(m_sin, m_con)`.
+5. **Complementar**: $R^2$ ajustado, AIC, tamaño de la diferencia de pendientes.
+6. **Diagnóstico** del modelo final (residuales, homocedasticidad, influencia).
+7. **Interpretar y graficar** efectos condicionales (pendientes simples).
+
+En la fórmula de R: `x * z` equivale a `x + z + x:z`; `x:z` es solo el producto.
+
+## Ejemplo real: `birthwt` — edad materna × tabaquismo
+
+¿El efecto de la edad materna sobre el peso al nacer (g) depende del tabaquismo?
+
+```{r}
+m_sin <- lm(bwt ~ age + smoke_f, data = birthwt)
+m_con <- lm(bwt ~ age * smoke_f, data = birthwt)
+round(summary(m_con)$coefficients, 3)
+anova(m_sin, m_con)        # prueba F parcial (aquí equivale a la t de β3)
+```
+
+$\beta_3 = -46.6$ g, *p* = 0.024 → la pendiente de la edad **difiere** entre fumadoras y no fumadoras.
+
+# 5. Efectos, gráficas e interpretación
+
+## Leer los coeficientes con interacción
+
+$$\widehat{bwt} = 2406.1 + 27.7\,\text{edad} + 798.2\,\text{Fuma} - 46.6\,(\text{edad}\times\text{Fuma})$$
+
+| Coeficiente | Valor | Significado **correcto** |
+|---|---|---|
+| Intercepto | 2406 | Peso esperado en no fumadora de **0 años** (sin sentido) |
+| `age` | 27.7 | Pendiente de la edad **en no fumadoras** |
+| `smoke_fFuma` | 798.2 | Diferencia Fuma − No fuma **a los 0 años** (¡no es "fumar aumenta el peso"!) |
+| `age:smoke_fFuma` | −46.6 | **Diferencia de pendientes** (Fuma − No fuma) |
+
+Pendiente en fumadoras = $27.7 + (-46.6) = -18.8$ g por año.
+
+::: callout-warning
+Interpretar `smoke_fFuma = +798` como "efecto del tabaquismo" es el error más común. Con interacción, ese coeficiente depende de dónde está el 0 de la otra variable.
+:::
+
+## Pendientes simples con IC 95 %: truco de `relevel()`
+
+El coeficiente de `age` siempre es la pendiente en la **categoría de referencia**. Cambiando la referencia obtenemos la pendiente (y su IC) en el otro grupo:
+
+```{r}
+m_ref_fuma <- lm(bwt ~ age * relevel(smoke_f, ref = "Fuma"), data = birthwt)
+
+rbind(
+  "No fuma" = c(coef(m_con)["age"],      confint(m_con)["age", ]),
+  "Fuma"    = c(coef(m_ref_fuma)["age"], confint(m_ref_fuma)["age", ])
+) |> round(1)
+```
+
+- No fumadoras: +27.7 g por año de edad (IC 95 % 3.8 a 51.7).
+- Fumadoras: −18.8 g por año (IC 95 % −51.3 a 13.6).
+
+## Centrar para que los coeficientes tengan sentido
+
+```{r}
+birthwt$age_c <- birthwt$age - mean(birthwt$age)    # media = 23.2 años
+m_cen <- lm(bwt ~ age_c * smoke_f, data = birthwt)
+round(summary(m_cen)$coefficients, 3)
+```
+
+- `smoke_fFuma` ahora = **−284 g**: diferencia por tabaquismo **a la edad promedio** (23 años), *p* = 0.008.
+- $\beta_3$, su EE, su *p* y el $R^2$ **no cambian**.
+- Centrar **no "arregla" la colinealidad** de la interacción (no la necesita): solo mejora la **interpretación** (Rimpler et al., 2025).
+
+## Gráfica: categórica × continua
+
+```{r}
+#| output-location: column
+#| fig-width: 5
+#| fig-height: 5
+ggplot(birthwt, aes(age, bwt, colour = smoke_f)) +
+  geom_point(alpha = 0.5) +
+  geom_smooth(method = "lm", se = TRUE) +
+  labs(x = "Edad materna (años)",
+       y = "Peso al nacer (g)",
+       colour = NULL) +
+  theme(legend.position = "top")
+```
+
+- Líneas **no paralelas** que se **cruzan** → interacción cualitativa (cruzada).
+- Con un factor de 2 niveles, `geom_smooth()` por grupo traza las mismas rectas que el modelo `bwt ~ age * smoke_f`.
+- Note la poca precisión en edades extremas: no extrapolar.
+
+## Continua × continua: simulación PAS ~ edad × IMC
+
+El efecto del IMC sobre la PAS aumenta con la edad (interacción sinérgica):
+
+```{r}
+set.seed(123)
+n    <- 300
+edad <- round(rnorm(n, 50, 10))
+imc  <- round(rnorm(n, 28, 4), 1)
+pas  <- 120 + 0.4*(edad - 50) + 0.8*(imc - 28) +
+        0.06*(edad - 50)*(imc - 28) + rnorm(n, 0, 8)
+d_pas <- data.frame(pas, edad, imc)
+
+m_pas <- lm(pas ~ edad * imc, data = d_pas)
+round(summary(m_pas)$coefficients, 3)
+```
+
+¿IMC con efecto **negativo** (−1.85)? No: es la pendiente del IMC **a los 0 años de edad**. Centrar lo resuelve.
+
+## Centrado en continua × continua
+
+```{r}
+d_pas$edad_c <- d_pas$edad - mean(d_pas$edad)
+d_pas$imc_c  <- d_pas$imc  - mean(d_pas$imc)
+m_pas_c <- lm(pas ~ edad_c * imc_c, data = d_pas)
+round(summary(m_pas_c)$coefficients, 3)
+
+c(r_sin_centrar = cor(d_pas$edad, d_pas$edad * d_pas$imc),
+  r_centrado    = cor(d_pas$edad_c, d_pas$edad_c * d_pas$imc_c)) |> round(2)
+```
+
+- `imc_c` = 0.73 mmHg por kg/m² **a la edad promedio**; `edad_c` = 0.36 mmHg/año **con IMC promedio**.
+- $\beta_3 = 0.051$: por cada año extra de edad, la pendiente del IMC aumenta 0.051 mmHg por kg/m².
+- La correlación X–XZ baja de 0.77 a −0.12, pero $\beta_3$ y su EE son **idénticos**.
+
+## Gráfica: pendientes simples (edad a −1 DE, media, +1 DE)
+
+```{r}
+#| output-location: column
+#| fig-width: 5
+#| fig-height: 5
+m_e <- mean(d_pas$edad); s_e <- sd(d_pas$edad)
+rejilla <- expand.grid(
+  imc  = seq(18, 40, by = 0.5),
+  edad = round(c(m_e - s_e, m_e, m_e + s_e)))
+rejilla$pred <- predict(m_pas, newdata = rejilla)
+
+ggplot(rejilla, aes(imc, pred,
+                    colour = factor(edad))) +
+  geom_point(data = d_pas, aes(imc, pas),
+             colour = "grey70", alpha = 0.5) +
+  geom_line(linewidth = 1.2) +
+  labs(x = "IMC (kg/m²)", y = "PAS predicha (mmHg)",
+       colour = "Edad (años)") +
+  theme(legend.position = "top")
+```
+
+Pendiente del IMC en cada edad: $\beta_{imc} + \beta_3 \times \text{edad}$.
+
+## Gráfica: el plano "doblado"
+
+```{r}
+#| output-location: column
+#| fig-width: 5
+#| fig-height: 6
+sup <- expand.grid(edad = seq(25, 75, 1),
+                   imc  = seq(18, 40, 0.5))
+m_adit <- lm(pas ~ edad + imc, data = d_pas)
+sup2 <- rbind(
+  cbind(sup, modelo = "Aditivo",
+        pred = predict(m_adit, sup)),
+  cbind(sup, modelo = "Con interacción",
+        pred = predict(m_pas, sup)))
+
+ggplot(sup2, aes(edad, imc, z = pred)) +
+  geom_raster(aes(fill = pred)) +
+  geom_contour(colour = "white", binwidth = 5) +
+  facet_wrap(~ modelo, ncol = 1) +
+  scale_fill_viridis_c(name = "PAS") +
+  labs(x = "Edad (años)", y = "IMC (kg/m²)")
+```
+
+Aditivo: contornos rectos y paralelos (plano). Interacción: contornos **curvos** → la superficie está torcida (PSU: "una hoja de papel doblada").
+
+## Diagnóstico del modelo con interacción
+
+El modelo con interacción sigue siendo un modelo lineal: los supuestos de Celis se verifican igual.
+
+```{r}
+#| output-location: column
+#| fig-width: 5
+#| fig-height: 5
+par(mfrow = c(2, 2), mar = c(4, 4, 2, 1))
+plot(m_con)
+```
+
+```{r}
+#| eval: false
+# Alternativa usada en el curso:
+performance::check_model(m_con)
+```
+
+## Cómo reportar una interacción
+
+> "Se observó una interacción entre la edad materna y el tabaquismo sobre el peso al nacer ($\beta_3 = -46.6$ g; IC 95 % −86.9 a −6.2; *p* = 0.024). En las no fumadoras, cada año adicional de edad se asoció con un aumento de 27.7 g (IC 95 % 3.8 a 51.7), mientras que en las fumadoras la asociación fue negativa y no significativa (−18.8 g; IC 95 % −51.3 a 13.6). A la edad promedio (23 años), los hijos de fumadoras pesaron 284 g menos (*p* = 0.008)."
+
+Elementos: (1) existencia de la interacción con IC; (2) efecto de X **en cada nivel** de Z; (3) efecto de Z en un valor **con sentido** de X; (4) gráfica.
+
+## Errores comunes
+
+- ❌ Interpretar $\beta_1$ o $\beta_2$ como "efectos principales" cuando hay interacción.
+- ❌ Quitar $X_1$ o $X_2$ porque "no son significativos" (viola la jerarquía).
+- ❌ Centrar "para eliminar la colinealidad" y creer que cambió la interacción.
+- ❌ Probar todas las interacciones posibles sin hipótesis (falsos positivos, sobreajuste).
+- ❌ Concluir "no hay interacción" con *n* pequeño (poco poder ≠ ausencia de efecto).
+- ❌ Confundir confusión con interacción: la confusión se **ajusta**, la interacción se **describe**.
+- ❌ Extrapolar las pendientes simples fuera del rango observado.
+
+# 6. Ejercicios de práctica
+
+## Ejercicio 1 — `Pima.tr`: edad × diabetes sobre la presión diastólica
+
+```{r}
+#| eval: false
+data(Pima.tr, package = "MASS")   # bp = presión diastólica; type = diabetes (No/Yes)
+```
+
+a) Grafique `bp` vs `age` con una recta por `type`. ¿Las rectas son paralelas?  
+b) Ajuste `bp ~ age + type` y `bp ~ age * type`. Compárelos con `anova()`.  
+c) Interprete cada coeficiente del modelo con interacción. ¿Qué significa el coeficiente de `typeYes`?  
+d) Calcule la pendiente de la edad en cada grupo (con IC 95 %) usando `relevel()`.  
+e) Centre `age` y vuelva a ajustar. ¿Qué cambió y qué no?  
+f) Redacte un párrafo de resultados.
+
+## Ejercicio 2 — `birthwt`: peso materno × tabaquismo
+
+a) Ajuste `bwt ~ lwt * smoke_f` (`lwt` = peso materno en libras).  
+b) ¿La interacción es significativa? ¿Qué decisión toma sobre el modelo final?  
+c) Si retira la interacción, ¿cómo interpreta ahora el coeficiente de `smoke_f`?  
+d) Haga la gráfica de rectas por grupo. ¿Coincide con su conclusión?
+
+## Ejercicio 3 — Datos Bio3_24a (Celis, cuadro 24-1)
+
+```{r}
+#| eval: false
+bio3_24a <- data.frame(
+  x1 = c(0, 0, 0, 0, 0, 1, 1, 1, 2, 2, 2),
+  x2 = c(0.28, 1.85, 3.73, 7.62, 8.12, 2.07, 2.09, 5.76, 5.83, 8.94, 9.39),
+  y  = c(1.04, 2.30, 4.39, 9.49, 8.28, 4.85, 4.91, 7.44, 8.20, 11.04, 12.72))
+```
+
+a) Ajuste los modelos de Celis $Y \sim X_1 + X_2$ y $Y \sim X_1 + X_2 + X_1X_2$.  
+b) ¿El término de interacción mejora el modelo (prueba F parcial, $R^2$ ajustado)?  
+c) Con *n* = 11, ¿qué puede y qué no puede concluir sobre la ausencia de interacción?
+
+## Ejercicio 4 — ¿Confusión o interacción?
+
+```{r}
+#| eval: false
+set.seed(42); n <- 300
+# Base A
+sexo <- rbinom(n, 1, 0.5)
+act  <- pmax(0, round(3 + 2*sexo + rnorm(n, 0, 1.5), 1))       # actividad física (h/sem)
+ldl  <- 120 + 20*sexo - 2*act + rnorm(n, 0, 12)
+base_A <- data.frame(ldl, act, sexo = factor(sexo, labels = c("Mujer", "Hombre")))
+# Base B
+sexo <- rbinom(n, 1, 0.5)
+act  <- pmax(0, round(4 + rnorm(n, 0, 1.5), 1))
+ldl  <- 130 - 4*act*(1 - sexo) + rnorm(n, 0, 12)
+base_B <- data.frame(ldl, act, sexo = factor(sexo, labels = c("Mujer", "Hombre")))
+```
+
+Para cada base: ajuste `ldl ~ act`, `ldl ~ act + sexo` y `ldl ~ act * sexo`; grafique por sexo y use la **guía de decisión** para clasificar el papel del sexo. ¿Qué ocurre con el signo del efecto crudo en la base A?
+
+## Ejercicio 5 — El costo de omitir la interacción
+
+Usando el código de la Simulación 2:
+
+a) Cambie las medias a $\mu_X = 0$ y $\mu_Z = 0$. ¿Sigue habiendo sesgo en $b_1$ y $b_2$? Explique con la fórmula $b_1 = \beta_1 + \beta_3\mu_Z$.  
+b) Con $\beta_1 = \beta_2 = 1$, $\mu_X = 1$, $\mu_Z = 2$, ¿qué valor de $\beta_3$ hace que $b_2 = 0$?  
+c) Repita con *n* = 50 y 1000 réplicas: ¿en qué % de las réplicas el efecto de X es significativo cuando $\beta_3 = -0.5$?
+
+## Mensajes para llevar
+
+1. Interacción = **el efecto de X depende de Z**; matemáticamente, pendiente de $X_1$ = $\beta_1 + \beta_3X_2$.
+2. **Confusión** es un sesgo que se ajusta; **interacción** es un hallazgo que se describe por estratos.
+3. Omitir una interacción real puede **anular o invertir** efectos verdaderos (sobre todo si es antagónica).
+4. Con interacción, $\beta_1$ y $\beta_2$ son efectos **condicionales** (en 0 de la otra variable): **centre** para interpretarlos.
+5. Evalúe con *t* de $\beta_3$ o F parcial, respete la **jerarquía**, grafique **pendientes simples** y reporte efectos por nivel.
+6. La decisión de incluirla nace de la **teoría**, no de la búsqueda de significancia.
+
+## Referencias
+
+- Celis de la Rosa, A. J., & Labrada Martagón, V. (2014). *Bioestadística* (3ª ed.). Editorial El Manual Moderno. Caps. 23 (Regresión y correlación simple) y 24 (Regresión y correlación múltiple).
+- Denis, D. J. (2020). *Univariate, Bivariate, and Multivariate Statistics Using R*, cap. 7. Wiley.
+- Rimpler, A., Kiers, H. A. L., & van Ravenzwaaij, D. (2025). To interact or not to interact: The pros and cons of including interactions in linear regression models. *Behavior Research Methods*, 57, 92. <https://doi.org/10.3758/s13428-025-02613-6>
+- Penn State Eberly College of Science. *STAT 462: Applied Regression Analysis*, 7.6 Interactions Between Quantitative Predictors. <https://online.stat.psu.edu/stat462/node/157/>
+- Hosmer, D. W., & Lemeshow, S. (1989). *Applied Logistic Regression*. Wiley (origen de `birthwt`). Venables & Ripley (2002), *MASS*.

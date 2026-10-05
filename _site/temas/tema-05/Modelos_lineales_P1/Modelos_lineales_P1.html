@@ -451,7 +451,7 @@ sample estimates:
 <section id="siempre-grafique.-cuarteto-de-anscombe" class="slide level2">
 <h2>Siempre grafique. Cuarteto de Anscombe</h2>
 
-<img data-src="Modelos_lineales_P1_files/figure-html/anscombe-1.png" width="672" class="r-stretch"><div class="cell">
+<img data-src="Modelos_lineales_P1_files/figure-revealjs/anscombe-1.png" width="1200" class="r-stretch"><div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a aria-hidden="true" tabindex="-1"></a><span class="co"># Misma correlación en los 4 conjuntos</span></span>
 <span id="cb14-2"><a aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(<span class="fu">c</span>(<span class="fu">cor</span>(anscombe<span class="sc">$</span>x1, anscombe<span class="sc">$</span>y1), <span class="fu">cor</span>(anscombe<span class="sc">$</span>x2, anscombe<span class="sc">$</span>y2),</span>
 <span id="cb14-3"><a aria-hidden="true" tabindex="-1"></a>        <span class="fu">cor</span>(anscombe<span class="sc">$</span>x3, anscombe<span class="sc">$</span>y3), <span class="fu">cor</span>(anscombe<span class="sc">$</span>x4, anscombe<span class="sc">$</span>y4)), <span class="dv">3</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
@@ -498,7 +498,7 @@ sample estimates:
 <span id="cb16-5"><a aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Tensión arterial sistólica (mmHg)"</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 
 </div>
-<img data-src="Modelos_lineales_P1_files/figure-html/fig-scatter-1.png" id="fig-scatter" width="672" class="r-stretch quarto-figure-center"><p class="caption">
+<img data-src="Modelos_lineales_P1_files/figure-revealjs/fig-scatter-1.png" id="fig-scatter" width="1200" class="r-stretch quarto-figure-center"><p class="caption">
 Figura&nbsp;1
 </p></section>
 <section id="el-modelo" class="slide level2">
@@ -559,7 +559,7 @@ y_i = \underbrace{\beta_0 + \beta_1 x_i}_{\text{parte determinística}} + \under
 <section id="por-qué-esa-recta-y-no-otra" class="slide level2">
 <h2>¿Por qué <em>esa</em> recta y no otra?</h2>
 
-<img data-src="Modelos_lineales_P1_files/figure-html/fig-lineas-1.png" id="fig-lineas" width="672" class="r-stretch quarto-figure-center"><p class="caption">
+<img data-src="Modelos_lineales_P1_files/figure-revealjs/fig-lineas-1.png" id="fig-lineas" width="1200" class="r-stretch quarto-figure-center"><p class="caption">
 Figura&nbsp;2
 </p></section>
 <section id="residuales" class="slide level2">
@@ -764,7 +764,7 @@ R^2_{aj} = 1 - \frac{(1 - R^2)(n - 1)}{n - p - 1}
 <section id="predicción-visualmente" class="slide level2">
 <h2>Predicción: visualmente</h2>
 
-<img data-src="Modelos_lineales_P1_files/figure-html/fig-bandas-1.png" id="fig-bandas" width="672" class="r-stretch quarto-figure-center"><p class="caption">
+<img data-src="Modelos_lineales_P1_files/figure-revealjs/fig-bandas-1.png" id="fig-bandas" width="1200" class="r-stretch quarto-figure-center"><p class="caption">
 Figura&nbsp;3
 </p><div class="alerta">
 <p><strong>No extrapole.</strong> Con 6 000 mg/24 h el modelo “predice” 197 mmHg, pero nunca observamos ese consumo.</p>
@@ -832,7 +832,7 @@ Figura&nbsp;3
 <section id="la-descomposición-en-un-paciente" class="slide level2">
 <h2>La descomposición, en un paciente</h2>
 
-<img data-src="Modelos_lineales_P1_files/figure-html/fig-descomposicion-1.png" id="fig-descomposicion" width="672" class="r-stretch quarto-figure-center"><p class="caption">
+<img data-src="Modelos_lineales_P1_files/figure-revealjs/fig-descomposicion-1.png" id="fig-descomposicion" width="1200" class="r-stretch quarto-figure-center"><p class="caption">
 Figura&nbsp;4
 </p></section>
 <section id="podemos-calcular-con-anova" class="slide level2">
@@ -1123,7 +1123,7 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">1</span>))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<img data-src="Modelos_lineales_P1_files/figure-html/plot-base-1.png" width="672" class="r-stretch"></section>
+<img data-src="Modelos_lineales_P1_files/figure-revealjs/plot-base-1.png" width="1200" class="r-stretch"></section>
 <section id="diagnóstico-con-performancecheck_model" class="slide level2">
 <h2>Diagnóstico con <code>performance::check_model()</code></h2>
 <div class="cell">
@@ -1135,7 +1135,7 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 <div class="cell-output-display">
 <div>
 <figure>
-<p><img data-src="Modelos_lineales_P1_files/figure-html/check-model-1.png" width="960"></p>
+<p><img data-src="Modelos_lineales_P1_files/figure-revealjs/check-model-1.png" width="1500"></p>
 </figure>
 </div>
 </div>
@@ -1199,7 +1199,7 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 </div>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">check_autocorrelation</span>(modelo)     <span class="co"># Durbin-Watson (independencia)</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>OK: Residuals appear to be independent and not autocorrelated (p = 0.616).</code></pre>
+<pre><code>OK: Residuals appear to be independent and not autocorrelated (p = 0.648).</code></pre>
 </div>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">check_outliers</span>(modelo)            <span class="co"># distancia de Cook</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
@@ -1291,7 +1291,7 @@ AIC   |  AICc |   BIC |    R2 | R2 (adj.) |  RMSE | Sigma
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb65"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb65-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">check_model</span>(modelo_malo)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 
 </div>
-<img data-src="Modelos_lineales_P1_files/figure-html/check-model-malo-1.png" width="960" class="r-stretch"><aside class="notes">
+<img data-src="Modelos_lineales_P1_files/figure-revealjs/check-model-malo-1.png" width="1500" class="r-stretch"><aside class="notes">
 <p>Señalar: forma de embudo en homogeneidad, un punto fuera de las curvas de Cook, colas en el QQ.</p>
 <style type="text/css">
         span.MJX_Assistive_MathML {
@@ -1893,6 +1893,44 @@ Schneider, Astrid, Gerhard Hommel, y Maria Blettner. 2010. <span>«Linear regres
         ]
       });
     </script>
+    
+    <script>
+      // htmlwidgets need to know to resize themselves when slides are shown/hidden.
+      // Fire the "slideenter" event (handled by htmlwidgets.js) when the current
+      // slide changes (different for each slide format).
+      (function () {
+        // dispatch for htmlwidgets
+        function fireSlideEnter() {
+          const event = window.document.createEvent("Event");
+          event.initEvent("slideenter", true, true);
+          window.document.dispatchEvent(event);
+        }
+
+        function fireSlideChanged(previousSlide, currentSlide) {
+          fireSlideEnter();
+
+          // dispatch for shiny
+          if (window.jQuery) {
+            if (previousSlide) {
+              window.jQuery(previousSlide).trigger("hidden");
+            }
+            if (currentSlide) {
+              window.jQuery(currentSlide).trigger("shown");
+            }
+          }
+        }
+
+        // hookup for slidy
+        if (window.w3c_slidy) {
+          window.w3c_slidy.add_observer(function (slide_num) {
+            // slide_num starts at position 1
+            fireSlideChanged(null, w3c_slidy.slides[slide_num - 1]);
+          });
+        }
+
+      })();
+    </script>
+
     <script id="quarto-html-after-body" type="application/javascript">
       window.document.addEventListener("DOMContentLoaded", function (event) {
         const tabsets =  window.document.querySelectorAll(".panel-tabset-tabby")
@@ -1963,7 +2001,7 @@ Schneider, Astrid, Gerhard Hommel, y Maria Blettner. 2010. <span>«Linear regres
         }
           var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
           var mailtoRegex = new RegExp(/^mailto:/);
-            var filterRegex = new RegExp('/' + window.location.host + '/');
+            var filterRegex = new RegExp("https:\/\/Ed-Perez-G\.github\.io\/bioestadistica-avanzada\/");
           var isInternal = (href) => {
               return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
           }

@@ -17,6 +17,8 @@ title: "Tema 5: Modelo lineal"
 
 [Modelos lineales parte 2. Presentacion](Modelos_lineales_P2/Modelos_lineales_P2.qmd)
 
+[Modelos lineales parte 3. Presentacion](Modelos_lineales_P3/Modelos_lineales_P3.qmd)
+
 ## Base de datos tema-05
 
 [sal_tension_arterial](Modelos_lineales_P1/Bases/sal_tension_arterial.csv){download="sal_tension_arterial.csv"}
