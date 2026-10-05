@@ -10,7 +10,7 @@
   <meta name="generator" content="quarto-1.8.25">
 
   <meta name="author" content="Edsaúl Emilio Pérez-Guerrero">
-  <meta name="dcterms.date" content="2026-09-27">
+  <meta name="dcterms.date" content="2026-10-05">
   <title>Bioestadística avanzada – Modelos lineales I</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -228,7 +228,7 @@ Edsaúl Emilio Pérez-Guerrero
 </div>
 </div>
 
-  <p class="date">2026-09-27</p>
+  <p class="date">2026-10-05</p>
 </section>
 <section id="objetivos-de-la-sesión" class="slide level2">
 <h2>Objetivos de la sesión</h2>
@@ -1199,7 +1199,7 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 </div>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">check_autocorrelation</span>(modelo)     <span class="co"># Durbin-Watson (independencia)</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>OK: Residuals appear to be independent and not autocorrelated (p = 0.648).</code></pre>
+<pre><code>OK: Residuals appear to be independent and not autocorrelated (p = 0.612).</code></pre>
 </div>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">check_outliers</span>(modelo)            <span class="co"># distancia de Cook</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">

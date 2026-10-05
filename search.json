@@ -11,7 +11,7 @@
     "href": "temas/tema-05/index-05.html#material-de-clase",
     "title": "Tema 5: Modelo lineal",
     "section": "Material de clase",
-    "text": "Material de clase\nModelos lineales parte 1. Presentacion\nModelos lineales parte 2. Presentacion"
+    "text": "Material de clase\nModelos lineales parte 1. Presentacion\nModelos lineales parte 2. Presentacion\nModelos lineales parte 3. Presentacion"
   },
   {
     "objectID": "temas/tema-05/index-05.html#base-de-datos-tema-05",
@@ -19,6 +19,307 @@
     "title": "Tema 5: Modelo lineal",
     "section": "Base de datos tema-05",
     "text": "Base de datos tema-05\nsal_tension_arterial\nLungCapData\nBodyfat"
+  },
+  {
+    "objectID": "temas/tema-05/Modelos_lineales_P3/Modelos_lineales_P3.html#objetivos-de-aprendizaje",
+    "href": "temas/tema-05/Modelos_lineales_P3/Modelos_lineales_P3.html#objetivos-de-aprendizaje",
+    "title": "Modelos lineales. Parte 3",
+    "section": "Objetivos de aprendizaje",
+    "text": "Objetivos de aprendizaje\n\n\n\nBloque\nTema\n\n\n\n\n\n1\n¿Qué es una interacción?\n\n\n\n2\nConfusión vs interacción\n\n\n\n3\n¿Por qué incluirla? ¿Qué pasa si la omito?\n\n\n\n4\n¿Qué indica una interacción significativa? ¿Cómo evaluarla?\n\n\n\n5\nEfectos, gráficas e interpretación\n\n\n\n6\nEjercicios de práctica\n\n\n\n\nPaquetes: ggplot2, emmeans, ggeffects y los datos de MASS (birthwt, Pima.tr)."
+  },
+  {
+    "objectID": "temas/tema-05/Modelos_lineales_P3/Modelos_lineales_P3.html#recordatorio-el-modelo-de-regresión-múltiple",
+    "href": "temas/tema-05/Modelos_lineales_P3/Modelos_lineales_P3.html#recordatorio-el-modelo-de-regresión-múltiple",
+    "title": "Modelos lineales. Parte 3",
+    "section": "Recordatorio: el modelo de regresión múltiple",
+    "text": "Recordatorio: el modelo de regresión múltiple\n\\[Y = \\beta_0 + \\beta_1X_1 + \\beta_2X_2 + \\dots + \\beta_kX_k + \\varepsilon\\]\nLas \\(X\\) pueden ser variables básicas o funciones de ellas: \\(\\ln(X_1)\\), \\(X_1^2\\)… o el producto \\(X_1X_2\\). Celis plantea, entre los modelos candidatos:\n\\[Y = \\beta_0 + \\beta_1X_1 + \\beta_2X_2 + \\beta_3X_1X_2 + \\varepsilon\\]\nEl término \\(\\beta_3X_1X_2\\) es el término de interacción es el tema de hoy.\nSupuestos: existencia, independencia, linealidad, homocedasticidad y normalidad siguen aplicando al modelo con interacción."
+  },
+  {
+    "objectID": "temas/tema-05/Modelos_lineales_P3/Modelos_lineales_P3.html#qué-es-una-interacción-1",
+    "href": "temas/tema-05/Modelos_lineales_P3/Modelos_lineales_P3.html#qué-es-una-interacción-1",
+    "title": "Modelos lineales. Parte 3",
+    "section": "¿Qué es una interacción?",
+    "text": "¿Qué es una interacción?"
+  },
+  {
+    "objectID": "temas/tema-05/Modelos_lineales_P3/Modelos_lineales_P3.html#definición",
+    "href": "temas/tema-05/Modelos_lineales_P3/Modelos_lineales_P3.html#definición",
+    "title": "Modelos lineales. Parte 3",
+    "section": "Definición",
+    "text": "Definición\nExiste interacción cuando el efecto de una variable independiente sobre \\(Y\\) depende del nivel de otra variable independiente.\nReordenando el modelo:\n\\[Y = \\beta_0 + \\beta_2X_2 + \\underbrace{(\\beta_1 + \\beta_3X_2)}_{\\text{pendiente de } X_1}X_1 + \\varepsilon\\]\n\nSin interacción (\\(\\beta_3 = 0\\)): la pendiente de \\(X_1\\) es la misma para cualquier valor de \\(X_2\\) → líneas paralelas.\nCon interacción (\\(\\beta_3 \\neq 0\\)): la pendiente de \\(X_1\\) cambia con \\(X_2\\) → líneas no paralelas.\n\nSinónimos según la disciplina: modificación de efecto (epidemiología), moderación (psicología), heterogeneidad del efecto (ensayos clínicos), G×E / epistasis estadística (genética)."
+  },
+  {
+    "objectID": "temas/tema-05/Modelos_lineales_P3/Modelos_lineales_P3.html#que-intente-responder-la-interacción",
+    "href": "temas/tema-05/Modelos_lineales_P3/Modelos_lineales_P3.html#que-intente-responder-la-interacción",
+    "title": "Modelos lineales. Parte 3",
+    "section": "Que intente responder la interacción",
+    "text": "Que intente responder la interacción\n¿El efecto de X sobre Y cambia dependiendo de Z?\n\\[Y = \\beta_0 + \\beta_1X + \\beta_2Z + \\beta_3XZ + \\varepsilon\\]\nAplica para:\n\nlm(Y ~ X * Z, data = datos)\n\nDonde X y Z son continuas. El término X:Z es el producto de las variables.\n\nlm(PA ~ edad * tratamiento, data = datos)"
+  },
+  {
+    "objectID": "temas/tema-05/Modelos_lineales_P3/Modelos_lineales_P3.html#modelo-aditivo-o-interacción",
+    "href": "temas/tema-05/Modelos_lineales_P3/Modelos_lineales_P3.html#modelo-aditivo-o-interacción",
+    "title": "Modelos lineales. Parte 3",
+    "section": "¿Modelo aditivo o interacción?",
+    "text": "¿Modelo aditivo o interacción?\n\n\nModelo aditivo\n\\[\nY = \\beta_0 + \\beta_1X + \\beta_2Z + \\varepsilon\n\\]\nLos efectos de \\(X\\) y \\(Z\\) se suman.\n\\[\n\\text{Efecto de }X = \\beta_1\n\\]\nPor lo tanto, el efecto de \\(X\\) no cambia según el valor de \\(Z\\).\n\nPregunta: ¿X y Z contribuyen independientemente a Y?\n\n\nModelo con interacción\n\\[\nY = \\beta_0 + \\beta_1X + \\beta_2Z +\n\\beta_3(XZ) + \\varepsilon\n\\]\nEl efecto de \\(X\\) ahora depende de \\(Z\\):\n\\[\n\\text{Efecto de }X = \\beta_1 + \\beta_3Z\n\\]\nSi \\(\\beta_3 \\neq 0\\), el efecto de \\(X\\) cambia según Z.\n\nPregunta: ¿El efecto de X sobre Y depende de Z?"
+  },
+  {
+    "objectID": "temas/tema-05/Modelos_lineales_P3/Modelos_lineales_P3.html#un-ejemplo-sencillo",
+    "href": "temas/tema-05/Modelos_lineales_P3/Modelos_lineales_P3.html#un-ejemplo-sencillo",
+    "title": "Modelos lineales. Parte 3",
+    "section": "Un ejemplo sencillo",
+    "text": "Un ejemplo sencillo\nSupongamos que evaluamos el efecto de un tratamiento sobre \\(Y\\) en dos grupos.\n\n\nAditivo\n\n\n\nGrupo\nControl\nTratamiento\nEfecto\n\n\n\n\nA\n100\n80\n−20\n\n\nB\n110\n90\n−20\n\n\n\nEl tratamiento tiene el mismo efecto:\n\\[\n-20 = -20\n\\]\nAunque los grupos son diferentes, el efecto del tratamiento no depende del grupo.\n\\[\nY \\sim Tratamiento + Grupo\n\\]\n\nInteracción\n\n\n\nGrupo\nControl\nTratamiento\nEfecto\n\n\n\n\nA\n100\n80\n−20\n\n\nB\n110\n105\n−5\n\n\n\nAhora:\n\\[\n-20 \\neq -5\n\\]\nEl efecto del tratamiento depende del grupo.\nLa diferencia de efectos es:\n\\[\n-20-(-5)=\\mathbf{-15}\n\\]\n\\[\nY \\sim Tratamiento * Grupo\n\\]"
+  },
+  {
+    "objectID": "temas/tema-05/Modelos_lineales_P3/Modelos_lineales_P3.html#cómo-reconocer-una-interacción",
+    "href": "temas/tema-05/Modelos_lineales_P3/Modelos_lineales_P3.html#cómo-reconocer-una-interacción",
+    "title": "Modelos lineales. Parte 3",
+    "section": "¿Cómo reconocer una interacción?",
+    "text": "¿Cómo reconocer una interacción?\n\n\nSin interacción\nLíneas paralelas\n\n\n\n\n\n\n\n\n\nEl efecto del tratamiento es constante entre grupos.\n\nCon interacción\nLíneas no paralelas\n\n\n\n\n\n\n\n\n\nEl efecto del tratamiento cambia dependiendo del grupo.\n\n\n\n\n\n\n\nIdea clave\n\n\nInteracción = el efecto de una variable depende del valor o nivel de otra variable.\nLas líneas no necesitan cruzarse para que exista interacción."
+  },
+  {
+    "objectID": "temas/tema-05/Modelos_lineales_P3/Modelos_lineales_P3.html#interacción-algunos-ejemplos",
+    "href": "temas/tema-05/Modelos_lineales_P3/Modelos_lineales_P3.html#interacción-algunos-ejemplos",
+    "title": "Modelos lineales. Parte 3",
+    "section": "Interacción algunos ejemplos:",
+    "text": "Interacción algunos ejemplos:\n\nFarmacología: el efecto de un antihipertensivo sobre la PAS depende de la ingesta de sodio.\nEpidemiología: el efecto de la edad materna sobre el peso al nacer depende del tabaquismo (lo veremos con birthwt).\nGenética (G×E): el efecto de un alelo de riesgo sobre el IMC se atenúa en personas físicamente activas.\nClínica: el efecto del IMC sobre la PAS es mayor en personas de mayor edad (simulación más adelante).\n\n\n\n\n\n\n\nNota\n\n\nLa pregunta clave es siempre: ¿el efecto de X es el mismo para todos, o depende de quién es la persona?"
+  },
+  {
+    "objectID": "temas/tema-05/Modelos_lineales_P3/Modelos_lineales_P3.html#dos-fenómenos-distintos",
+    "href": "temas/tema-05/Modelos_lineales_P3/Modelos_lineales_P3.html#dos-fenómenos-distintos",
+    "title": "Modelos lineales. Parte 3",
+    "section": "Dos fenómenos distintos",
+    "text": "Dos fenómenos distintos\n\n\n\n\n\n\n\n\n\nConfusión\nInteracción (modificación de efecto)\n\n\n\n\n¿Qué es?\nUn sesgo: una tercera variable distorsiona la asociación X–Y\nUn fenómeno real: el efecto de X difiere según Z\n\n\nCondición\nZ se asocia con X y con Y, y no es intermedia\nEl efecto de X sobre Y cambia entre niveles de Z\n\n\n¿Cómo se detecta?\nComparando \\(\\beta_{crudo}\\) vs \\(\\beta_{ajustado}\\) (cambio ≳ 10 %)\nTérmino producto \\(X \\times Z\\) (o estratificando)\n\n\nEstimadores por estrato\nSimilares entre sí, pero distintos del crudo\nDiferentes entre estratos\n\n\n¿Qué hacer?\nAjustar (incluir Z) y reportar el efecto ajustado\nDescribir: reportar el efecto de X en cada nivel de Z\n\n\nObjetivo\nEliminarla\nEntenderla y reportarla\n\n\n\nUna misma variable puede ser confusora, modificadora, ambas o ninguna. Primero se evalúa la interacción; si no hay, después la confusión."
+  },
+  {
+    "objectID": "temas/tema-05/Modelos_lineales_P3/Modelos_lineales_P3.html#confusión-café-tabaquismo-y-pas",
+    "href": "temas/tema-05/Modelos_lineales_P3/Modelos_lineales_P3.html#confusión-café-tabaquismo-y-pas",
+    "title": "Modelos lineales. Parte 3",
+    "section": "Confusión: café, tabaquismo y PAS",
+    "text": "Confusión: café, tabaquismo y PAS\nEl consumo de café se asocia con las PAS"
+  },
+  {
+    "objectID": "temas/tema-05/Modelos_lineales_P3/Modelos_lineales_P3.html#confusión-café-tabaquismo-y-pas-1",
+    "href": "temas/tema-05/Modelos_lineales_P3/Modelos_lineales_P3.html#confusión-café-tabaquismo-y-pas-1",
+    "title": "Modelos lineales. Parte 3",
+    "section": "Confusión: café, tabaquismo y PAS",
+    "text": "Confusión: café, tabaquismo y PAS\nEl tabaquismo aumenta el consumo de café y la PAS. El café no tiene efecto real."
+  },
+  {
+    "objectID": "temas/tema-05/Modelos_lineales_P3/Modelos_lineales_P3.html#confusión-café-tabaquismo-y-pas-2",
+    "href": "temas/tema-05/Modelos_lineales_P3/Modelos_lineales_P3.html#confusión-café-tabaquismo-y-pas-2",
+    "title": "Modelos lineales. Parte 3",
+    "section": "Confusión: café, tabaquismo y PAS",
+    "text": "Confusión: café, tabaquismo y PAS\nEl tabaquismo aumenta el consumo de café y la PAS. El café no tiene efecto real.\nAsi cambian los coeficientes de café en los modelos crudo y ajustado:\n\ncrudo    &lt;- lm(pas ~ cafe, data = d_conf)\najustado &lt;- lm(pas ~ cafe + fuma, data = d_conf)\ninterac  &lt;- lm(pas ~ cafe * fuma, data = d_conf)\n\nc(crudo = coef(crudo)[\"cafe\"], ajustado = coef(ajustado)[\"cafe\"])\n\n   crudo.cafe ajustado.cafe \n    3.2580661     0.4389347 \n\nsummary(interac)$coefficients[\"cafe:fumaFuma\", ]\n\n  Estimate Std. Error    t value   Pr(&gt;|t|) \n 0.2935593  1.0827653  0.2711200  0.7864400 \n\n\n\nCrudo ≈ 3.3 mmHg/taza (¡“significativo”!) → ajustado ≈ 0.4: cambio ≫ 10 % → confusión.\nTérmino cafe:fumaFuma no significativo → no hay interacción."
+  },
+  {
+    "objectID": "temas/tema-05/Modelos_lineales_P3/Modelos_lineales_P3.html#así-se-ve-la-confusión",
+    "href": "temas/tema-05/Modelos_lineales_P3/Modelos_lineales_P3.html#así-se-ve-la-confusión",
+    "title": "Modelos lineales. Parte 3",
+    "section": "Así se ve la confusión",
+    "text": "Así se ve la confusión\n\n\nggplot(d_conf, aes(cafe, pas)) +\n  geom_point(aes(colour = fuma), alpha = 0.4) +\n  geom_smooth(method = \"lm\", se = FALSE,\n              colour = \"black\", linetype = 2) +\n  geom_smooth(aes(colour = fuma),\n              method = \"lm\", se = FALSE) +\n  labs(x = \"Café (tazas/día)\", y = \"PAS (mmHg)\",\n       colour = NULL,\n       caption = \"Línea punteada = modelo crudo\") +\n  theme(legend.position = \"top\")\n\n\n\n\n\n\n\n\n\n\nDentro de cada estrato las líneas son planas y paralelas (sin efecto, sin interacción).\nLa línea cruda sube solo porque los fumadores toman más café y tienen PAS más alta."
+  },
+  {
+    "objectID": "temas/tema-05/Modelos_lineales_P3/Modelos_lineales_P3.html#si-el-ajuste-elimina-el-efecto-de-x-quitamos-z",
+    "href": "temas/tema-05/Modelos_lineales_P3/Modelos_lineales_P3.html#si-el-ajuste-elimina-el-efecto-de-x-quitamos-z",
+    "title": "Modelos lineales. Parte 3",
+    "section": "Si el ajuste “elimina” el efecto de X, ¿quitamos Z?",
+    "text": "Si el ajuste “elimina” el efecto de X, ¿quitamos Z?\n\n\nModelo crudo\n\\[\nY = \\beta_0 + \\beta_1X + \\varepsilon\n\\]\nSupongamos que observamos:\n\\[\n\\beta_X = 2.5\n\\]\nExiste una asociación aparente entre \\(X\\) y \\(Y\\).\nY\n│          /\n│        /\n│      /\n│    /\n│  /\n└──────────── X\nConclusión cruda:\n\nAl aumentar X, aumenta Y.\n\n\nModelo ajustado por Z\n\\[\nY = \\beta_0 + \\beta_1X + \\beta_2Z + \\varepsilon\n\\]\nDespués del ajuste:\n\\[\n\\beta_X = 0.3\n\\]\nLa asociación se atenúa considerablemente.\nY\n│\n│       ─────────\n│\n│\n│\n└──────────── X\n¿Debemos eliminar Z?\nNO\nSi \\(Z\\) es un confusor, debe permanecer en el modelo.\n\n\n\n\n\n\n\nEl cambio en el efecto de X es precisamente lo que queremos detectar\n\n\nSi el efecto crudo desaparece después de controlar un confusor verdadero, la interpretación es que la asociación original estaba confundida, no que debamos retirar el ajuste."
+  },
+  {
+    "objectID": "temas/tema-05/Modelos_lineales_P3/Modelos_lineales_P3.html#por-qué-z-cambia-el-efecto-de-x",
+    "href": "temas/tema-05/Modelos_lineales_P3/Modelos_lineales_P3.html#por-qué-z-cambia-el-efecto-de-x",
+    "title": "Modelos lineales. Parte 3",
+    "section": "¿Por qué Z cambia el efecto de X?",
+    "text": "¿Por qué Z cambia el efecto de X?\nNo toda variable que modifica \\(\\beta_X\\) es necesariamente un confusor.\n\n\nConfusión\n\\[\nZ \\rightarrow X\n\\]\n\\[\nZ \\rightarrow Y\n\\]\nZ explica parte de la asociación observada entre X e Y.\n¿Ajustar por Z?\nSí ✓\nAunque:\n\n\\(\\beta_X\\) disminuya\n\\(p_X &gt; 0.05\\)\nla asociación desaparezca\n\n\nMediación\n\\[\nX \\rightarrow Z \\rightarrow Y\n\\]\nZ se encuentra en la vía causal entre X e Y.\n¿Ajustar por Z?\nDepende ⚠️\nSi buscamos el efecto total de X:\nNO\nSi buscamos el efecto directo de X:\npuede ser necesario.\n\nInteracción\nEl efecto de X cambia dependiendo de Z:\n\\[\nY = \\beta_0+\\beta_1X+\\beta_2Z+\n\\beta_3XZ+\\varepsilon\n\\]\n\\[\n\\text{Efecto de X} =\n\\beta_1+\\beta_3Z\n\\]\n¿Incluir Z?\nSí ✓\nPero también debemos incluir:\n\\[\nX\\times Z\n\\]\ny reportar efectos específicos.\n\n\n\n\n\n\n\nRegla práctica\n\n\nNo elimine una variable porque haga que X pierda significancia.\nPrimero pregunta qué papel tiene \\(Z\\):\n¿Confusor, mediador o modificador del efecto?"
+  },
+  {
+    "objectID": "temas/tema-05/Modelos_lineales_P3/Modelos_lineales_P3.html#confusión-helados-y-ahogamientos",
+    "href": "temas/tema-05/Modelos_lineales_P3/Modelos_lineales_P3.html#confusión-helados-y-ahogamientos",
+    "title": "Modelos lineales. Parte 3",
+    "section": "Confusión: helados y ahogamientos",
+    "text": "Confusión: helados y ahogamientos\n\n\nAsociación observada\nDurante los meses con mayor venta de helados también se registran más ahogamientos.\n\\[\n\\text{Helados} \\longrightarrow \\text{Ahogamientos}\n\\]\n¿Significa que consumir helado aumenta el riesgo de ahogamiento?\nNo necesariamente\nExiste una tercera variable:\n\\[\n\\boxed{\\text{Temperatura / Verano}}\n\\]\n\nEl confusor explica la asociación\n\\[\n\\text{Helados}\n\\longleftarrow\n\\boxed{\\text{Temperatura}}\n\\longrightarrow\n\\text{Actividades acuáticas}\n\\longrightarrow\n\\text{Ahogamientos}\n\\]\nCuando aumenta la temperatura:\n\naumenta el consumo de helados\naumenta la exposición a actividades acuáticas\n\nPor lo tanto, debemos ajustar por temperatura/temporada para estimar la asociación independiente:\n\\[\nY = \\beta_0 + \\beta_1(\\text{Helados}) +\n\\beta_2(\\text{Temperatura}) + \\varepsilon\n\\]\n\n\n\n\n\n\n\nImportante\n\n\nSi al ajustar por temperatura la asociación entre helados y ahogamientos disminuye o desaparece, esto es compatible con que la asociación cruda estaba confundida."
+  },
+  {
+    "objectID": "temas/tema-05/Modelos_lineales_P3/Modelos_lineales_P3.html#confusión-encendedor-y-cáncer-de-pulmón",
+    "href": "temas/tema-05/Modelos_lineales_P3/Modelos_lineales_P3.html#confusión-encendedor-y-cáncer-de-pulmón",
+    "title": "Modelos lineales. Parte 3",
+    "section": "Confusión: encendedor y cáncer de pulmón",
+    "text": "Confusión: encendedor y cáncer de pulmón\n\n\nAsociación observada\nUn estudio encuentra que las personas que llevan encendedor presentan mayor riesgo de cáncer de pulmón.\n\\[\n\\text{Encendedor} \\longrightarrow \\text{Cáncer}\n\\]\nPor ejemplo:\n\\[\n\\beta = 2.4,\\qquad p &lt; 0.001\n\\]\n¿El encendedor causa cáncer?\nNo\nFalta considerar una variable:\n\\[\n\\boxed{\\text{Tabaquismo}}\n\\]\n\nEl tabaquismo es un confusor\n\\[\n\\text{Encendedor}\n\\longleftarrow\n\\boxed{\\text{Tabaquismo}}\n\\longrightarrow\n\\text{Cáncer de pulmón}\n\\]\nEl tabaquismo está relacionado con:\n\nllevar un encendedor\ndesarrollar cáncer de pulmón\n\nDespués de ajustar:\n\\[\nY = \\beta_0 +\n\\beta_1(\\text{Encendedor}) +\n\\beta_2(\\text{Tabaquismo}) + \\varepsilon\n\\]\npodríamos obtener:\n\\[\n\\beta_{\\text{Encendedor}} = 0.1,\\qquad p=0.74\n\\]\n\n\n\n\n\n\n\nImportante\n\n\nNo eliminamos tabaquismo porque haga desaparecer el efecto.\nSi es un confusor, debe permanecer en el modelo. El objetivo del ajuste es obtener una estimación menos sesgada, no conservar la significancia de \\(X\\)."
+  },
+  {
+    "objectID": "temas/tema-05/Modelos_lineales_P3/Modelos_lineales_P3.html#guía-de-decisión",
+    "href": "temas/tema-05/Modelos_lineales_P3/Modelos_lineales_P3.html#guía-de-decisión",
+    "title": "Modelos lineales. Parte 3",
+    "section": "Guía de decisión",
+    "text": "Guía de decisión"
+  },
+  {
+    "objectID": "temas/tema-05/Modelos_lineales_P3/Modelos_lineales_P3.html#omitir-una-interacción-real-sesga-los-efectos-simples",
+    "href": "temas/tema-05/Modelos_lineales_P3/Modelos_lineales_P3.html#omitir-una-interacción-real-sesga-los-efectos-simples",
+    "title": "Modelos lineales. Parte 3",
+    "section": "Omitir una interacción real sesga los efectos simples",
+    "text": "Omitir una interacción real sesga los efectos simples\nSi los datos se generan con \\(Y=\\beta_0+\\beta_1X+\\beta_2Z+\\beta_3XZ+\\varepsilon\\) y ajustamos solo \\(Y \\sim X + Z\\), Rimpler et al. (2025) muestran que lo que en realidad estimamos es:\n\\[b_1 = \\beta_1 + \\beta_3\\,\\mu_Z \\qquad\\qquad b_2 = \\beta_2 + \\beta_3\\,\\mu_X\\]\nEl efecto “simple” absorbe la interacción multiplicada por la media de la otra variable. Consecuencias:\n\nEl efecto puede inflarse (interacción sinérgica).\nPuede desaparecer (\\(b_1 \\approx 0\\)) aunque \\(\\beta_1 \\neq 0\\).\nPuede invertir su signo (interacción antagónica).\n\nAdemás, los residuales ya no son independientes ni homocedásticos → los valores p del modelo mal especificado no son confiables."
+  },
+  {
+    "objectID": "temas/tema-05/Modelos_lineales_P3/Modelos_lineales_P3.html#forma-de-la-interacción-rimpler-et-al.-2025",
+    "href": "temas/tema-05/Modelos_lineales_P3/Modelos_lineales_P3.html#forma-de-la-interacción-rimpler-et-al.-2025",
+    "title": "Modelos lineales. Parte 3",
+    "section": "Forma de la interacción (Rimpler et al., 2025)",
+    "text": "Forma de la interacción (Rimpler et al., 2025)\n\n\n\n\n\n\n\n\n\nTipo\nSignos\nEjemplo en salud\nSi la omito…\n\n\n\n\nSinérgica\n\\(\\beta_1, \\beta_2, \\beta_3\\) mismo signo\nTabaquismo + exposición a asbesto → riesgo pulmonar mayor que la suma\nEfectos simples inflados; el modelo simple “funciona” razonablemente\n\n\nAmortiguadora\n\\(\\beta_1\\) y \\(\\beta_2\\) con signos opuestos\nEstrés laboral (+PAS) amortiguado por actividad física (−PAS)\nSesgo intermedio\n\n\nAntagónica\nEfectos simples opuestos a \\(\\beta_3\\)\nDos fármacos que bajan la PA, pero juntos menos que la suma (efecto techo)\nEfectos que desaparecen o se invierten → conclusiones erróneas"
+  },
+  {
+    "objectID": "temas/tema-05/Modelos_lineales_P3/Modelos_lineales_P3.html#entonces-siempre-incluirla-el-costo",
+    "href": "temas/tema-05/Modelos_lineales_P3/Modelos_lineales_P3.html#entonces-siempre-incluirla-el-costo",
+    "title": "Modelos lineales. Parte 3",
+    "section": "Entonces… ¿siempre incluirla? El costo",
+    "text": "Entonces… ¿siempre incluirla? El costo\nRimpler et al. (55 millones de análisis simulados) encontraron:\n\nEl modelo con interacción sobreajusta más la muestra cuando n es pequeño o cuando no hay interacción real.\nPero, en la población, el modelo correcto (con interacción) casi siempre generaliza mejor cuando la interacción existe.\nEl modelo simple solo gana cuando la interacción es nula o sinérgica y n es pequeño.\nLas interacciones suelen ser pequeñas: requieren mucha más muestra que los efectos principales.\n\n\n\n\n\n\n\nTip\n\n\nRegla práctica: la decisión de evaluar una interacción debe venir de la teoría / hipótesis biológica, planearse a priori y justificarse."
+  },
+  {
+    "objectID": "temas/tema-05/Modelos_lineales_P3/Modelos_lineales_P3.html#el-modelo-ideal",
+    "href": "temas/tema-05/Modelos_lineales_P3/Modelos_lineales_P3.html#el-modelo-ideal",
+    "title": "Modelos lineales. Parte 3",
+    "section": "El modelo ideal",
+    "text": "El modelo ideal\nUn modelo ideal debería ser:\nSencillo\nInterpretativo\nBiológicamente plausible\nIncluir confusoras\nIncluir interacciones relevantes"
+  },
+  {
+    "objectID": "temas/tema-05/Modelos_lineales_P3/Modelos_lineales_P3.html#qué-significa-que-beta_3-sea-significativo",
+    "href": "temas/tema-05/Modelos_lineales_P3/Modelos_lineales_P3.html#qué-significa-que-beta_3-sea-significativo",
+    "title": "Modelos lineales. Parte 3",
+    "section": "¿Qué significa que \\(\\beta_3\\) sea significativo?",
+    "text": "¿Qué significa que \\(\\beta_3\\) sea significativo?\n\\(H_0: \\beta_3 = 0\\) (las pendientes son iguales; líneas paralelas)\n\\(H_1: \\beta_3 \\neq 0\\) (la pendiente de \\(X_1\\) cambia con \\(X_2\\))\nSi se rechaza \\(H_0\\):\n\nNo existe un único efecto de \\(X_1\\): hay que reportarlo condicionado a \\(X_2\\).\nLos coeficientes \\(\\beta_1\\) y \\(\\beta_2\\) dejan de ser “efectos principales”: son efectos condicionales cuando la otra variable vale 0.\nSe respeta el principio de jerarquía: si \\(X_1X_2\\) está en el modelo, \\(X_1\\) y \\(X_2\\) también, sean o no significativos.\n\nSignificancia estadística ≠ relevancia clínica: evalúe también la magnitud de la diferencia de pendientes y su IC 95 %."
+  },
+  {
+    "objectID": "temas/tema-05/Modelos_lineales_P3/Modelos_lineales_P3.html#cómo-evaluarla-pasos",
+    "href": "temas/tema-05/Modelos_lineales_P3/Modelos_lineales_P3.html#cómo-evaluarla-pasos",
+    "title": "Modelos lineales. Parte 3",
+    "section": "Cómo evaluarla: pasos",
+    "text": "Cómo evaluarla: pasos\n\nHipótesis a priori: ¿hay razón biológica para que Z modifique el efecto de X?\nExplorar: gráfico de dispersión por estratos / líneas de regresión por grupo.\nAjustar el modelo sin y con interacción: y ~ x + z vs y ~ x * z.\nProbar:\n\nUn solo término → prueba t de \\(\\beta_3\\).\nVarios términos (p. ej. factor con &gt;2 niveles) → prueba F parcial: anova(m_sin, m_con).\n\nComplementar: \\(R^2\\) ajustado, AIC, tamaño de la diferencia de pendientes.\nDiagnóstico del modelo final (residuales, homocedasticidad, influencia).\nInterpretar y graficar efectos condicionales (pendientes simples).\n\nEn la fórmula de R: x * z equivale a x + z + x:z; x:z es solo el producto."
+  },
+  {
+    "objectID": "temas/tema-05/Modelos_lineales_P3/Modelos_lineales_P3.html#ejemplo-con-birthwt-edad-materna-tabaquismo",
+    "href": "temas/tema-05/Modelos_lineales_P3/Modelos_lineales_P3.html#ejemplo-con-birthwt-edad-materna-tabaquismo",
+    "title": "Modelos lineales. Parte 3",
+    "section": "Ejemplo con birthwt edad materna × tabaquismo",
+    "text": "Ejemplo con birthwt edad materna × tabaquismo\n¿El efecto de la edad materna sobre el peso al nacer (g) depende del tabaquismo?\n\nm_sin &lt;- lm(bwt ~ age + smoke_f, data = birthwt)\nm_con &lt;- lm(bwt ~ age * smoke_f, data = birthwt)\nround(summary(m_con)$coefficients, 3)\n\n                Estimate Std. Error t value Pr(&gt;|t|)\n(Intercept)     2406.058    292.190   8.235    0.000\nage               27.731     12.149   2.283    0.024\nsmoke_fFuma      798.175    484.342   1.648    0.101\nage:smoke_fFuma  -46.572     20.447  -2.278    0.024\n\nanova(m_sin, m_con)        # prueba F parcial (aquí equivale a la t de β3)\n\nAnalysis of Variance Table\n\nModel 1: bwt ~ age + smoke_f\nModel 2: bwt ~ age * smoke_f\n  Res.Df      RSS Df Sum of Sq      F  Pr(&gt;F)  \n1    186 95672288                              \n2    185 93062605  1   2609683 5.1878 0.02389 *\n---\nSignif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1\n\n\n\\(\\beta_3 = -46.6\\) g, p = 0.024 → la pendiente de la edad difiere entre fumadoras y no fumadoras."
+  },
+  {
+    "objectID": "temas/tema-05/Modelos_lineales_P3/Modelos_lineales_P3.html#leer-los-coeficientes-con-interacción",
+    "href": "temas/tema-05/Modelos_lineales_P3/Modelos_lineales_P3.html#leer-los-coeficientes-con-interacción",
+    "title": "Modelos lineales. Parte 3",
+    "section": "Leer los coeficientes con interacción",
+    "text": "Leer los coeficientes con interacción\n\\[\\widehat{bwt} = 2406.1 + 27.7\\,\\text{edad} + 798.2\\,\\text{Fuma} - 46.6\\,(\\text{edad}\\times\\text{Fuma})\\]\n\n\n\n\n\n\n\n\nCoeficiente\nValor\nSignificado correcto\n\n\n\n\nIntercepto\n2406\nPeso esperado en no fumadora de 0 años (sin sentido)\n\n\nage\n27.7\nPendiente de la edad en no fumadoras\n\n\nsmoke_fFuma\n798.2\nDiferencia Fuma − No fuma a los 0 años (¡no es “fumar aumenta el peso”!)\n\n\nage:smoke_fFuma\n−46.6\nDiferencia de pendientes (Fuma − No fuma)\n\n\n\nPendiente en fumadoras = \\(27.7 + (-46.6) = -18.8\\) g por año.\n\n\n\n\n\n\nAdvertencia\n\n\nInterpretar smoke_fFuma = +798 como efecto del tabaquismo es el error más común. Con interacción, ese coeficiente depende de dónde está el 0 de la otra variable."
+  },
+  {
+    "objectID": "temas/tema-05/Modelos_lineales_P3/Modelos_lineales_P3.html#interacción-tabaquismo-edad-materna",
+    "href": "temas/tema-05/Modelos_lineales_P3/Modelos_lineales_P3.html#interacción-tabaquismo-edad-materna",
+    "title": "Modelos lineales. Parte 3",
+    "section": "Interacción: tabaquismo × edad materna",
+    "text": "Interacción: tabaquismo × edad materna\nEvaluamos si la asociación entre edad materna y peso al nacer depende del tabaquismo.\n\\[\nbwt = \\beta_0 + \\beta_1 smoke + \\beta_2 age +\n\\beta_3(smoke \\times age) + \\varepsilon\n\\]\n\nmodelo &lt;- lm(bwt ~ smoke * age, data = birthwt)\nsummary(modelo)\n\n\nCall:\nlm(formula = bwt ~ smoke * age, data = birthwt)\n\nResiduals:\n     Min       1Q   Median       3Q      Max \n-2189.27  -458.46    51.46   527.26  1521.39 \n\nCoefficients:\n            Estimate Std. Error t value Pr(&gt;|t|)    \n(Intercept)  2406.06     292.19   8.235 3.18e-14 ***\nsmoke         798.17     484.34   1.648   0.1011    \nage            27.73      12.15   2.283   0.0236 *  \nsmoke:age     -46.57      20.45  -2.278   0.0239 *  \n---\nSignif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1\n\nResidual standard error: 709.3 on 185 degrees of freedom\nMultiple R-squared:  0.06909,   Adjusted R-squared:  0.054 \nF-statistic: 4.577 on 3 and 185 DF,  p-value: 0.004068"
+  },
+  {
+    "objectID": "temas/tema-05/Modelos_lineales_P3/Modelos_lineales_P3.html#interacción-tabaquismo-edad-materna-1",
+    "href": "temas/tema-05/Modelos_lineales_P3/Modelos_lineales_P3.html#interacción-tabaquismo-edad-materna-1",
+    "title": "Modelos lineales. Parte 3",
+    "section": "Interacción: tabaquismo × edad materna",
+    "text": "Interacción: tabaquismo × edad materna\n\n\nNo fumadoras\nCuando \\(smoke=0\\):\n\\[\n\\widehat{bwt}=2406.06+27.73(age)\n\\]\nPor tanto:\n\\[\n\\boxed{\\text{Pendiente}=+27.73\\text{ g/año}}\n\\]\nPor cada año adicional de edad materna, el peso esperado aumenta 27.7 g.\n\nFumadoras\nCuando \\(smoke=1\\):\n\\[\n\\widehat{bwt}=3204.23-18.84(age)\n\\]\nPor tanto:\n\\[\n\\boxed{\\text{Pendiente}=-18.84\\text{ g/año}}\n\\]\nPor cada año adicional de edad materna, el peso esperado disminuye 18.8 g."
+  },
+  {
+    "objectID": "temas/tema-05/Modelos_lineales_P3/Modelos_lineales_P3.html#dónde-está-la-interacción",
+    "href": "temas/tema-05/Modelos_lineales_P3/Modelos_lineales_P3.html#dónde-está-la-interacción",
+    "title": "Modelos lineales. Parte 3",
+    "section": "¿Dónde está la interacción?",
+    "text": "¿Dónde está la interacción?\nEl coeficiente de interacción es:\n\\[\n\\boxed{\\beta_{smoke:age}=-46.57,\\qquad p=0.024}\n\\]\n\n\n¿Qué significa −46.57?\nEs la diferencia entre las pendientes:\n\\[\n-18.84-(27.73)=-46.57\n\\]\n\n\n\nGrupo\nPendiente\n\n\n\n\nNo fumadoras\n+27.73 g/año\n\n\nFumadoras\n−18.84 g/año\n\n\nDiferencia\n−46.57 g/año\n\n\n\n\nInterpretación\nLa asociación entre edad materna y peso al nacer depende del tabaquismo.\n\\[\n\\boxed{\n\\text{Efecto de edad}\n=\n\\beta_{age}+\n\\beta_{smoke:age}(smoke)\n}\n\\]\nLas pendientes son diferentes:\n\nNo fumadoras: positiva\nFumadoras: negativa\n\nPor tanto, el modelo no es aditivo.\n\n\n\n\n\n\n\nInteracción\n\n\nUna interacción significativa no significa simplemente que ambas variables sean importantes.\nSignifica que el efecto de una variable cambia dependiendo de la otra."
+  },
+  {
+    "objectID": "temas/tema-05/Modelos_lineales_P3/Modelos_lineales_P3.html#cuidado-con-los-efectos-principales",
+    "href": "temas/tema-05/Modelos_lineales_P3/Modelos_lineales_P3.html#cuidado-con-los-efectos-principales",
+    "title": "Modelos lineales. Parte 3",
+    "section": "Cuidado con los efectos principales",
+    "text": "Cuidado con los efectos principales\nEl modelo estima:\n\\[\n\\beta_{smoke}=798.17,\\qquad p=0.101\n\\]\n¿Significa que fumar aumenta el peso al nacer en 798 g?\nNo\n\n\nCon una interacción:\n\\[\n\\text{Efecto de smoke}\n=\n\\beta_{smoke}+\n\\beta_{smoke:age}(age)\n\\]\nPor tanto:\n\\[\n\\text{Efecto de smoke}\n=\n798.17-46.57(age)\n\\]\nEl coeficiente \\(\\beta_{smoke}=798.17\\) representa el efecto del tabaquismo cuando:\n\\[\nage=0\n\\]\nUna edad sin interpretación práctica.\n\nSolución: centrar la edad\nPor ejemplo, a los 25 años:\n\\[\nage_c=age-25\n\\]\n\nbirthwt &lt;- birthwt |&gt;\n  mutate(age_c = age - 25)\n\nmodelo_c &lt;- lm(\n  bwt ~ smoke * age_c,\n  data = birthwt\n)\n\nAhora \\(\\beta_{smoke}\\) representa la diferencia entre fumadoras y no fumadoras a los 25 años:\n\\[\n798.17-46.57(25)\n\\]\n\\[\n\\boxed{\\approx -366\\text{ g}}\n\\]\n\n\n\n\n\n\n\n¿Qué cambia al centrar?\n\n\nNo cambia la interacción ni el ajuste del modelo.\nCambia el punto de referencia y hace que los efectos principales sean interpretables."
+  },
+  {
+    "objectID": "temas/tema-05/Modelos_lineales_P3/Modelos_lineales_P3.html#pendientes-simples-con-ic-95-truco-de-relevel",
+    "href": "temas/tema-05/Modelos_lineales_P3/Modelos_lineales_P3.html#pendientes-simples-con-ic-95-truco-de-relevel",
+    "title": "Modelos lineales. Parte 3",
+    "section": "Pendientes simples con IC 95 %: truco de relevel()",
+    "text": "Pendientes simples con IC 95 %: truco de relevel()\nEl coeficiente de age siempre es la pendiente en la categoría de referencia. Cambiando la referencia obtenemos la pendiente (y su IC) en el otro grupo:\n\nm_ref_fuma &lt;- lm(bwt ~ age * relevel(smoke_f, ref = \"Fuma\"), data = birthwt)\n\nrbind(\n  \"No fuma\" = c(coef(m_con)[\"age\"],      confint(m_con)[\"age\", ]),\n  \"Fuma\"    = c(coef(m_ref_fuma)[\"age\"], confint(m_ref_fuma)[\"age\", ])\n) |&gt; round(1)\n\n          age 2.5 % 97.5 %\nNo fuma  27.7   3.8   51.7\nFuma    -18.8 -51.3   13.6\n\n\n\nNo fumadoras: +27.7 g por año de edad (IC 95 % 3.8 a 51.7).\nFumadoras: −18.8 g por año (IC 95 % −51.3 a 13.6)."
+  },
+  {
+    "objectID": "temas/tema-05/Modelos_lineales_P3/Modelos_lineales_P3.html#centrar-para-que-los-coeficientes-tengan-sentido",
+    "href": "temas/tema-05/Modelos_lineales_P3/Modelos_lineales_P3.html#centrar-para-que-los-coeficientes-tengan-sentido",
+    "title": "Modelos lineales. Parte 3",
+    "section": "Centrar para que los coeficientes tengan sentido",
+    "text": "Centrar para que los coeficientes tengan sentido\n\nbirthwt$age_c &lt;- birthwt$age - mean(birthwt$age)    # media = 23.2 años\nm_cen &lt;- lm(bwt ~ age_c * smoke_f, data = birthwt)\nround(summary(m_cen)$coefficients, 3)\n\n                  Estimate Std. Error t value Pr(&gt;|t|)\n(Intercept)       3050.482     66.178  46.095    0.000\nage_c               27.731     12.149   2.283    0.024\nsmoke_fFuma       -284.068    105.832  -2.684    0.008\nage_c:smoke_fFuma  -46.572     20.447  -2.278    0.024\n\n\n\nsmoke_fFuma ahora = −284 g: diferencia por tabaquismo a la edad promedio (23 años), p = 0.008.\n\\(\\beta_3\\), su EE, su p y el \\(R^2\\) no cambian.\nCentrar no “arregla” la colinealidad de la interacción (no la necesita): solo mejora la interpretación (Rimpler et al., 2025)."
+  },
+  {
+    "objectID": "temas/tema-05/Modelos_lineales_P3/Modelos_lineales_P3.html#gráfica-categórica-continua",
+    "href": "temas/tema-05/Modelos_lineales_P3/Modelos_lineales_P3.html#gráfica-categórica-continua",
+    "title": "Modelos lineales. Parte 3",
+    "section": "Gráfica: categórica × continua",
+    "text": "Gráfica: categórica × continua\n\n\nggplot(birthwt, aes(age, bwt, colour = smoke_f)) +\n  geom_point(alpha = 0.5) +\n  geom_smooth(method = \"lm\", se = TRUE) +\n  labs(x = \"Edad materna (años)\",\n       y = \"Peso al nacer (g)\",\n       colour = NULL) +\n  theme(legend.position = \"top\")\n\n\n\n\n\n\n\n\n\n\nLíneas no paralelas que se cruzan → interacción cualitativa (cruzada).\nCon un factor de 2 niveles, geom_smooth() por grupo traza las mismas rectas que el modelo bwt ~ age * smoke_f.\nNote la poca precisión en edades extremas: no extrapolar."
+  },
+  {
+    "objectID": "temas/tema-05/Modelos_lineales_P3/Modelos_lineales_P3.html#diagnóstico-del-modelo-con-interacción",
+    "href": "temas/tema-05/Modelos_lineales_P3/Modelos_lineales_P3.html#diagnóstico-del-modelo-con-interacción",
+    "title": "Modelos lineales. Parte 3",
+    "section": "Diagnóstico del modelo con interacción",
+    "text": "Diagnóstico del modelo con interacción\nEl modelo con interacción sigue siendo un modelo lineal: los supuestos de Celis se verifican igual.\n\n\npar(mfrow = c(2, 2), mar = c(4, 4, 2, 1))\nplot(m_con)\n\n\n\n\n\n\n\n\n\n\n# Alternativa usada en el curso:\nperformance::check_model(m_con)"
+  },
+  {
+    "objectID": "temas/tema-05/Modelos_lineales_P3/Modelos_lineales_P3.html#cómo-reportar-una-interacción",
+    "href": "temas/tema-05/Modelos_lineales_P3/Modelos_lineales_P3.html#cómo-reportar-una-interacción",
+    "title": "Modelos lineales. Parte 3",
+    "section": "Cómo reportar una interacción",
+    "text": "Cómo reportar una interacción\n\n“Se observó una interacción entre la edad materna y el tabaquismo sobre el peso al nacer (\\(\\beta_3 = -46.6\\) g; IC 95 % −86.9 a −6.2; p = 0.024). En las no fumadoras, cada año adicional de edad se asoció con un aumento de 27.7 g (IC 95 % 3.8 a 51.7), mientras que en las fumadoras la asociación fue negativa y no significativa (−18.8 g; IC 95 % −51.3 a 13.6). A la edad promedio (23 años), los hijos de fumadoras pesaron 284 g menos (p = 0.008).”\n\nElementos: (1) existencia de la interacción con IC; (2) efecto de X en cada nivel de Z; (3) efecto de Z en un valor con sentido de X; (4) gráfica."
+  },
+  {
+    "objectID": "temas/tema-05/Modelos_lineales_P3/Modelos_lineales_P3.html#errores-comunes",
+    "href": "temas/tema-05/Modelos_lineales_P3/Modelos_lineales_P3.html#errores-comunes",
+    "title": "Modelos lineales. Parte 3",
+    "section": "Errores comunes",
+    "text": "Errores comunes\n\n❌ Interpretar \\(\\beta_1\\) o \\(\\beta_2\\) como “efectos principales” cuando hay interacción.\n❌ Quitar \\(X_1\\) o \\(X_2\\) porque “no son significativos” (viola la jerarquía).\n❌ Centrar “para eliminar la colinealidad” y creer que cambió la interacción.\n❌ Probar todas las interacciones posibles sin hipótesis (falsos positivos, sobreajuste).\n❌ Concluir “no hay interacción” con n pequeño (poco poder ≠ ausencia de efecto).\n❌ Confundir confusión con interacción: la confusión se ajusta, la interacción se describe.\n❌ Extrapolar las pendientes simples fuera del rango observado."
+  },
+  {
+    "objectID": "temas/tema-05/Modelos_lineales_P3/Modelos_lineales_P3.html#ejercicio-1-pima.tr-edad-diabetes-sobre-la-presión-diastólica",
+    "href": "temas/tema-05/Modelos_lineales_P3/Modelos_lineales_P3.html#ejercicio-1-pima.tr-edad-diabetes-sobre-la-presión-diastólica",
+    "title": "Modelos lineales. Parte 3",
+    "section": "Ejercicio 1 — Pima.tr: edad × diabetes sobre la presión diastólica",
+    "text": "Ejercicio 1 — Pima.tr: edad × diabetes sobre la presión diastólica\n\ndata(Pima.tr, package = \"MASS\")   # bp = presión diastólica; type = diabetes (No/Yes)\n\n\nGrafique bp vs age con una recta por type. ¿Las rectas son paralelas?\n\nAjuste bp ~ age + type y bp ~ age * type. Compárelos con anova().\n\nInterprete cada coeficiente del modelo con interacción. ¿Qué significa el coeficiente de typeYes?\n\nCalcule la pendiente de la edad en cada grupo (con IC 95 %) usando relevel().\n\nCentre age y vuelva a ajustar. ¿Qué cambió y qué no?\n\nRedacte un párrafo de resultados."
+  },
+  {
+    "objectID": "temas/tema-05/Modelos_lineales_P3/Modelos_lineales_P3.html#ejercicio-2-birthwt-peso-materno-tabaquismo",
+    "href": "temas/tema-05/Modelos_lineales_P3/Modelos_lineales_P3.html#ejercicio-2-birthwt-peso-materno-tabaquismo",
+    "title": "Modelos lineales. Parte 3",
+    "section": "Ejercicio 2 — birthwt: peso materno × tabaquismo",
+    "text": "Ejercicio 2 — birthwt: peso materno × tabaquismo\n\nAjuste bwt ~ lwt * smoke_f (lwt = peso materno en libras).\n\n¿La interacción es significativa? ¿Qué decisión toma sobre el modelo final?\n\nSi retira la interacción, ¿cómo interpreta ahora el coeficiente de smoke_f?\n\nHaga la gráfica de rectas por grupo. ¿Coincide con su conclusión?"
+  },
+  {
+    "objectID": "temas/tema-05/Modelos_lineales_P3/Modelos_lineales_P3.html#ejercicio-3-datos-bio3_24a-celis-cuadro-24-1",
+    "href": "temas/tema-05/Modelos_lineales_P3/Modelos_lineales_P3.html#ejercicio-3-datos-bio3_24a-celis-cuadro-24-1",
+    "title": "Modelos lineales. Parte 3",
+    "section": "Ejercicio 3 — Datos Bio3_24a (Celis, cuadro 24-1)",
+    "text": "Ejercicio 3 — Datos Bio3_24a (Celis, cuadro 24-1)\n\nbio3_24a &lt;- data.frame(\n  x1 = c(0, 0, 0, 0, 0, 1, 1, 1, 2, 2, 2),\n  x2 = c(0.28, 1.85, 3.73, 7.62, 8.12, 2.07, 2.09, 5.76, 5.83, 8.94, 9.39),\n  y  = c(1.04, 2.30, 4.39, 9.49, 8.28, 4.85, 4.91, 7.44, 8.20, 11.04, 12.72))\n\n\nAjuste los modelos de Celis \\(Y \\sim X_1 + X_2\\) y \\(Y \\sim X_1 + X_2 + X_1X_2\\).\n\n¿El término de interacción mejora el modelo (prueba F parcial, \\(R^2\\) ajustado)?\n\nCon n = 11, ¿qué puede y qué no puede concluir sobre la ausencia de interacción?"
+  },
+  {
+    "objectID": "temas/tema-05/Modelos_lineales_P3/Modelos_lineales_P3.html#ejercicio-4-confusión-o-interacción",
+    "href": "temas/tema-05/Modelos_lineales_P3/Modelos_lineales_P3.html#ejercicio-4-confusión-o-interacción",
+    "title": "Modelos lineales. Parte 3",
+    "section": "Ejercicio 4 — ¿Confusión o interacción?",
+    "text": "Ejercicio 4 — ¿Confusión o interacción?\n\nset.seed(42); n &lt;- 300\n# Base A\nsexo &lt;- rbinom(n, 1, 0.5)\nact  &lt;- pmax(0, round(3 + 2*sexo + rnorm(n, 0, 1.5), 1))       # actividad física (h/sem)\nldl  &lt;- 120 + 20*sexo - 2*act + rnorm(n, 0, 12)\nbase_A &lt;- data.frame(ldl, act, sexo = factor(sexo, labels = c(\"Mujer\", \"Hombre\")))\n# Base B\nsexo &lt;- rbinom(n, 1, 0.5)\nact  &lt;- pmax(0, round(4 + rnorm(n, 0, 1.5), 1))\nldl  &lt;- 130 - 4*act*(1 - sexo) + rnorm(n, 0, 12)\nbase_B &lt;- data.frame(ldl, act, sexo = factor(sexo, labels = c(\"Mujer\", \"Hombre\")))\n\nPara cada base: ajuste ldl ~ act, ldl ~ act + sexo y ldl ~ act * sexo; grafique por sexo y use la guía de decisión para clasificar el papel del sexo. ¿Qué ocurre con el signo del efecto crudo en la base A?"
+  },
+  {
+    "objectID": "temas/tema-05/Modelos_lineales_P3/Modelos_lineales_P3.html#resumen",
+    "href": "temas/tema-05/Modelos_lineales_P3/Modelos_lineales_P3.html#resumen",
+    "title": "Modelos lineales. Parte 3",
+    "section": "Resumen",
+    "text": "Resumen\n\nInteracción = el efecto de X depende de Z; matemáticamente, pendiente de \\(X_1\\) = \\(\\beta_1 + \\beta_3X_2\\).\nConfusión es un sesgo que se ajusta; interacción es un hallazgo que se describe por estratos.\nOmitir una interacción real puede anular o invertir efectos verdaderos (sobre todo si es antagónica).\nCon interacción, \\(\\beta_1\\) y \\(\\beta_2\\) son efectos condicionales (en 0 de la otra variable): centre para interpretarlos.\nEvalúe con t de \\(\\beta_3\\) o F parcial, respete la jerarquía, grafique pendientes simples y reporte efectos por nivel.\nLa decisión de incluirla nace de la teoría, no de la búsqueda de significancia."
+  },
+  {
+    "objectID": "temas/tema-05/Modelos_lineales_P3/Modelos_lineales_P3.html#referencias",
+    "href": "temas/tema-05/Modelos_lineales_P3/Modelos_lineales_P3.html#referencias",
+    "title": "Modelos lineales. Parte 3",
+    "section": "Referencias",
+    "text": "Referencias\n\nCelis de la Rosa, A. J., & Labrada Martagón, V. (2014). Bioestadística (3ª ed.). Editorial El Manual Moderno. Caps. 23 (Regresión y correlación simple) y 24 (Regresión y correlación múltiple).\nDenis, D. J. (2020). Univariate, Bivariate, and Multivariate Statistics Using R, cap. 7. Wiley.\nRimpler, A., Kiers, H. A. L., & van Ravenzwaaij, D. (2025). To interact or not to interact: The pros and cons of including interactions in linear regression models. Behavior Research Methods, 57, 92. https://doi.org/10.3758/s13428-025-02613-6\nPenn State Eberly College of Science. STAT 462: Applied Regression Analysis, 7.6 Interactions Between Quantitative Predictors. https://online.stat.psu.edu/stat462/node/157/\nHosmer, D. W., & Lemeshow, S. (1989). Applied Logistic Regression. Wiley (origen de birthwt). Venables & Ripley (2002), MASS."
   },
   {
     "objectID": "temas/tema-05/Modelos_lineales_P1/Modelos_lineales_P1.html#objetivos-de-la-sesión",
@@ -333,7 +634,7 @@
     "href": "temas/tema-05/Modelos_lineales_P1/Modelos_lineales_P1.html#pruebas-individuales-con-performance",
     "title": "Modelos lineales I",
     "section": "Pruebas individuales con performance",
-    "text": "Pruebas individuales con performance\n\ncheck_normality(modelo)           # Shapiro-Wilk sobre residuales estudentizados\n\nOK: residuals appear as normally distributed (p = 0.719).\n\ncheck_heteroscedasticity(modelo)  # Breusch-Pagan\n\nOK: Error variance appears to be homoscedastic (p = 0.859).\n\ncheck_autocorrelation(modelo)     # Durbin-Watson (independencia)\n\nOK: Residuals appear to be independent and not autocorrelated (p = 0.648).\n\ncheck_outliers(modelo)            # distancia de Cook\n\nOK: No outliers detected.\n- Based on the following method and threshold: cook (0.7).\n- For variable: (Whole model)\n\n\n\nLas pruebas complementan a los gráficos, no los sustituyen. Con n grande detectan desviaciones irrelevantes; con n pequeña no detectan problemas serios."
+    "text": "Pruebas individuales con performance\n\ncheck_normality(modelo)           # Shapiro-Wilk sobre residuales estudentizados\n\nOK: residuals appear as normally distributed (p = 0.719).\n\ncheck_heteroscedasticity(modelo)  # Breusch-Pagan\n\nOK: Error variance appears to be homoscedastic (p = 0.859).\n\ncheck_autocorrelation(modelo)     # Durbin-Watson (independencia)\n\nOK: Residuals appear to be independent and not autocorrelated (p = 0.612).\n\ncheck_outliers(modelo)            # distancia de Cook\n\nOK: No outliers detected.\n- Based on the following method and threshold: cook (0.7).\n- For variable: (Whole model)\n\n\n\nLas pruebas complementan a los gráficos, no los sustituyen. Con n grande detectan desviaciones irrelevantes; con n pequeña no detectan problemas serios."
   },
   {
     "objectID": "temas/tema-05/Modelos_lineales_P1/Modelos_lineales_P1.html#apalancamiento-e-influencia-con-base-r",
@@ -564,7 +865,7 @@
     "href": "temas/tema-04/tema-04-ejercicio-integrador.html#paso-5.-tamaño-del-efecto-con-ic-95-1",
     "title": "Ejercicio integrador",
     "section": "Paso 5. Tamaño del efecto con IC 95 %",
-    "text": "Paso 5. Tamaño del efecto con IC 95 %\n\nepsilon &lt;- rank_epsilon_squared(bili ~ estadio, data = datos, alternative = \"two.sided\")\nepsilon\n\nEpsilon2 (rank) |       95% CI\n------------------------------\n0.11            | [0.07, 0.18]\n\ninterpret_epsilon_squared(epsilon$rank_epsilon_squared)\n\n[1] \"medium\"\n(Rules: field2013)"
+    "text": "Paso 5. Tamaño del efecto con IC 95 %\n\nepsilon &lt;- rank_epsilon_squared(bili ~ estadio, data = datos, alternative = \"two.sided\")\nepsilon\n\nEpsilon2 (rank) |       95% CI\n------------------------------\n0.11            | [0.07, 0.19]\n\ninterpret_epsilon_squared(epsilon$rank_epsilon_squared)\n\n[1] \"medium\"\n(Rules: field2013)"
   },
   {
     "objectID": "temas/tema-04/tema-04-ejercicio-integrador.html#paso-6.-prueba-pos-hoc-1",
@@ -3526,5 +3827,243 @@
     "title": "Modelos lineales II",
     "section": "Referencias",
     "text": "Referencias\n\n\nAnscombe, F. J. 1973. «Graphs in Statistical Analysis». The American Statistician 27 (1): 17-21. https://doi.org/10.1080/00031305.1973.10478966.\n\n\nBursac, Zoran, C. Heath Gauss, David Keith Williams, y David W. Hosmer. 2008. «Purposeful Selection of Variables in Logistic Regression». Source Code for Biology and Medicine 3: 17. https://doi.org/10.1186/1751-0473-3-17.\n\n\nDenis, Daniel J. 2020. Univariate, Bivariate, and Multivariate Statistics Using R: Quantitative Tools for Data Analysis and Data Science. Hoboken, NJ: John Wiley & Sons, Inc.\n\n\nFox, John. 2016. Applied Regression Analysis and Generalized Linear Models. 3.ª ed. Thousand Oaks, CA: SAGE Publications.\n\n\nFox, John, y Georges Monette. 1992. «Generalized Collinearity Diagnostics». Journal of the American Statistical Association 87 (417): 178-83. https://doi.org/10.1080/01621459.1992.10475190.\n\n\nGreenland, Sander, Judea Pearl, y James M. Robins. 1999. «Causal Diagrams for Epidemiologic Research». Epidemiology 10 (1): 37-48.\n\n\nHarrell, Jr., Frank E. 2015. Regression Modeling Strategies: With Applications to Linear Models, Logistic and Ordinal Regression, and Survival Analysis. 2.ª ed. Cham: Springer.\n\n\nHeinze, Georg, Christine Wallisch, y Daniela Dunkler. 2018. «Variable Selection – A Review and Recommendations for the Practicing Statistician». Biometrical Journal 60 (3): 431-49. https://doi.org/10.1002/bimj.201700067.\n\n\nLüdecke, Daniel, Mattan S. Ben-Shachar, Indrajeet Patil, Philip Waggoner, y Dominique Makowski. 2021. «performance: An R Package for Assessment, Comparison and Testing of Statistical Models». Journal of Open Source Software 6 (60): 3139. https://doi.org/10.21105/joss.03139.\n\n\nMickey, Ruth M., y Sander Greenland. 1989. «The Impact of Confounder Selection Criteria on Effect Estimation». American Journal of Epidemiology 129 (1): 125-37. https://doi.org/10.1093/oxfordjournals.aje.a115101.\n\n\nO’Brien, Robert M. 2007. «A Caution Regarding Rules of Thumb for Variance Inflation Factors». Quality & Quantity 41 (5): 673-90. https://doi.org/10.1007/s11135-006-9018-6.\n\n\nPérez Guerrero, Edsaúl Emilio. 2024. Bioestadística en R para ciencias de la salud: Guía práctica. 1.ª ed. Zapopan, Jalisco, México: Editorial Innovación Educativa. https://www.cucs.udg.mx/libros/lectura_cucs.php?libro=Bioestadistica_enR_digital.\n\n\nSchisterman, Enrique F., Stephen R. Cole, y Robert W. Platt. 2009. «Overadjustment Bias and Unnecessary Adjustment in Epidemiologic Studies». Epidemiology 20 (4): 488-95. https://doi.org/10.1097/EDE.0b013e3181a819a1.\n\n\nSchmidt, Amand F., y Chris Finan. 2018. «Linear regression and the normality assumption». Journal of Clinical Epidemiology 98: 146-51. https://doi.org/10.1016/j.jclinepi.2017.12.006.\n\n\nSchneider, Astrid, Gerhard Hommel, y Maria Blettner. 2010. «Linear regression analysis: part 14 of a series on evaluation of scientific publications». Deutsches Ärzteblatt International 107 (44): 776-82. https://doi.org/10.3238/arztebl.2010.0776.\n\n\nVanderWeele, Tyler J. 2019. «Principles of Confounder Selection». European Journal of Epidemiology 34 (3): 211-19. https://doi.org/10.1007/s10654-019-00494-6."
+  },
+  {
+    "objectID": "temas/tema-05/Modelos_lineales_P3/Modelos_lineales_P3_origginal.html#ruta-de-la-sesión-60-min",
+    "href": "temas/tema-05/Modelos_lineales_P3/Modelos_lineales_P3_origginal.html#ruta-de-la-sesión-60-min",
+    "title": "Modelos lineales — Parte 3",
+    "section": "Ruta de la sesión (60 min)",
+    "text": "Ruta de la sesión (60 min)\n\n\n\nBloque\nTema\nMin\n\n\n\n\n1\n¿Qué es una interacción?\n7\n\n\n2\nConfusión vs interacción\n10\n\n\n3\n¿Por qué incluirla? ¿Qué pasa si la omito?\n10\n\n\n4\n¿Qué indica una interacción significativa? ¿Cómo evaluarla?\n8\n\n\n5\nEfectos, gráficas e interpretación\n15\n\n\n6\nEjercicios de práctica\n10\n\n\n\nPaquetes: solo ggplot2 y los datos de MASS (birthwt, Pima.tr) + simulaciones."
+  },
+  {
+    "objectID": "temas/tema-05/Modelos_lineales_P3/Modelos_lineales_P3_origginal.html#recordatorio-el-modelo-de-regresión-múltiple",
+    "href": "temas/tema-05/Modelos_lineales_P3/Modelos_lineales_P3_origginal.html#recordatorio-el-modelo-de-regresión-múltiple",
+    "title": "Modelos lineales — Parte 3",
+    "section": "Recordatorio: el modelo de regresión múltiple",
+    "text": "Recordatorio: el modelo de regresión múltiple\nCelis (cap. 24) define el modelo general para k variables independientes:\n\\[Y = \\beta_0 + \\beta_1X_1 + \\beta_2X_2 + \\dots + \\beta_kX_k + \\varepsilon\\]\nLas \\(X\\) pueden ser variables básicas o funciones de ellas: \\(\\ln(X_1)\\), \\(X_1^2\\)… o el producto \\(X_1X_2\\). Celis plantea, entre los modelos candidatos:\n\\[Y = \\beta_0 + \\beta_1X_1 + \\beta_2X_2 + \\beta_3X_1X_2 + \\varepsilon\\]\nEse término \\(\\beta_3X_1X_2\\) es el término de interacción y es el tema de hoy.\nSupuestos (Celis): existencia, independencia, linealidad, homocedasticidad y normalidad — siguen aplicando al modelo con interacción."
+  },
+  {
+    "objectID": "temas/tema-05/Modelos_lineales_P3/Modelos_lineales_P3_origginal.html#definición",
+    "href": "temas/tema-05/Modelos_lineales_P3/Modelos_lineales_P3_origginal.html#definición",
+    "title": "Modelos lineales — Parte 3",
+    "section": "Definición",
+    "text": "Definición\nExiste interacción cuando el efecto de una variable independiente sobre \\(Y\\) depende del nivel de otra variable independiente.\nReordenando el modelo:\n\\[Y = \\beta_0 + \\beta_2X_2 + \\underbrace{(\\beta_1 + \\beta_3X_2)}_{\\text{pendiente de } X_1}X_1 + \\varepsilon\\]\n\nSin interacción (\\(\\beta_3 = 0\\)): la pendiente de \\(X_1\\) es la misma para cualquier valor de \\(X_2\\) → líneas paralelas.\nCon interacción (\\(\\beta_3 \\neq 0\\)): la pendiente de \\(X_1\\) cambia con \\(X_2\\) → líneas no paralelas.\n\nSinónimos según la disciplina: modificación de efecto (epidemiología), moderación (psicología), heterogeneidad del efecto (ensayos clínicos), G×E / epistasis estadística (genética)."
+  },
+  {
+    "objectID": "temas/tema-05/Modelos_lineales_P3/Modelos_lineales_P3_origginal.html#visualmente-aditivo-vs-interacción",
+    "href": "temas/tema-05/Modelos_lineales_P3/Modelos_lineales_P3_origginal.html#visualmente-aditivo-vs-interacción",
+    "title": "Modelos lineales — Parte 3",
+    "section": "Visualmente: aditivo vs interacción",
+    "text": "Visualmente: aditivo vs interacción\n\n\ng &lt;- expand.grid(X1 = 0:10,\n                 X2 = factor(c(\"X2 = 0\", \"X2 = 1\")))\nx2 &lt;- as.numeric(g$X2) - 1\ng$Aditivo     &lt;- 2 + 1*g$X1 + 3*x2\ng$Interaccion &lt;- 2 + 1*g$X1 + 3*x2 + 1*g$X1*x2\n\ng_largo &lt;- rbind(\n  data.frame(g[1:2], Y = g$Aditivo,     modelo = \"Aditivo (β3 = 0)\"),\n  data.frame(g[1:2], Y = g$Interaccion, modelo = \"Con interacción (β3 = 1)\"))\n\nggplot(g_largo, aes(X1, Y, colour = X2)) +\n  geom_line(linewidth = 1.2) +\n  facet_wrap(~ modelo, ncol = 1) +\n  labs(colour = NULL) +\n  theme(legend.position = \"top\")"
+  },
+  {
+    "objectID": "temas/tema-05/Modelos_lineales_P3/Modelos_lineales_P3_origginal.html#interacción-en-ciencias-de-la-salud-ejemplos",
+    "href": "temas/tema-05/Modelos_lineales_P3/Modelos_lineales_P3_origginal.html#interacción-en-ciencias-de-la-salud-ejemplos",
+    "title": "Modelos lineales — Parte 3",
+    "section": "Interacción en ciencias de la salud: ejemplos",
+    "text": "Interacción en ciencias de la salud: ejemplos\n\nFarmacología: el efecto de un antihipertensivo sobre la PAS depende de la ingesta de sodio.\nEpidemiología: el efecto de la edad materna sobre el peso al nacer depende del tabaquismo (lo veremos con birthwt).\nGenética (G×E): el efecto de un alelo de riesgo sobre el IMC se atenúa en personas físicamente activas.\nClínica: el efecto del IMC sobre la PAS es mayor en personas de mayor edad (simulación más adelante).\n\n\n\n\n\n\n\nNota\n\n\nLa pregunta clave es siempre: ¿el efecto de X es el mismo para todos, o depende de quién es la persona?"
+  },
+  {
+    "objectID": "temas/tema-05/Modelos_lineales_P3/Modelos_lineales_P3_origginal.html#dos-fenómenos-distintos",
+    "href": "temas/tema-05/Modelos_lineales_P3/Modelos_lineales_P3_origginal.html#dos-fenómenos-distintos",
+    "title": "Modelos lineales — Parte 3",
+    "section": "Dos fenómenos distintos",
+    "text": "Dos fenómenos distintos\n\n\n\n\n\n\n\n\n\nConfusión\nInteracción (modificación de efecto)\n\n\n\n\n¿Qué es?\nUn sesgo: una tercera variable distorsiona la asociación X–Y\nUn fenómeno real: el efecto de X difiere según Z\n\n\nCondición\nZ se asocia con X y con Y, y no es intermedia\nEl efecto de X sobre Y cambia entre niveles de Z\n\n\n¿Cómo se detecta?\nComparando \\(\\beta_{crudo}\\) vs \\(\\beta_{ajustado}\\) (cambio ≳ 10 %)\nTérmino producto \\(X \\times Z\\) (o estratificando)\n\n\nEstimadores por estrato\nSimilares entre sí, pero distintos del crudo\nDiferentes entre estratos\n\n\n¿Qué hacer?\nAjustar (incluir Z) y reportar el efecto ajustado\nDescribir: reportar el efecto de X en cada nivel de Z\n\n\nObjetivo\nEliminarla\nEntenderla y reportarla\n\n\n\nUna misma variable puede ser confusora, modificadora, ambas o ninguna. Primero se evalúa la interacción; si no hay, después la confusión."
+  },
+  {
+    "objectID": "temas/tema-05/Modelos_lineales_P3/Modelos_lineales_P3_origginal.html#simulación-1-confusión-café-tabaquismo-y-pas",
+    "href": "temas/tema-05/Modelos_lineales_P3/Modelos_lineales_P3_origginal.html#simulación-1-confusión-café-tabaquismo-y-pas",
+    "title": "Modelos lineales — Parte 3",
+    "section": "Simulación 1 — Confusión: café, tabaquismo y PAS",
+    "text": "Simulación 1 — Confusión: café, tabaquismo y PAS\nEl tabaquismo aumenta el consumo de café y la PAS. El café no tiene efecto real.\n\nset.seed(2026)\nn    &lt;- 400\nfuma &lt;- rbinom(n, 1, 0.3)\ncafe &lt;- pmax(0, round(1 + 2 * fuma + rnorm(n, 0, 1), 1))   # tazas/día\npas  &lt;- 118 + 0 * cafe + 12 * fuma + rnorm(n, 0, 10)        # café: efecto real = 0\nd_conf &lt;- data.frame(pas, cafe, fuma = factor(fuma, labels = c(\"No fuma\", \"Fuma\")))\n\ncrudo    &lt;- lm(pas ~ cafe, data = d_conf)\najustado &lt;- lm(pas ~ cafe + fuma, data = d_conf)\ninterac  &lt;- lm(pas ~ cafe * fuma, data = d_conf)\n\nc(crudo = coef(crudo)[\"cafe\"], ajustado = coef(ajustado)[\"cafe\"])\n\n   crudo.cafe ajustado.cafe \n    3.2580661     0.4389347 \n\nsummary(interac)$coefficients[\"cafe:fumaFuma\", ]\n\n  Estimate Std. Error    t value   Pr(&gt;|t|) \n 0.2935593  1.0827653  0.2711200  0.7864400 \n\n\n\nCrudo ≈ 3.3 mmHg/taza (¡“significativo”!) → ajustado ≈ 0.4: cambio ≫ 10 % → confusión.\nTérmino cafe:fumaFuma no significativo → no hay interacción."
+  },
+  {
+    "objectID": "temas/tema-05/Modelos_lineales_P3/Modelos_lineales_P3_origginal.html#así-se-ve-la-confusión",
+    "href": "temas/tema-05/Modelos_lineales_P3/Modelos_lineales_P3_origginal.html#así-se-ve-la-confusión",
+    "title": "Modelos lineales — Parte 3",
+    "section": "Así se ve la confusión",
+    "text": "Así se ve la confusión\n\n\nggplot(d_conf, aes(cafe, pas)) +\n  geom_point(aes(colour = fuma), alpha = 0.4) +\n  geom_smooth(method = \"lm\", se = FALSE,\n              colour = \"black\", linetype = 2) +\n  geom_smooth(aes(colour = fuma),\n              method = \"lm\", se = FALSE) +\n  labs(x = \"Café (tazas/día)\", y = \"PAS (mmHg)\",\n       colour = NULL,\n       caption = \"Línea punteada = modelo crudo\") +\n  theme(legend.position = \"top\")\n\n\n\n\n\n\n\n\n\n\nDentro de cada estrato las líneas son planas y paralelas (sin efecto, sin interacción).\nLa línea cruda sube solo porque los fumadores toman más café y tienen PAS más alta."
+  },
+  {
+    "objectID": "temas/tema-05/Modelos_lineales_P3/Modelos_lineales_P3_origginal.html#guía-de-decisión",
+    "href": "temas/tema-05/Modelos_lineales_P3/Modelos_lineales_P3_origginal.html#guía-de-decisión",
+    "title": "Modelos lineales — Parte 3",
+    "section": "Guía de decisión",
+    "text": "Guía de decisión\n\nflowchart TD\n  A[Asociación X → Y&lt;br/&gt;¿tercera variable Z?] --&gt; B[Ajustar modelo con X*Z]\n  B --&gt; C{¿β3 de X:Z&lt;br/&gt;significativo y&lt;br/&gt;clínicamente relevante?}\n  C -- Sí --&gt; D[INTERACCIÓN&lt;br/&gt;Reportar el efecto de X&lt;br/&gt;en cada nivel de Z]\n  C -- No --&gt; E[Quitar X:Z&lt;br/&gt;comparar β crudo vs β ajustado por Z]\n  E --&gt; F{¿Cambio ≥ 10 %?}\n  F -- Sí --&gt; G[CONFUSIÓN&lt;br/&gt;Reportar efecto ajustado]\n  F -- No --&gt; H[Z no confunde&lt;br/&gt;ni modifica]\n\n\n\n\nflowchart TD\n  A[Asociación X → Y&lt;br/&gt;¿tercera variable Z?] --&gt; B[Ajustar modelo con X*Z]\n  B --&gt; C{¿β3 de X:Z&lt;br/&gt;significativo y&lt;br/&gt;clínicamente relevante?}\n  C -- Sí --&gt; D[INTERACCIÓN&lt;br/&gt;Reportar el efecto de X&lt;br/&gt;en cada nivel de Z]\n  C -- No --&gt; E[Quitar X:Z&lt;br/&gt;comparar β crudo vs β ajustado por Z]\n  E --&gt; F{¿Cambio ≥ 10 %?}\n  F -- Sí --&gt; G[CONFUSIÓN&lt;br/&gt;Reportar efecto ajustado]\n  F -- No --&gt; H[Z no confunde&lt;br/&gt;ni modifica]"
+  },
+  {
+    "objectID": "temas/tema-05/Modelos_lineales_P3/Modelos_lineales_P3_origginal.html#omitir-una-interacción-real-sesga-los-efectos-simples",
+    "href": "temas/tema-05/Modelos_lineales_P3/Modelos_lineales_P3_origginal.html#omitir-una-interacción-real-sesga-los-efectos-simples",
+    "title": "Modelos lineales — Parte 3",
+    "section": "Omitir una interacción real sesga los efectos simples",
+    "text": "Omitir una interacción real sesga los efectos simples\nSi los datos se generan con \\(Y=\\beta_0+\\beta_1X+\\beta_2Z+\\beta_3XZ+\\varepsilon\\) y ajustamos solo \\(Y \\sim X + Z\\), Rimpler et al. (2025) muestran que lo que en realidad estimamos es:\n\\[b_1 = \\beta_1 + \\beta_3\\,\\mu_Z \\qquad\\qquad b_2 = \\beta_2 + \\beta_3\\,\\mu_X\\]\nEl efecto “simple” absorbe la interacción multiplicada por la media de la otra variable. Consecuencias:\n\nEl efecto puede inflarse (interacción sinérgica).\nPuede desaparecer (\\(b_1 \\approx 0\\)) aunque \\(\\beta_1 \\neq 0\\).\nPuede invertir su signo (interacción antagónica).\n\nAdemás, los residuales ya no son independientes ni homocedásticos → los valores p del modelo mal especificado no son confiables."
+  },
+  {
+    "objectID": "temas/tema-05/Modelos_lineales_P3/Modelos_lineales_P3_origginal.html#simulación-2-reproduciendo-a-rimpler-et-al.-tabla-2",
+    "href": "temas/tema-05/Modelos_lineales_P3/Modelos_lineales_P3_origginal.html#simulación-2-reproduciendo-a-rimpler-et-al.-tabla-2",
+    "title": "Modelos lineales — Parte 3",
+    "section": "Simulación 2 — reproduciendo a Rimpler et al. (Tabla 2)",
+    "text": "Simulación 2 — reproduciendo a Rimpler et al. (Tabla 2)\nVerdad: \\(\\beta_1 = \\beta_2 = 1\\), \\(\\mu_X = 1\\), \\(\\mu_Z = 2\\). Ajustamos el modelo sin interacción:\n\nset.seed(1)\nN &lt;- 1e5\nX &lt;- rnorm(N, mean = 1, sd = 1)\nZ &lt;- rnorm(N, mean = 2, sd = 1)\n\nb3_verdad &lt;- c(-1, -0.5, 0, 0.5, 1)\ntabla &lt;- t(sapply(b3_verdad, function(b3) {\n  Y &lt;- 1*X + 1*Z + b3*X*Z + rnorm(N)\n  coef(lm(Y ~ X + Z))          # modelo mal especificado\n}))\ndata.frame(beta3 = b3_verdad, round(tabla, 2))\n\n  beta3 X.Intercept.     X   Z\n1  -1.0         2.00 -0.99 0.0\n2  -0.5         1.00  0.00 0.5\n3   0.0         0.00  1.00 1.0\n4   0.5        -1.01  2.00 1.5\n5   1.0        -2.00  3.00 2.0\n\n\nCon \\(\\beta_3=-0.5\\) el efecto de X “desaparece”; con \\(\\beta_3=-1\\) ¡cambia de signo! (verdad = +1 en ambos casos)."
+  },
+  {
+    "objectID": "temas/tema-05/Modelos_lineales_P3/Modelos_lineales_P3_origginal.html#forma-de-la-interacción-rimpler-et-al.-2025",
+    "href": "temas/tema-05/Modelos_lineales_P3/Modelos_lineales_P3_origginal.html#forma-de-la-interacción-rimpler-et-al.-2025",
+    "title": "Modelos lineales — Parte 3",
+    "section": "Forma de la interacción (Rimpler et al., 2025)",
+    "text": "Forma de la interacción (Rimpler et al., 2025)\n\n\n\n\n\n\n\n\n\nTipo\nSignos\nEjemplo en salud\nSi la omito…\n\n\n\n\nSinérgica\n\\(\\beta_1, \\beta_2, \\beta_3\\) mismo signo\nTabaquismo + exposición a asbesto → riesgo pulmonar mayor que la suma\nEfectos simples inflados; el modelo simple “funciona” razonablemente\n\n\nAmortiguadora\n\\(\\beta_1\\) y \\(\\beta_2\\) con signos opuestos\nEstrés laboral (+PAS) amortiguado por actividad física (−PAS)\nSesgo intermedio\n\n\nAntagónica\nEfectos simples opuestos a \\(\\beta_3\\)\nDos fármacos que bajan la PA, pero juntos menos que la suma (efecto techo)\nEfectos que desaparecen o se invierten → conclusiones erróneas\n\n\n\n\n\n\n\n\n\nAdvertencia\n\n\nEl caso más peligroso es el antagónico: el investigador puede concluir que un factor de riesgo es protector, y aumentar n o replicar el estudio no lo corrige."
+  },
+  {
+    "objectID": "temas/tema-05/Modelos_lineales_P3/Modelos_lineales_P3_origginal.html#entonces-siempre-incluirla-el-costo",
+    "href": "temas/tema-05/Modelos_lineales_P3/Modelos_lineales_P3_origginal.html#entonces-siempre-incluirla-el-costo",
+    "title": "Modelos lineales — Parte 3",
+    "section": "Entonces… ¿siempre incluirla? El costo",
+    "text": "Entonces… ¿siempre incluirla? El costo\nRimpler et al. (55 millones de análisis simulados) encontraron:\n\nEl modelo con interacción sobreajusta más la muestra cuando n es pequeño o cuando no hay interacción real.\nPero, en la población, el modelo correcto (con interacción) casi siempre generaliza mejor cuando la interacción existe.\nEl modelo simple solo gana cuando la interacción es nula o sinérgica y n es pequeño.\nLas interacciones suelen ser pequeñas: requieren mucha más muestra que los efectos principales.\n\n\n\n\n\n\n\nTip\n\n\nRegla práctica: la decisión de evaluar una interacción debe venir de la teoría / hipótesis biológica, planearse a priori y justificarse — tanto si se incluye como si se excluye. No es para “pescar” todos los productos posibles."
+  },
+  {
+    "objectID": "temas/tema-05/Modelos_lineales_P3/Modelos_lineales_P3_origginal.html#qué-significa-que-beta_3-sea-significativo",
+    "href": "temas/tema-05/Modelos_lineales_P3/Modelos_lineales_P3_origginal.html#qué-significa-que-beta_3-sea-significativo",
+    "title": "Modelos lineales — Parte 3",
+    "section": "¿Qué significa que \\(\\beta_3\\) sea significativo?",
+    "text": "¿Qué significa que \\(\\beta_3\\) sea significativo?\n\\(H_0: \\beta_3 = 0\\) (las pendientes son iguales; líneas paralelas)\n\\(H_1: \\beta_3 \\neq 0\\) (la pendiente de \\(X_1\\) cambia con \\(X_2\\))\nSi se rechaza \\(H_0\\):\n\nNo existe un único efecto de \\(X_1\\): hay que reportarlo condicionado a \\(X_2\\).\nLos coeficientes \\(\\beta_1\\) y \\(\\beta_2\\) dejan de ser “efectos principales”: son efectos condicionales cuando la otra variable vale 0.\nSe respeta el principio de jerarquía (PSU STAT 462): si \\(X_1X_2\\) está en el modelo, \\(X_1\\) y \\(X_2\\) también, sean o no significativos.\n\nSignificancia estadística ≠ relevancia clínica: evalúe también la magnitud de la diferencia de pendientes y su IC 95 %."
+  },
+  {
+    "objectID": "temas/tema-05/Modelos_lineales_P3/Modelos_lineales_P3_origginal.html#cómo-evaluarla-pasos",
+    "href": "temas/tema-05/Modelos_lineales_P3/Modelos_lineales_P3_origginal.html#cómo-evaluarla-pasos",
+    "title": "Modelos lineales — Parte 3",
+    "section": "Cómo evaluarla: pasos",
+    "text": "Cómo evaluarla: pasos\n\nHipótesis a priori: ¿hay razón biológica para que Z modifique el efecto de X?\nExplorar: gráfico de dispersión por estratos / líneas de regresión por grupo.\nAjustar el modelo sin y con interacción: y ~ x + z vs y ~ x * z.\nProbar:\n\nUn solo término → prueba t de \\(\\beta_3\\).\nVarios términos (p. ej. factor con &gt;2 niveles) → prueba F parcial: anova(m_sin, m_con).\n\nComplementar: \\(R^2\\) ajustado, AIC, tamaño de la diferencia de pendientes.\nDiagnóstico del modelo final (residuales, homocedasticidad, influencia).\nInterpretar y graficar efectos condicionales (pendientes simples).\n\nEn la fórmula de R: x * z equivale a x + z + x:z; x:z es solo el producto."
+  },
+  {
+    "objectID": "temas/tema-05/Modelos_lineales_P3/Modelos_lineales_P3_origginal.html#ejemplo-real-birthwt-edad-materna-tabaquismo",
+    "href": "temas/tema-05/Modelos_lineales_P3/Modelos_lineales_P3_origginal.html#ejemplo-real-birthwt-edad-materna-tabaquismo",
+    "title": "Modelos lineales — Parte 3",
+    "section": "Ejemplo real: birthwt — edad materna × tabaquismo",
+    "text": "Ejemplo real: birthwt — edad materna × tabaquismo\n¿El efecto de la edad materna sobre el peso al nacer (g) depende del tabaquismo?\n\nm_sin &lt;- lm(bwt ~ age + smoke_f, data = birthwt)\nm_con &lt;- lm(bwt ~ age * smoke_f, data = birthwt)\nround(summary(m_con)$coefficients, 3)\n\n                Estimate Std. Error t value Pr(&gt;|t|)\n(Intercept)     2406.058    292.190   8.235    0.000\nage               27.731     12.149   2.283    0.024\nsmoke_fFuma      798.175    484.342   1.648    0.101\nage:smoke_fFuma  -46.572     20.447  -2.278    0.024\n\nanova(m_sin, m_con)        # prueba F parcial (aquí equivale a la t de β3)\n\nAnalysis of Variance Table\n\nModel 1: bwt ~ age + smoke_f\nModel 2: bwt ~ age * smoke_f\n  Res.Df      RSS Df Sum of Sq      F  Pr(&gt;F)  \n1    186 95672288                              \n2    185 93062605  1   2609683 5.1878 0.02389 *\n---\nSignif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1\n\n\n\\(\\beta_3 = -46.6\\) g, p = 0.024 → la pendiente de la edad difiere entre fumadoras y no fumadoras."
+  },
+  {
+    "objectID": "temas/tema-05/Modelos_lineales_P3/Modelos_lineales_P3_origginal.html#leer-los-coeficientes-con-interacción",
+    "href": "temas/tema-05/Modelos_lineales_P3/Modelos_lineales_P3_origginal.html#leer-los-coeficientes-con-interacción",
+    "title": "Modelos lineales — Parte 3",
+    "section": "Leer los coeficientes con interacción",
+    "text": "Leer los coeficientes con interacción\n\\[\\widehat{bwt} = 2406.1 + 27.7\\,\\text{edad} + 798.2\\,\\text{Fuma} - 46.6\\,(\\text{edad}\\times\\text{Fuma})\\]\n\n\n\n\n\n\n\n\nCoeficiente\nValor\nSignificado correcto\n\n\n\n\nIntercepto\n2406\nPeso esperado en no fumadora de 0 años (sin sentido)\n\n\nage\n27.7\nPendiente de la edad en no fumadoras\n\n\nsmoke_fFuma\n798.2\nDiferencia Fuma − No fuma a los 0 años (¡no es “fumar aumenta el peso”!)\n\n\nage:smoke_fFuma\n−46.6\nDiferencia de pendientes (Fuma − No fuma)\n\n\n\nPendiente en fumadoras = \\(27.7 + (-46.6) = -18.8\\) g por año.\n\n\n\n\n\n\nAdvertencia\n\n\nInterpretar smoke_fFuma = +798 como “efecto del tabaquismo” es el error más común. Con interacción, ese coeficiente depende de dónde está el 0 de la otra variable."
+  },
+  {
+    "objectID": "temas/tema-05/Modelos_lineales_P3/Modelos_lineales_P3_origginal.html#pendientes-simples-con-ic-95-truco-de-relevel",
+    "href": "temas/tema-05/Modelos_lineales_P3/Modelos_lineales_P3_origginal.html#pendientes-simples-con-ic-95-truco-de-relevel",
+    "title": "Modelos lineales — Parte 3",
+    "section": "Pendientes simples con IC 95 %: truco de relevel()",
+    "text": "Pendientes simples con IC 95 %: truco de relevel()\nEl coeficiente de age siempre es la pendiente en la categoría de referencia. Cambiando la referencia obtenemos la pendiente (y su IC) en el otro grupo:\n\nm_ref_fuma &lt;- lm(bwt ~ age * relevel(smoke_f, ref = \"Fuma\"), data = birthwt)\n\nrbind(\n  \"No fuma\" = c(coef(m_con)[\"age\"],      confint(m_con)[\"age\", ]),\n  \"Fuma\"    = c(coef(m_ref_fuma)[\"age\"], confint(m_ref_fuma)[\"age\", ])\n) |&gt; round(1)\n\n          age 2.5 % 97.5 %\nNo fuma  27.7   3.8   51.7\nFuma    -18.8 -51.3   13.6\n\n\n\nNo fumadoras: +27.7 g por año de edad (IC 95 % 3.8 a 51.7).\nFumadoras: −18.8 g por año (IC 95 % −51.3 a 13.6)."
+  },
+  {
+    "objectID": "temas/tema-05/Modelos_lineales_P3/Modelos_lineales_P3_origginal.html#centrar-para-que-los-coeficientes-tengan-sentido",
+    "href": "temas/tema-05/Modelos_lineales_P3/Modelos_lineales_P3_origginal.html#centrar-para-que-los-coeficientes-tengan-sentido",
+    "title": "Modelos lineales — Parte 3",
+    "section": "Centrar para que los coeficientes tengan sentido",
+    "text": "Centrar para que los coeficientes tengan sentido\n\nbirthwt$age_c &lt;- birthwt$age - mean(birthwt$age)    # media = 23.2 años\nm_cen &lt;- lm(bwt ~ age_c * smoke_f, data = birthwt)\nround(summary(m_cen)$coefficients, 3)\n\n                  Estimate Std. Error t value Pr(&gt;|t|)\n(Intercept)       3050.482     66.178  46.095    0.000\nage_c               27.731     12.149   2.283    0.024\nsmoke_fFuma       -284.068    105.832  -2.684    0.008\nage_c:smoke_fFuma  -46.572     20.447  -2.278    0.024\n\n\n\nsmoke_fFuma ahora = −284 g: diferencia por tabaquismo a la edad promedio (23 años), p = 0.008.\n\\(\\beta_3\\), su EE, su p y el \\(R^2\\) no cambian.\nCentrar no “arregla” la colinealidad de la interacción (no la necesita): solo mejora la interpretación (Rimpler et al., 2025)."
+  },
+  {
+    "objectID": "temas/tema-05/Modelos_lineales_P3/Modelos_lineales_P3_origginal.html#gráfica-categórica-continua",
+    "href": "temas/tema-05/Modelos_lineales_P3/Modelos_lineales_P3_origginal.html#gráfica-categórica-continua",
+    "title": "Modelos lineales — Parte 3",
+    "section": "Gráfica: categórica × continua",
+    "text": "Gráfica: categórica × continua\n\n\nggplot(birthwt, aes(age, bwt, colour = smoke_f)) +\n  geom_point(alpha = 0.5) +\n  geom_smooth(method = \"lm\", se = TRUE) +\n  labs(x = \"Edad materna (años)\",\n       y = \"Peso al nacer (g)\",\n       colour = NULL) +\n  theme(legend.position = \"top\")\n\n\n\n\n\n\n\n\n\n\nLíneas no paralelas que se cruzan → interacción cualitativa (cruzada).\nCon un factor de 2 niveles, geom_smooth() por grupo traza las mismas rectas que el modelo bwt ~ age * smoke_f.\nNote la poca precisión en edades extremas: no extrapolar."
+  },
+  {
+    "objectID": "temas/tema-05/Modelos_lineales_P3/Modelos_lineales_P3_origginal.html#continua-continua-simulación-pas-edad-imc",
+    "href": "temas/tema-05/Modelos_lineales_P3/Modelos_lineales_P3_origginal.html#continua-continua-simulación-pas-edad-imc",
+    "title": "Modelos lineales — Parte 3",
+    "section": "Continua × continua: simulación PAS ~ edad × IMC",
+    "text": "Continua × continua: simulación PAS ~ edad × IMC\nEl efecto del IMC sobre la PAS aumenta con la edad (interacción sinérgica):\n\nset.seed(123)\nn    &lt;- 300\nedad &lt;- round(rnorm(n, 50, 10))\nimc  &lt;- round(rnorm(n, 28, 4), 1)\npas  &lt;- 120 + 0.4*(edad - 50) + 0.8*(imc - 28) +\n        0.06*(edad - 50)*(imc - 28) + rnorm(n, 0, 8)\nd_pas &lt;- data.frame(pas, edad, imc)\n\nm_pas &lt;- lm(pas ~ edad * imc, data = d_pas)\nround(summary(m_pas)$coefficients, 3)\n\n            Estimate Std. Error t value Pr(&gt;|t|)\n(Intercept)  154.239     19.779   7.798    0.000\nedad          -1.083      0.383  -2.828    0.005\nimc           -1.850      0.708  -2.614    0.009\nedad:imc       0.051      0.014   3.732    0.000\n\n\n¿IMC con efecto negativo (−1.85)? No: es la pendiente del IMC a los 0 años de edad. Centrar lo resuelve."
+  },
+  {
+    "objectID": "temas/tema-05/Modelos_lineales_P3/Modelos_lineales_P3_origginal.html#centrado-en-continua-continua",
+    "href": "temas/tema-05/Modelos_lineales_P3/Modelos_lineales_P3_origginal.html#centrado-en-continua-continua",
+    "title": "Modelos lineales — Parte 3",
+    "section": "Centrado en continua × continua",
+    "text": "Centrado en continua × continua\n\nd_pas$edad_c &lt;- d_pas$edad - mean(d_pas$edad)\nd_pas$imc_c  &lt;- d_pas$imc  - mean(d_pas$imc)\nm_pas_c &lt;- lm(pas ~ edad_c * imc_c, data = d_pas)\nround(summary(m_pas_c)$coefficients, 3)\n\n             Estimate Std. Error t value Pr(&gt;|t|)\n(Intercept)   120.273      0.480 250.793        0\nedad_c          0.356      0.051   6.968        0\nimc_c           0.733      0.122   6.029        0\nedad_c:imc_c    0.051      0.014   3.732        0\n\nc(r_sin_centrar = cor(d_pas$edad, d_pas$edad * d_pas$imc),\n  r_centrado    = cor(d_pas$edad_c, d_pas$edad_c * d_pas$imc_c)) |&gt; round(2)\n\nr_sin_centrar    r_centrado \n         0.77         -0.12 \n\n\n\nimc_c = 0.73 mmHg por kg/m² a la edad promedio; edad_c = 0.36 mmHg/año con IMC promedio.\n\\(\\beta_3 = 0.051\\): por cada año extra de edad, la pendiente del IMC aumenta 0.051 mmHg por kg/m².\nLa correlación X–XZ baja de 0.77 a −0.12, pero \\(\\beta_3\\) y su EE son idénticos."
+  },
+  {
+    "objectID": "temas/tema-05/Modelos_lineales_P3/Modelos_lineales_P3_origginal.html#gráfica-pendientes-simples-edad-a-1-de-media-1-de",
+    "href": "temas/tema-05/Modelos_lineales_P3/Modelos_lineales_P3_origginal.html#gráfica-pendientes-simples-edad-a-1-de-media-1-de",
+    "title": "Modelos lineales — Parte 3",
+    "section": "Gráfica: pendientes simples (edad a −1 DE, media, +1 DE)",
+    "text": "Gráfica: pendientes simples (edad a −1 DE, media, +1 DE)\n\n\nm_e &lt;- mean(d_pas$edad); s_e &lt;- sd(d_pas$edad)\nrejilla &lt;- expand.grid(\n  imc  = seq(18, 40, by = 0.5),\n  edad = round(c(m_e - s_e, m_e, m_e + s_e)))\nrejilla$pred &lt;- predict(m_pas, newdata = rejilla)\n\nggplot(rejilla, aes(imc, pred,\n                    colour = factor(edad))) +\n  geom_point(data = d_pas, aes(imc, pas),\n             colour = \"grey70\", alpha = 0.5) +\n  geom_line(linewidth = 1.2) +\n  labs(x = \"IMC (kg/m²)\", y = \"PAS predicha (mmHg)\",\n       colour = \"Edad (años)\") +\n  theme(legend.position = \"top\")\n\n\n\n\n\n\n\n\n\nPendiente del IMC en cada edad: \\(\\beta_{imc} + \\beta_3 \\times \\text{edad}\\)."
+  },
+  {
+    "objectID": "temas/tema-05/Modelos_lineales_P3/Modelos_lineales_P3_origginal.html#gráfica-el-plano-doblado",
+    "href": "temas/tema-05/Modelos_lineales_P3/Modelos_lineales_P3_origginal.html#gráfica-el-plano-doblado",
+    "title": "Modelos lineales — Parte 3",
+    "section": "Gráfica: el plano “doblado”",
+    "text": "Gráfica: el plano “doblado”\n\n\nsup &lt;- expand.grid(edad = seq(25, 75, 1),\n                   imc  = seq(18, 40, 0.5))\nm_adit &lt;- lm(pas ~ edad + imc, data = d_pas)\nsup2 &lt;- rbind(\n  cbind(sup, modelo = \"Aditivo\",\n        pred = predict(m_adit, sup)),\n  cbind(sup, modelo = \"Con interacción\",\n        pred = predict(m_pas, sup)))\n\nggplot(sup2, aes(edad, imc, z = pred)) +\n  geom_raster(aes(fill = pred)) +\n  geom_contour(colour = \"white\", binwidth = 5) +\n  facet_wrap(~ modelo, ncol = 1) +\n  scale_fill_viridis_c(name = \"PAS\") +\n  labs(x = \"Edad (años)\", y = \"IMC (kg/m²)\")\n\n\n\n\n\n\n\n\n\nAditivo: contornos rectos y paralelos (plano). Interacción: contornos curvos → la superficie está torcida (PSU: “una hoja de papel doblada”)."
+  },
+  {
+    "objectID": "temas/tema-05/Modelos_lineales_P3/Modelos_lineales_P3_origginal.html#diagnóstico-del-modelo-con-interacción",
+    "href": "temas/tema-05/Modelos_lineales_P3/Modelos_lineales_P3_origginal.html#diagnóstico-del-modelo-con-interacción",
+    "title": "Modelos lineales — Parte 3",
+    "section": "Diagnóstico del modelo con interacción",
+    "text": "Diagnóstico del modelo con interacción\nEl modelo con interacción sigue siendo un modelo lineal: los supuestos de Celis se verifican igual.\n\n\npar(mfrow = c(2, 2), mar = c(4, 4, 2, 1))\nplot(m_con)\n\n\n\n\n\n\n\n\n\n\n# Alternativa usada en el curso:\nperformance::check_model(m_con)"
+  },
+  {
+    "objectID": "temas/tema-05/Modelos_lineales_P3/Modelos_lineales_P3_origginal.html#cómo-reportar-una-interacción",
+    "href": "temas/tema-05/Modelos_lineales_P3/Modelos_lineales_P3_origginal.html#cómo-reportar-una-interacción",
+    "title": "Modelos lineales — Parte 3",
+    "section": "Cómo reportar una interacción",
+    "text": "Cómo reportar una interacción\n\n“Se observó una interacción entre la edad materna y el tabaquismo sobre el peso al nacer (\\(\\beta_3 = -46.6\\) g; IC 95 % −86.9 a −6.2; p = 0.024). En las no fumadoras, cada año adicional de edad se asoció con un aumento de 27.7 g (IC 95 % 3.8 a 51.7), mientras que en las fumadoras la asociación fue negativa y no significativa (−18.8 g; IC 95 % −51.3 a 13.6). A la edad promedio (23 años), los hijos de fumadoras pesaron 284 g menos (p = 0.008).”\n\nElementos: (1) existencia de la interacción con IC; (2) efecto de X en cada nivel de Z; (3) efecto de Z en un valor con sentido de X; (4) gráfica."
+  },
+  {
+    "objectID": "temas/tema-05/Modelos_lineales_P3/Modelos_lineales_P3_origginal.html#errores-comunes",
+    "href": "temas/tema-05/Modelos_lineales_P3/Modelos_lineales_P3_origginal.html#errores-comunes",
+    "title": "Modelos lineales — Parte 3",
+    "section": "Errores comunes",
+    "text": "Errores comunes\n\n❌ Interpretar \\(\\beta_1\\) o \\(\\beta_2\\) como “efectos principales” cuando hay interacción.\n❌ Quitar \\(X_1\\) o \\(X_2\\) porque “no son significativos” (viola la jerarquía).\n❌ Centrar “para eliminar la colinealidad” y creer que cambió la interacción.\n❌ Probar todas las interacciones posibles sin hipótesis (falsos positivos, sobreajuste).\n❌ Concluir “no hay interacción” con n pequeño (poco poder ≠ ausencia de efecto).\n❌ Confundir confusión con interacción: la confusión se ajusta, la interacción se describe.\n❌ Extrapolar las pendientes simples fuera del rango observado."
+  },
+  {
+    "objectID": "temas/tema-05/Modelos_lineales_P3/Modelos_lineales_P3_origginal.html#ejercicio-1-pima.tr-edad-diabetes-sobre-la-presión-diastólica",
+    "href": "temas/tema-05/Modelos_lineales_P3/Modelos_lineales_P3_origginal.html#ejercicio-1-pima.tr-edad-diabetes-sobre-la-presión-diastólica",
+    "title": "Modelos lineales — Parte 3",
+    "section": "Ejercicio 1 — Pima.tr: edad × diabetes sobre la presión diastólica",
+    "text": "Ejercicio 1 — Pima.tr: edad × diabetes sobre la presión diastólica\n\ndata(Pima.tr, package = \"MASS\")   # bp = presión diastólica; type = diabetes (No/Yes)\n\n\nGrafique bp vs age con una recta por type. ¿Las rectas son paralelas?\n\nAjuste bp ~ age + type y bp ~ age * type. Compárelos con anova().\n\nInterprete cada coeficiente del modelo con interacción. ¿Qué significa el coeficiente de typeYes?\n\nCalcule la pendiente de la edad en cada grupo (con IC 95 %) usando relevel().\n\nCentre age y vuelva a ajustar. ¿Qué cambió y qué no?\n\nRedacte un párrafo de resultados."
+  },
+  {
+    "objectID": "temas/tema-05/Modelos_lineales_P3/Modelos_lineales_P3_origginal.html#ejercicio-2-birthwt-peso-materno-tabaquismo",
+    "href": "temas/tema-05/Modelos_lineales_P3/Modelos_lineales_P3_origginal.html#ejercicio-2-birthwt-peso-materno-tabaquismo",
+    "title": "Modelos lineales — Parte 3",
+    "section": "Ejercicio 2 — birthwt: peso materno × tabaquismo",
+    "text": "Ejercicio 2 — birthwt: peso materno × tabaquismo\n\nAjuste bwt ~ lwt * smoke_f (lwt = peso materno en libras).\n\n¿La interacción es significativa? ¿Qué decisión toma sobre el modelo final?\n\nSi retira la interacción, ¿cómo interpreta ahora el coeficiente de smoke_f?\n\nHaga la gráfica de rectas por grupo. ¿Coincide con su conclusión?"
+  },
+  {
+    "objectID": "temas/tema-05/Modelos_lineales_P3/Modelos_lineales_P3_origginal.html#ejercicio-3-datos-bio3_24a-celis-cuadro-24-1",
+    "href": "temas/tema-05/Modelos_lineales_P3/Modelos_lineales_P3_origginal.html#ejercicio-3-datos-bio3_24a-celis-cuadro-24-1",
+    "title": "Modelos lineales — Parte 3",
+    "section": "Ejercicio 3 — Datos Bio3_24a (Celis, cuadro 24-1)",
+    "text": "Ejercicio 3 — Datos Bio3_24a (Celis, cuadro 24-1)\n\nbio3_24a &lt;- data.frame(\n  x1 = c(0, 0, 0, 0, 0, 1, 1, 1, 2, 2, 2),\n  x2 = c(0.28, 1.85, 3.73, 7.62, 8.12, 2.07, 2.09, 5.76, 5.83, 8.94, 9.39),\n  y  = c(1.04, 2.30, 4.39, 9.49, 8.28, 4.85, 4.91, 7.44, 8.20, 11.04, 12.72))\n\n\nAjuste los modelos de Celis \\(Y \\sim X_1 + X_2\\) y \\(Y \\sim X_1 + X_2 + X_1X_2\\).\n\n¿El término de interacción mejora el modelo (prueba F parcial, \\(R^2\\) ajustado)?\n\nCon n = 11, ¿qué puede y qué no puede concluir sobre la ausencia de interacción?"
+  },
+  {
+    "objectID": "temas/tema-05/Modelos_lineales_P3/Modelos_lineales_P3_origginal.html#ejercicio-4-confusión-o-interacción",
+    "href": "temas/tema-05/Modelos_lineales_P3/Modelos_lineales_P3_origginal.html#ejercicio-4-confusión-o-interacción",
+    "title": "Modelos lineales — Parte 3",
+    "section": "Ejercicio 4 — ¿Confusión o interacción?",
+    "text": "Ejercicio 4 — ¿Confusión o interacción?\n\nset.seed(42); n &lt;- 300\n# Base A\nsexo &lt;- rbinom(n, 1, 0.5)\nact  &lt;- pmax(0, round(3 + 2*sexo + rnorm(n, 0, 1.5), 1))       # actividad física (h/sem)\nldl  &lt;- 120 + 20*sexo - 2*act + rnorm(n, 0, 12)\nbase_A &lt;- data.frame(ldl, act, sexo = factor(sexo, labels = c(\"Mujer\", \"Hombre\")))\n# Base B\nsexo &lt;- rbinom(n, 1, 0.5)\nact  &lt;- pmax(0, round(4 + rnorm(n, 0, 1.5), 1))\nldl  &lt;- 130 - 4*act*(1 - sexo) + rnorm(n, 0, 12)\nbase_B &lt;- data.frame(ldl, act, sexo = factor(sexo, labels = c(\"Mujer\", \"Hombre\")))\n\nPara cada base: ajuste ldl ~ act, ldl ~ act + sexo y ldl ~ act * sexo; grafique por sexo y use la guía de decisión para clasificar el papel del sexo. ¿Qué ocurre con el signo del efecto crudo en la base A?"
+  },
+  {
+    "objectID": "temas/tema-05/Modelos_lineales_P3/Modelos_lineales_P3_origginal.html#ejercicio-5-el-costo-de-omitir-la-interacción",
+    "href": "temas/tema-05/Modelos_lineales_P3/Modelos_lineales_P3_origginal.html#ejercicio-5-el-costo-de-omitir-la-interacción",
+    "title": "Modelos lineales — Parte 3",
+    "section": "Ejercicio 5 — El costo de omitir la interacción",
+    "text": "Ejercicio 5 — El costo de omitir la interacción\nUsando el código de la Simulación 2:\n\nCambie las medias a \\(\\mu_X = 0\\) y \\(\\mu_Z = 0\\). ¿Sigue habiendo sesgo en \\(b_1\\) y \\(b_2\\)? Explique con la fórmula \\(b_1 = \\beta_1 + \\beta_3\\mu_Z\\).\n\nCon \\(\\beta_1 = \\beta_2 = 1\\), \\(\\mu_X = 1\\), \\(\\mu_Z = 2\\), ¿qué valor de \\(\\beta_3\\) hace que \\(b_2 = 0\\)?\n\nRepita con n = 50 y 1000 réplicas: ¿en qué % de las réplicas el efecto de X es significativo cuando \\(\\beta_3 = -0.5\\)?"
+  },
+  {
+    "objectID": "temas/tema-05/Modelos_lineales_P3/Modelos_lineales_P3_origginal.html#mensajes-para-llevar",
+    "href": "temas/tema-05/Modelos_lineales_P3/Modelos_lineales_P3_origginal.html#mensajes-para-llevar",
+    "title": "Modelos lineales — Parte 3",
+    "section": "Mensajes para llevar",
+    "text": "Mensajes para llevar\n\nInteracción = el efecto de X depende de Z; matemáticamente, pendiente de \\(X_1\\) = \\(\\beta_1 + \\beta_3X_2\\).\nConfusión es un sesgo que se ajusta; interacción es un hallazgo que se describe por estratos.\nOmitir una interacción real puede anular o invertir efectos verdaderos (sobre todo si es antagónica).\nCon interacción, \\(\\beta_1\\) y \\(\\beta_2\\) son efectos condicionales (en 0 de la otra variable): centre para interpretarlos.\nEvalúe con t de \\(\\beta_3\\) o F parcial, respete la jerarquía, grafique pendientes simples y reporte efectos por nivel.\nLa decisión de incluirla nace de la teoría, no de la búsqueda de significancia."
+  },
+  {
+    "objectID": "temas/tema-05/Modelos_lineales_P3/Modelos_lineales_P3_origginal.html#referencias",
+    "href": "temas/tema-05/Modelos_lineales_P3/Modelos_lineales_P3_origginal.html#referencias",
+    "title": "Modelos lineales — Parte 3",
+    "section": "Referencias",
+    "text": "Referencias\n\nCelis de la Rosa, A. J., & Labrada Martagón, V. (2014). Bioestadística (3ª ed.). Editorial El Manual Moderno. Caps. 23 (Regresión y correlación simple) y 24 (Regresión y correlación múltiple).\nDenis, D. J. (2020). Univariate, Bivariate, and Multivariate Statistics Using R, cap. 7. Wiley.\nRimpler, A., Kiers, H. A. L., & van Ravenzwaaij, D. (2025). To interact or not to interact: The pros and cons of including interactions in linear regression models. Behavior Research Methods, 57, 92. https://doi.org/10.3758/s13428-025-02613-6\nPenn State Eberly College of Science. STAT 462: Applied Regression Analysis, 7.6 Interactions Between Quantitative Predictors. https://online.stat.psu.edu/stat462/node/157/\nHosmer, D. W., & Lemeshow, S. (1989). Applied Logistic Regression. Wiley (origen de birthwt). Venables & Ripley (2002), MASS."
   }
 ]
