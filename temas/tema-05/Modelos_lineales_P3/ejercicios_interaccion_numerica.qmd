@@ -1,0 +1,46 @@
+<!-- Diapositivas para insertar en Modelos_lineales_P3.qmd, después del Ejercicio 5 -->
+
+## Ejercicio 6 — `Pima`: pliegue cutáneo × edad sobre el IMC
+
+¿La relación entre el pliegue del tríceps y el IMC es la misma a cualquier edad?
+
+```{r}
+#| eval: false
+data(Pima.tr, package = "MASS")
+data(Pima.te, package = "MASS")
+pima <- rbind(Pima.tr, Pima.te)   # n = 532 mujeres Pima
+# bmi = IMC (kg/m²); skin = pliegue del tríceps (mm); age = edad (años)
+```
+
+a) Ajuste `bmi ~ skin + age` y `bmi ~ skin * age`. ¿La interacción es significativa? Compare $R^2$ ajustado.  
+b) Interprete **cada** coeficiente del modelo con interacción. ¿Qué significa el coeficiente de `age`?  
+c) Calcule la pendiente del pliegue a los 22, 30 y 45 años: $\beta_{skin} + \beta_3 \times \text{edad}$.  
+d) Centre `skin` y `age` y vuelva a ajustar. ¿Qué pasó con el coeficiente de `age`? ¿Y con $\beta_3$?  
+e) ¿A qué edad la pendiente del pliegue sería 0? ¿Es razonable interpretar ese valor?  
+f) Grafique las pendientes simples (edad a −1 DE, media, +1 DE) y redacte un párrafo de resultados.
+
+::: callout-tip
+**IC de una pendiente simple con moderador continuo:** reste el valor de interés (p. ej. `age - 45`) y reajuste; el coeficiente de `skin` es la pendiente a los 45 años y `confint()` da su IC.
+:::
+
+## Ejercicio 7 — G×E: alelos de riesgo × actividad física sobre el IMC
+
+Simulación inspirada en la atenuación del riesgo genético de obesidad por la actividad física:
+
+```{r}
+#| eval: false
+set.seed(6)
+n      <- 800
+alelos <- rbinom(n, size = 20, prob = 0.5)          # nº de alelos de riesgo (puntaje poligénico)
+act    <- round(pmax(0, rnorm(n, 15, 6)), 1)        # actividad física (MET-h/semana)
+imc    <- 26 + 0.6*(alelos - 10) - 0.10*(act - 15) -
+          0.025*(alelos - 10)*(act - 15) + rnorm(n, 0, 2.5)
+gxe    <- data.frame(imc = round(imc, 1), alelos, act)
+```
+
+a) Antes de ajustar: según el código, ¿qué tipo de interacción es (sinérgica, amortiguadora, antagónica)?  
+b) Ajuste el modelo con y sin interacción. ¿El coeficiente de `act` del modelo con interacción sugiere que la actividad física **aumenta** el IMC? Explique.  
+c) Centre ambas variables y compare los coeficientes con los valores verdaderos de la simulación.  
+d) Calcule el efecto de cada alelo de riesgo en personas con 5, 15 y 30 MET-h/semana (con IC 95 %).  
+e) ¿Con cuánta actividad física se "anularía" el efecto genético? ¿Está dentro del rango observado?  
+f) Repita la simulación con `n <- 150`. ¿Sigue detectando la interacción? ¿Qué concluye sobre el tamaño de muestra?

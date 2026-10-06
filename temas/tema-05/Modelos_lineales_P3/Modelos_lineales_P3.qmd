@@ -12,7 +12,7 @@ format:
     scrollable: true
     code-overflow: wrap
     fig-align: center
-    footer: "Bioestadística Avanzada · Modelos lineales — Parte 2"
+    footer: "Bioestadística Avanzada · Modelos lineales. Parte 3. Interacciones."
     width: 1600
     height: 900
 execute:
@@ -1180,7 +1180,216 @@ Para cada base: ajuste `ldl ~ act`, `ldl ~ act + sexo` y `ldl ~ act * sexo`; gra
 
 # 7. Interacciones con variables cuantitativas 
 
+## ¿La asociación entre IMC y glucosa depende de la edad?
+
+Vamos a utilizar la base `Pima.tr` de `MASS` para evaluar si la asociación entre **IMC** y **glucosa** depende de la **edad**.
+
+```{r}
+data(Pima.tr, package = "MASS")
+lm(glu ~ bmi * age, data = Pima.tr)->mod_glu
+lm(glu ~ bmi + age, data = Pima.tr)->mod_glu_sin
+```
+
+A diferencia de los que veíamos en los ejercicios anteriores, aquí ambas variables son cuantitativas. Por lo tanto hay una pendiente de BMI diferente para cada edad. La interpretación de los coeficientes es la misma que antes: el efecto de IMC sobre glucosa depende de la edad.
+
+
+## ¿La asociación entre IMC y glucosa depende de la edad?
+
+> No
+
+```{r}
+summary(mod_glu)
+anova(mod_glu_sin, mod_glu)
+```
+
+## Continua × continua: PAS ~ edad × IMC
+
+El efecto del IMC sobre la PAS aumenta con la edad (interacción sinérgica):
+
+```{r}
+set.seed(123)
+n    <- 300
+edad <- round(rnorm(n, 50, 10))
+imc  <- round(rnorm(n, 28, 4), 1)
+pas  <- 120 + 0.4*(edad - 50) + 0.8*(imc - 28) +
+        0.06*(edad - 50)*(imc - 28) + rnorm(n, 0, 8)
+d_pas <- data.frame(pas, edad, imc)
+
+m_pas <- lm(pas ~ edad * imc, data = d_pas)
+round(summary(m_pas)$coefficients, 3)
+```
+
+
+## Continua × continua: PAS ~ edad × IMC
+Nuestra ecuación es:
+
+$$
+PAS = \beta_0 + \beta_1 \text{edad} + \beta_2 \text{IMC} + \beta_3 (\text{edad} \times \text{IMC}) + \varepsilon
+$$
+
+$$
+PAS = 154.23 - 1.083 \text{edad} -1.850\text{IMC} + 0.051 (\text{edad} \times \text{IMC}) + \varepsilon
+$$
+
+
+
+- ¿IMC con efecto **negativo** (−1.85)? No: es la pendiente del IMC **a los 0 años de edad**. La pendiente es negativa. Centrar lo resuelve.
+- ¿Edad con efecto **negativo** (−1.083)? No: es la pendiente del Edad **con 0 de IMC**. La pendiente es negativa. Centrar lo resuelve
+- $\beta_3 = 0.051$: por cada año extra de edad, la pendiente del IMC aumenta 0.051 mmHg por kg/m². Representa cuánto cambia la pendiente del IMC por cada año adicional de edad.
+
+
+:::{.callout-tip}
+$$\boxed{
+\text{Interacción continua × continua: }
+\beta_3=\text{cambio en una pendiente por cada unidad de la otra variable}
+}$$
+:::
+
+## Centrado en continua × continua
+
+Para cada $X_i$ se resta su media: $X_{i,c}=X_i-\bar{X_i}$. Esto hace que los **efectos principales** sean interpretables:
+```{r}
+d_pas$edad_c <- d_pas$edad - mean(d_pas$edad)
+d_pas$imc_c  <- d_pas$imc  - mean(d_pas$imc)
+m_pas_c <- lm(pas ~ edad_c * imc_c, data = d_pas)
+round(summary(m_pas_c)$coefficients, 3)
+
+c(r_sin_centrar = cor(d_pas$edad, d_pas$edad * d_pas$imc),
+  r_centrado    = cor(d_pas$edad_c, d_pas$edad_c * d_pas$imc_c)) |> round(2)
+```
+
+- `imc_c` = 0.73 mmHg por kg/m² **a la edad promedio**; `edad_c` = 0.36 mmHg/año **con IMC promedio**.
+- $\beta_3 = 0.051$: por cada año extra de edad, la pendiente del IMC aumenta 0.051 mmHg por kg/m².
+
+
+## Gráfica: pendientes simples (edad a −1 DE, media, +1 DE)
+
+
+```{r}
+#| output-location: column
+#| fig-width: 5
+#| fig-height: 5
+
+# Media y DE de la edad
+
+m_e <- mean(d_pas$edad); s_e <- sd(d_pas$edad) 
+
+# expan.grid crea un data frame con todas las combinaciones posibles de los vectores que le pasemos. 
+
+rejilla <- expand.grid(
+  imc  = seq(18, 40, by = 0.5), # Sequencia de valores de IMC
+  edad = round(c(m_e - s_e, m_e, m_e + s_e))) # Sequencia de valores de edad (media y ±1 DE)
+rejilla$pred <- predict(m_pas, newdata = rejilla) # Calula el valor de PAS para cada combinación de IMC y edad
+
+ggplot(rejilla, aes(imc, pred,
+                    colour = factor(edad))) +
+  geom_point(data = d_pas, aes(imc, pas),
+             colour = "grey70", alpha = 0.5) +
+  geom_line(linewidth = 1.2) +
+  labs(x = "IMC (kg/m²)", y = "PAS predicha (mmHg)",
+       colour = "Edad (años)") +
+  theme(legend.position = "top")
+```
+
+Pendiente del IMC en cada edad: $\beta_{imc} + \beta_3 \times \text{edad}$.
+
+## Otra opcion es cortar la variable
+
+```{r}
+d_pas <- d_pas |>
+  mutate(
+    edad_grupo = cut(
+      edad,
+      breaks = c(-Inf, 40, 60, Inf),
+      labels = c("<40", "40–60", ">60")
+    )
+  )
+```
+
+```{r}
+d_pas |> 
+  ggplot(aes(imc, pas, colour = edad_grupo)) +
+  geom_point(alpha = 0.5) +
+  geom_smooth(method = "lm", se = FALSE) +
+  labs(x = "IMC (kg/m²)", y = "PAS (mmHg)",
+       colour = "Edad (años)") +
+  theme(legend.position = "top")
+```
+
+## Otra opcion
+
+```{r eval=FALSE}
+library(plotly)
+
+plot_ly(
+  data = d_pas,
+  x = ~pas,
+  y = ~edad,
+  z = ~imc,
+  color = ~edad,
+  colors = c("blue", "red"),
+  type = "scatter3d",
+  mode = "markers"
+) |>
+  layout(
+    scene = list(
+      xaxis = list(title = "IMC"),
+      yaxis = list(title = "PAS"),
+      zaxis = list(title = "Edad")
+    )
+  )
+```
+
+## Otra opcion
+
+```{r echo=FALSE, fig.width=8, fig.height=8, fig.align="center"}
+library(plotly)
+
+plot_ly(
+  data = d_pas,
+  x = ~pas,
+  y = ~edad,
+  z = ~imc,
+  color = ~edad,
+  colors = c("blue", "red"),
+  type = "scatter3d",
+  mode = "markers"
+) |>
+  layout(
+    scene = list(
+      xaxis = list(title = "IMC"),
+      yaxis = list(title = "PAS"),
+      zaxis = list(title = "Edad")
+    )
+  )
+```
+
+
+
+
 # 8. Ejercicios de interaccioes con variables cuantitativas
+
+## Pima: pliegue cutáneo × edad sobre el IMC
+Utilizano la base de datos `Pima.tr` de `MASS`, evalúe si la asociación entre **pliegue cutáneo** y **IMC** depende de la **edad**.
+Grafice, ajuste el modelo con y sin interacción, interprete los coeficientes y reporte los efectos condicionales.
+Centre si es necesario para que los efectos principales tengan sentido.
+
+
+## Sodio × edad sobre la PAS (ajustando por IMC)
+
+Simule los siguientes datos: 
+
+```{r}
+set.seed(2024)
+n     <- 400
+edad  <- round(pmin(80, pmax(25, rnorm(n, 50, 12))))
+imc   <- round(rnorm(n, 28, 4), 1)
+sodio <- round(pmax(0.5, 3.5 + 0.08*(imc - 28) + rnorm(n, 0, 1)), 2)
+pas   <- 125 + 0.5*(edad - 50) + 0.6*(imc - 28) + 2*(sodio - 3.5) +
+         0.12*(sodio - 3.5)*(edad - 50) + rnorm(n, 0, 10)
+d_na  <- data.frame(pas = round(pas), sodio, edad, imc)
+```
+Posteriormente responda: si el efecto del sodio sobre la PAS depende de la edad, ¿cómo cambia la pendiente del sodio por cada año adicional de edad? 
 
 # 9. Resumen y conclusiones
 

@@ -1,0 +1,25 @@
+<!-- Diapositiva para insertar en Modelos_lineales_P3.qmd, después del Ejercicio 7 -->
+
+## Ejercicio 8 — Sodio × edad sobre la PAS, ajustando por IMC
+
+Todas las variables son **numéricas continuas**. Hipótesis: la sensibilidad a la sal aumenta con la edad.
+
+```{r}
+#| eval: false
+set.seed(2024)
+n     <- 400
+edad  <- round(pmin(80, pmax(25, rnorm(n, 50, 12))))                     # años
+imc   <- round(rnorm(n, 28, 4), 1)                                       # kg/m²
+sodio <- round(pmax(0.5, 3.5 + 0.08*(imc - 28) + rnorm(n, 0, 1)), 2)     # g/día (orina 24 h)
+pas   <- 125 + 0.5*(edad - 50) + 0.6*(imc - 28) + 2*(sodio - 3.5) +
+         0.12*(sodio - 3.5)*(edad - 50) + rnorm(n, 0, 10)                # mmHg
+d_na  <- data.frame(pas = round(pas), sodio, edad, imc)
+```
+
+a) **Explore:** obtenga la matriz de correlaciones y divida la edad en terciles (`cut()` + `quantile()`); ajuste `pas ~ sodio + imc` en cada tercil. ¿La pendiente del sodio es parecida?  
+b) **¿Confusión?** Compare el coeficiente del sodio en `pas ~ sodio` y en `pas ~ sodio + imc`. ¿El IMC confunde?  
+c) **¿Interacción?** Ajuste `pas ~ sodio + edad + imc` y `pas ~ sodio * edad + imc`. Compare con `anova()`, $R^2$ ajustado y AIC.  
+d) En el modelo con interacción, el coeficiente de `sodio` es **negativo**. ¿Significa que la sal baja la presión? Centre `sodio`, `edad` e `imc` y vuelva a interpretar.  
+e) Calcule el efecto de 1 g/día de sodio (con IC 95 %) a los 35, 50 y 65 años.  
+f) ¿A qué edad el efecto del sodio sería 0? ¿Está dentro del rango observado? ¿Qué implica clínicamente?  
+g) Grafique las pendientes simples (edad −1 DE, media, +1 DE, con IMC en su media) y redacte los resultados.
