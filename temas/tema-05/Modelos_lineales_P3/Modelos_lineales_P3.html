@@ -10,7 +10,7 @@
   <meta name="generator" content="quarto-1.8.25">
 
   <meta name="author" content="Edsaul Emilio Pérez-Guerrero">
-  <meta name="dcterms.date" content="2026-10-05">
+  <meta name="dcterms.date" content="2026-10-06">
   <title>Bioestadística avanzada – Modelos lineales. Parte 3</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -189,6 +189,15 @@
       margin-right: 0; 
     }
   </style>
+  <link href="../../../site_libs/htmltools-fill-0.5.9/fill.css" rel="stylesheet">
+  <script src="../../../site_libs/htmlwidgets-1.6.4/htmlwidgets.js"></script>
+  <script src="../../../site_libs/plotly-binding-4.12.0/plotly.js"></script>
+  <script src="../../../site_libs/typedarray-0.1/typedarray.min.js"></script>
+  <script src="../../../site_libs/jquery-3.5.1/jquery.min.js"></script>
+  <link href="../../../site_libs/crosstalk-1.2.2/css/crosstalk.min.css" rel="stylesheet">
+  <script src="../../../site_libs/crosstalk-1.2.2/js/crosstalk.min.js"></script>
+  <link href="../../../site_libs/plotly-htmlwidgets-css-2.25.2/plotly-htmlwidgets.css" rel="stylesheet">
+  <script src="../../../site_libs/plotly-main-2.25.2/plotly-latest.min.js"></script>
 </head>
 <body class="quarto-light">
   <div class="reveal">
@@ -206,7 +215,7 @@ Edsaul Emilio Pérez-Guerrero
 </div>
 </div>
 
-  <p class="date">2026-10-05</p>
+  <p class="date">2026-10-06</p>
 </section>
 <section id="objetivos-de-aprendizaje" class="slide level2">
 <h2>Objetivos de aprendizaje</h2>
@@ -1420,16 +1429,257 @@ age_c:smoke_fFuma  -46.572     20.447  -2.278    0.024</code></pre>
 </div>
 <p>Para cada base: ajuste <code>ldl ~ act</code>, <code>ldl ~ act + sexo</code> y <code>ldl ~ act * sexo</code>; grafique por sexo y use la <strong>guía de decisión</strong> para clasificar el papel del sexo. ¿Qué ocurre con el signo del efecto crudo en la base A?</p>
 </section></section>
+<section>
 <section id="interacciones-con-variables-cuantitativas" class="title-slide slide level1 center">
 <h1>7. Interacciones con variables cuantitativas</h1>
 
 </section>
+<section id="la-asociación-entre-imc-y-glucosa-depende-de-la-edad" class="slide level2">
+<h2>¿La asociación entre IMC y glucosa depende de la edad?</h2>
+<p>Vamos a utilizar la base <code>Pima.tr</code> de <code>MASS</code> para evaluar si la asociación entre <strong>IMC</strong> y <strong>glucosa</strong> depende de la <strong>edad</strong>.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a></a><span class="fu">data</span>(Pima.tr, <span class="at">package =</span> <span class="st">"MASS"</span>)</span>
+<span id="cb27-2"><a></a><span class="fu">lm</span>(glu <span class="sc">~</span> bmi <span class="sc">*</span> age, <span class="at">data =</span> Pima.tr)<span class="ot">-&gt;</span>mod_glu</span>
+<span id="cb27-3"><a></a><span class="fu">lm</span>(glu <span class="sc">~</span> bmi <span class="sc">+</span> age, <span class="at">data =</span> Pima.tr)<span class="ot">-&gt;</span>mod_glu_sin</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>A diferencia de los que veíamos en los ejercicios anteriores, aquí ambas variables son cuantitativas. Por lo tanto hay una pendiente de BMI diferente para cada edad. La interpretación de los coeficientes es la misma que antes: el efecto de IMC sobre glucosa depende de la edad.</p>
+</section>
+<section id="la-asociación-entre-imc-y-glucosa-depende-de-la-edad-1" class="slide level2">
+<h2>¿La asociación entre IMC y glucosa depende de la edad?</h2>
+<blockquote>
+<p>No</p>
+</blockquote>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a></a><span class="fu">summary</span>(mod_glu)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = glu ~ bmi * age, data = Pima.tr)
 
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-76.548 -17.120  -2.939  18.058  83.212 
+
+Coefficients:
+            Estimate Std. Error t value Pr(&gt;|t|)  
+(Intercept) 30.08322   37.12917   0.810   0.4188  
+bmi          2.01133    1.16216   1.731   0.0851 .
+age          2.12058    1.21214   1.749   0.0818 .
+bmi:age     -0.03746    0.03748  -0.999   0.3188  
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 29.38 on 196 degrees of freedom
+Multiple R-squared:  0.1522,    Adjusted R-squared:  0.1392 
+F-statistic: 11.73 on 3 and 196 DF,  p-value: 4.232e-07</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb30"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a></a><span class="fu">anova</span>(mod_glu_sin, mod_glu)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Analysis of Variance Table
+
+Model 1: glu ~ bmi + age
+Model 2: glu ~ bmi * age
+  Res.Df    RSS Df Sum of Sq      F Pr(&gt;F)
+1    197 170053                           
+2    196 169191  1    862.15 0.9988 0.3188</code></pre>
+</div>
+</div>
+</section>
+<section id="continua-continua-pas-edad-imc" class="slide level2">
+<h2>Continua × continua: PAS ~ edad × IMC</h2>
+<p>El efecto del IMC sobre la PAS aumenta con la edad (interacción sinérgica):</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb32"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
+<span id="cb32-2"><a></a>n    <span class="ot">&lt;-</span> <span class="dv">300</span></span>
+<span id="cb32-3"><a></a>edad <span class="ot">&lt;-</span> <span class="fu">round</span>(<span class="fu">rnorm</span>(n, <span class="dv">50</span>, <span class="dv">10</span>))</span>
+<span id="cb32-4"><a></a>imc  <span class="ot">&lt;-</span> <span class="fu">round</span>(<span class="fu">rnorm</span>(n, <span class="dv">28</span>, <span class="dv">4</span>), <span class="dv">1</span>)</span>
+<span id="cb32-5"><a></a>pas  <span class="ot">&lt;-</span> <span class="dv">120</span> <span class="sc">+</span> <span class="fl">0.4</span><span class="sc">*</span>(edad <span class="sc">-</span> <span class="dv">50</span>) <span class="sc">+</span> <span class="fl">0.8</span><span class="sc">*</span>(imc <span class="sc">-</span> <span class="dv">28</span>) <span class="sc">+</span></span>
+<span id="cb32-6"><a></a>        <span class="fl">0.06</span><span class="sc">*</span>(edad <span class="sc">-</span> <span class="dv">50</span>)<span class="sc">*</span>(imc <span class="sc">-</span> <span class="dv">28</span>) <span class="sc">+</span> <span class="fu">rnorm</span>(n, <span class="dv">0</span>, <span class="dv">8</span>)</span>
+<span id="cb32-7"><a></a>d_pas <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(pas, edad, imc)</span>
+<span id="cb32-8"><a></a></span>
+<span id="cb32-9"><a></a>m_pas <span class="ot">&lt;-</span> <span class="fu">lm</span>(pas <span class="sc">~</span> edad <span class="sc">*</span> imc, <span class="at">data =</span> d_pas)</span>
+<span id="cb32-10"><a></a><span class="fu">round</span>(<span class="fu">summary</span>(m_pas)<span class="sc">$</span>coefficients, <span class="dv">3</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>            Estimate Std. Error t value Pr(&gt;|t|)
+(Intercept)  154.239     19.779   7.798    0.000
+edad          -1.083      0.383  -2.828    0.005
+imc           -1.850      0.708  -2.614    0.009
+edad:imc       0.051      0.014   3.732    0.000</code></pre>
+</div>
+</div>
+</section>
+<section id="continua-continua-pas-edad-imc-1" class="slide level2">
+<h2>Continua × continua: PAS ~ edad × IMC</h2>
+<p>Nuestra ecuación es:</p>
+<p><span class="math display">\[
+PAS = \beta_0 + \beta_1 \text{edad} + \beta_2 \text{IMC} + \beta_3 (\text{edad} \times \text{IMC}) + \varepsilon
+\]</span></p>
+<p><span class="math display">\[
+PAS = 154.23 - 1.083 \text{edad} -1.850\text{IMC} + 0.051 (\text{edad} \times \text{IMC}) + \varepsilon
+\]</span></p>
+<ul>
+<li>¿IMC con efecto <strong>negativo</strong> (−1.85)? No: es la pendiente del IMC <strong>a los 0 años de edad</strong>. La pendiente es negativa. Centrar lo resuelve.</li>
+<li>¿Edad con efecto <strong>negativo</strong> (−1.083)? No: es la pendiente del Edad <strong>con 0 de IMC</strong>. La pendiente es negativa. Centrar lo resuelve</li>
+<li><span class="math inline">\(\beta_3 = 0.051\)</span>: por cada año extra de edad, la pendiente del IMC aumenta 0.051 mmHg por kg/m². Representa cuánto cambia la pendiente del IMC por cada año adicional de edad.</li>
+</ul>
+<div class="callout callout-tip callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Tip</strong></p>
+</div>
+<div class="callout-content">
+<p><span class="math display">\[\boxed{
+\text{Interacción continua × continua: }
+\beta_3=\text{cambio en una pendiente por cada unidad de la otra variable}
+}\]</span></p>
+</div>
+</div>
+</div>
+</section>
+<section id="centrado-en-continua-continua" class="slide level2">
+<h2>Centrado en continua × continua</h2>
+<p>Para cada <span class="math inline">\(X_i\)</span> se resta su media: <span class="math inline">\(X_{i,c}=X_i-\bar{X_i}\)</span>. Esto hace que los <strong>efectos principales</strong> sean interpretables:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb34"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a></a>d_pas<span class="sc">$</span>edad_c <span class="ot">&lt;-</span> d_pas<span class="sc">$</span>edad <span class="sc">-</span> <span class="fu">mean</span>(d_pas<span class="sc">$</span>edad)</span>
+<span id="cb34-2"><a></a>d_pas<span class="sc">$</span>imc_c  <span class="ot">&lt;-</span> d_pas<span class="sc">$</span>imc  <span class="sc">-</span> <span class="fu">mean</span>(d_pas<span class="sc">$</span>imc)</span>
+<span id="cb34-3"><a></a>m_pas_c <span class="ot">&lt;-</span> <span class="fu">lm</span>(pas <span class="sc">~</span> edad_c <span class="sc">*</span> imc_c, <span class="at">data =</span> d_pas)</span>
+<span id="cb34-4"><a></a><span class="fu">round</span>(<span class="fu">summary</span>(m_pas_c)<span class="sc">$</span>coefficients, <span class="dv">3</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>             Estimate Std. Error t value Pr(&gt;|t|)
+(Intercept)   120.273      0.480 250.793        0
+edad_c          0.356      0.051   6.968        0
+imc_c           0.733      0.122   6.029        0
+edad_c:imc_c    0.051      0.014   3.732        0</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb36"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a></a><span class="fu">c</span>(<span class="at">r_sin_centrar =</span> <span class="fu">cor</span>(d_pas<span class="sc">$</span>edad, d_pas<span class="sc">$</span>edad <span class="sc">*</span> d_pas<span class="sc">$</span>imc),</span>
+<span id="cb36-2"><a></a>  <span class="at">r_centrado    =</span> <span class="fu">cor</span>(d_pas<span class="sc">$</span>edad_c, d_pas<span class="sc">$</span>edad_c <span class="sc">*</span> d_pas<span class="sc">$</span>imc_c)) <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">2</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>r_sin_centrar    r_centrado 
+         0.77         -0.12 </code></pre>
+</div>
+</div>
+<ul>
+<li><code>imc_c</code> = 0.73 mmHg por kg/m² <strong>a la edad promedio</strong>; <code>edad_c</code> = 0.36 mmHg/año <strong>con IMC promedio</strong>.</li>
+<li><span class="math inline">\(\beta_3 = 0.051\)</span>: por cada año extra de edad, la pendiente del IMC aumenta 0.051 mmHg por kg/m².</li>
+</ul>
+</section>
+<section id="gráfica-pendientes-simples-edad-a-1-de-media-1-de" class="slide level2">
+<h2>Gráfica: pendientes simples (edad a −1 DE, media, +1 DE)</h2>
+<div class="cell columns column-output-location">
+<div class="column">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb38"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a></a><span class="co"># Media y DE de la edad</span></span>
+<span id="cb38-2"><a></a></span>
+<span id="cb38-3"><a></a>m_e <span class="ot">&lt;-</span> <span class="fu">mean</span>(d_pas<span class="sc">$</span>edad); s_e <span class="ot">&lt;-</span> <span class="fu">sd</span>(d_pas<span class="sc">$</span>edad) </span>
+<span id="cb38-4"><a></a></span>
+<span id="cb38-5"><a></a><span class="co"># expan.grid crea un data frame con todas las combinaciones posibles de los vectores que le pasemos. </span></span>
+<span id="cb38-6"><a></a></span>
+<span id="cb38-7"><a></a>rejilla <span class="ot">&lt;-</span> <span class="fu">expand.grid</span>(</span>
+<span id="cb38-8"><a></a>  <span class="at">imc  =</span> <span class="fu">seq</span>(<span class="dv">18</span>, <span class="dv">40</span>, <span class="at">by =</span> <span class="fl">0.5</span>), <span class="co"># Sequencia de valores de IMC</span></span>
+<span id="cb38-9"><a></a>  <span class="at">edad =</span> <span class="fu">round</span>(<span class="fu">c</span>(m_e <span class="sc">-</span> s_e, m_e, m_e <span class="sc">+</span> s_e))) <span class="co"># Sequencia de valores de edad (media y ±1 DE)</span></span>
+<span id="cb38-10"><a></a>rejilla<span class="sc">$</span>pred <span class="ot">&lt;-</span> <span class="fu">predict</span>(m_pas, <span class="at">newdata =</span> rejilla) <span class="co"># Calula el valor de PAS para cada combinación de IMC y edad</span></span>
+<span id="cb38-11"><a></a></span>
+<span id="cb38-12"><a></a><span class="fu">ggplot</span>(rejilla, <span class="fu">aes</span>(imc, pred,</span>
+<span id="cb38-13"><a></a>                    <span class="at">colour =</span> <span class="fu">factor</span>(edad))) <span class="sc">+</span></span>
+<span id="cb38-14"><a></a>  <span class="fu">geom_point</span>(<span class="at">data =</span> d_pas, <span class="fu">aes</span>(imc, pas),</span>
+<span id="cb38-15"><a></a>             <span class="at">colour =</span> <span class="st">"grey70"</span>, <span class="at">alpha =</span> <span class="fl">0.5</span>) <span class="sc">+</span></span>
+<span id="cb38-16"><a></a>  <span class="fu">geom_line</span>(<span class="at">linewidth =</span> <span class="fl">1.2</span>) <span class="sc">+</span></span>
+<span id="cb38-17"><a></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"IMC (kg/m²)"</span>, <span class="at">y =</span> <span class="st">"PAS predicha (mmHg)"</span>,</span>
+<span id="cb38-18"><a></a>       <span class="at">colour =</span> <span class="st">"Edad (años)"</span>) <span class="sc">+</span></span>
+<span id="cb38-19"><a></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"top"</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div><div class="column">
+<div class="cell-output-display">
+<div>
+<figure>
+<p><img data-src="Modelos_lineales_P3_files/figure-revealjs/unnamed-chunk-24-1.png" width="480"></p>
+</figure>
+</div>
+</div>
+</div></div>
+<p>Pendiente del IMC en cada edad: <span class="math inline">\(\beta_{imc} + \beta_3 \times \text{edad}\)</span>.</p>
+</section>
+<section id="otra-opcion-es-cortar-la-variable" class="slide level2">
+<h2>Otra opcion es cortar la variable</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb39"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a></a>d_pas <span class="ot">&lt;-</span> d_pas <span class="sc">|&gt;</span></span>
+<span id="cb39-2"><a></a>  <span class="fu">mutate</span>(</span>
+<span id="cb39-3"><a></a>    <span class="at">edad_grupo =</span> <span class="fu">cut</span>(</span>
+<span id="cb39-4"><a></a>      edad,</span>
+<span id="cb39-5"><a></a>      <span class="at">breaks =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="cn">Inf</span>, <span class="dv">40</span>, <span class="dv">60</span>, <span class="cn">Inf</span>),</span>
+<span id="cb39-6"><a></a>      <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"&lt;40"</span>, <span class="st">"40–60"</span>, <span class="st">"&gt;60"</span>)</span>
+<span id="cb39-7"><a></a>    )</span>
+<span id="cb39-8"><a></a>  )</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb40"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a></a>d_pas <span class="sc">|&gt;</span> </span>
+<span id="cb40-2"><a></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(imc, pas, <span class="at">colour =</span> edad_grupo)) <span class="sc">+</span></span>
+<span id="cb40-3"><a></a>  <span class="fu">geom_point</span>(<span class="at">alpha =</span> <span class="fl">0.5</span>) <span class="sc">+</span></span>
+<span id="cb40-4"><a></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"lm"</span>, <span class="at">se =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
+<span id="cb40-5"><a></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"IMC (kg/m²)"</span>, <span class="at">y =</span> <span class="st">"PAS (mmHg)"</span>,</span>
+<span id="cb40-6"><a></a>       <span class="at">colour =</span> <span class="st">"Edad (años)"</span>) <span class="sc">+</span></span>
+<span id="cb40-7"><a></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"top"</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+
+</div>
+<img data-src="Modelos_lineales_P3_files/figure-revealjs/unnamed-chunk-26-1.png" width="960" class="r-stretch"></section>
+<section id="otra-opcion" class="slide level2">
+<h2>Otra opcion</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb41"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a></a><span class="fu">library</span>(plotly)</span>
+<span id="cb41-2"><a></a></span>
+<span id="cb41-3"><a></a><span class="fu">plot_ly</span>(</span>
+<span id="cb41-4"><a></a>  <span class="at">data =</span> d_pas,</span>
+<span id="cb41-5"><a></a>  <span class="at">x =</span> <span class="sc">~</span>pas,</span>
+<span id="cb41-6"><a></a>  <span class="at">y =</span> <span class="sc">~</span>edad,</span>
+<span id="cb41-7"><a></a>  <span class="at">z =</span> <span class="sc">~</span>imc,</span>
+<span id="cb41-8"><a></a>  <span class="at">color =</span> <span class="sc">~</span>edad,</span>
+<span id="cb41-9"><a></a>  <span class="at">colors =</span> <span class="fu">c</span>(<span class="st">"blue"</span>, <span class="st">"red"</span>),</span>
+<span id="cb41-10"><a></a>  <span class="at">type =</span> <span class="st">"scatter3d"</span>,</span>
+<span id="cb41-11"><a></a>  <span class="at">mode =</span> <span class="st">"markers"</span></span>
+<span id="cb41-12"><a></a>) <span class="sc">|&gt;</span></span>
+<span id="cb41-13"><a></a>  <span class="fu">layout</span>(</span>
+<span id="cb41-14"><a></a>    <span class="at">scene =</span> <span class="fu">list</span>(</span>
+<span id="cb41-15"><a></a>      <span class="at">xaxis =</span> <span class="fu">list</span>(<span class="at">title =</span> <span class="st">"IMC"</span>),</span>
+<span id="cb41-16"><a></a>      <span class="at">yaxis =</span> <span class="fu">list</span>(<span class="at">title =</span> <span class="st">"PAS"</span>),</span>
+<span id="cb41-17"><a></a>      <span class="at">zaxis =</span> <span class="fu">list</span>(<span class="at">title =</span> <span class="st">"Edad"</span>)</span>
+<span id="cb41-18"><a></a>    )</span>
+<span id="cb41-19"><a></a>  )</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="otra-opcion-1" class="slide level2">
+<h2>Otra opcion</h2>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="plotly html-widget html-fill-item" id="htmlwidget-bf89e17c25cc0b2267ba" style="width:768px;height:768px;"></div>
+<script type="application/json" data-for="htmlwidget-bf89e17c25cc0b2267ba">{"x":{"visdat":{"1309f4c42d7f9":["function () ","plotlyVisDat"]},"cur_data":"1309f4c42d7f9","attrs":{"1309f4c42d7f9":{"x":{},"y":{},"z":{},"mode":"markers","color":{},"colors":["blue","red"],"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"type":"scatter3d"}},"layout":{"margin":{"b":40,"l":60,"t":25,"r":10},"scene":{"xaxis":{"title":"IMC"},"yaxis":{"title":"PAS"},"zaxis":{"title":"Edad"}},"hovermode":"closest","showlegend":false,"legend":{"yanchor":"top","y":0.5}},"source":"A","config":{"modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"data":[{"x":[124.91609808225591,116.94122426869006,119.44535726179265,104.65945901479122,125.26108275110583,127.4801265544658,107.83605659711138,103.51979365873353,116.66390002682984,116.19951091986634,129.52775583737733,114.97920009789122,127.92471586356558,118.20797978233625,125.58356061817908,111.65040263793878,117.93441736004131,108.59614166726342,121.19059056507268,132.17287323379276,104.40374464184407,125.07912208326421,121.69149028463754,119.61352150734419,109.67395618003586,120.13532645379333,124.30870465472671,114.59201674894365,105.23760761918349,141.89373947594518,120.43597483665249,100.97942676865567,123.98007490202922,134.25584204848715,114.28932531421921,97.252348691344395,115.08957986273116,128.12317033367538,126.05899228145719,114.23250060670419,111.47649414732498,123.95253405400436,116.19282677772925,134.26169397354184,121.32961639768882,121.8148324256248,111.97750778131001,114.20564239904029,124.13451618980723,127.00177286901689,109.70996238837297,114.45752325612922,123.51023209387704,114.81340549207495,120.59700479900175,121.58460583682563,122.00202409731543,126.59185625682113,118.03841835996488,131.24175463429626,127.67718747326202,130.34411622651629,135.21198412364507,116.59283956200747,98.069591277340763,120.66820803675193,124.8044896675998,115.88923722284481,132.70230896621661,132.77742371611413,118.70614055865744,112.27523738275111,124.52273767040272,114.05221006808691,118.69013906790587,104.94633920891758,107.360802228819,104.62595619516701,113.87901042618206,108.72556377655467,123.13844114037096,130.28890402018112,112.97293176729971,109.55328814097597,112.15848912808393,123.27329018909062,125.11576745477949,120.78894027070616,115.17540126265288,109.81608584911982,119.62852579559889,122.03749448521246,133.55281014808259,109.83629425511016,109.44578765089942,139.90448393492218,120.92862446016466,131.00038999915506,119.16459350958517,102.80768434704704,111.26024711046972,104.27046075767991,111.95524308791524,119.68879546403649,105.6223243361047,119.43986143493851,118.66675223053868,105.3062797950349,118.97859953904852,130.79064929995076,126.96876202609393,121.97321377082778,112.43490564871163,118.53628692014459,131.66169404844035,119.81257513822395,126.73121254205633,116.04927360127445,120.45793147333126,118.78632264976555,118.17261364568543,102.85956387743407,123.38464022121293,109.72751575055661,121.76146950787368,118.51798257078666,134.14293912244705,121.91540990011849,111.43716954962299,123.19892687916368,138.19707013524996,130.69943047140356,105.41079278940819,127.35660948322355,111.10555243050985,122.32131423455434,118.68626588696847,127.27251141434635,109.73189441881019,122.35725655464721,122.39281537988995,127.83809796835385,132.24741356184262,119.39532690955269,115.67504925908244,100.66493511539504,135.35371202596892,123.20858542562954,130.50587772076315,117.66714854403989,142.80344159117436,127.69831743059008,126.957766037585,118.29166383713809,120.84903440501203,111.26484940302005,135.60667468675405,115.72433482422801,108.95854004447359,116.16088600936139,133.82832484429019,120.65164573081151,119.77454253981946,114.91118783304736,118.88593646408955,133.64687367957652,136.09262945174126,119.65030983164708,119.75485931053758,138.18270265502431,111.22857563376544,115.95936018469502,119.41969663485965,113.39780987695019,119.09502289945407,130.70691216841755,125.40751477250927,117.69836780029131,126.95929371227243,115.31742263370154,122.1212029926325,134.48948371559757,122.10753328984097,107.1164627380022,110.62623418032729,116.56402107475748,136.18104400439867,102.7563586027446,116.42939873013964,112.01976140191918,123.58715878384469,114.96347161468007,131.96599229676846,117.92295976124147,113.36488305409112,123.75062509225424,126.31892130255494,111.24651978230274,120.10891947534527,120.55610686382073,126.5622667588964,113.61591833640416,128.18361764051352,134.52348980446894,117.2501964523467,118.95283729969751,115.04299935376129,131.23932677042228,130.10252425708634,118.11164777040045,99.99265758242197,109.10574587975574,129.49861439511548,120.05035235874479,117.71497967089292,128.09405424358894,116.56678072543635,127.37271035586049,107.49187165704338,105.11845823645547,109.48411057956949,127.87437619349215,119.64864046128621,127.77654337456399,118.77834862754332,117.55686318229752,116.11517939898796,102.60706540606617,116.38707791668708,104.02372282913238,141.23457817580277,113.34135926909761,121.87167882232144,129.52192481353569,119.49780152712046,117.13503125081881,108.38745984483137,116.50664177984157,119.29771879506271,118.93669522668921,110.37281506160895,138.52887199381439,127.09287888726091,115.4419484530403,126.77833493722814,134.18185092180806,110.89946090378308,122.65844531170644,133.81036258565763,119.34244823160131,124.80213876322453,115.45670001197895,129.65964174161729,112.01066084592118,156.58288179195583,110.47975001769329,112.43720468449527,117.15665738245544,120.18166787316001,127.23896966144183,123.63967741417055,120.2896674563663,105.36413180809473,127.5936980426231,117.64772054216563,147.10420890768472,106.27217940625268,121.20443721476818,113.51012594212864,133.98592719989935,118.95039488021278,117.02898587730198,110.22159246637798,121.57613141089341,132.76623590990468,137.08576805120924,129.66480526071615,135.40413003662258,125.33139126929316,119.02500070540788,117.3022979062776,114.53604630819252,115.23038264479204,129.80770966679057,121.11827314785882,123.28485865300264,113.87495168250237,116.10789415732707,114.64715188997145,119.08636696010799,99.851938956267546,131.67033112079241,120.43266870453166,131.74424366508291,135.68473079582483,110.83597110197384,128.55836746000978,111.89237440617637,126.72918367807726,137.9962617500824],"y":[44,48,66,51,51,67,55,37,43,46,62,54,54,51,44,68,55,30,57,45,39,48,40,43,44,33,58,52,39,63,54,47,59,59,58,57,56,49,47,46,43,48,37,72,62,39,46,45,58,49,53,50,50,64,48,65,35,56,51,52,54,45,47,40,39,53,54,51,59,71,45,27,60,43,43,60,47,38,52,49,50,54,46,56,48,53,61,54,47,61,60,55,52,44,64,44,72,65,48,40,43,53,48,47,40,50,42,33,46,59,44,56,34,49,55,53,51,44,42,40,51,41,45,47,68,43,52,51,40,49,64,55,50,46,29,61,35,57,69,36,57,47,34,35,34,45,35,57,71,37,58,58,53,40,49,47,56,46,60,46,61,40,37,82,46,53,56,45,55,54,48,51,50,71,43,39,50,53,54,45,39,63,47,41,48,48,61,51,58,45,52,47,51,41,37,70,56,37,44,38,72,63,47,55,46,45,42,44,67,49,51,52,62,45,40,67,46,43,38,37,44,56,61,57,46,51,43,43,59,40,70,49,52,43,44,37,48,54,53,42,42,45,65,39,48,69,49,36,43,55,46,44,47,51,66,49,61,56,49,35,45,45,50,63,73,65,49,32,46,51,58,60,57,36,58,46,52,51,54,50,33,57,54,47,51,51,52,66,48,52,62,61,61,44,70,51,69,36,50,62],"z":[25.100000000000001,25,24.199999999999999,23.800000000000001,26.300000000000001,29.300000000000001,19.899999999999999,28.800000000000001,32.899999999999999,36.200000000000003,33.200000000000003,31,21.100000000000001,25.600000000000001,26.600000000000001,30.800000000000001,27.600000000000001,23,34.700000000000003,31.600000000000001,28.899999999999999,32.899999999999999,22.600000000000001,30.600000000000001,25.899999999999999,30.699999999999999,27.800000000000001,30.5,33.299999999999997,28,32.100000000000001,23.199999999999999,25.100000000000001,34.100000000000001,29.5,19.800000000000001,22.5,27.199999999999999,31.5,27.600000000000001,30.5,31.800000000000001,34.700000000000003,28.199999999999999,27.800000000000001,21,28.399999999999999,25.699999999999999,24.100000000000001,27.300000000000001,32.100000000000001,20,26.300000000000001,28.5,24.399999999999999,29.300000000000001,29.600000000000001,27.899999999999999,18.100000000000001,38.299999999999997,27.199999999999999,30.600000000000001,29.100000000000001,32.100000000000001,31.300000000000001,27.199999999999999,29.5,24.199999999999999,31.399999999999999,26.199999999999999,37.700000000000003,21.399999999999999,26.100000000000001,31.300000000000001,30,25.600000000000001,24,28.600000000000001,27.899999999999999,20.800000000000001,28.100000000000001,28.800000000000001,28.699999999999999,23.800000000000001,29.899999999999999,33.5,29.800000000000001,23.5,26.300000000000001,29.399999999999999,25.399999999999999,19.399999999999999,31.5,24.699999999999999,25.699999999999999,34,24.899999999999999,31.399999999999999,23,26.600000000000001,27.699999999999999,23.300000000000001,25.5,27.899999999999999,30.699999999999999,21.399999999999999,26.600000000000001,31,25.800000000000001,28.899999999999999,30,29.100000000000001,30.600000000000001,27.5,26.300000000000001,17.399999999999999,27.600000000000001,29.699999999999999,30.100000000000001,25.800000000000001,35.100000000000001,29.100000000000001,28.5,33.100000000000001,25.100000000000001,26.199999999999999,37.600000000000001,28,34.5,22.199999999999999,27.199999999999999,29.5,29.199999999999999,24,28.100000000000001,23.699999999999999,30.899999999999999,32.299999999999997,19.100000000000001,32.899999999999999,23,29.800000000000001,30.600000000000001,27.199999999999999,25.399999999999999,28.699999999999999,29.800000000000001,31.5,19.800000000000001,21.5,33.700000000000003,32.200000000000003,29.699999999999999,30.899999999999999,31.699999999999999,17.399999999999999,32.399999999999999,26.100000000000001,28.899999999999999,26.800000000000001,31.5,26.600000000000001,30.100000000000001,26.399999999999999,23.600000000000001,32.799999999999997,31,34.899999999999999,28.300000000000001,32.5,35.899999999999999,26.899999999999999,22.699999999999999,27,27.100000000000001,28.600000000000001,34.799999999999997,26.699999999999999,29.5,27.100000000000001,28.100000000000001,29.300000000000001,33.299999999999997,28.5,30.899999999999999,31.100000000000001,31.699999999999999,25.699999999999999,34.5,26.5,27.600000000000001,33.600000000000001,33.200000000000003,23.600000000000001,24.5,22.600000000000001,28.699999999999999,28.699999999999999,29.5,30.199999999999999,25.600000000000001,24,32.100000000000001,31,22,27.600000000000001,24.399999999999999,19.699999999999999,28.600000000000001,27.699999999999999,27.600000000000001,28.899999999999999,31.5,28.800000000000001,25.5,25.100000000000001,27.5,29.199999999999999,23.800000000000001,27.300000000000001,31.899999999999999,27.600000000000001,25.199999999999999,26.899999999999999,32.5,30.199999999999999,32.899999999999999,28.600000000000001,29.600000000000001,25.800000000000001,30.399999999999999,26,22.300000000000001,28.5,35.799999999999997,31.199999999999999,32.700000000000003,29.399999999999999,25.600000000000001,27.199999999999999,26.899999999999999,26.100000000000001,30.800000000000001,23.199999999999999,31.5,31.5,23.199999999999999,30.600000000000001,37.700000000000003,25.800000000000001,31.399999999999999,24.899999999999999,32.399999999999999,29,34.600000000000001,22.199999999999999,27.800000000000001,25.899999999999999,27.199999999999999,25.5,24.699999999999999,30.300000000000001,23.600000000000001,33.899999999999999,23.300000000000001,28.399999999999999,30.100000000000001,30.300000000000001,26.800000000000001,28.300000000000001,31.800000000000001,22.199999999999999,24.899999999999999,29.300000000000001,26.199999999999999,33.5,30.699999999999999,28.300000000000001,22,28.100000000000001,26.699999999999999,27.600000000000001,23.300000000000001,30,23.800000000000001,27.100000000000001,29.5,24.899999999999999,30.300000000000001,22.699999999999999,16.800000000000001,29.899999999999999,31.399999999999999,26.899999999999999,30,23.399999999999999,27.5,20.199999999999999,32.700000000000003,35.399999999999999],"mode":"markers","type":"scatter3d","marker":{"colorbar":{"title":"edad","ticklen":2},"cmin":27,"cmax":82,"colorscale":[["0","rgba(0,0,255,1)"],["0.0416666666666667","rgba(69,0,245,1)"],["0.0833333333333333","rgba(96,0,235,1)"],["0.125","rgba(115,0,224,1)"],["0.166666666666667","rgba(130,0,214,1)"],["0.208333333333333","rgba(143,0,204,1)"],["0.25","rgba(154,0,195,1)"],["0.291666666666667","rgba(164,0,185,1)"],["0.333333333333333","rgba(173,0,175,1)"],["0.375","rgba(181,0,165,1)"],["0.416666666666667","rgba(188,0,156,1)"],["0.458333333333333","rgba(195,0,146,1)"],["0.5","rgba(202,0,136,1)"],["0.541666666666667","rgba(207,0,127,1)"],["0.583333333333333","rgba(213,0,118,1)"],["0.625","rgba(218,0,108,1)"],["0.666666666666667","rgba(223,0,99,1)"],["0.708333333333333","rgba(228,0,89,1)"],["0.75","rgba(232,0,80,1)"],["0.791666666666667","rgba(236,0,70,1)"],["0.833333333333333","rgba(240,0,60,1)"],["0.875","rgba(244,0,49,1)"],["0.916666666666667","rgba(248,0,37,1)"],["0.958333333333333","rgba(251,0,23,1)"],["1","rgba(255,0,0,1)"]],"showscale":false,"color":[44,48,66,51,51,67,55,37,43,46,62,54,54,51,44,68,55,30,57,45,39,48,40,43,44,33,58,52,39,63,54,47,59,59,58,57,56,49,47,46,43,48,37,72,62,39,46,45,58,49,53,50,50,64,48,65,35,56,51,52,54,45,47,40,39,53,54,51,59,71,45,27,60,43,43,60,47,38,52,49,50,54,46,56,48,53,61,54,47,61,60,55,52,44,64,44,72,65,48,40,43,53,48,47,40,50,42,33,46,59,44,56,34,49,55,53,51,44,42,40,51,41,45,47,68,43,52,51,40,49,64,55,50,46,29,61,35,57,69,36,57,47,34,35,34,45,35,57,71,37,58,58,53,40,49,47,56,46,60,46,61,40,37,82,46,53,56,45,55,54,48,51,50,71,43,39,50,53,54,45,39,63,47,41,48,48,61,51,58,45,52,47,51,41,37,70,56,37,44,38,72,63,47,55,46,45,42,44,67,49,51,52,62,45,40,67,46,43,38,37,44,56,61,57,46,51,43,43,59,40,70,49,52,43,44,37,48,54,53,42,42,45,65,39,48,69,49,36,43,55,46,44,47,51,66,49,61,56,49,35,45,45,50,63,73,65,49,32,46,51,58,60,57,36,58,46,52,51,54,50,33,57,54,47,51,51,52,66,48,52,62,61,61,44,70,51,69,36,50,62],"line":{"colorbar":{"title":"","ticklen":2},"cmin":27,"cmax":82,"colorscale":[["0","rgba(0,0,255,1)"],["0.0416666666666667","rgba(69,0,245,1)"],["0.0833333333333333","rgba(96,0,235,1)"],["0.125","rgba(115,0,224,1)"],["0.166666666666667","rgba(130,0,214,1)"],["0.208333333333333","rgba(143,0,204,1)"],["0.25","rgba(154,0,195,1)"],["0.291666666666667","rgba(164,0,185,1)"],["0.333333333333333","rgba(173,0,175,1)"],["0.375","rgba(181,0,165,1)"],["0.416666666666667","rgba(188,0,156,1)"],["0.458333333333333","rgba(195,0,146,1)"],["0.5","rgba(202,0,136,1)"],["0.541666666666667","rgba(207,0,127,1)"],["0.583333333333333","rgba(213,0,118,1)"],["0.625","rgba(218,0,108,1)"],["0.666666666666667","rgba(223,0,99,1)"],["0.708333333333333","rgba(228,0,89,1)"],["0.75","rgba(232,0,80,1)"],["0.791666666666667","rgba(236,0,70,1)"],["0.833333333333333","rgba(240,0,60,1)"],["0.875","rgba(244,0,49,1)"],["0.916666666666667","rgba(248,0,37,1)"],["0.958333333333333","rgba(251,0,23,1)"],["1","rgba(255,0,0,1)"]],"showscale":false,"color":[44,48,66,51,51,67,55,37,43,46,62,54,54,51,44,68,55,30,57,45,39,48,40,43,44,33,58,52,39,63,54,47,59,59,58,57,56,49,47,46,43,48,37,72,62,39,46,45,58,49,53,50,50,64,48,65,35,56,51,52,54,45,47,40,39,53,54,51,59,71,45,27,60,43,43,60,47,38,52,49,50,54,46,56,48,53,61,54,47,61,60,55,52,44,64,44,72,65,48,40,43,53,48,47,40,50,42,33,46,59,44,56,34,49,55,53,51,44,42,40,51,41,45,47,68,43,52,51,40,49,64,55,50,46,29,61,35,57,69,36,57,47,34,35,34,45,35,57,71,37,58,58,53,40,49,47,56,46,60,46,61,40,37,82,46,53,56,45,55,54,48,51,50,71,43,39,50,53,54,45,39,63,47,41,48,48,61,51,58,45,52,47,51,41,37,70,56,37,44,38,72,63,47,55,46,45,42,44,67,49,51,52,62,45,40,67,46,43,38,37,44,56,61,57,46,51,43,43,59,40,70,49,52,43,44,37,48,54,53,42,42,45,65,39,48,69,49,36,43,55,46,44,47,51,66,49,61,56,49,35,45,45,50,63,73,65,49,32,46,51,58,60,57,36,58,46,52,51,54,50,33,57,54,47,51,51,52,66,48,52,62,61,61,44,70,51,69,36,50,62]}},"frame":null},{"x":[97.252348691344395,156.58288179195583],"y":[27,82],"type":"scatter3d","mode":"markers","opacity":0,"hoverinfo":"none","showlegend":false,"marker":{"colorbar":{"title":"edad","ticklen":2,"len":0.5,"lenmode":"fraction","y":1,"yanchor":"top"},"cmin":27,"cmax":82,"colorscale":[["0","rgba(0,0,255,1)"],["0.0416666666666667","rgba(69,0,245,1)"],["0.0833333333333333","rgba(96,0,235,1)"],["0.125","rgba(115,0,224,1)"],["0.166666666666667","rgba(130,0,214,1)"],["0.208333333333333","rgba(143,0,204,1)"],["0.25","rgba(154,0,195,1)"],["0.291666666666667","rgba(164,0,185,1)"],["0.333333333333333","rgba(173,0,175,1)"],["0.375","rgba(181,0,165,1)"],["0.416666666666667","rgba(188,0,156,1)"],["0.458333333333333","rgba(195,0,146,1)"],["0.5","rgba(202,0,136,1)"],["0.541666666666667","rgba(207,0,127,1)"],["0.583333333333333","rgba(213,0,118,1)"],["0.625","rgba(218,0,108,1)"],["0.666666666666667","rgba(223,0,99,1)"],["0.708333333333333","rgba(228,0,89,1)"],["0.75","rgba(232,0,80,1)"],["0.791666666666667","rgba(236,0,70,1)"],["0.833333333333333","rgba(240,0,60,1)"],["0.875","rgba(244,0,49,1)"],["0.916666666666667","rgba(248,0,37,1)"],["0.958333333333333","rgba(251,0,23,1)"],["1","rgba(255,0,0,1)"]],"showscale":true,"color":[27,82],"line":{"color":"rgba(255,127,14,1)"}},"z":[16.800000000000001,38.299999999999997],"frame":null}],"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.20000000000000001,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+</div>
+</div>
+</section></section>
+<section>
 <section id="ejercicios-de-interaccioes-con-variables-cuantitativas" class="title-slide slide level1 center">
 <h1>8. Ejercicios de interaccioes con variables cuantitativas</h1>
 
 </section>
-
+<section id="pima-pliegue-cutáneo-edad-sobre-el-imc" class="slide level2">
+<h2>Pima: pliegue cutáneo × edad sobre el IMC</h2>
+<p>Utilizano la base de datos <code>Pima.tr</code> de <code>MASS</code>, evalúe si la asociación entre <strong>pliegue cutáneo</strong> y <strong>IMC</strong> depende de la <strong>edad</strong>. Grafice, ajuste el modelo con y sin interacción, interprete los coeficientes y reporte los efectos condicionales. Centre si es necesario para que los efectos principales tengan sentido.</p>
+</section>
+<section id="sodio-edad-sobre-la-pas-ajustando-por-imc" class="slide level2">
+<h2>Sodio × edad sobre la PAS (ajustando por IMC)</h2>
+<p>Simule los siguientes datos:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb42"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a></a><span class="fu">set.seed</span>(<span class="dv">2024</span>)</span>
+<span id="cb42-2"><a></a>n     <span class="ot">&lt;-</span> <span class="dv">400</span></span>
+<span id="cb42-3"><a></a>edad  <span class="ot">&lt;-</span> <span class="fu">round</span>(<span class="fu">pmin</span>(<span class="dv">80</span>, <span class="fu">pmax</span>(<span class="dv">25</span>, <span class="fu">rnorm</span>(n, <span class="dv">50</span>, <span class="dv">12</span>))))</span>
+<span id="cb42-4"><a></a>imc   <span class="ot">&lt;-</span> <span class="fu">round</span>(<span class="fu">rnorm</span>(n, <span class="dv">28</span>, <span class="dv">4</span>), <span class="dv">1</span>)</span>
+<span id="cb42-5"><a></a>sodio <span class="ot">&lt;-</span> <span class="fu">round</span>(<span class="fu">pmax</span>(<span class="fl">0.5</span>, <span class="fl">3.5</span> <span class="sc">+</span> <span class="fl">0.08</span><span class="sc">*</span>(imc <span class="sc">-</span> <span class="dv">28</span>) <span class="sc">+</span> <span class="fu">rnorm</span>(n, <span class="dv">0</span>, <span class="dv">1</span>)), <span class="dv">2</span>)</span>
+<span id="cb42-6"><a></a>pas   <span class="ot">&lt;-</span> <span class="dv">125</span> <span class="sc">+</span> <span class="fl">0.5</span><span class="sc">*</span>(edad <span class="sc">-</span> <span class="dv">50</span>) <span class="sc">+</span> <span class="fl">0.6</span><span class="sc">*</span>(imc <span class="sc">-</span> <span class="dv">28</span>) <span class="sc">+</span> <span class="dv">2</span><span class="sc">*</span>(sodio <span class="sc">-</span> <span class="fl">3.5</span>) <span class="sc">+</span></span>
+<span id="cb42-7"><a></a>         <span class="fl">0.12</span><span class="sc">*</span>(sodio <span class="sc">-</span> <span class="fl">3.5</span>)<span class="sc">*</span>(edad <span class="sc">-</span> <span class="dv">50</span>) <span class="sc">+</span> <span class="fu">rnorm</span>(n, <span class="dv">0</span>, <span class="dv">10</span>)</span>
+<span id="cb42-8"><a></a>d_na  <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">pas =</span> <span class="fu">round</span>(pas), sodio, edad, imc)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Posteriormente responda: si el efecto del sodio sobre la PAS depende de la edad, ¿cómo cambia la pendiente del sodio por cada año adicional de edad?</p>
+</section></section>
 <section>
 <section id="resumen-y-conclusiones" class="title-slide slide level1 center">
 <h1>9. Resumen y conclusiones</h1>
@@ -1461,7 +1711,7 @@ age_c:smoke_fFuma  -46.572     20.447  -2.278    0.024</code></pre>
     </div>
   <div class="quarto-auto-generated-content" style="display: none;">
 <div class="footer footer-default">
-<p>Bioestadística Avanzada · Modelos lineales — Parte 2</p>
+<p>Bioestadística Avanzada · Modelos lineales. Parte 3. Interacciones.</p>
 </div>
 </div></div>
 

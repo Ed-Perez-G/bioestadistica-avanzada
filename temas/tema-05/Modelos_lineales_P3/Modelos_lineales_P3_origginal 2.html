@@ -1,0 +1,1462 @@
+<!DOCTYPE html>
+<html lang="es"><head>
+<script src="../../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../../site_libs/quarto-html/tabby.min.js"></script>
+<script src="../../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<link href="../../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../../site_libs/quarto-html/light-border.css" rel="stylesheet">
+<link href="../../../site_libs/quarto-html/quarto-syntax-highlighting-7b89279ff1a6dce999919e0e67d4d9ec.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
+  <meta name="generator" content="quarto-1.8.25">
+
+  <meta name="author" content="Edsaul Emilio Pérez Guerrero">
+  <meta name="dcterms.date" content="2026-10-05">
+  <title>Bioestadística avanzada – Modelos lineales — Parte 3</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <link rel="stylesheet" href="../../../site_libs/revealjs/dist/reset.css">
+  <link rel="stylesheet" href="../../../site_libs/revealjs/dist/reveal.css">
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+      vertical-align: middle;
+    }
+    /* CSS for syntax highlighting */
+    html { -webkit-text-size-adjust: 100%; }
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      { color: #003b4f; background-color: #f1f3f5; }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span { color: #003b4f; } /* Normal */
+    code span.al { color: #ad0000; } /* Alert */
+    code span.an { color: #5e5e5e; } /* Annotation */
+    code span.at { color: #657422; } /* Attribute */
+    code span.bn { color: #ad0000; } /* BaseN */
+    code span.bu { } /* BuiltIn */
+    code span.cf { color: #003b4f; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #20794d; } /* Char */
+    code span.cn { color: #8f5902; } /* Constant */
+    code span.co { color: #5e5e5e; } /* Comment */
+    code span.cv { color: #5e5e5e; font-style: italic; } /* CommentVar */
+    code span.do { color: #5e5e5e; font-style: italic; } /* Documentation */
+    code span.dt { color: #ad0000; } /* DataType */
+    code span.dv { color: #ad0000; } /* DecVal */
+    code span.er { color: #ad0000; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #ad0000; } /* Float */
+    code span.fu { color: #4758ab; } /* Function */
+    code span.im { color: #00769e; } /* Import */
+    code span.in { color: #5e5e5e; } /* Information */
+    code span.kw { color: #003b4f; font-weight: bold; } /* Keyword */
+    code span.op { color: #5e5e5e; } /* Operator */
+    code span.ot { color: #003b4f; } /* Other */
+    code span.pp { color: #ad0000; } /* Preprocessor */
+    code span.sc { color: #5e5e5e; } /* SpecialChar */
+    code span.ss { color: #20794d; } /* SpecialString */
+    code span.st { color: #20794d; } /* String */
+    code span.va { color: #111111; } /* Variable */
+    code span.vs { color: #20794d; } /* VerbatimString */
+    code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
+  </style>
+  <link rel="stylesheet" href="../../../site_libs/revealjs/dist/theme/quarto-7262fb28817f0fdf3c802d565bf43787.css">
+  <link href="../../../site_libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
+  <link href="../../../site_libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
+  <link href="../../../site_libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
+  <link href="../../../site_libs/revealjs/plugin/quarto-support/footer.css" rel="stylesheet">
+  <style type="text/css">
+    .reveal div.sourceCode {
+      margin: 0;
+      overflow: auto;
+    }
+    .reveal div.hanging-indent {
+      margin-left: 1em;
+      text-indent: -1em;
+    }
+    .reveal .slide:not(.center) {
+      height: 100%;
+      overflow-y: auto;
+    }
+    .reveal .slide.scrollable {
+      overflow-y: auto;
+    }
+    .reveal .footnotes {
+      height: 100%;
+      overflow-y: auto;
+    }
+    .reveal .slide .absolute {
+      position: absolute;
+      display: block;
+    }
+    .reveal .footnotes ol {
+      counter-reset: ol;
+      list-style-type: none; 
+      margin-left: 0;
+    }
+    .reveal .footnotes ol li:before {
+      counter-increment: ol;
+      content: counter(ol) ". "; 
+    }
+    .reveal .footnotes ol li > p:first-child {
+      display: inline-block;
+    }
+    .reveal .slide ul,
+    .reveal .slide ol {
+      margin-bottom: 0.5em;
+    }
+    .reveal .slide ul li,
+    .reveal .slide ol li {
+      margin-top: 0.4em;
+      margin-bottom: 0.2em;
+    }
+    .reveal .slide ul[role="tablist"] li {
+      margin-bottom: 0;
+    }
+    .reveal .slide ul li > *:first-child,
+    .reveal .slide ol li > *:first-child {
+      margin-block-start: 0;
+    }
+    .reveal .slide ul li > *:last-child,
+    .reveal .slide ol li > *:last-child {
+      margin-block-end: 0;
+    }
+    .reveal .slide .columns:nth-child(3) {
+      margin-block-start: 0.8em;
+    }
+    .reveal blockquote {
+      box-shadow: none;
+    }
+    .reveal .tippy-content>* {
+      margin-top: 0.2em;
+      margin-bottom: 0.7em;
+    }
+    .reveal .tippy-content>*:last-child {
+      margin-bottom: 0.2em;
+    }
+    .reveal .slide > img.stretch.quarto-figure-center,
+    .reveal .slide > img.r-stretch.quarto-figure-center {
+      display: block;
+      margin-left: auto;
+      margin-right: auto; 
+    }
+    .reveal .slide > img.stretch.quarto-figure-left,
+    .reveal .slide > img.r-stretch.quarto-figure-left  {
+      display: block;
+      margin-left: 0;
+      margin-right: auto; 
+    }
+    .reveal .slide > img.stretch.quarto-figure-right,
+    .reveal .slide > img.r-stretch.quarto-figure-right  {
+      display: block;
+      margin-left: auto;
+      margin-right: 0; 
+    }
+  </style>
+  <script src="../../../site_libs/quarto-diagram/mermaid.min.js"></script>
+  <script src="../../../site_libs/quarto-diagram/mermaid-init.js"></script>
+  <link href="../../../site_libs/quarto-diagram/mermaid.css" rel="stylesheet">
+</head>
+<body class="quarto-light">
+  <div class="reveal">
+    <div class="slides">
+
+<section id="title-slide" class="quarto-title-block center">
+  <h1 class="title">Modelos lineales — Parte 3</h1>
+  <p class="subtitle">Interacciones (modificación de efecto) en regresión lineal múltiple</p>
+
+<div class="quarto-title-authors">
+<div class="quarto-title-author">
+<div class="quarto-title-author-name">
+Edsaul Emilio Pérez Guerrero 
+</div>
+</div>
+</div>
+
+  <p class="date">2026-10-05</p>
+</section>
+<section id="ruta-de-la-sesión-60-min" class="slide level2">
+<h2>Ruta de la sesión (60 min)</h2>
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th>Bloque</th>
+<th>Tema</th>
+<th>Min</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>1</td>
+<td>¿Qué es una interacción?</td>
+<td>7</td>
+</tr>
+<tr class="even">
+<td>2</td>
+<td>Confusión <em>vs</em> interacción</td>
+<td>10</td>
+</tr>
+<tr class="odd">
+<td>3</td>
+<td>¿Por qué incluirla? ¿Qué pasa si la omito?</td>
+<td>10</td>
+</tr>
+<tr class="even">
+<td>4</td>
+<td>¿Qué indica una interacción significativa? ¿Cómo evaluarla?</td>
+<td>8</td>
+</tr>
+<tr class="odd">
+<td>5</td>
+<td>Efectos, gráficas e interpretación</td>
+<td>15</td>
+</tr>
+<tr class="even">
+<td>6</td>
+<td>Ejercicios de práctica</td>
+<td>10</td>
+</tr>
+</tbody>
+</table>
+<p>Paquetes: solo <code>ggplot2</code> y los datos de <code>MASS</code> (<code>birthwt</code>, <code>Pima.tr</code>) + simulaciones.</p>
+</section>
+<section id="recordatorio-el-modelo-de-regresión-múltiple" class="slide level2">
+<h2>Recordatorio: el modelo de regresión múltiple</h2>
+<p>Celis (cap. 24) define el modelo general para <em>k</em> variables independientes:</p>
+<p><span class="math display">\[Y = \beta_0 + \beta_1X_1 + \beta_2X_2 + \dots + \beta_kX_k + \varepsilon\]</span></p>
+<p>Las <span class="math inline">\(X\)</span> pueden ser variables básicas <strong>o funciones de ellas</strong>: <span class="math inline">\(\ln(X_1)\)</span>, <span class="math inline">\(X_1^2\)</span>… o el <strong>producto</strong> <span class="math inline">\(X_1X_2\)</span>. Celis plantea, entre los modelos candidatos:</p>
+<p><span class="math display">\[Y = \beta_0 + \beta_1X_1 + \beta_2X_2 + \beta_3X_1X_2 + \varepsilon\]</span></p>
+<p>Ese término <span class="math inline">\(\beta_3X_1X_2\)</span> es el <strong>término de interacción</strong> y es el tema de hoy.</p>
+<p>Supuestos (Celis): existencia, independencia, linealidad, homocedasticidad y normalidad — <strong>siguen aplicando</strong> al modelo con interacción.</p>
+</section>
+<section>
+<section id="qué-es-una-interacción" class="title-slide slide level1 center">
+<h1>1. ¿Qué es una interacción?</h1>
+
+</section>
+<section id="definición" class="slide level2">
+<h2>Definición</h2>
+<p>Existe <strong>interacción</strong> cuando el efecto de una variable independiente sobre <span class="math inline">\(Y\)</span> <strong>depende del nivel</strong> de otra variable independiente.</p>
+<p>Reordenando el modelo:</p>
+<p><span class="math display">\[Y = \beta_0 + \beta_2X_2 + \underbrace{(\beta_1 + \beta_3X_2)}_{\text{pendiente de } X_1}X_1 + \varepsilon\]</span></p>
+<ul>
+<li>Sin interacción (<span class="math inline">\(\beta_3 = 0\)</span>): la pendiente de <span class="math inline">\(X_1\)</span> es <strong>la misma</strong> para cualquier valor de <span class="math inline">\(X_2\)</span> → líneas <strong>paralelas</strong>.</li>
+<li>Con interacción (<span class="math inline">\(\beta_3 \neq 0\)</span>): la pendiente de <span class="math inline">\(X_1\)</span> <strong>cambia</strong> con <span class="math inline">\(X_2\)</span> → líneas <strong>no paralelas</strong>.</li>
+</ul>
+<p>Sinónimos según la disciplina: <strong>modificación de efecto</strong> (epidemiología), <strong>moderación</strong> (psicología), <strong>heterogeneidad del efecto</strong> (ensayos clínicos), <strong>G×E / epistasis estadística</strong> (genética).</p>
+</section>
+<section id="visualmente-aditivo-vs-interacción" class="slide level2">
+<h2>Visualmente: aditivo <em>vs</em> interacción</h2>
+<div class="cell columns column-output-location">
+<div class="column">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a></a>g <span class="ot">&lt;-</span> <span class="fu">expand.grid</span>(<span class="at">X1 =</span> <span class="dv">0</span><span class="sc">:</span><span class="dv">10</span>,</span>
+<span id="cb1-2"><a></a>                 <span class="at">X2 =</span> <span class="fu">factor</span>(<span class="fu">c</span>(<span class="st">"X2 = 0"</span>, <span class="st">"X2 = 1"</span>)))</span>
+<span id="cb1-3"><a></a>x2 <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(g<span class="sc">$</span>X2) <span class="sc">-</span> <span class="dv">1</span></span>
+<span id="cb1-4"><a></a>g<span class="sc">$</span>Aditivo     <span class="ot">&lt;-</span> <span class="dv">2</span> <span class="sc">+</span> <span class="dv">1</span><span class="sc">*</span>g<span class="sc">$</span>X1 <span class="sc">+</span> <span class="dv">3</span><span class="sc">*</span>x2</span>
+<span id="cb1-5"><a></a>g<span class="sc">$</span>Interaccion <span class="ot">&lt;-</span> <span class="dv">2</span> <span class="sc">+</span> <span class="dv">1</span><span class="sc">*</span>g<span class="sc">$</span>X1 <span class="sc">+</span> <span class="dv">3</span><span class="sc">*</span>x2 <span class="sc">+</span> <span class="dv">1</span><span class="sc">*</span>g<span class="sc">$</span>X1<span class="sc">*</span>x2</span>
+<span id="cb1-6"><a></a></span>
+<span id="cb1-7"><a></a>g_largo <span class="ot">&lt;-</span> <span class="fu">rbind</span>(</span>
+<span id="cb1-8"><a></a>  <span class="fu">data.frame</span>(g[<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>], <span class="at">Y =</span> g<span class="sc">$</span>Aditivo,     <span class="at">modelo =</span> <span class="st">"Aditivo (β3 = 0)"</span>),</span>
+<span id="cb1-9"><a></a>  <span class="fu">data.frame</span>(g[<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>], <span class="at">Y =</span> g<span class="sc">$</span>Interaccion, <span class="at">modelo =</span> <span class="st">"Con interacción (β3 = 1)"</span>))</span>
+<span id="cb1-10"><a></a></span>
+<span id="cb1-11"><a></a><span class="fu">ggplot</span>(g_largo, <span class="fu">aes</span>(X1, Y, <span class="at">colour =</span> X2)) <span class="sc">+</span></span>
+<span id="cb1-12"><a></a>  <span class="fu">geom_line</span>(<span class="at">linewidth =</span> <span class="fl">1.2</span>) <span class="sc">+</span></span>
+<span id="cb1-13"><a></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> modelo, <span class="at">ncol =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb1-14"><a></a>  <span class="fu">labs</span>(<span class="at">colour =</span> <span class="cn">NULL</span>) <span class="sc">+</span></span>
+<span id="cb1-15"><a></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"top"</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div><div class="column">
+<div class="cell-output-display">
+<div>
+<figure>
+<p><img data-src="Modelos_lineales_P3_origginal_files/figure-revealjs/unnamed-chunk-1-1.png" width="480"></p>
+</figure>
+</div>
+</div>
+</div></div>
+</section>
+<section id="interacción-en-ciencias-de-la-salud-ejemplos" class="slide level2">
+<h2>Interacción en ciencias de la salud: ejemplos</h2>
+<ul>
+<li><strong>Farmacología:</strong> el efecto de un antihipertensivo sobre la PAS depende de la ingesta de sodio.</li>
+<li><strong>Epidemiología:</strong> el efecto de la edad materna sobre el peso al nacer depende del tabaquismo (lo veremos con <code>birthwt</code>).</li>
+<li><strong>Genética (G×E):</strong> el efecto de un alelo de riesgo sobre el IMC se atenúa en personas físicamente activas.</li>
+<li><strong>Clínica:</strong> el efecto del IMC sobre la PAS es mayor en personas de mayor edad (simulación más adelante).</li>
+</ul>
+<div class="callout callout-note callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Nota</strong></p>
+</div>
+<div class="callout-content">
+<p>La pregunta clave es siempre: <strong>¿el efecto de X es el mismo para todos, o depende de quién es la persona?</strong></p>
+</div>
+</div>
+</div>
+</section></section>
+<section>
+<section id="confusión-vs-interacción" class="title-slide slide level1 center">
+<h1>2. Confusión <em>vs</em> interacción</h1>
+
+</section>
+<section id="dos-fenómenos-distintos" class="slide level2">
+<h2>Dos fenómenos distintos</h2>
+<table class="caption-top">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Confusión</strong></th>
+<th><strong>Interacción (modificación de efecto)</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>¿Qué es?</td>
+<td>Un <strong>sesgo</strong>: una tercera variable distorsiona la asociación X–Y</td>
+<td>Un <strong>fenómeno real</strong>: el efecto de X difiere según Z</td>
+</tr>
+<tr class="even">
+<td>Condición</td>
+<td>Z se asocia con X <strong>y</strong> con Y, y no es intermedia</td>
+<td>El efecto de X sobre Y cambia entre niveles de Z</td>
+</tr>
+<tr class="odd">
+<td>¿Cómo se detecta?</td>
+<td>Comparando <span class="math inline">\(\beta_{crudo}\)</span> vs <span class="math inline">\(\beta_{ajustado}\)</span> (cambio ≳ 10 %)</td>
+<td>Término producto <span class="math inline">\(X \times Z\)</span> (o estratificando)</td>
+</tr>
+<tr class="even">
+<td>Estimadores por estrato</td>
+<td><strong>Similares</strong> entre sí, pero distintos del crudo</td>
+<td><strong>Diferentes</strong> entre estratos</td>
+</tr>
+<tr class="odd">
+<td>¿Qué hacer?</td>
+<td><strong>Ajustar</strong> (incluir Z) y reportar el efecto ajustado</td>
+<td><strong>Describir</strong>: reportar el efecto de X <strong>en cada nivel</strong> de Z</td>
+</tr>
+<tr class="even">
+<td>Objetivo</td>
+<td>Eliminarla</td>
+<td>Entenderla y reportarla</td>
+</tr>
+</tbody>
+</table>
+<p>Una misma variable puede ser confusora, modificadora, ambas o ninguna. <strong>Primero</strong> se evalúa la interacción; si no hay, <strong>después</strong> la confusión.</p>
+</section>
+<section id="simulación-1-confusión-café-tabaquismo-y-pas" class="slide level2">
+<h2>Simulación 1 — Confusión: café, tabaquismo y PAS</h2>
+<p>El tabaquismo aumenta el consumo de café <strong>y</strong> la PAS. El café <strong>no</strong> tiene efecto real.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a></a><span class="fu">set.seed</span>(<span class="dv">2026</span>)</span>
+<span id="cb2-2"><a></a>n    <span class="ot">&lt;-</span> <span class="dv">400</span></span>
+<span id="cb2-3"><a></a>fuma <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(n, <span class="dv">1</span>, <span class="fl">0.3</span>)</span>
+<span id="cb2-4"><a></a>cafe <span class="ot">&lt;-</span> <span class="fu">pmax</span>(<span class="dv">0</span>, <span class="fu">round</span>(<span class="dv">1</span> <span class="sc">+</span> <span class="dv">2</span> <span class="sc">*</span> fuma <span class="sc">+</span> <span class="fu">rnorm</span>(n, <span class="dv">0</span>, <span class="dv">1</span>), <span class="dv">1</span>))   <span class="co"># tazas/día</span></span>
+<span id="cb2-5"><a></a>pas  <span class="ot">&lt;-</span> <span class="dv">118</span> <span class="sc">+</span> <span class="dv">0</span> <span class="sc">*</span> cafe <span class="sc">+</span> <span class="dv">12</span> <span class="sc">*</span> fuma <span class="sc">+</span> <span class="fu">rnorm</span>(n, <span class="dv">0</span>, <span class="dv">10</span>)        <span class="co"># café: efecto real = 0</span></span>
+<span id="cb2-6"><a></a>d_conf <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(pas, cafe, <span class="at">fuma =</span> <span class="fu">factor</span>(fuma, <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"No fuma"</span>, <span class="st">"Fuma"</span>)))</span>
+<span id="cb2-7"><a></a></span>
+<span id="cb2-8"><a></a>crudo    <span class="ot">&lt;-</span> <span class="fu">lm</span>(pas <span class="sc">~</span> cafe, <span class="at">data =</span> d_conf)</span>
+<span id="cb2-9"><a></a>ajustado <span class="ot">&lt;-</span> <span class="fu">lm</span>(pas <span class="sc">~</span> cafe <span class="sc">+</span> fuma, <span class="at">data =</span> d_conf)</span>
+<span id="cb2-10"><a></a>interac  <span class="ot">&lt;-</span> <span class="fu">lm</span>(pas <span class="sc">~</span> cafe <span class="sc">*</span> fuma, <span class="at">data =</span> d_conf)</span>
+<span id="cb2-11"><a></a></span>
+<span id="cb2-12"><a></a><span class="fu">c</span>(<span class="at">crudo =</span> <span class="fu">coef</span>(crudo)[<span class="st">"cafe"</span>], <span class="at">ajustado =</span> <span class="fu">coef</span>(ajustado)[<span class="st">"cafe"</span>])</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   crudo.cafe ajustado.cafe 
+    3.2580661     0.4389347 </code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a></a><span class="fu">summary</span>(interac)<span class="sc">$</span>coefficients[<span class="st">"cafe:fumaFuma"</span>, ]</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  Estimate Std. Error    t value   Pr(&gt;|t|) 
+ 0.2935593  1.0827653  0.2711200  0.7864400 </code></pre>
+</div>
+</div>
+<ul>
+<li>Crudo ≈ 3.3 mmHg/taza (¡“significativo”!) → ajustado ≈ 0.4: cambio ≫ 10 % → <strong>confusión</strong>.</li>
+<li>Término <code>cafe:fumaFuma</code> no significativo → <strong>no hay interacción</strong>.</li>
+</ul>
+</section>
+<section id="así-se-ve-la-confusión" class="slide level2">
+<h2>Así se ve la confusión</h2>
+<div class="cell columns column-output-location">
+<div class="column">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a></a><span class="fu">ggplot</span>(d_conf, <span class="fu">aes</span>(cafe, pas)) <span class="sc">+</span></span>
+<span id="cb6-2"><a></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">colour =</span> fuma), <span class="at">alpha =</span> <span class="fl">0.4</span>) <span class="sc">+</span></span>
+<span id="cb6-3"><a></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"lm"</span>, <span class="at">se =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb6-4"><a></a>              <span class="at">colour =</span> <span class="st">"black"</span>, <span class="at">linetype =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
+<span id="cb6-5"><a></a>  <span class="fu">geom_smooth</span>(<span class="fu">aes</span>(<span class="at">colour =</span> fuma),</span>
+<span id="cb6-6"><a></a>              <span class="at">method =</span> <span class="st">"lm"</span>, <span class="at">se =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
+<span id="cb6-7"><a></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Café (tazas/día)"</span>, <span class="at">y =</span> <span class="st">"PAS (mmHg)"</span>,</span>
+<span id="cb6-8"><a></a>       <span class="at">colour =</span> <span class="cn">NULL</span>,</span>
+<span id="cb6-9"><a></a>       <span class="at">caption =</span> <span class="st">"Línea punteada = modelo crudo"</span>) <span class="sc">+</span></span>
+<span id="cb6-10"><a></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"top"</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div><div class="column">
+<div class="cell-output-display">
+<div>
+<figure>
+<p><img data-src="Modelos_lineales_P3_origginal_files/figure-revealjs/unnamed-chunk-3-1.png" width="480"></p>
+</figure>
+</div>
+</div>
+</div></div>
+<ul>
+<li>Dentro de cada estrato las líneas son <strong>planas y paralelas</strong> (sin efecto, sin interacción).</li>
+<li>La línea cruda sube solo porque los fumadores toman más café y tienen PAS más alta.</li>
+</ul>
+</section>
+<section id="guía-de-decisión" class="slide level2">
+<h2>Guía de decisión</h2>
+<div class="cell" data-reveal="true" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource default number-lines code-with-copy"><code class="sourceCode default"><span id="cb7-1"><a></a>flowchart TD</span>
+<span id="cb7-2"><a></a>  A[Asociación X → Y&lt;br/&gt;¿tercera variable Z?] --&gt; B[Ajustar modelo con X*Z]</span>
+<span id="cb7-3"><a></a>  B --&gt; C{¿β3 de X:Z&lt;br/&gt;significativo y&lt;br/&gt;clínicamente relevante?}</span>
+<span id="cb7-4"><a></a>  C -- Sí --&gt; D[INTERACCIÓN&lt;br/&gt;Reportar el efecto de X&lt;br/&gt;en cada nivel de Z]</span>
+<span id="cb7-5"><a></a>  C -- No --&gt; E[Quitar X:Z&lt;br/&gt;comparar β crudo vs β ajustado por Z]</span>
+<span id="cb7-6"><a></a>  E --&gt; F{¿Cambio ≥ 10 %?}</span>
+<span id="cb7-7"><a></a>  F -- Sí --&gt; G[CONFUSIÓN&lt;br/&gt;Reportar efecto ajustado]</span>
+<span id="cb7-8"><a></a>  F -- No --&gt; H[Z no confunde&lt;br/&gt;ni modifica]</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<p></p><figure class=""><p></p>
+<div>
+<pre class="mermaid mermaid-js">flowchart TD
+  A[Asociación X → Y&lt;br/&gt;¿tercera variable Z?] --&gt; B[Ajustar modelo con X*Z]
+  B --&gt; C{¿β3 de X:Z&lt;br/&gt;significativo y&lt;br/&gt;clínicamente relevante?}
+  C -- Sí --&gt; D[INTERACCIÓN&lt;br/&gt;Reportar el efecto de X&lt;br/&gt;en cada nivel de Z]
+  C -- No --&gt; E[Quitar X:Z&lt;br/&gt;comparar β crudo vs β ajustado por Z]
+  E --&gt; F{¿Cambio ≥ 10 %?}
+  F -- Sí --&gt; G[CONFUSIÓN&lt;br/&gt;Reportar efecto ajustado]
+  F -- No --&gt; H[Z no confunde&lt;br/&gt;ni modifica]
+</pre>
+</div>
+<p></p></figure><p></p>
+</div>
+</div>
+</div>
+</section></section>
+<section>
+<section id="por-qué-incluirla-qué-pasa-si-la-omito" class="title-slide slide level1 center">
+<h1>3. ¿Por qué incluirla? ¿Qué pasa si la omito?</h1>
+
+</section>
+<section id="omitir-una-interacción-real-sesga-los-efectos-simples" class="slide level2">
+<h2>Omitir una interacción real sesga los efectos simples</h2>
+<p>Si los datos se generan con <span class="math inline">\(Y=\beta_0+\beta_1X+\beta_2Z+\beta_3XZ+\varepsilon\)</span> y ajustamos solo <span class="math inline">\(Y \sim X + Z\)</span>, Rimpler et al.&nbsp;(2025) muestran que lo que en realidad estimamos es:</p>
+<p><span class="math display">\[b_1 = \beta_1 + \beta_3\,\mu_Z \qquad\qquad b_2 = \beta_2 + \beta_3\,\mu_X\]</span></p>
+<p>El efecto “simple” absorbe la interacción multiplicada <strong>por la media de la otra variable</strong>. Consecuencias:</p>
+<ul>
+<li>El efecto puede <strong>inflarse</strong> (interacción sinérgica).</li>
+<li>Puede <strong>desaparecer</strong> (<span class="math inline">\(b_1 \approx 0\)</span>) aunque <span class="math inline">\(\beta_1 \neq 0\)</span>.</li>
+<li>Puede <strong>invertir su signo</strong> (interacción antagónica).</li>
+</ul>
+<p>Además, los residuales ya no son independientes ni homocedásticos → los valores <em>p</em> del modelo mal especificado <strong>no son confiables</strong>.</p>
+</section>
+<section id="simulación-2-reproduciendo-a-rimpler-et-al.-tabla-2" class="slide level2">
+<h2>Simulación 2 — reproduciendo a Rimpler et al.&nbsp;(Tabla 2)</h2>
+<p>Verdad: <span class="math inline">\(\beta_1 = \beta_2 = 1\)</span>, <span class="math inline">\(\mu_X = 1\)</span>, <span class="math inline">\(\mu_Z = 2\)</span>. Ajustamos el modelo <strong>sin</strong> interacción:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a></a><span class="fu">set.seed</span>(<span class="dv">1</span>)</span>
+<span id="cb8-2"><a></a>N <span class="ot">&lt;-</span> <span class="fl">1e5</span></span>
+<span id="cb8-3"><a></a>X <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(N, <span class="at">mean =</span> <span class="dv">1</span>, <span class="at">sd =</span> <span class="dv">1</span>)</span>
+<span id="cb8-4"><a></a>Z <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(N, <span class="at">mean =</span> <span class="dv">2</span>, <span class="at">sd =</span> <span class="dv">1</span>)</span>
+<span id="cb8-5"><a></a></span>
+<span id="cb8-6"><a></a>b3_verdad <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">1</span>, <span class="sc">-</span><span class="fl">0.5</span>, <span class="dv">0</span>, <span class="fl">0.5</span>, <span class="dv">1</span>)</span>
+<span id="cb8-7"><a></a>tabla <span class="ot">&lt;-</span> <span class="fu">t</span>(<span class="fu">sapply</span>(b3_verdad, <span class="cf">function</span>(b3) {</span>
+<span id="cb8-8"><a></a>  Y <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">*</span>X <span class="sc">+</span> <span class="dv">1</span><span class="sc">*</span>Z <span class="sc">+</span> b3<span class="sc">*</span>X<span class="sc">*</span>Z <span class="sc">+</span> <span class="fu">rnorm</span>(N)</span>
+<span id="cb8-9"><a></a>  <span class="fu">coef</span>(<span class="fu">lm</span>(Y <span class="sc">~</span> X <span class="sc">+</span> Z))          <span class="co"># modelo mal especificado</span></span>
+<span id="cb8-10"><a></a>}))</span>
+<span id="cb8-11"><a></a><span class="fu">data.frame</span>(<span class="at">beta3 =</span> b3_verdad, <span class="fu">round</span>(tabla, <span class="dv">2</span>))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  beta3 X.Intercept.     X   Z
+1  -1.0         2.00 -0.99 0.0
+2  -0.5         1.00  0.00 0.5
+3   0.0         0.00  1.00 1.0
+4   0.5        -1.01  2.00 1.5
+5   1.0        -2.00  3.00 2.0</code></pre>
+</div>
+</div>
+<p>Con <span class="math inline">\(\beta_3=-0.5\)</span> el efecto de X “desaparece”; con <span class="math inline">\(\beta_3=-1\)</span> ¡<strong>cambia de signo</strong>! (verdad = +1 en ambos casos).</p>
+</section>
+<section id="forma-de-la-interacción-rimpler-et-al.-2025" class="slide level2">
+<h2>Forma de la interacción (Rimpler et al., 2025)</h2>
+<table class="caption-top">
+<colgroup>
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Tipo</th>
+<th>Signos</th>
+<th>Ejemplo en salud</th>
+<th>Si la omito…</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Sinérgica</strong></td>
+<td><span class="math inline">\(\beta_1, \beta_2, \beta_3\)</span> mismo signo</td>
+<td>Tabaquismo + exposición a asbesto → riesgo pulmonar mayor que la suma</td>
+<td>Efectos simples inflados; el modelo simple “funciona” razonablemente</td>
+</tr>
+<tr class="even">
+<td><strong>Amortiguadora</strong></td>
+<td><span class="math inline">\(\beta_1\)</span> y <span class="math inline">\(\beta_2\)</span> con signos opuestos</td>
+<td>Estrés laboral (+PAS) amortiguado por actividad física (−PAS)</td>
+<td>Sesgo intermedio</td>
+</tr>
+<tr class="odd">
+<td><strong>Antagónica</strong></td>
+<td>Efectos simples opuestos a <span class="math inline">\(\beta_3\)</span></td>
+<td>Dos fármacos que bajan la PA, pero juntos menos que la suma (efecto techo)</td>
+<td>Efectos que <strong>desaparecen o se invierten</strong> → conclusiones erróneas</td>
+</tr>
+</tbody>
+</table>
+<div class="callout callout-warning callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Advertencia</strong></p>
+</div>
+<div class="callout-content">
+<p>El caso más peligroso es el <strong>antagónico</strong>: el investigador puede concluir que un factor de riesgo es <em>protector</em>, y aumentar <em>n</em> o replicar el estudio <strong>no lo corrige</strong>.</p>
+</div>
+</div>
+</div>
+</section>
+<section id="entonces-siempre-incluirla-el-costo" class="slide level2">
+<h2>Entonces… ¿siempre incluirla? El costo</h2>
+<p>Rimpler et al.&nbsp;(55 millones de análisis simulados) encontraron:</p>
+<ul>
+<li>El modelo con interacción <strong>sobreajusta más</strong> la muestra cuando <em>n</em> es pequeño o cuando no hay interacción real.</li>
+<li>Pero, en la población, el modelo correcto (con interacción) <strong>casi siempre generaliza mejor</strong> cuando la interacción existe.</li>
+<li>El modelo simple solo gana cuando la interacción es nula o sinérgica <strong>y</strong> <em>n</em> es pequeño.</li>
+<li>Las interacciones suelen ser pequeñas: requieren <strong>mucha más muestra</strong> que los efectos principales.</li>
+</ul>
+<div class="callout callout-tip callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Tip</strong></p>
+</div>
+<div class="callout-content">
+<p><strong>Regla práctica:</strong> la decisión de evaluar una interacción debe venir de la <strong>teoría / hipótesis biológica</strong>, planearse <em>a priori</em> y justificarse — tanto si se incluye como si se excluye. No es para “pescar” todos los productos posibles.</p>
+</div>
+</div>
+</div>
+</section></section>
+<section>
+<section id="qué-indica-una-interacción-significativa-cómo-evaluarla" class="title-slide slide level1 center">
+<h1>4. ¿Qué indica una interacción significativa? ¿Cómo evaluarla?</h1>
+
+</section>
+<section id="qué-significa-que-beta_3-sea-significativo" class="slide level2 scrollable">
+<h2>¿Qué significa que <span class="math inline">\(\beta_3\)</span> sea significativo?</h2>
+<p><span class="math inline">\(H_0: \beta_3 = 0\)</span> (las pendientes son iguales; líneas paralelas)<br>
+<span class="math inline">\(H_1: \beta_3 \neq 0\)</span> (la pendiente de <span class="math inline">\(X_1\)</span> cambia con <span class="math inline">\(X_2\)</span>)</p>
+<p>Si se rechaza <span class="math inline">\(H_0\)</span>:</p>
+<ol type="1">
+<li><strong>No existe un único efecto de <span class="math inline">\(X_1\)</span></strong>: hay que reportarlo <strong>condicionado</strong> a <span class="math inline">\(X_2\)</span>.</li>
+<li>Los coeficientes <span class="math inline">\(\beta_1\)</span> y <span class="math inline">\(\beta_2\)</span> <strong>dejan de ser “efectos principales”</strong>: son efectos <strong>condicionales</strong> cuando la otra variable vale <strong>0</strong>.</li>
+<li>Se respeta el <strong>principio de jerarquía</strong> (PSU STAT 462): si <span class="math inline">\(X_1X_2\)</span> está en el modelo, <span class="math inline">\(X_1\)</span> y <span class="math inline">\(X_2\)</span> también, <strong>sean o no significativos</strong>.</li>
+</ol>
+<p>Significancia estadística ≠ relevancia clínica: evalúe también la <strong>magnitud</strong> de la diferencia de pendientes y su IC 95 %.</p>
+</section>
+<section id="cómo-evaluarla-pasos" class="slide level2 scrollable">
+<h2>Cómo evaluarla: pasos</h2>
+<ol type="1">
+<li><strong>Hipótesis a priori</strong>: ¿hay razón biológica para que Z modifique el efecto de X?</li>
+<li><strong>Explorar</strong>: gráfico de dispersión por estratos / líneas de regresión por grupo.</li>
+<li><strong>Ajustar</strong> el modelo sin y con interacción: <code>y ~ x + z</code> vs <code>y ~ x * z</code>.</li>
+<li><strong>Probar</strong>:
+<ul>
+<li>Un solo término → prueba <em>t</em> de <span class="math inline">\(\beta_3\)</span>.</li>
+<li>Varios términos (p.&nbsp;ej. factor con &gt;2 niveles) → <strong>prueba F parcial</strong>: <code>anova(m_sin, m_con)</code>.</li>
+</ul></li>
+<li><strong>Complementar</strong>: <span class="math inline">\(R^2\)</span> ajustado, AIC, tamaño de la diferencia de pendientes.</li>
+<li><strong>Diagnóstico</strong> del modelo final (residuales, homocedasticidad, influencia).</li>
+<li><strong>Interpretar y graficar</strong> efectos condicionales (pendientes simples).</li>
+</ol>
+<p>En la fórmula de R: <code>x * z</code> equivale a <code>x + z + x:z</code>; <code>x:z</code> es solo el producto.</p>
+</section>
+<section id="ejemplo-real-birthwt-edad-materna-tabaquismo" class="slide level2">
+<h2>Ejemplo real: <code>birthwt</code> — edad materna × tabaquismo</h2>
+<p>¿El efecto de la edad materna sobre el peso al nacer (g) depende del tabaquismo?</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a></a>m_sin <span class="ot">&lt;-</span> <span class="fu">lm</span>(bwt <span class="sc">~</span> age <span class="sc">+</span> smoke_f, <span class="at">data =</span> birthwt)</span>
+<span id="cb10-2"><a></a>m_con <span class="ot">&lt;-</span> <span class="fu">lm</span>(bwt <span class="sc">~</span> age <span class="sc">*</span> smoke_f, <span class="at">data =</span> birthwt)</span>
+<span id="cb10-3"><a></a><span class="fu">round</span>(<span class="fu">summary</span>(m_con)<span class="sc">$</span>coefficients, <span class="dv">3</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                Estimate Std. Error t value Pr(&gt;|t|)
+(Intercept)     2406.058    292.190   8.235    0.000
+age               27.731     12.149   2.283    0.024
+smoke_fFuma      798.175    484.342   1.648    0.101
+age:smoke_fFuma  -46.572     20.447  -2.278    0.024</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a></a><span class="fu">anova</span>(m_sin, m_con)        <span class="co"># prueba F parcial (aquí equivale a la t de β3)</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Analysis of Variance Table
+
+Model 1: bwt ~ age + smoke_f
+Model 2: bwt ~ age * smoke_f
+  Res.Df      RSS Df Sum of Sq      F  Pr(&gt;F)  
+1    186 95672288                              
+2    185 93062605  1   2609683 5.1878 0.02389 *
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
+</div>
+</div>
+<p><span class="math inline">\(\beta_3 = -46.6\)</span> g, <em>p</em> = 0.024 → la pendiente de la edad <strong>difiere</strong> entre fumadoras y no fumadoras.</p>
+</section></section>
+<section>
+<section id="efectos-gráficas-e-interpretación" class="title-slide slide level1 center">
+<h1>5. Efectos, gráficas e interpretación</h1>
+
+</section>
+<section id="leer-los-coeficientes-con-interacción" class="slide level2">
+<h2>Leer los coeficientes con interacción</h2>
+<p><span class="math display">\[\widehat{bwt} = 2406.1 + 27.7\,\text{edad} + 798.2\,\text{Fuma} - 46.6\,(\text{edad}\times\text{Fuma})\]</span></p>
+<table class="caption-top">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Coeficiente</th>
+<th>Valor</th>
+<th>Significado <strong>correcto</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Intercepto</td>
+<td>2406</td>
+<td>Peso esperado en no fumadora de <strong>0 años</strong> (sin sentido)</td>
+</tr>
+<tr class="even">
+<td><code>age</code></td>
+<td>27.7</td>
+<td>Pendiente de la edad <strong>en no fumadoras</strong></td>
+</tr>
+<tr class="odd">
+<td><code>smoke_fFuma</code></td>
+<td>798.2</td>
+<td>Diferencia Fuma − No fuma <strong>a los 0 años</strong> (¡no es “fumar aumenta el peso”!)</td>
+</tr>
+<tr class="even">
+<td><code>age:smoke_fFuma</code></td>
+<td>−46.6</td>
+<td><strong>Diferencia de pendientes</strong> (Fuma − No fuma)</td>
+</tr>
+</tbody>
+</table>
+<p>Pendiente en fumadoras = <span class="math inline">\(27.7 + (-46.6) = -18.8\)</span> g por año.</p>
+<div class="callout callout-warning callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Advertencia</strong></p>
+</div>
+<div class="callout-content">
+<p>Interpretar <code>smoke_fFuma = +798</code> como “efecto del tabaquismo” es el error más común. Con interacción, ese coeficiente depende de dónde está el 0 de la otra variable.</p>
+</div>
+</div>
+</div>
+</section>
+<section id="pendientes-simples-con-ic-95-truco-de-relevel" class="slide level2">
+<h2>Pendientes simples con IC 95 %: truco de <code>relevel()</code></h2>
+<p>El coeficiente de <code>age</code> siempre es la pendiente en la <strong>categoría de referencia</strong>. Cambiando la referencia obtenemos la pendiente (y su IC) en el otro grupo:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a></a>m_ref_fuma <span class="ot">&lt;-</span> <span class="fu">lm</span>(bwt <span class="sc">~</span> age <span class="sc">*</span> <span class="fu">relevel</span>(smoke_f, <span class="at">ref =</span> <span class="st">"Fuma"</span>), <span class="at">data =</span> birthwt)</span>
+<span id="cb14-2"><a></a></span>
+<span id="cb14-3"><a></a><span class="fu">rbind</span>(</span>
+<span id="cb14-4"><a></a>  <span class="st">"No fuma"</span> <span class="ot">=</span> <span class="fu">c</span>(<span class="fu">coef</span>(m_con)[<span class="st">"age"</span>],      <span class="fu">confint</span>(m_con)[<span class="st">"age"</span>, ]),</span>
+<span id="cb14-5"><a></a>  <span class="st">"Fuma"</span>    <span class="ot">=</span> <span class="fu">c</span>(<span class="fu">coef</span>(m_ref_fuma)[<span class="st">"age"</span>], <span class="fu">confint</span>(m_ref_fuma)[<span class="st">"age"</span>, ])</span>
+<span id="cb14-6"><a></a>) <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">1</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>          age 2.5 % 97.5 %
+No fuma  27.7   3.8   51.7
+Fuma    -18.8 -51.3   13.6</code></pre>
+</div>
+</div>
+<ul>
+<li>No fumadoras: +27.7 g por año de edad (IC 95 % 3.8 a 51.7).</li>
+<li>Fumadoras: −18.8 g por año (IC 95 % −51.3 a 13.6).</li>
+</ul>
+</section>
+<section id="centrar-para-que-los-coeficientes-tengan-sentido" class="slide level2">
+<h2>Centrar para que los coeficientes tengan sentido</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a></a>birthwt<span class="sc">$</span>age_c <span class="ot">&lt;-</span> birthwt<span class="sc">$</span>age <span class="sc">-</span> <span class="fu">mean</span>(birthwt<span class="sc">$</span>age)    <span class="co"># media = 23.2 años</span></span>
+<span id="cb16-2"><a></a>m_cen <span class="ot">&lt;-</span> <span class="fu">lm</span>(bwt <span class="sc">~</span> age_c <span class="sc">*</span> smoke_f, <span class="at">data =</span> birthwt)</span>
+<span id="cb16-3"><a></a><span class="fu">round</span>(<span class="fu">summary</span>(m_cen)<span class="sc">$</span>coefficients, <span class="dv">3</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                  Estimate Std. Error t value Pr(&gt;|t|)
+(Intercept)       3050.482     66.178  46.095    0.000
+age_c               27.731     12.149   2.283    0.024
+smoke_fFuma       -284.068    105.832  -2.684    0.008
+age_c:smoke_fFuma  -46.572     20.447  -2.278    0.024</code></pre>
+</div>
+</div>
+<ul>
+<li><code>smoke_fFuma</code> ahora = <strong>−284 g</strong>: diferencia por tabaquismo <strong>a la edad promedio</strong> (23 años), <em>p</em> = 0.008.</li>
+<li><span class="math inline">\(\beta_3\)</span>, su EE, su <em>p</em> y el <span class="math inline">\(R^2\)</span> <strong>no cambian</strong>.</li>
+<li>Centrar <strong>no “arregla” la colinealidad</strong> de la interacción (no la necesita): solo mejora la <strong>interpretación</strong> (Rimpler et al., 2025).</li>
+</ul>
+</section>
+<section id="gráfica-categórica-continua" class="slide level2">
+<h2>Gráfica: categórica × continua</h2>
+<div class="cell columns column-output-location">
+<div class="column">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a></a><span class="fu">ggplot</span>(birthwt, <span class="fu">aes</span>(age, bwt, <span class="at">colour =</span> smoke_f)) <span class="sc">+</span></span>
+<span id="cb18-2"><a></a>  <span class="fu">geom_point</span>(<span class="at">alpha =</span> <span class="fl">0.5</span>) <span class="sc">+</span></span>
+<span id="cb18-3"><a></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"lm"</span>, <span class="at">se =</span> <span class="cn">TRUE</span>) <span class="sc">+</span></span>
+<span id="cb18-4"><a></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Edad materna (años)"</span>,</span>
+<span id="cb18-5"><a></a>       <span class="at">y =</span> <span class="st">"Peso al nacer (g)"</span>,</span>
+<span id="cb18-6"><a></a>       <span class="at">colour =</span> <span class="cn">NULL</span>) <span class="sc">+</span></span>
+<span id="cb18-7"><a></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"top"</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div><div class="column">
+<div class="cell-output-display">
+<div>
+<figure>
+<p><img data-src="Modelos_lineales_P3_origginal_files/figure-revealjs/unnamed-chunk-9-1.png" width="480"></p>
+</figure>
+</div>
+</div>
+</div></div>
+<ul>
+<li>Líneas <strong>no paralelas</strong> que se <strong>cruzan</strong> → interacción cualitativa (cruzada).</li>
+<li>Con un factor de 2 niveles, <code>geom_smooth()</code> por grupo traza las mismas rectas que el modelo <code>bwt ~ age * smoke_f</code>.</li>
+<li>Note la poca precisión en edades extremas: no extrapolar.</li>
+</ul>
+</section>
+<section id="continua-continua-simulación-pas-edad-imc" class="slide level2">
+<h2>Continua × continua: simulación PAS ~ edad × IMC</h2>
+<p>El efecto del IMC sobre la PAS aumenta con la edad (interacción sinérgica):</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
+<span id="cb19-2"><a></a>n    <span class="ot">&lt;-</span> <span class="dv">300</span></span>
+<span id="cb19-3"><a></a>edad <span class="ot">&lt;-</span> <span class="fu">round</span>(<span class="fu">rnorm</span>(n, <span class="dv">50</span>, <span class="dv">10</span>))</span>
+<span id="cb19-4"><a></a>imc  <span class="ot">&lt;-</span> <span class="fu">round</span>(<span class="fu">rnorm</span>(n, <span class="dv">28</span>, <span class="dv">4</span>), <span class="dv">1</span>)</span>
+<span id="cb19-5"><a></a>pas  <span class="ot">&lt;-</span> <span class="dv">120</span> <span class="sc">+</span> <span class="fl">0.4</span><span class="sc">*</span>(edad <span class="sc">-</span> <span class="dv">50</span>) <span class="sc">+</span> <span class="fl">0.8</span><span class="sc">*</span>(imc <span class="sc">-</span> <span class="dv">28</span>) <span class="sc">+</span></span>
+<span id="cb19-6"><a></a>        <span class="fl">0.06</span><span class="sc">*</span>(edad <span class="sc">-</span> <span class="dv">50</span>)<span class="sc">*</span>(imc <span class="sc">-</span> <span class="dv">28</span>) <span class="sc">+</span> <span class="fu">rnorm</span>(n, <span class="dv">0</span>, <span class="dv">8</span>)</span>
+<span id="cb19-7"><a></a>d_pas <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(pas, edad, imc)</span>
+<span id="cb19-8"><a></a></span>
+<span id="cb19-9"><a></a>m_pas <span class="ot">&lt;-</span> <span class="fu">lm</span>(pas <span class="sc">~</span> edad <span class="sc">*</span> imc, <span class="at">data =</span> d_pas)</span>
+<span id="cb19-10"><a></a><span class="fu">round</span>(<span class="fu">summary</span>(m_pas)<span class="sc">$</span>coefficients, <span class="dv">3</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>            Estimate Std. Error t value Pr(&gt;|t|)
+(Intercept)  154.239     19.779   7.798    0.000
+edad          -1.083      0.383  -2.828    0.005
+imc           -1.850      0.708  -2.614    0.009
+edad:imc       0.051      0.014   3.732    0.000</code></pre>
+</div>
+</div>
+<p>¿IMC con efecto <strong>negativo</strong> (−1.85)? No: es la pendiente del IMC <strong>a los 0 años de edad</strong>. Centrar lo resuelve.</p>
+</section>
+<section id="centrado-en-continua-continua" class="slide level2">
+<h2>Centrado en continua × continua</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a></a>d_pas<span class="sc">$</span>edad_c <span class="ot">&lt;-</span> d_pas<span class="sc">$</span>edad <span class="sc">-</span> <span class="fu">mean</span>(d_pas<span class="sc">$</span>edad)</span>
+<span id="cb21-2"><a></a>d_pas<span class="sc">$</span>imc_c  <span class="ot">&lt;-</span> d_pas<span class="sc">$</span>imc  <span class="sc">-</span> <span class="fu">mean</span>(d_pas<span class="sc">$</span>imc)</span>
+<span id="cb21-3"><a></a>m_pas_c <span class="ot">&lt;-</span> <span class="fu">lm</span>(pas <span class="sc">~</span> edad_c <span class="sc">*</span> imc_c, <span class="at">data =</span> d_pas)</span>
+<span id="cb21-4"><a></a><span class="fu">round</span>(<span class="fu">summary</span>(m_pas_c)<span class="sc">$</span>coefficients, <span class="dv">3</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>             Estimate Std. Error t value Pr(&gt;|t|)
+(Intercept)   120.273      0.480 250.793        0
+edad_c          0.356      0.051   6.968        0
+imc_c           0.733      0.122   6.029        0
+edad_c:imc_c    0.051      0.014   3.732        0</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a></a><span class="fu">c</span>(<span class="at">r_sin_centrar =</span> <span class="fu">cor</span>(d_pas<span class="sc">$</span>edad, d_pas<span class="sc">$</span>edad <span class="sc">*</span> d_pas<span class="sc">$</span>imc),</span>
+<span id="cb23-2"><a></a>  <span class="at">r_centrado    =</span> <span class="fu">cor</span>(d_pas<span class="sc">$</span>edad_c, d_pas<span class="sc">$</span>edad_c <span class="sc">*</span> d_pas<span class="sc">$</span>imc_c)) <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">2</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>r_sin_centrar    r_centrado 
+         0.77         -0.12 </code></pre>
+</div>
+</div>
+<ul>
+<li><code>imc_c</code> = 0.73 mmHg por kg/m² <strong>a la edad promedio</strong>; <code>edad_c</code> = 0.36 mmHg/año <strong>con IMC promedio</strong>.</li>
+<li><span class="math inline">\(\beta_3 = 0.051\)</span>: por cada año extra de edad, la pendiente del IMC aumenta 0.051 mmHg por kg/m².</li>
+<li>La correlación X–XZ baja de 0.77 a −0.12, pero <span class="math inline">\(\beta_3\)</span> y su EE son <strong>idénticos</strong>.</li>
+</ul>
+</section>
+<section id="gráfica-pendientes-simples-edad-a-1-de-media-1-de" class="slide level2">
+<h2>Gráfica: pendientes simples (edad a −1 DE, media, +1 DE)</h2>
+<div class="cell columns column-output-location">
+<div class="column">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a></a>m_e <span class="ot">&lt;-</span> <span class="fu">mean</span>(d_pas<span class="sc">$</span>edad); s_e <span class="ot">&lt;-</span> <span class="fu">sd</span>(d_pas<span class="sc">$</span>edad)</span>
+<span id="cb25-2"><a></a>rejilla <span class="ot">&lt;-</span> <span class="fu">expand.grid</span>(</span>
+<span id="cb25-3"><a></a>  <span class="at">imc  =</span> <span class="fu">seq</span>(<span class="dv">18</span>, <span class="dv">40</span>, <span class="at">by =</span> <span class="fl">0.5</span>),</span>
+<span id="cb25-4"><a></a>  <span class="at">edad =</span> <span class="fu">round</span>(<span class="fu">c</span>(m_e <span class="sc">-</span> s_e, m_e, m_e <span class="sc">+</span> s_e)))</span>
+<span id="cb25-5"><a></a>rejilla<span class="sc">$</span>pred <span class="ot">&lt;-</span> <span class="fu">predict</span>(m_pas, <span class="at">newdata =</span> rejilla)</span>
+<span id="cb25-6"><a></a></span>
+<span id="cb25-7"><a></a><span class="fu">ggplot</span>(rejilla, <span class="fu">aes</span>(imc, pred,</span>
+<span id="cb25-8"><a></a>                    <span class="at">colour =</span> <span class="fu">factor</span>(edad))) <span class="sc">+</span></span>
+<span id="cb25-9"><a></a>  <span class="fu">geom_point</span>(<span class="at">data =</span> d_pas, <span class="fu">aes</span>(imc, pas),</span>
+<span id="cb25-10"><a></a>             <span class="at">colour =</span> <span class="st">"grey70"</span>, <span class="at">alpha =</span> <span class="fl">0.5</span>) <span class="sc">+</span></span>
+<span id="cb25-11"><a></a>  <span class="fu">geom_line</span>(<span class="at">linewidth =</span> <span class="fl">1.2</span>) <span class="sc">+</span></span>
+<span id="cb25-12"><a></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"IMC (kg/m²)"</span>, <span class="at">y =</span> <span class="st">"PAS predicha (mmHg)"</span>,</span>
+<span id="cb25-13"><a></a>       <span class="at">colour =</span> <span class="st">"Edad (años)"</span>) <span class="sc">+</span></span>
+<span id="cb25-14"><a></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"top"</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div><div class="column">
+<div class="cell-output-display">
+<div>
+<figure>
+<p><img data-src="Modelos_lineales_P3_origginal_files/figure-revealjs/unnamed-chunk-12-1.png" width="480"></p>
+</figure>
+</div>
+</div>
+</div></div>
+<p>Pendiente del IMC en cada edad: <span class="math inline">\(\beta_{imc} + \beta_3 \times \text{edad}\)</span>.</p>
+</section>
+<section id="gráfica-el-plano-doblado" class="slide level2">
+<h2>Gráfica: el plano “doblado”</h2>
+<div class="cell columns column-output-location">
+<div class="column">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a></a>sup <span class="ot">&lt;-</span> <span class="fu">expand.grid</span>(<span class="at">edad =</span> <span class="fu">seq</span>(<span class="dv">25</span>, <span class="dv">75</span>, <span class="dv">1</span>),</span>
+<span id="cb26-2"><a></a>                   <span class="at">imc  =</span> <span class="fu">seq</span>(<span class="dv">18</span>, <span class="dv">40</span>, <span class="fl">0.5</span>))</span>
+<span id="cb26-3"><a></a>m_adit <span class="ot">&lt;-</span> <span class="fu">lm</span>(pas <span class="sc">~</span> edad <span class="sc">+</span> imc, <span class="at">data =</span> d_pas)</span>
+<span id="cb26-4"><a></a>sup2 <span class="ot">&lt;-</span> <span class="fu">rbind</span>(</span>
+<span id="cb26-5"><a></a>  <span class="fu">cbind</span>(sup, <span class="at">modelo =</span> <span class="st">"Aditivo"</span>,</span>
+<span id="cb26-6"><a></a>        <span class="at">pred =</span> <span class="fu">predict</span>(m_adit, sup)),</span>
+<span id="cb26-7"><a></a>  <span class="fu">cbind</span>(sup, <span class="at">modelo =</span> <span class="st">"Con interacción"</span>,</span>
+<span id="cb26-8"><a></a>        <span class="at">pred =</span> <span class="fu">predict</span>(m_pas, sup)))</span>
+<span id="cb26-9"><a></a></span>
+<span id="cb26-10"><a></a><span class="fu">ggplot</span>(sup2, <span class="fu">aes</span>(edad, imc, <span class="at">z =</span> pred)) <span class="sc">+</span></span>
+<span id="cb26-11"><a></a>  <span class="fu">geom_raster</span>(<span class="fu">aes</span>(<span class="at">fill =</span> pred)) <span class="sc">+</span></span>
+<span id="cb26-12"><a></a>  <span class="fu">geom_contour</span>(<span class="at">colour =</span> <span class="st">"white"</span>, <span class="at">binwidth =</span> <span class="dv">5</span>) <span class="sc">+</span></span>
+<span id="cb26-13"><a></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> modelo, <span class="at">ncol =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb26-14"><a></a>  <span class="fu">scale_fill_viridis_c</span>(<span class="at">name =</span> <span class="st">"PAS"</span>) <span class="sc">+</span></span>
+<span id="cb26-15"><a></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Edad (años)"</span>, <span class="at">y =</span> <span class="st">"IMC (kg/m²)"</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div><div class="column">
+<div class="cell-output-display">
+<div>
+<figure>
+<p><img data-src="Modelos_lineales_P3_origginal_files/figure-revealjs/unnamed-chunk-13-1.png" width="480"></p>
+</figure>
+</div>
+</div>
+</div></div>
+<p>Aditivo: contornos rectos y paralelos (plano). Interacción: contornos <strong>curvos</strong> → la superficie está torcida (PSU: “una hoja de papel doblada”).</p>
+</section>
+<section id="diagnóstico-del-modelo-con-interacción" class="slide level2">
+<h2>Diagnóstico del modelo con interacción</h2>
+<p>El modelo con interacción sigue siendo un modelo lineal: los supuestos de Celis se verifican igual.</p>
+<div class="cell columns column-output-location">
+<div class="column">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a></a><span class="fu">par</span>(<span class="at">mfrow =</span> <span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">2</span>), <span class="at">mar =</span> <span class="fu">c</span>(<span class="dv">4</span>, <span class="dv">4</span>, <span class="dv">2</span>, <span class="dv">1</span>))</span>
+<span id="cb27-2"><a></a><span class="fu">plot</span>(m_con)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div><div class="column">
+<div class="cell-output-display">
+<div>
+<figure>
+<p><img data-src="Modelos_lineales_P3_origginal_files/figure-revealjs/unnamed-chunk-14-1.png" width="480"></p>
+</figure>
+</div>
+</div>
+</div></div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a></a><span class="co"># Alternativa usada en el curso:</span></span>
+<span id="cb28-2"><a></a>performance<span class="sc">::</span><span class="fu">check_model</span>(m_con)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="cómo-reportar-una-interacción" class="slide level2">
+<h2>Cómo reportar una interacción</h2>
+<blockquote>
+<p>“Se observó una interacción entre la edad materna y el tabaquismo sobre el peso al nacer (<span class="math inline">\(\beta_3 = -46.6\)</span> g; IC 95 % −86.9 a −6.2; <em>p</em> = 0.024). En las no fumadoras, cada año adicional de edad se asoció con un aumento de 27.7 g (IC 95 % 3.8 a 51.7), mientras que en las fumadoras la asociación fue negativa y no significativa (−18.8 g; IC 95 % −51.3 a 13.6). A la edad promedio (23 años), los hijos de fumadoras pesaron 284 g menos (<em>p</em> = 0.008).”</p>
+</blockquote>
+<p>Elementos: (1) existencia de la interacción con IC; (2) efecto de X <strong>en cada nivel</strong> de Z; (3) efecto de Z en un valor <strong>con sentido</strong> de X; (4) gráfica.</p>
+</section>
+<section id="errores-comunes" class="slide level2">
+<h2>Errores comunes</h2>
+<ul>
+<li>❌ Interpretar <span class="math inline">\(\beta_1\)</span> o <span class="math inline">\(\beta_2\)</span> como “efectos principales” cuando hay interacción.</li>
+<li>❌ Quitar <span class="math inline">\(X_1\)</span> o <span class="math inline">\(X_2\)</span> porque “no son significativos” (viola la jerarquía).</li>
+<li>❌ Centrar “para eliminar la colinealidad” y creer que cambió la interacción.</li>
+<li>❌ Probar todas las interacciones posibles sin hipótesis (falsos positivos, sobreajuste).</li>
+<li>❌ Concluir “no hay interacción” con <em>n</em> pequeño (poco poder ≠ ausencia de efecto).</li>
+<li>❌ Confundir confusión con interacción: la confusión se <strong>ajusta</strong>, la interacción se <strong>describe</strong>.</li>
+<li>❌ Extrapolar las pendientes simples fuera del rango observado.</li>
+</ul>
+</section></section>
+<section>
+<section id="ejercicios-de-práctica" class="title-slide slide level1 center">
+<h1>6. Ejercicios de práctica</h1>
+
+</section>
+<section id="ejercicio-1-pima.tr-edad-diabetes-sobre-la-presión-diastólica" class="slide level2 scrollable">
+<h2>Ejercicio 1 — <code>Pima.tr</code>: edad × diabetes sobre la presión diastólica</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a></a><span class="fu">data</span>(Pima.tr, <span class="at">package =</span> <span class="st">"MASS"</span>)   <span class="co"># bp = presión diastólica; type = diabetes (No/Yes)</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<ol type="a">
+<li>Grafique <code>bp</code> vs <code>age</code> con una recta por <code>type</code>. ¿Las rectas son paralelas?<br>
+</li>
+<li>Ajuste <code>bp ~ age + type</code> y <code>bp ~ age * type</code>. Compárelos con <code>anova()</code>.<br>
+</li>
+<li>Interprete cada coeficiente del modelo con interacción. ¿Qué significa el coeficiente de <code>typeYes</code>?<br>
+</li>
+<li>Calcule la pendiente de la edad en cada grupo (con IC 95 %) usando <code>relevel()</code>.<br>
+</li>
+<li>Centre <code>age</code> y vuelva a ajustar. ¿Qué cambió y qué no?<br>
+</li>
+<li>Redacte un párrafo de resultados.</li>
+</ol>
+</section>
+<section id="ejercicio-2-birthwt-peso-materno-tabaquismo" class="slide level2 scrollable">
+<h2>Ejercicio 2 — <code>birthwt</code>: peso materno × tabaquismo</h2>
+<ol type="a">
+<li>Ajuste <code>bwt ~ lwt * smoke_f</code> (<code>lwt</code> = peso materno en libras).<br>
+</li>
+<li>¿La interacción es significativa? ¿Qué decisión toma sobre el modelo final?<br>
+</li>
+<li>Si retira la interacción, ¿cómo interpreta ahora el coeficiente de <code>smoke_f</code>?<br>
+</li>
+<li>Haga la gráfica de rectas por grupo. ¿Coincide con su conclusión?</li>
+</ol>
+</section>
+<section id="ejercicio-3-datos-bio3_24a-celis-cuadro-24-1" class="slide level2 scrollable">
+<h2>Ejercicio 3 — Datos Bio3_24a (Celis, cuadro 24-1)</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb30"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a></a>bio3_24a <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb30-2"><a></a>  <span class="at">x1 =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">2</span>, <span class="dv">2</span>),</span>
+<span id="cb30-3"><a></a>  <span class="at">x2 =</span> <span class="fu">c</span>(<span class="fl">0.28</span>, <span class="fl">1.85</span>, <span class="fl">3.73</span>, <span class="fl">7.62</span>, <span class="fl">8.12</span>, <span class="fl">2.07</span>, <span class="fl">2.09</span>, <span class="fl">5.76</span>, <span class="fl">5.83</span>, <span class="fl">8.94</span>, <span class="fl">9.39</span>),</span>
+<span id="cb30-4"><a></a>  <span class="at">y  =</span> <span class="fu">c</span>(<span class="fl">1.04</span>, <span class="fl">2.30</span>, <span class="fl">4.39</span>, <span class="fl">9.49</span>, <span class="fl">8.28</span>, <span class="fl">4.85</span>, <span class="fl">4.91</span>, <span class="fl">7.44</span>, <span class="fl">8.20</span>, <span class="fl">11.04</span>, <span class="fl">12.72</span>))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<ol type="a">
+<li>Ajuste los modelos de Celis <span class="math inline">\(Y \sim X_1 + X_2\)</span> y <span class="math inline">\(Y \sim X_1 + X_2 + X_1X_2\)</span>.<br>
+</li>
+<li>¿El término de interacción mejora el modelo (prueba F parcial, <span class="math inline">\(R^2\)</span> ajustado)?<br>
+</li>
+<li>Con <em>n</em> = 11, ¿qué puede y qué no puede concluir sobre la ausencia de interacción?</li>
+</ol>
+</section>
+<section id="ejercicio-4-confusión-o-interacción" class="slide level2">
+<h2>Ejercicio 4 — ¿Confusión o interacción?</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb31"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a></a><span class="fu">set.seed</span>(<span class="dv">42</span>); n <span class="ot">&lt;-</span> <span class="dv">300</span></span>
+<span id="cb31-2"><a></a><span class="co"># Base A</span></span>
+<span id="cb31-3"><a></a>sexo <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(n, <span class="dv">1</span>, <span class="fl">0.5</span>)</span>
+<span id="cb31-4"><a></a>act  <span class="ot">&lt;-</span> <span class="fu">pmax</span>(<span class="dv">0</span>, <span class="fu">round</span>(<span class="dv">3</span> <span class="sc">+</span> <span class="dv">2</span><span class="sc">*</span>sexo <span class="sc">+</span> <span class="fu">rnorm</span>(n, <span class="dv">0</span>, <span class="fl">1.5</span>), <span class="dv">1</span>))       <span class="co"># actividad física (h/sem)</span></span>
+<span id="cb31-5"><a></a>ldl  <span class="ot">&lt;-</span> <span class="dv">120</span> <span class="sc">+</span> <span class="dv">20</span><span class="sc">*</span>sexo <span class="sc">-</span> <span class="dv">2</span><span class="sc">*</span>act <span class="sc">+</span> <span class="fu">rnorm</span>(n, <span class="dv">0</span>, <span class="dv">12</span>)</span>
+<span id="cb31-6"><a></a>base_A <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(ldl, act, <span class="at">sexo =</span> <span class="fu">factor</span>(sexo, <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"Mujer"</span>, <span class="st">"Hombre"</span>)))</span>
+<span id="cb31-7"><a></a><span class="co"># Base B</span></span>
+<span id="cb31-8"><a></a>sexo <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(n, <span class="dv">1</span>, <span class="fl">0.5</span>)</span>
+<span id="cb31-9"><a></a>act  <span class="ot">&lt;-</span> <span class="fu">pmax</span>(<span class="dv">0</span>, <span class="fu">round</span>(<span class="dv">4</span> <span class="sc">+</span> <span class="fu">rnorm</span>(n, <span class="dv">0</span>, <span class="fl">1.5</span>), <span class="dv">1</span>))</span>
+<span id="cb31-10"><a></a>ldl  <span class="ot">&lt;-</span> <span class="dv">130</span> <span class="sc">-</span> <span class="dv">4</span><span class="sc">*</span>act<span class="sc">*</span>(<span class="dv">1</span> <span class="sc">-</span> sexo) <span class="sc">+</span> <span class="fu">rnorm</span>(n, <span class="dv">0</span>, <span class="dv">12</span>)</span>
+<span id="cb31-11"><a></a>base_B <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(ldl, act, <span class="at">sexo =</span> <span class="fu">factor</span>(sexo, <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"Mujer"</span>, <span class="st">"Hombre"</span>)))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Para cada base: ajuste <code>ldl ~ act</code>, <code>ldl ~ act + sexo</code> y <code>ldl ~ act * sexo</code>; grafique por sexo y use la <strong>guía de decisión</strong> para clasificar el papel del sexo. ¿Qué ocurre con el signo del efecto crudo en la base A?</p>
+</section>
+<section id="ejercicio-5-el-costo-de-omitir-la-interacción" class="slide level2 scrollable">
+<h2>Ejercicio 5 — El costo de omitir la interacción</h2>
+<p>Usando el código de la Simulación 2:</p>
+<ol type="a">
+<li>Cambie las medias a <span class="math inline">\(\mu_X = 0\)</span> y <span class="math inline">\(\mu_Z = 0\)</span>. ¿Sigue habiendo sesgo en <span class="math inline">\(b_1\)</span> y <span class="math inline">\(b_2\)</span>? Explique con la fórmula <span class="math inline">\(b_1 = \beta_1 + \beta_3\mu_Z\)</span>.<br>
+</li>
+<li>Con <span class="math inline">\(\beta_1 = \beta_2 = 1\)</span>, <span class="math inline">\(\mu_X = 1\)</span>, <span class="math inline">\(\mu_Z = 2\)</span>, ¿qué valor de <span class="math inline">\(\beta_3\)</span> hace que <span class="math inline">\(b_2 = 0\)</span>?<br>
+</li>
+<li>Repita con <em>n</em> = 50 y 1000 réplicas: ¿en qué % de las réplicas el efecto de X es significativo cuando <span class="math inline">\(\beta_3 = -0.5\)</span>?</li>
+</ol>
+</section>
+<section id="mensajes-para-llevar" class="slide level2 scrollable">
+<h2>Mensajes para llevar</h2>
+<ol type="1">
+<li>Interacción = <strong>el efecto de X depende de Z</strong>; matemáticamente, pendiente de <span class="math inline">\(X_1\)</span> = <span class="math inline">\(\beta_1 + \beta_3X_2\)</span>.</li>
+<li><strong>Confusión</strong> es un sesgo que se ajusta; <strong>interacción</strong> es un hallazgo que se describe por estratos.</li>
+<li>Omitir una interacción real puede <strong>anular o invertir</strong> efectos verdaderos (sobre todo si es antagónica).</li>
+<li>Con interacción, <span class="math inline">\(\beta_1\)</span> y <span class="math inline">\(\beta_2\)</span> son efectos <strong>condicionales</strong> (en 0 de la otra variable): <strong>centre</strong> para interpretarlos.</li>
+<li>Evalúe con <em>t</em> de <span class="math inline">\(\beta_3\)</span> o F parcial, respete la <strong>jerarquía</strong>, grafique <strong>pendientes simples</strong> y reporte efectos por nivel.</li>
+<li>La decisión de incluirla nace de la <strong>teoría</strong>, no de la búsqueda de significancia.</li>
+</ol>
+</section>
+<section id="referencias" class="slide level2">
+<h2>Referencias</h2>
+<ul>
+<li>Celis de la Rosa, A. J., &amp; Labrada Martagón, V. (2014). <em>Bioestadística</em> (3ª ed.). Editorial El Manual Moderno. Caps. 23 (Regresión y correlación simple) y 24 (Regresión y correlación múltiple).</li>
+<li>Denis, D. J. (2020). <em>Univariate, Bivariate, and Multivariate Statistics Using R</em>, cap. 7. Wiley.</li>
+<li>Rimpler, A., Kiers, H. A. L., &amp; van Ravenzwaaij, D. (2025). To interact or not to interact: The pros and cons of including interactions in linear regression models. <em>Behavior Research Methods</em>, 57, 92. <a href="https://doi.org/10.3758/s13428-025-02613-6" class="uri">https://doi.org/10.3758/s13428-025-02613-6</a></li>
+<li>Penn State Eberly College of Science. <em>STAT 462: Applied Regression Analysis</em>, 7.6 Interactions Between Quantitative Predictors. <a href="https://online.stat.psu.edu/stat462/node/157/" class="uri">https://online.stat.psu.edu/stat462/node/157/</a></li>
+<li>Hosmer, D. W., &amp; Lemeshow, S. (1989). <em>Applied Logistic Regression</em>. Wiley (origen de <code>birthwt</code>). Venables &amp; Ripley (2002), <em>MASS</em>.</li>
+</ul>
+
+
+</section></section>
+    </div>
+  <div class="quarto-auto-generated-content" style="display: none;">
+<div class="footer footer-default">
+
+</div>
+</div></div>
+
+  <script>window.backupDefine = window.define; window.define = undefined;</script>
+  <script src="../../../site_libs/revealjs/dist/reveal.js"></script>
+  <!-- reveal.js plugins -->
+  <script src="../../../site_libs/revealjs/plugin/quarto-line-highlight/line-highlight.js"></script>
+  <script src="../../../site_libs/revealjs/plugin/pdf-export/pdfexport.js"></script>
+  <script src="../../../site_libs/revealjs/plugin/reveal-menu/menu.js"></script>
+  <script src="../../../site_libs/revealjs/plugin/reveal-menu/quarto-menu.js"></script>
+  <script src="../../../site_libs/revealjs/plugin/quarto-support/support.js"></script>
+  
+
+  <script src="../../../site_libs/revealjs/plugin/notes/notes.js"></script>
+  <script src="../../../site_libs/revealjs/plugin/search/search.js"></script>
+  <script src="../../../site_libs/revealjs/plugin/zoom/zoom.js"></script>
+  <script src="../../../site_libs/revealjs/plugin/math/math.js"></script>
+  <script>window.define = window.backupDefine; window.backupDefine = undefined;</script>
+
+  <script>
+
+      // Full list of configuration options available at:
+      // https://revealjs.com/config/
+      Reveal.initialize({
+'controlsAuto': true,
+'previewLinksAuto': false,
+'pdfSeparateFragments': false,
+'autoAnimateEasing': "ease",
+'autoAnimateDuration': 1,
+'autoAnimateUnmatched': true,
+'jumpToSlide': true,
+'menu': {"side":"left","useTextContentForMissingTitles":true,"markers":false,"loadIcons":false,"custom":[{"title":"Tools","icon":"<i class=\"fas fa-gear\"></i>","content":"<ul class=\"slide-menu-items\">\n<li class=\"slide-tool-item active\" data-item=\"0\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.fullscreen(event)\"><kbd>f</kbd> Fullscreen</a></li>\n<li class=\"slide-tool-item\" data-item=\"1\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.speakerMode(event)\"><kbd>s</kbd> Speaker View</a></li>\n<li class=\"slide-tool-item\" data-item=\"2\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.overview(event)\"><kbd>o</kbd> Slide Overview</a></li>\n<li class=\"slide-tool-item\" data-item=\"3\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.togglePdfExport(event)\"><kbd>e</kbd> PDF Export Mode</a></li>\n<li class=\"slide-tool-item\" data-item=\"4\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.toggleScrollView(event)\"><kbd>r</kbd> Scroll View Mode</a></li>\n<li class=\"slide-tool-item\" data-item=\"5\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.keyboardHelp(event)\"><kbd>?</kbd> Keyboard Help</a></li>\n</ul>"}],"openButton":true},
+'smaller': true,
+ 
+        // Display controls in the bottom right corner
+        controls: false,
+
+        // Help the user learn the controls by providing hints, for example by
+        // bouncing the down arrow when they first encounter a vertical slide
+        controlsTutorial: false,
+
+        // Determines where controls appear, "edges" or "bottom-right"
+        controlsLayout: 'edges',
+
+        // Visibility rule for backwards navigation arrows; "faded", "hidden"
+        // or "visible"
+        controlsBackArrows: 'faded',
+
+        // Display a presentation progress bar
+        progress: true,
+
+        // Display the page number of the current slide
+        slideNumber: 'c/t',
+
+        // 'all', 'print', or 'speaker'
+        showSlideNumber: 'all',
+
+        // Add the current slide number to the URL hash so that reloading the
+        // page/copying the URL will return you to the same slide
+        hash: true,
+
+        // Start with 1 for the hash rather than 0
+        hashOneBasedIndex: false,
+
+        // Flags if we should monitor the hash and change slides accordingly
+        respondToHashChanges: true,
+
+        // Push each slide change to the browser history
+        history: true,
+
+        // Enable keyboard shortcuts for navigation
+        keyboard: true,
+
+        // Enable the slide overview mode
+        overview: true,
+
+        // Disables the default reveal.js slide layout (scaling and centering)
+        // so that you can use custom CSS layout
+        disableLayout: false,
+
+        // Vertical centering of slides
+        center: false,
+
+        // Enables touch navigation on devices with touch input
+        touch: true,
+
+        // Loop the presentation
+        loop: false,
+
+        // Change the presentation direction to be RTL
+        rtl: false,
+
+        // see https://revealjs.com/vertical-slides/#navigation-mode
+        navigationMode: 'linear',
+
+        // Randomizes the order of slides each time the presentation loads
+        shuffle: false,
+
+        // Turns fragments on and off globally
+        fragments: true,
+
+        // Flags whether to include the current fragment in the URL,
+        // so that reloading brings you to the same fragment position
+        fragmentInURL: false,
+
+        // Flags if the presentation is running in an embedded mode,
+        // i.e. contained within a limited portion of the screen
+        embedded: false,
+
+        // Flags if we should show a help overlay when the questionmark
+        // key is pressed
+        help: true,
+
+        // Flags if it should be possible to pause the presentation (blackout)
+        pause: true,
+
+        // Flags if speaker notes should be visible to all viewers
+        showNotes: false,
+
+        // Global override for autoplaying embedded media (null/true/false)
+        autoPlayMedia: null,
+
+        // Global override for preloading lazy-loaded iframes (null/true/false)
+        preloadIframes: null,
+
+        // Number of milliseconds between automatically proceeding to the
+        // next slide, disabled when set to 0, this value can be overwritten
+        // by using a data-autoslide attribute on your slides
+        autoSlide: 0,
+
+        // Stop auto-sliding after user input
+        autoSlideStoppable: true,
+
+        // Use this method for navigation when auto-sliding
+        autoSlideMethod: null,
+
+        // Specify the average time in seconds that you think you will spend
+        // presenting each slide. This is used to show a pacing timer in the
+        // speaker view
+        defaultTiming: null,
+
+        // Enable slide navigation via mouse wheel
+        mouseWheel: false,
+
+        // The display mode that will be used to show slides
+        display: 'block',
+
+        // Hide cursor if inactive
+        hideInactiveCursor: true,
+
+        // Time before the cursor is hidden (in ms)
+        hideCursorTime: 5000,
+
+        // Opens links in an iframe preview overlay
+        previewLinks: false,
+
+        // Transition style (none/fade/slide/convex/concave/zoom)
+        transition: 'none',
+
+        // Transition speed (default/fast/slow)
+        transitionSpeed: 'default',
+
+        // Transition style for full page slide backgrounds
+        // (none/fade/slide/convex/concave/zoom)
+        backgroundTransition: 'none',
+
+        // Number of slides away from the current that are visible
+        viewDistance: 3,
+
+        // Number of slides away from the current that are visible on mobile
+        // devices. It is advisable to set this to a lower number than
+        // viewDistance in order to save resources.
+        mobileViewDistance: 2,
+
+        // The "normal" size of the presentation, aspect ratio will be preserved
+        // when the presentation is scaled to fit different resolutions. Can be
+        // specified using percentage units.
+        width: 1050,
+
+        height: 700,
+
+        // Factor of the display size that should remain empty around the content
+        margin: 0.1,
+
+        math: {
+          mathjax: 'https://cdn.jsdelivr.net/npm/mathjax@2.7.9/MathJax.js',
+          config: 'TeX-AMS_HTML-full',
+          tex2jax: {
+            inlineMath: [['\\(','\\)']],
+            displayMath: [['\\[','\\]']],
+            balanceBraces: true,
+            processEscapes: false,
+            processRefs: true,
+            processEnvironments: true,
+            preview: 'TeX',
+            skipTags: ['script','noscript','style','textarea','pre','code'],
+            ignoreClass: 'tex2jax_ignore',
+            processClass: 'tex2jax_process'
+          },
+        },
+
+        // reveal.js plugins
+        plugins: [QuartoLineHighlight, PdfExport, RevealMenu, QuartoSupport,
+
+          RevealMath,
+          RevealNotes,
+          RevealSearch,
+          RevealZoom
+        ]
+      });
+    </script>
+    
+    <script>
+      // htmlwidgets need to know to resize themselves when slides are shown/hidden.
+      // Fire the "slideenter" event (handled by htmlwidgets.js) when the current
+      // slide changes (different for each slide format).
+      (function () {
+        // dispatch for htmlwidgets
+        function fireSlideEnter() {
+          const event = window.document.createEvent("Event");
+          event.initEvent("slideenter", true, true);
+          window.document.dispatchEvent(event);
+        }
+
+        function fireSlideChanged(previousSlide, currentSlide) {
+          fireSlideEnter();
+
+          // dispatch for shiny
+          if (window.jQuery) {
+            if (previousSlide) {
+              window.jQuery(previousSlide).trigger("hidden");
+            }
+            if (currentSlide) {
+              window.jQuery(currentSlide).trigger("shown");
+            }
+          }
+        }
+
+        // hookup for slidy
+        if (window.w3c_slidy) {
+          window.w3c_slidy.add_observer(function (slide_num) {
+            // slide_num starts at position 1
+            fireSlideChanged(null, w3c_slidy.slides[slide_num - 1]);
+          });
+        }
+
+      })();
+    </script>
+
+    <script id="quarto-html-after-body" type="application/javascript">
+      window.document.addEventListener("DOMContentLoaded", function (event) {
+        const tabsets =  window.document.querySelectorAll(".panel-tabset-tabby")
+        tabsets.forEach(function(tabset) {
+          const tabby = new Tabby('#' + tabset.id);
+        });
+        const isCodeAnnotation = (el) => {
+          for (const clz of el.classList) {
+            if (clz.startsWith('code-annotation-')) {                     
+              return true;
+            }
+          }
+          return false;
+        }
+        const onCopySuccess = function(e) {
+          // button target
+          const button = e.trigger;
+          // don't keep focus
+          button.blur();
+          // flash "checked"
+          button.classList.add('code-copy-button-checked');
+          var currentTitle = button.getAttribute("title");
+          button.setAttribute("title", "Copiado");
+          let tooltip;
+          if (window.bootstrap) {
+            button.setAttribute("data-bs-toggle", "tooltip");
+            button.setAttribute("data-bs-placement", "left");
+            button.setAttribute("data-bs-title", "Copiado");
+            tooltip = new bootstrap.Tooltip(button, 
+              { trigger: "manual", 
+                customClass: "code-copy-button-tooltip",
+                offset: [0, -8]});
+            tooltip.show();    
+          }
+          setTimeout(function() {
+            if (tooltip) {
+              tooltip.hide();
+              button.removeAttribute("data-bs-title");
+              button.removeAttribute("data-bs-toggle");
+              button.removeAttribute("data-bs-placement");
+            }
+            button.setAttribute("title", currentTitle);
+            button.classList.remove('code-copy-button-checked');
+          }, 1000);
+          // clear code selection
+          e.clearSelection();
+        }
+        const getTextToCopy = function(trigger) {
+          const outerScaffold = trigger.parentElement.cloneNode(true);
+          const codeEl = outerScaffold.querySelector('code');
+          for (const childEl of codeEl.children) {
+            if (isCodeAnnotation(childEl)) {
+              childEl.remove();
+            }
+          }
+          return codeEl.innerText;
+        }
+        const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+          text: getTextToCopy
+        });
+        clipboard.on('success', onCopySuccess);
+        if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+          const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+            text: getTextToCopy,
+            container: window.document.getElementById('quarto-embedded-source-code-modal')
+          });
+          clipboardModal.on('success', onCopySuccess);
+        }
+          var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+          var mailtoRegex = new RegExp(/^mailto:/);
+            var filterRegex = new RegExp('/' + window.location.host + '/');
+          var isInternal = (href) => {
+              return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+          }
+          // Inspect non-navigation links and adorn them if external
+         var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+          for (var i=0; i<links.length; i++) {
+            const link = links[i];
+            if (!isInternal(link.href)) {
+              // undo the damage that might have been done by quarto-nav.js in the case of
+              // links that we want to consider external
+              if (link.dataset.originalHref !== undefined) {
+                link.href = link.dataset.originalHref;
+              }
+            }
+          }
+        function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+          const config = {
+            allowHTML: true,
+            maxWidth: 500,
+            delay: 100,
+            arrow: false,
+            appendTo: function(el) {
+                return el.closest('section.slide') || el.parentElement;
+            },
+            interactive: true,
+            interactiveBorder: 10,
+            theme: 'light-border',
+            placement: 'bottom-start',
+          };
+          if (contentFn) {
+            config.content = contentFn;
+          }
+          if (onTriggerFn) {
+            config.onTrigger = onTriggerFn;
+          }
+          if (onUntriggerFn) {
+            config.onUntrigger = onUntriggerFn;
+          }
+            config['offset'] = [0,0];
+            config['maxWidth'] = 700;
+          window.tippy(el, config); 
+        }
+        const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+        for (var i=0; i<noterefs.length; i++) {
+          const ref = noterefs[i];
+          tippyHover(ref, function() {
+            // use id or data attribute instead here
+            let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+            try { href = new URL(href).hash; } catch {}
+            const id = href.replace(/^#\/?/, "");
+            const note = window.document.getElementById(id);
+            if (note) {
+              return note.innerHTML;
+            } else {
+              return "";
+            }
+          });
+        }
+        const findCites = (el) => {
+          const parentEl = el.parentElement;
+          if (parentEl) {
+            const cites = parentEl.dataset.cites;
+            if (cites) {
+              return {
+                el,
+                cites: cites.split(' ')
+              };
+            } else {
+              return findCites(el.parentElement)
+            }
+          } else {
+            return undefined;
+          }
+        };
+        var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+        for (var i=0; i<bibliorefs.length; i++) {
+          const ref = bibliorefs[i];
+          const citeInfo = findCites(ref);
+          if (citeInfo) {
+            tippyHover(citeInfo.el, function() {
+              var popup = window.document.createElement('div');
+              citeInfo.cites.forEach(function(cite) {
+                var citeDiv = window.document.createElement('div');
+                citeDiv.classList.add('hanging-indent');
+                citeDiv.classList.add('csl-entry');
+                var biblioDiv = window.document.getElementById('ref-' + cite);
+                if (biblioDiv) {
+                  citeDiv.innerHTML = biblioDiv.innerHTML;
+                }
+                popup.appendChild(citeDiv);
+              });
+              return popup.innerHTML;
+            });
+          }
+        }
+      });
+      </script>
+    
+
+</body></html>
