@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="es" xml:lang="es"><head>
 
 <meta charset="utf-8">
 <meta name="generator" content="quarto-1.8.25">
@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Tema 5: Modelo lineal – Bioestadística avanzada</title>
+<title>Ejercicios integradores. Regresión múltiple con interacción – Bioestadística avanzada</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -19,6 +19,41 @@ ul.task-list li input[type="checkbox"] {
   width: 0.8em;
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 </style>
 
@@ -55,17 +90,17 @@ ul.task-list li input[type="checkbox"] {
   ],
   "show-item-context": false,
   "language": {
-    "search-no-results-text": "No results",
-    "search-matching-documents-text": "matching documents",
-    "search-copy-link-title": "Copy link to search",
-    "search-hide-matches-text": "Hide additional matches",
-    "search-more-match-text": "more match in this document",
-    "search-more-matches-text": "more matches in this document",
-    "search-clear-button-title": "Clear",
+    "search-no-results-text": "No se han encontrado resultados",
+    "search-matching-documents-text": "documentos encontrados",
+    "search-copy-link-title": "Copiar el enlace en la búsqueda",
+    "search-hide-matches-text": "Ocultar resultados adicionales",
+    "search-more-match-text": "resultado adicional en este documento",
+    "search-more-matches-text": "resultados adicionales en este documento",
+    "search-clear-button-title": "Borrar",
     "search-text-placeholder": "",
-    "search-detached-cancel-button-title": "Cancel",
-    "search-submit-button-title": "Submit",
-    "search-label": "Search"
+    "search-detached-cancel-button-title": "Cancelar",
+    "search-submit-button-title": "Enviar",
+    "search-label": "Buscar"
   }
 }</script>
 
@@ -86,8 +121,8 @@ ul.task-list li input[type="checkbox"] {
     <span class="navbar-title">Bioestadística avanzada</span>
     </a>
   </div>
-            <div id="quarto-search" class="" title="Search"></div>
-          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+            <div id="quarto-search" class="" title="Buscar"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Navegación de palanca" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
   <span class="navbar-toggler-icon"></span>
 </button>
           <div class="collapse navbar-collapse" id="navbarCollapse">
@@ -143,20 +178,24 @@ ul.task-list li input[type="checkbox"] {
     <h2 id="toc-title">En esta página</h2>
    
   <ul>
-  <li><a href="#objetivo" id="toc-objetivo" class="nav-link active" data-scroll-target="#objetivo">Objetivo</a></li>
-  <li><a href="#contenidos" id="toc-contenidos" class="nav-link" data-scroll-target="#contenidos">Contenidos</a></li>
-  <li><a href="#material-de-clase" id="toc-material-de-clase" class="nav-link" data-scroll-target="#material-de-clase">Material de clase</a></li>
-  <li><a href="#base-de-datos-tema-05" id="toc-base-de-datos-tema-05" class="nav-link" data-scroll-target="#base-de-datos-tema-05">Base de datos tema-05</a></li>
-  <li><a href="#ejercicios" id="toc-ejercicios" class="nav-link" data-scroll-target="#ejercicios">Ejercicios</a></li>
+  <li><a href="#instrucciones-generales" id="toc-instrucciones-generales" class="nav-link active" data-scroll-target="#instrucciones-generales">Instrucciones generales</a>
+  <ul class="collapse">
+  <li><a href="#paquetes-necesarios" id="toc-paquetes-necesarios" class="nav-link" data-scroll-target="#paquetes-necesarios">Paquetes necesarios</a></li>
+  </ul></li>
+  <li><a href="#base-1-diabetes-en-afroamericanos-de-virginia" id="toc-base-1-diabetes-en-afroamericanos-de-virginia" class="nav-link" data-scroll-target="#base-1-diabetes-en-afroamericanos-de-virginia">Base 1 — Diabetes en afroamericanos de Virginia</a></li>
+  <li><a href="#base-2-nhanes" id="toc-base-2-nhanes" class="nav-link" data-scroll-target="#base-2-nhanes">Base 2 — NHANES</a></li>
+  <li><a href="#base-3-estudio-del-corazón-de-framingham" id="toc-base-3-estudio-del-corazón-de-framingham" class="nav-link" data-scroll-target="#base-3-estudio-del-corazón-de-framingham">Base 3 — Estudio del Corazón de Framingham</a></li>
+  <li><a href="#base-4-cadenas-ligeras-libres-en-suero-olmsted-county" id="toc-base-4-cadenas-ligeras-libres-en-suero-olmsted-county" class="nav-link" data-scroll-target="#base-4-cadenas-ligeras-libres-en-suero-olmsted-county">Base 4 — Cadenas ligeras libres en suero (Olmsted County)</a></li>
   </ul>
-</nav>
+<div class="quarto-alternate-formats"><h2>Otros formatos</h2><ul><li><a href="ejercicios-regresion-multiple-instrucciones.pdf"><i class="bi bi-file-pdf"></i>PDF</a></li></ul></div></nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Tema 5: Modelo lineal</h1>
+<h1 class="title">Ejercicios integradores. Regresión múltiple con interacción</h1>
+<p class="subtitle lead">Modelos lineales, Parte 3</p>
 </div>
 
 
@@ -173,32 +212,80 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<section id="objetivo" class="level2">
-<h2 class="anchored" data-anchor-id="objetivo">Objetivo</h2>
-</section>
-<section id="contenidos" class="level2">
-<h2 class="anchored" data-anchor-id="contenidos">Contenidos</h2>
+<section id="instrucciones-generales" class="level2">
+<h2 class="anchored" data-anchor-id="instrucciones-generales">Instrucciones generales</h2>
+<p>Para cada una de las cuatro bases de datos, responda la <strong>pregunta de investigación</strong> usando un modelo de regresión lineal múltiple. Usted decide qué pasos seguir, qué variables preparar, qué transformaciones aplicar y qué gráficos presentar. <strong>Cada decisión debe estar justificada.</strong></p>
+<p><strong>Entregable:</strong> un archivo Quarto (<code>.qmd</code>) y su versión renderizada (<code>.docx</code> o <code>.pdf</code>), con una sección por base. Cada sección debe incluir el código, los resultados, los gráficos y la interpretación. El documento debe poder ejecutarse completo de principio a fin sin errores.</p>
+<p><strong>Se evaluará:</strong></p>
 <ul>
-<li><p>Modelos lineales parte 1. Correlación vs.&nbsp;regresión · Regresión lineal simple · ANOVA · Diagnóstico · Interpretación de coeficientes</p></li>
-<li><p>Modelos lineales parte 2. Regresión lineal múltiple · Variables dummy · ANOVA · Diagnóstico · Colinealidad · Confusión · Selección de variables.</p></li>
-<li><p>Modelos lineales parte 3. Interacciones</p></li>
+<li>Los <strong>pasos</strong> que siguió y su justificación: carga, revisión de calidad de los datos, preparación de variables y exploración.</li>
+<li>Las <strong>transformaciones o normalizaciones</strong> que aplicó, o la justificación de no aplicarlas.</li>
+<li>La <strong>construcción y comparación de modelos</strong>, incluyendo la evaluación de confusión y de interacción.</li>
+<li>La <strong>verificación de supuestos</strong>.</li>
+<li>Los <strong>gráficos</strong>: claridad, pertinencia y que muestren lo que usted concluye.</li>
+<li>La <strong>interpretación</strong> de los coeficientes y la <strong>conclusión</strong> que responde a la pregunta, redactada como en la sección de resultados de un artículo.</li>
 </ul>
+<section id="paquetes-necesarios" class="level3">
+<h3 class="anchored" data-anchor-id="paquetes-necesarios">Paquetes necesarios</h3>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="fu">c</span>(<span class="st">"faraway"</span>, <span class="st">"NHANES"</span>, <span class="st">"riskCommunicator"</span>))   <span class="co"># survival viene incluido con R</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Cargue cada base <strong>indicando el paquete</strong> (<code>package = "..."</code>), porque hay bases con el mismo nombre en distintos paquetes. Consulte la documentación de cada base con <code>?nombre_de_la_base</code> antes de analizarla.</p>
+<hr>
 </section>
-<section id="material-de-clase" class="level2">
-<h2 class="anchored" data-anchor-id="material-de-clase">Material de clase</h2>
-<p><a href="../../temas/tema-05/Modelos_lineales_P1/Modelos_lineales_P1.html">Modelos lineales parte 1. Presentacion</a></p>
-<p><a href="../../temas/tema-05/Modelos_lineales_P2/Modelos_lineales_P2.html">Modelos lineales parte 2. Presentacion</a></p>
-<p><a href="../../temas/tema-05/Modelos_lineales_P3/Modelos_lineales_P3.html">Modelos lineales parte 3. Presentacion</a></p>
 </section>
-<section id="base-de-datos-tema-05" class="level2">
-<h2 class="anchored" data-anchor-id="base-de-datos-tema-05">Base de datos tema-05</h2>
-<p><a href="Modelos_lineales_P1/Bases/sal_tension_arterial.csv" download="sal_tension_arterial.csv">sal_tension_arterial</a></p>
-<p><a href="Modelos_lineales_P1/Bases/LungCapData.xls" download="LungCapData.xls">LungCapData</a></p>
-<p><a href="Modelos_lineales_P1/Bases/bodyfat.txt" download="bodyfat.txt">Bodyfat</a></p>
+<section id="base-1-diabetes-en-afroamericanos-de-virginia" class="level2">
+<h2 class="anchored" data-anchor-id="base-1-diabetes-en-afroamericanos-de-virginia">Base 1 — Diabetes en afroamericanos de Virginia</h2>
+<p><strong>Fuente:</strong> paquete <code>faraway</code>. Estudio de Willems et al.&nbsp;(1997) sobre obesidad, diabetes y factores de riesgo cardiovascular en adultos afroamericanos de Virginia central.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(diabetes, <span class="at">package =</span> <span class="st">"faraway"</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>?faraway<span class="sc">::</span>diabetes</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p><strong>Pregunta de investigación:</strong></p>
+<blockquote class="blockquote">
+<p>¿La relación entre la glucosa estabilizada (<code>stab.glu</code>) y la hemoglobina glicosilada (<code>glyhb</code>) depende de la edad (<code>age</code>), después de considerar el sexo (<code>gender</code>) y el índice de masa corporal?</p>
+<p>El IMC no viene en la base; debe calcularlo a partir de <code>weight</code> y <code>height</code>, revisando primero las unidades en la documentación.</p>
+</blockquote>
+<hr>
 </section>
-<section id="ejercicios" class="level2">
-<h2 class="anchored" data-anchor-id="ejercicios">Ejercicios</h2>
-<p><a href="../../temas/tema-05/ejercicios-regresion-multiple-instrucciones.html">Ejercicios regresion múltiple</a></p>
+<section id="base-2-nhanes" class="level2">
+<h2 class="anchored" data-anchor-id="base-2-nhanes">Base 2 — NHANES</h2>
+<p><strong>Fuente:</strong> paquete <code>NHANES</code>. Datos de la Encuesta Nacional de Salud y Nutrición de EE. UU. (ciclos 2009–2010 y 2011–2012), adaptados para docencia.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(NHANES, <span class="at">package =</span> <span class="st">"NHANES"</span>)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>?NHANES<span class="sc">::</span>NHANES</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p><strong>Pregunta de investigación:</strong></p>
+<blockquote class="blockquote">
+<p>En adultos de 20 años o más, ¿el efecto de la edad (<code>Age</code>) sobre la presión arterial sistólica (<code>BPSysAve</code>) es diferente en hombres y mujeres (<code>Gender</code>), independientemente del IMC (<code>BMI</code>)?</p>
+</blockquote>
+<hr>
+</section>
+<section id="base-3-estudio-del-corazón-de-framingham" class="level2">
+<h2 class="anchored" data-anchor-id="base-3-estudio-del-corazón-de-framingham">Base 3 — Estudio del Corazón de Framingham</h2>
+<p><strong>Fuente:</strong> paquete <code>riskCommunicator</code>. Versión docente y anonimizada de la cohorte de Framingham. <strong>No debe usarse para publicaciones.</strong></p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(framingham, <span class="at">package =</span> <span class="st">"riskCommunicator"</span>)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>?riskCommunicator<span class="sc">::</span>framingham</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p><strong>Pregunta de investigación:</strong></p>
+<blockquote class="blockquote">
+<p>En la visita basal del estudio, ¿la relación entre la edad (<code>AGE</code>) y el colesterol total (<code>TOTCHOL</code>) difiere entre hombres y mujeres (<code>SEX</code>), después de ajustar por IMC (<code>BMI</code>)? Si difiere, describa cómo y proponga una explicación biológica.</p>
+</blockquote>
+<hr>
+</section>
+<section id="base-4-cadenas-ligeras-libres-en-suero-olmsted-county" class="level2">
+<h2 class="anchored" data-anchor-id="base-4-cadenas-ligeras-libres-en-suero-olmsted-county">Base 4 — Cadenas ligeras libres en suero (Olmsted County)</h2>
+<p><strong>Fuente:</strong> paquete <code>survival</code> (incluido con R). Estudio de Dispenzieri et al.&nbsp;(2012) sobre cadenas ligeras libres en suero en residentes de Olmsted County, Minnesota, de 50 años o más.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(flchain, <span class="at">package =</span> <span class="st">"survival"</span>)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>?survival<span class="sc">::</span>flchain</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p><strong>Pregunta de investigación:</strong></p>
+<blockquote class="blockquote">
+<p>¿La asociación entre la función renal, medida por la creatinina sérica (<code>creatinine</code>), y la concentración de cadena ligera libre kappa (<code>kappa</code>) cambia con la edad (<code>age</code>), considerando el sexo (<code>sex</code>)?</p>
+<p>Discuta además si el resultado es relevante clínicamente, no solo estadísticamente.</p>
+</blockquote>
 
 
 </section>
@@ -229,12 +316,12 @@ ul.task-list li input[type="checkbox"] {
       // flash "checked"
       button.classList.add('code-copy-button-checked');
       var currentTitle = button.getAttribute("title");
-      button.setAttribute("title", "Copied!");
+      button.setAttribute("title", "Copiado");
       let tooltip;
       if (window.bootstrap) {
         button.setAttribute("data-bs-toggle", "tooltip");
         button.setAttribute("data-bs-placement", "left");
-        button.setAttribute("data-bs-title", "Copied!");
+        button.setAttribute("data-bs-title", "Copiado");
         tooltip = new bootstrap.Tooltip(button, 
           { trigger: "manual", 
             customClass: "code-copy-button-tooltip",
