@@ -66,8 +66,8 @@ gtsummary::tbl_regression(mod_sin)
 
 
 ```{r}
-summary(mod_sin)
-performance(mod_sin)
+summary(mod_con)
+performance(mod_con)
 ```
 ```{r echo=FALSE}
 gtsummary::tbl_regression(mod_con)

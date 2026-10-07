@@ -11,6 +11,9 @@ title: "Tema 5: Modelo lineal"
 
 - Modelos lineales parte 2. Regresión lineal múltiple · Variables dummy · ANOVA · Diagnóstico · Colinealidad · Confusión · Selección de variables.
 
+
+- Modelos lineales parte 3. Interacciones
+
 ## Material de clase
 
 [Modelos lineales parte 1. Presentacion](Modelos_lineales_P1/Modelos_lineales_P1.qmd)
@@ -28,3 +31,6 @@ title: "Tema 5: Modelo lineal"
 
 [Bodyfat](Modelos_lineales_P1/Bases/bodyfat.txt){download="bodyfat.txt"}
 
+## Ejercicios
+
+[Ejercicios regresion múltiple](ejercicios-regresion-multiple-instrucciones.qmd)

@@ -1,0 +1,104 @@
+---
+title: "Ejercicios integradores. Regresión múltiple con interacción"
+subtitle: "Modelos lineales, Parte 3"
+lang: es
+format:
+  html:
+    toc: true
+    number-sections: false
+  pdf:
+    toc: true
+    number-sections: false
+---
+
+## Instrucciones generales
+
+Para cada una de las cuatro bases de datos, responda la **pregunta de investigación** usando un modelo de regresión lineal múltiple. Usted decide qué pasos seguir, qué variables preparar, qué transformaciones aplicar y qué gráficos presentar. **Cada decisión debe estar justificada.**
+
+**Entregable:** un archivo Quarto (`.qmd`) y su versión renderizada (`.docx` o `.pdf`), con una sección por base. Cada sección debe incluir el código, los resultados, los gráficos y la interpretación. El documento debe poder ejecutarse completo de principio a fin sin errores.
+
+**Se evaluará:**
+
+- Los **pasos** que siguió y su justificación: carga, revisión de calidad de los datos, preparación de variables y exploración.
+- Las **transformaciones o normalizaciones** que aplicó, o la justificación de no aplicarlas.
+- La **construcción y comparación de modelos**, incluyendo la evaluación de confusión y de interacción.
+- La **verificación de supuestos**.
+- Los **gráficos**: claridad, pertinencia y que muestren lo que usted concluye.
+- La **interpretación** de los coeficientes y la **conclusión** que responde a la pregunta, redactada como en la sección de resultados de un artículo.
+
+### Paquetes necesarios
+
+```{r}
+#| eval: false
+install.packages(c("faraway", "NHANES", "riskCommunicator"))   # survival viene incluido con R
+```
+
+Cargue cada base **indicando el paquete** (`package = "..."`), porque hay bases con el mismo nombre en distintos paquetes. Consulte la documentación de cada base con `?nombre_de_la_base` antes de analizarla.
+
+---
+
+## Base 1 — Diabetes en afroamericanos de Virginia
+
+**Fuente:** paquete `faraway`. Estudio de Willems et al. (1997) sobre obesidad, diabetes y factores de riesgo cardiovascular en adultos afroamericanos de Virginia central.
+
+```{r}
+#| eval: false
+data(diabetes, package = "faraway")
+?faraway::diabetes
+```
+
+**Pregunta de investigación:**
+
+> ¿La relación entre la glucosa estabilizada (`stab.glu`) y la hemoglobina glicosilada (`glyhb`) depende de la edad (`age`), después de considerar el sexo (`gender`) y el índice de masa corporal?
+>
+> El IMC no viene en la base; debe calcularlo a partir de `weight` y `height`, revisando primero las unidades en la documentación.
+
+---
+
+## Base 2 — NHANES
+
+**Fuente:** paquete `NHANES`. Datos de la Encuesta Nacional de Salud y Nutrición de EE. UU. (ciclos 2009–2010 y 2011–2012), adaptados para docencia.
+
+```{r}
+#| eval: false
+data(NHANES, package = "NHANES")
+?NHANES::NHANES
+```
+
+**Pregunta de investigación:**
+
+> En adultos de 20 años o más, ¿el efecto de la edad (`Age`) sobre la presión arterial sistólica (`BPSysAve`) es diferente en hombres y mujeres (`Gender`), independientemente del IMC (`BMI`)?
+
+---
+
+## Base 3 — Estudio del Corazón de Framingham
+
+**Fuente:** paquete `riskCommunicator`. Versión docente y anonimizada de la cohorte de Framingham. **No debe usarse para publicaciones.**
+
+```{r}
+#| eval: false
+data(framingham, package = "riskCommunicator")
+?riskCommunicator::framingham
+```
+
+**Pregunta de investigación:**
+
+> En la visita basal del estudio, ¿la relación entre la edad (`AGE`) y el colesterol total (`TOTCHOL`) difiere entre hombres y mujeres (`SEX`), después de ajustar por IMC (`BMI`)? Si difiere, describa cómo y proponga una explicación biológica.
+
+---
+
+## Base 4 — Cadenas ligeras libres en suero (Olmsted County)
+
+**Fuente:** paquete `survival` (incluido con R). Estudio de Dispenzieri et al. (2012) sobre cadenas ligeras libres en suero en residentes de Olmsted County, Minnesota, de 50 años o más.
+
+```{r}
+#| eval: false
+data(flchain, package = "survival")
+?survival::flchain
+```
+
+**Pregunta de investigación:**
+
+> ¿La asociación entre la función renal, medida por la creatinina sérica (`creatinine`), y la concentración de cadena ligera libre kappa (`kappa`) cambia con la edad (`age`), considerando el sexo (`sex`)?
+>
+> Discuta además si el resultado es relevante clínicamente, no solo estadísticamente.

@@ -147,6 +147,7 @@ ul.task-list li input[type="checkbox"] {
   <li><a href="#contenidos" id="toc-contenidos" class="nav-link" data-scroll-target="#contenidos">Contenidos</a></li>
   <li><a href="#material-de-clase" id="toc-material-de-clase" class="nav-link" data-scroll-target="#material-de-clase">Material de clase</a></li>
   <li><a href="#base-de-datos-tema-05" id="toc-base-de-datos-tema-05" class="nav-link" data-scroll-target="#base-de-datos-tema-05">Base de datos tema-05</a></li>
+  <li><a href="#ejercicios" id="toc-ejercicios" class="nav-link" data-scroll-target="#ejercicios">Ejercicios</a></li>
   </ul>
 </nav>
     </div>
@@ -180,6 +181,7 @@ ul.task-list li input[type="checkbox"] {
 <ul>
 <li><p>Modelos lineales parte 1. Correlación vs.&nbsp;regresión · Regresión lineal simple · ANOVA · Diagnóstico · Interpretación de coeficientes</p></li>
 <li><p>Modelos lineales parte 2. Regresión lineal múltiple · Variables dummy · ANOVA · Diagnóstico · Colinealidad · Confusión · Selección de variables.</p></li>
+<li><p>Modelos lineales parte 3. Interacciones</p></li>
 </ul>
 </section>
 <section id="material-de-clase" class="level2">
@@ -193,6 +195,10 @@ ul.task-list li input[type="checkbox"] {
 <p><a href="Modelos_lineales_P1/Bases/sal_tension_arterial.csv" download="sal_tension_arterial.csv">sal_tension_arterial</a></p>
 <p><a href="Modelos_lineales_P1/Bases/LungCapData.xls" download="LungCapData.xls">LungCapData</a></p>
 <p><a href="Modelos_lineales_P1/Bases/bodyfat.txt" download="bodyfat.txt">Bodyfat</a></p>
+</section>
+<section id="ejercicios" class="level2">
+<h2 class="anchored" data-anchor-id="ejercicios">Ejercicios</h2>
+<p><a href="../../temas/tema-05/ejercicios-regresion-multiple-instrucciones.html">Ejercicios regresion múltiple</a></p>
 
 
 </section>
@@ -271,7 +277,7 @@ ul.task-list li input[type="checkbox"] {
     }
       var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
       var mailtoRegex = new RegExp(/^mailto:/);
-        var filterRegex = new RegExp("https:\/\/Ed-Perez-G\.github\.io\/bioestadistica-avanzada\/");
+        var filterRegex = new RegExp('/' + window.location.host + '/');
       var isInternal = (href) => {
           return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
       }
