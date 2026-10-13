@@ -1,0 +1,543 @@
+---
+title: "Regresión logística II"
+subtitle: "Modelos simples y múltiples · Confusión · Codificación · Aplicaciones en genética"
+author: "Edsaúl Emilio Pérez-Guerrero"
+date: today
+lang: es
+format:
+  revealjs:
+    theme: simple
+    css: estilos.css
+    slide-number: true
+    progress: true
+    chalkboard: true
+    code-copy: true
+    code-line-numbers: false
+    code-overflow: wrap
+    highlight-style: github
+    fig-align: center
+    fig-width: 8
+    fig-height: 4.5
+    fig-dpi: 150
+    transition: fade
+    footer: "Bioestadística con R · Regresión logística — Parte 2"
+    width: 1600
+    height: 900
+    scrollable: true
+execute:
+  echo: true
+  warning: false
+  message: false
+bibliography: referencias.bib
+---
+
+```{r}
+#| label: setup
+#| include: false
+library(ggplot2)
+library(patchwork)
+library(broom)
+library(ggeffects)
+options(scipen = 999, digits = 4)
+theme_set(theme_linedraw(base_size = 14))
+azul <- "#1f4e79"; naranja <- "#F0A05B"; rojo <- "#c0392b"; verde <- "#6aa84f"
+```
+
+## Objetivos de la sesión
+
+| Bloque | Tema | Pregunta del caso |
+|---|---|---|
+| 4 | Regresión logística simple y múltiple | ¿La asociación de rs7574865 se mantiene al ajustar? |
+| 5 | Aplicaciones en genética | ¿Qué modelo de herencia? ¿Hay G × E? ¿Estratificación? ¿Falsos positivos? |
+
+::: pregunta
+Recordatorio. OR **crudo** por alelo T = 1.95; valor verdadero de la simulación = 1.30. ¿De dónde sale la diferencia?
+:::
+
+## Datos (igual que en la Parte 1)
+
+```{r}
+#| label: datos
+datos <- read.csv("../Bases/estudio_AR_STAT4.csv")
+
+datos$sexo       <- factor(datos$sexo, levels = c("Hombre", "Mujer"))
+datos$tabaquismo <- factor(datos$tabaquismo, levels = c("Nunca", "Exfumador", "Actual"))
+datos$rs7574865  <- factor(datos$rs7574865, levels = c("GG", "GT", "TT"))
+datos$dosis_T    <- as.numeric(datos$rs7574865) - 1     # 0, 1, 2 alelos T
+
+table(datos$caso)   # 400 casos (1) y 400 controles (0)
+```
+
+# 4. Regresión logística simple y múltiple {background-color="#1f4e79"}
+
+## 4.1 Regresión logística simple
+
+Un solo predictor. Responde: ¿**cada** variable, por separado, se asocia con AR?
+
+```{r}
+#| label: simple
+m_snp  <- glm(caso ~ dosis_T,    data = datos, family = binomial)
+m_sexo <- glm(caso ~ sexo,       data = datos, family = binomial)
+m_edad <- glm(caso ~ edad,       data = datos, family = binomial)
+m_tab  <- glm(caso ~ tabaquismo, data = datos, family = binomial)
+m_pc1  <- glm(caso ~ PC1,        data = datos, family = binomial)
+
+# tidy() de broom: tabla con OR (exponentiate = TRUE) e IC 95 %
+tidy(m_snp, exponentiate = TRUE, conf.int = TRUE)
+```
+
+## OR crudos de todas las variables
+
+```{r}
+#| label: crudos
+crudos <- rbind(tidy(m_snp,  exponentiate = TRUE, conf.int = TRUE)[-1, ],
+                tidy(m_sexo, exponentiate = TRUE, conf.int = TRUE)[-1, ],
+                tidy(m_edad, exponentiate = TRUE, conf.int = TRUE)[-1, ],
+                tidy(m_tab,  exponentiate = TRUE, conf.int = TRUE)[-1, ],
+                tidy(m_pc1,  exponentiate = TRUE, conf.int = TRUE)[-1, ])
+crudos[, c("term", "estimate", "conf.low", "conf.high", "p.value")]
+```
+
+::: small
+`[-1, ]` elimina el intercepto. Este es el "análisis crudo" de Celis: la fuerza de asociación de cada variable independiente con el desenlace [@celis2014bioestadistica].
+:::
+
+## 4.2 Regresión logística múltiple
+
+$$\ln\left(\frac{p}{1-p}\right) = \beta_0 + \beta_1\,\text{dosis}_T + \beta_2\,\text{Mujer} + \beta_3\,\text{edad} + \beta_4\,\text{Exfum.} + \beta_5\,\text{Actual} + \beta_6\,\text{PC1}$$
+
+```{r}
+#| label: multiple
+m_ajust <- glm(caso ~ dosis_T + sexo + edad + tabaquismo + PC1,
+               data = datos, family = binomial)
+
+tabla_ajust <- tidy(m_ajust, exponentiate = TRUE, conf.int = TRUE)
+tabla_ajust[, c("term", "estimate", "conf.low", "conf.high", "p.value")]
+```
+
+## Interpretación del modelo múltiple
+
+Cada OR es **ajustado**: el efecto de esa variable **manteniendo constantes las demás** [@sperandei2014understanding; @denis2020univariate].
+
+-   **dosis_T**: por cada alelo T, los odds de AR se multiplican por `r round(exp(coef(m_ajust)["dosis_T"]), 2)`, ajustando por sexo, edad, tabaquismo y PC1.
+-   **sexoMujer**: las mujeres tienen `r round(exp(coef(m_ajust)["sexoMujer"]), 2)` veces los odds de los hombres.
+-   **edad**: OR por año = `r round(exp(coef(m_ajust)["edad"]), 3)`; por 10 años = `r round(exp(10 * coef(m_ajust)["edad"]), 2)`.
+-   **tabaquismoActual**: fumar actualmente vs. nunca, OR = `r round(exp(coef(m_ajust)["tabaquismoActual"]), 2)`.
+-   **Intercepto**: odds en la referencia (hombre, 0 alelos T, edad 0, nunca fumador, PC1 = 0). Sin interpretación práctica.
+
+::: alerta
+Error frecuente ("falacia de la Tabla 2"): interpretar los OR de **covariables de ajuste** como efectos causales. El modelo se construyó para la exposición de interés (el SNP) [@westreich2013table2].
+:::
+
+## 4.3 Variables de confusión
+
+Una variable **confunde** la asociación exposición → desenlace si [@celis2014bioestadistica; @vanderweele2019principles]:
+
+1.  Se asocia con la **exposición** (genotipo).
+2.  Se asocia con el **desenlace** (AR), independientemente de la exposición.
+3.  **No** es un eslabón intermedio (mediador) entre ambos.
+
+```{r}
+#| label: dag
+#| echo: false
+#| fig-height: 3.2
+#| fig-width: 9
+nodos <- data.frame(x = c(1, 0, 2), y = c(1, 0, 0),
+                    nombre = c("Ancestría / PC1", "Genotipo rs7574865", "Artritis reumatoide"),
+                    tipo = c("z", "x", "y"))
+flechas <- data.frame(x = c(0.9, 1.1, 0.35), y = c(0.9, 0.9, 0),
+                      xend = c(0.15, 1.85, 1.6), yend = c(0.12, 0.12, 0))
+ggplot() +
+  geom_segment(data = flechas, aes(x = x, y = y, xend = xend, yend = yend),
+               arrow = arrow(length = unit(0.3, "cm"), type = "closed"), linewidth = 1.1, col = "grey30") +
+  geom_label(data = nodos, aes(x = x, y = y, label = nombre, fill = tipo), size = 6,
+             label.padding = unit(0.5, "lines"), show.legend = FALSE) +
+  annotate("text", x = 1, y = -0.15, label = "¿efecto real?", size = 5, fontface = "italic") +
+  scale_fill_manual(values = c(x = "#dbe8f5", y = "#dbe8f5", z = "#fff1e0")) +
+  xlim(-0.5, 2.5) + ylim(-0.3, 1.2) + theme_void()
+```
+
+::: clave
+La ancestría determina la **frecuencia alélica** y también se asocia con el **riesgo de AR** en esta población simulada → abre un "camino trasero" que infla el OR crudo [@greenland1999causal].
+:::
+
+## ¿Qué covariable confunde? Criterio del cambio ≥ 10 %
+
+```{r}
+#| label: cambio-10
+or_crudo <- exp(coef(m_snp)["dosis_T"])
+
+# Agregamos una covariable a la vez y guardamos el OR del SNP
+covariables <- c("sexo", "edad", "tabaquismo", "PC1")
+cambio <- data.frame(covariable = covariables, OR_SNP = NA)
+for (i in seq_along(covariables)) {
+  f <- as.formula(paste("caso ~ dosis_T +", covariables[i]))
+  m <- glm(f, data = datos, family = binomial)
+  cambio$OR_SNP[i] <- exp(coef(m)["dosis_T"])
+}
+cambio$cambio_pct <- round((or_crudo - cambio$OR_SNP) / cambio$OR_SNP * 100, 1)
+cambio
+```
+
+::: small
+Se considera confusión cuando el OR crudo y el ajustado difieren más de 10 % [@celis2014bioestadistica; @mickey1989impact]. Es una guía, no una regla: la decisión de ajustar es **causal** antes que estadística [@vanderweele2019principles].
+:::
+
+## La ancestría cumple los criterios de confusión
+
+```{r}
+#| label: confusor-plot
+#| echo: false
+#| fig-height: 4.3
+c1 <- ggplot(datos, aes(rs7574865, PC1, fill = rs7574865)) +
+  geom_boxplot(alpha = .7, show.legend = FALSE) +
+  scale_fill_manual(values = c("grey80", naranja, rojo)) +
+  labs(title = "1) PC1 ~ genotipo", x = "Genotipo", y = "PC1 (ancestría)")
+c2 <- ggplot(datos, aes(factor(caso, labels = c("Control", "Caso")), PC1,
+                        fill = factor(caso))) +
+  geom_boxplot(alpha = .7, show.legend = FALSE) +
+  scale_fill_manual(values = c(azul, rojo)) +
+  labs(title = "2) PC1 ~ AR", x = NULL, y = "PC1 (ancestría)")
+c1 + c2
+```
+
+## 4.4 OR crudos vs. ajustados
+
+```{r}
+#| label: crudo-vs-ajustado
+#| echo: false
+#| fig-height: 4.3
+cr <- crudos[, c("term", "estimate", "conf.low", "conf.high")]; cr$modelo <- "Crudo"
+aj <- tabla_ajust[-1, c("term", "estimate", "conf.low", "conf.high")]; aj$modelo <- "Ajustado"
+comp <- rbind(cr, aj)
+comp$term <- factor(comp$term, levels = rev(unique(cr$term)))
+comp$modelo <- factor(comp$modelo, levels = c("Crudo", "Ajustado"))
+ggplot(comp, aes(estimate, term, col = modelo)) +
+  geom_vline(xintercept = 1, lty = 2) +
+  geom_pointrange(aes(xmin = conf.low, xmax = conf.high),
+                  position = position_dodge(width = .5), linewidth = 1) +
+  scale_x_log10() + scale_color_manual(values = c("grey55", azul), name = NULL) +
+  labs(x = "OR (IC 95 %, escala log)", y = NULL)
+```
+
+-   El OR del SNP baja de `r round(or_crudo, 2)` (crudo) a `r round(exp(coef(m_ajust)["dosis_T"]), 2)` (ajustado): **parte de la asociación cruda era confusión por ancestría**.
+-   Presente ambos en la misma tabla e indique en una nota al pie las covariables del ajuste [@celis2014bioestadistica].
+
+::: small
+Detalle técnico: el OR es **no colapsable**: puede cambiar un poco al agregar una covariable asociada solo con el desenlace, aunque no haya confusión [@greenland1999confounding]. Por eso el criterio del 10 % es orientativo.
+:::
+
+## 4.5 Codificación de variables categóricas
+
+-   **Desenlace**: 1 = evento (caso), 0 = no evento. Con un `factor`, R modela la probabilidad del **segundo nivel**.
+-   **Predictores** con $k$ categorías → $k-1$ variables *dummy*; la categoría de referencia toma 0 en todas [@sperandei2014understanding; @celis2014bioestadistica].
+
+| tabaquismo | `tabaquismoExfumador` | `tabaquismoActual` |
+|---|---|---|
+| Nunca (referencia) | 0 | 0 |
+| Exfumador | 1 | 0 |
+| Actual | 0 | 1 |
+
+-   Las *dummy* de una misma variable **entran y salen juntas** del modelo [@celis2014bioestadistica].
+
+## Selección de la categoría de referencia
+
+```{r}
+#| label: referencia
+datos$tab_ref_actual <- relevel(datos$tabaquismo, ref = "Actual")
+m_ref2 <- glm(caso ~ dosis_T + sexo + edad + tab_ref_actual + PC1,
+              data = datos, family = binomial)
+tidy(m_ref2, exponentiate = TRUE)[5:6, c("term", "estimate", "p.value")]
+```
+
+-   El **modelo es el mismo** (mismas predicciones, misma devianza); cambian las **comparaciones** y sus valores *p* [@sperandei2014understanding].
+-   Recomendaciones: la referencia debe tener **tamaño suficiente** y sentido clínico (p. ej., "nunca fumador"; homocigoto del alelo **no** de riesgo, GG) [@sperandei2014understanding].
+
+## 4.6 Construcción e interpretación de modelos en R
+
+| Paso | Código |
+|---|---|
+| 1. Preparar factores y referencia | `factor(x, levels = ...)`, `relevel()` |
+| 2. Ajustar | `glm(y ~ x1 + x2, data, family = binomial)` |
+| 3. Coeficientes y Wald | `summary(modelo)` |
+| 4. OR e IC 95 % | `tidy(modelo, exponentiate = TRUE, conf.int = TRUE)` |
+| 5. Probabilidades predichas | `predict(modelo, newdata, type = "response")` |
+| 6. Diagnóstico y comparación | `performance::check_model()`, `anova()`, AIC (Parte 3) |
+
+::: clave
+**Tamaño de muestra**: al menos ≈ 10 eventos por parámetro estimado (EPV) [@peduzzi1996simulation; @sperandei2014understanding]. Aquí: min(400 casos, 400 controles) / 6 parámetros ≈ `r round(400 / 6)` → holgado.
+:::
+
+# 5. Aplicaciones en genética {background-color="#1f4e79"}
+
+## 5.1 Estudios de asociación genética de casos y controles
+
+-   Se comparan **frecuencias alélicas/genotípicas** entre casos y controles [@clarke2011basic; @lewis2012introduction].
+-   Control de calidad previo: tasa de genotipificación, **equilibrio de Hardy–Weinberg (HWE) en controles**, frecuencia del alelo menor.
+-   La regresión logística permite **ajustar** por covariables (sexo, edad, ancestría) que una prueba χ² no puede.
+
+```{r}
+#| label: frecuencias
+# Frecuencia del alelo T en casos y controles
+tapply(datos$dosis_T, datos$caso, sum) / (2 * table(datos$caso))
+```
+
+::: small
+Compare con el estudio original: 27 % en casos vs. 22 % en controles [@remmers2007stat4].
+:::
+
+## Equilibrio de Hardy–Weinberg en controles
+
+```{r}
+#| label: hwe
+obs <- table(datos$rs7574865[datos$caso == 0])     # GG, GT, TT observados
+n   <- sum(obs)
+pT  <- (obs["GT"] + 2 * obs["TT"]) / (2 * n)        # frecuencia del alelo T
+esp <- n * c((1 - pT)^2, 2 * pT * (1 - pT), pT^2)   # esperados bajo HWE
+
+chi2 <- sum((obs - esp)^2 / esp)
+rbind(observado = obs, esperado = round(esp, 1))
+pchisq(chi2, df = 1, lower.tail = FALSE)            # valor p (1 g.l.)
+```
+
+::: small
+Una desviación de HWE en controles sugiere **error de genotipificación**, selección sesgada o estructura poblacional [@clarke2011basic].
+:::
+
+## 5.2 Modelos de herencia
+
+| Modelo | Supuesto | Codificación (GG / GT / TT) | g.l. |
+|---|---|---|---|
+| **Aditivo** (log-aditivo) | Cada alelo T multiplica los odds por el mismo factor | 0 / 1 / 2 | 1 |
+| **Dominante** | Basta una copia de T | 0 / 1 / 1 | 1 |
+| **Recesivo** | Se necesitan dos copias de T | 0 / 0 / 1 | 1 |
+| **Genotípico** (codominante) | Sin supuestos; cada genotipo vs. GG | factor (2 *dummy*) | 2 |
+
+::: small
+El modelo aditivo es el estándar en GWAS por su potencia ante efectos dominantes o aditivos [@lewis2012introduction; @clarke2011basic].
+:::
+
+## Cómo se ve cada modelo de herencia
+
+```{r}
+#| label: herencia-plot
+#| echo: false
+#| fig-height: 4
+her <- data.frame(
+  genotipo = factor(rep(c("GG", "GT", "TT"), 4), levels = c("GG", "GT", "TT")),
+  modelo = factor(rep(c("Aditivo", "Dominante", "Recesivo", "Genotípico"), each = 3),
+                  levels = c("Aditivo", "Dominante", "Recesivo", "Genotípico")),
+  logodds = c(0, .4, .8,  0, .6, .6,  0, 0, .8,  0, .55, .7))
+ggplot(her, aes(genotipo, logodds, group = modelo)) +
+  geom_line(col = azul, linewidth = 1.2) + geom_point(size = 4, col = rojo) +
+  facet_wrap(~ modelo, nrow = 1) +
+  labs(x = "Genotipo", y = "log-odds de AR (relativo a GG)")
+```
+
+## 5.3 Codificación de genotipos y dosis alélica
+
+```{r}
+#| label: codificacion
+datos$dominante <- ifelse(datos$rs7574865 %in% c("GT", "TT"), 1, 0)   # al menos un T
+datos$recesivo  <- ifelse(datos$rs7574865 == "TT", 1, 0)              # dos copias de T
+
+head(datos[, c("rs7574865", "dosis_T", "dominante", "recesivo")])
+```
+
+## Ajustar los cuatro modelos (mismas covariables)
+
+```{r}
+#| label: cuatro-modelos
+cov <- "+ sexo + edad + tabaquismo + PC1"
+m_adit <- glm(as.formula(paste("caso ~ dosis_T",   cov)), data = datos, family = binomial)
+m_dom  <- glm(as.formula(paste("caso ~ dominante", cov)), data = datos, family = binomial)
+m_rec  <- glm(as.formula(paste("caso ~ recesivo",  cov)), data = datos, family = binomial)
+m_gen  <- glm(as.formula(paste("caso ~ rs7574865", cov)), data = datos, family = binomial)
+
+herencia <- rbind(
+  tidy(m_adit, exponentiate = TRUE, conf.int = TRUE)[2, ],
+  tidy(m_dom,  exponentiate = TRUE, conf.int = TRUE)[2, ],
+  tidy(m_rec,  exponentiate = TRUE, conf.int = TRUE)[2, ],
+  tidy(m_gen,  exponentiate = TRUE, conf.int = TRUE)[2:3, ])
+herencia$AIC <- c(AIC(m_adit), AIC(m_dom), AIC(m_rec), AIC(m_gen), NA)
+herencia[, c("term", "estimate", "conf.low", "conf.high", "p.value", "AIC")]
+```
+
+## Interpretación de los modelos de herencia
+
+-   **Aditivo**: OR = `r round(exp(coef(m_adit)[2]), 2)` **por alelo T**. TT vs. GG = OR² = `r round(exp(2 * coef(m_adit)[2]), 2)`.
+-   **Dominante**: portadores (GT + TT) vs. GG.
+-   **Recesivo**: TT vs. GG + GT.
+-   **Genotípico**: GT vs. GG y TT vs. GG por separado. Si OR(TT) ≈ OR(GT)², el patrón es aditivo.
+-   Menor **AIC** → mejor balance ajuste/complejidad (Parte 3). Aquí el aditivo tiene el menor AIC, coherente con cómo se simularon los datos.
+
+::: alerta
+Probar los cuatro modelos y reportar el "mejor" es otra forma de **comparaciones múltiples**. Defina el modelo principal **antes** de analizar (aditivo, por convención) [@clarke2011basic].
+:::
+
+## 5.4 Interacción gen–ambiente (G × E)
+
+¿El efecto del alelo T **depende** del tabaquismo? (multiplicativa en la escala del odds)
+
+```{r}
+#| label: gxe
+m_gxe <- glm(caso ~ dosis_T * tabaquismo + sexo + edad + PC1,
+             data = datos, family = binomial)
+tidy(m_gxe, exponentiate = TRUE, conf.int = TRUE)[c(2, 8, 9),
+     c("term", "estimate", "conf.low", "conf.high", "p.value")]
+
+# Prueba global de la interacción (2 g.l.): razón de verosimilitudes
+anova(m_ajust, m_gxe, test = "Chisq")
+```
+
+## Visualizar la interacción
+
+```{r}
+#| label: gxe-plot
+#| fig-height: 4.2
+#| fig-width: 8
+#| out-width: "70%"
+pred_gxe <- ggpredict(m_gxe, terms = c("dosis_T", "tabaquismo"))
+plot(pred_gxe) + labs(x = "Alelos T", y = "P(AR) predicha", title = NULL) +
+  theme_linedraw(base_size = 14)
+```
+
+-   La interacción **existía** en la simulación (OR de interacción = 1.35 en fumadores actuales), pero el estudio **no la detecta**.
+-   Detectar interacciones requiere muestras mucho mayores que los efectos principales [@gelman2020regression]. Ausencia de evidencia ≠ evidencia de ausencia.
+-   La interacción puede existir en una escala (aditiva, riesgos) y no en otra (multiplicativa, OR) [@vanderweele2014tutorial; @celis2014bioestadistica].
+
+## Interacción gen–gen (G × G, epistasis estadística)
+
+```{r}
+#| label: gxg
+m_gxg <- glm(caso ~ dosis_T * SNP03 + sexo + edad + tabaquismo + PC1,
+             data = datos, family = binomial)
+tidy(m_gxg, exponentiate = TRUE)[c(2, 3, 9), c("term", "estimate", "p.value")]
+```
+
+-   El término `dosis_T:SNP03` evalúa si el efecto de rs7574865 cambia según los alelos de SNP03.
+-   Con miles de SNPs, las combinaciones son **millones** → enorme problema de comparaciones múltiples y de potencia [@cordell2009detecting].
+
+## 5.5 Estratificación poblacional
+
+Si casos y controles difieren en **ancestría**, y la frecuencia alélica varía con la ancestría, aparecen asociaciones espurias o infladas [@price2006principal]. Muy relevante en poblaciones **mestizas** (p. ej., mexicana).
+
+```{r}
+#| label: estratificacion-plot
+#| echo: false
+#| fig-height: 3.8
+datos$tercil_anc <- cut(datos$ancestria, quantile(datos$ancestria, c(0, 1/3, 2/3, 1)),
+                        include.lowest = TRUE, labels = c("Baja", "Media", "Alta"))
+fa <- aggregate(dosis_T ~ tercil_anc, data = subset(datos, caso == 0), FUN = function(x) sum(x) / (2 * length(x)))
+pa <- aggregate(caso ~ tercil_anc, data = datos, FUN = mean)
+e1 <- ggplot(fa, aes(tercil_anc, dosis_T)) + geom_col(fill = naranja) +
+  labs(title = "Alelo T (controles)", x = "Ancestría amerindia", y = "Frecuencia de T")
+e2 <- ggplot(pa, aes(tercil_anc, caso)) + geom_col(fill = rojo) +
+  labs(title = "Proporción de casos", x = "Ancestría amerindia", y = "Proporción de casos")
+e1 + e2
+```
+
+## Ajuste por ascendencia genética
+
+```{r}
+#| label: ajuste-pc
+m_sin_pc <- glm(caso ~ dosis_T + sexo + edad + tabaquismo, data = datos, family = binomial)
+m_con_pc <- glm(caso ~ dosis_T + sexo + edad + tabaquismo + PC1, data = datos, family = binomial)
+
+rbind(data.frame(modelo = "Sin PC1", tidy(m_sin_pc, exponentiate = TRUE, conf.int = TRUE)[2, ]),
+      data.frame(modelo = "Con PC1", tidy(m_con_pc, exponentiate = TRUE, conf.int = TRUE)[2, ]))
+```
+
+-   **Componentes principales** genéticos (PC1, PC2…) como covariables: estrategia estándar en GWAS [@price2006principal].
+-   Otras: **control genómico** (inflación λ) [@devlin1999genomic], modelos mixtos, diseños basados en familias.
+
+::: clave
+Sin PC1 el IC 95 % del OR **no incluye** el valor verdadero (1.30); con PC1 sí.
+:::
+
+## 5.6 Comparaciones múltiples: panel de 20 SNPs
+
+```{r}
+#| label: panel
+snps <- sprintf("SNP%02d", 1:20)
+resultados <- data.frame(snp = snps, OR = NA, p = NA)
+
+for (i in seq_along(snps)) {
+  f <- as.formula(paste("caso ~", snps[i], "+ sexo + edad + tabaquismo + PC1"))
+  m <- glm(f, data = datos, family = binomial)
+  resultados$OR[i] <- exp(coef(m)[2])
+  resultados$p[i]  <- summary(m)$coefficients[2, 4]
+}
+
+resultados$p_Bonferroni <- p.adjust(resultados$p, method = "bonferroni")
+resultados$p_FDR        <- p.adjust(resultados$p, method = "BH")   # Benjamini–Hochberg
+resultados[order(resultados$p), ][1:6, ]
+```
+
+## ¿Cuántos falsos positivos?
+
+```{r}
+#| label: fdr-plot
+#| echo: false
+#| fig-height: 4.6
+#| fig-width: 9
+#| out-width: "75%"
+res <- resultados[order(resultados$p), ]
+res$rango <- seq_len(nrow(res))
+res$umbral_BH <- 0.05 * res$rango / nrow(res)
+res$verdad <- ifelse(res$snp %in% c("SNP03", "SNP11"), "Efecto real (simulado)", "Sin efecto (simulado)")
+ggplot(res, aes(rango, p)) +
+  geom_hline(yintercept = 0.05, lty = 2, col = "grey40") +
+  geom_hline(yintercept = 0.05 / 20, lty = 3, col = rojo) +
+  geom_line(aes(y = umbral_BH), col = azul, linewidth = 1) +
+  geom_point(aes(col = verdad), size = 3.5) +
+  geom_text(aes(label = snp), vjust = -0.9, size = 3.2, data = res[1:6, ]) +
+  scale_y_log10() + scale_color_manual(values = c(rojo, "grey50"), name = NULL) +
+  annotate("text", x = 18, y = 0.07, label = "p = 0.05", size = 4) +
+  annotate("text", x = 18, y = 0.0035, label = "Bonferroni", size = 4, col = rojo) +
+  annotate("text", x = 15, y = 0.03, label = "Línea BH", size = 4, col = azul) +
+  labs(x = "SNPs ordenados por valor p", y = "Valor p (escala log)") +
+  theme(legend.position = "bottom")
+```
+
+-   Con 20 pruebas y α = 0.05 esperamos ≈ 1 falso positivo **aunque ningún SNP tenga efecto**.
+-   **Bonferroni** controla la probabilidad de **algún** falso positivo (conservador). **FDR** (Benjamini–Hochberg) controla la **proporción** esperada de falsos descubrimientos [@benjamini1995controlling].
+-   En nuestro panel: `r sum(resultados$p < 0.05)` SNPs con *p* < 0.05 sin corregir; con FDR < 0.05 solo `r sum(resultados$p_FDR < 0.05)`. SNP03 tenía un efecto real pero no sobrevive a la corrección: el precio es **potencia**.
+-   En GWAS (~1 millón de pruebas independientes) el umbral convencional es $p < 5 \times 10^{-8}$ [@peer2008estimation].
+
+# Cierre {background-color="#1f4e79"}
+
+## Mensajes clave
+
+1.  La regresión **simple** da OR **crudos**; la **múltiple**, OR **ajustados** ("manteniendo constantes las demás").
+2.  Un confusor se asocia con la exposición y con el desenlace y no es mediador. Criterio orientativo: cambio ≥ 10 % del OR.
+3.  Las referencias cambian las comparaciones, **no** el modelo.
+4.  En genética: modelo **aditivo** (dosis alélica) por defecto; dominante, recesivo y genotípico como alternativas pre-especificadas.
+5.  Las interacciones G × E y G × G requieren **mucha** potencia.
+6.  **Ajuste por ancestría** (PCs) para evitar asociaciones espurias por estratificación.
+7.  Muchas pruebas → corrija (Bonferroni, **FDR**).
+
+## Respuesta parcial a la pregunta guía
+
+| | OR por alelo T | IC 95 % |
+|---|---|---|
+| Crudo | `r round(or_crudo, 2)` | `r round(exp(confint(m_snp))[2, 1], 2)`–`r round(exp(confint(m_snp))[2, 2], 2)` |
+| Ajustado (sexo, edad, tabaquismo, PC1) | `r round(exp(coef(m_ajust)["dosis_T"]), 2)` | `r round(exp(confint(m_ajust))["dosis_T", 1], 2)`–`r round(exp(confint(m_ajust))["dosis_T", 2], 2)` |
+| Verdadero (simulación) | 1.30 | — |
+
+::: pregunta
+Ya sabemos que la asociación existe y cuánto mide. Falta saber si el **modelo es válido** (supuestos, separación, influyentes) y si **sirve para predecir**. → Parte 3.
+:::
+
+## Práctica en clase
+
+1.  Agregue al modelo ajustado `PC1` **y** `ancestria`. ¿Qué pasa con los errores estándar? (adelanto de multicolinealidad).
+2.  Ajuste el modelo **recesivo** con covariables. Interprete el OR. ¿Por qué su IC es más ancho que el del aditivo?
+3.  Evalúe la interacción `dosis_T × sexo` con una prueba de razón de verosimilitudes.
+4.  Repita el panel de 20 SNPs **sin** ajustar por covariables. ¿Cambian los SNPs significativos antes y después de la corrección FDR?
+5.  Cambie la referencia del genotipo a "TT" con `relevel()` e interprete los nuevos OR.
+
+## Referencias
+
+::: {#refs .small}
+:::

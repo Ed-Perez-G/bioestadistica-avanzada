@@ -1,0 +1,822 @@
+---
+title: "Modelos lineales IV"
+subtitle: "Algoritmos para la selección de variables · Forward · Backward · Stepwise · AIC/BIC · Regularización · Validación"
+author: "Edsaúl Emilio Pérez-Guerrero"
+date: today
+lang: es
+format:
+  revealjs:
+    theme: simple
+    css: estilos.css
+    slide-number: true
+    progress: true
+    chalkboard: true
+    code-copy: true
+    code-line-numbers: false
+    code-overflow: wrap
+    highlight-style: github
+    fig-align: center
+    fig-width: 8
+    fig-height: 4.5
+    fig-dpi: 150
+    transition: fade
+    footer: "Bioestadística con R · Modelos lineales — Parte 4"
+    width: 1600
+    height: 900
+    scrollable: true
+execute:
+  echo: true
+  warning: false
+  message: false
+bibliography: referencias.bib
+---
+
+```{r}
+#| label: setup
+#| include: false
+library(ggplot2)
+library(patchwork)
+library(MASS)          # stepAIC(), birthwt, Pima.tr
+library(glmnet)        # ridge, LASSO, elastic net
+library(performance)
+options(scipen = 999, digits = 4)
+theme_set(theme_linedraw(base_size = 14))
+azul <- "#1f4e79"; naranja <- "#F0A05B"; rojo <- "#c0392b"; verde <- "#6aa84f"
+
+# Función auxiliar: nombres de las variables que quedaron en un modelo
+variables <- function(modelo) attr(terms(modelo), "term.labels")
+```
+
+## Objetivos de la sesión
+
+| Bloque | Tema |
+|---|---|
+| 1 | Fundamentos: ¿para qué seleccionar variables? |
+| 2 | Métodos secuenciales: *forward*, *backward*, *stepwise* |
+| 3 | Criterios: valores *p*, AIC, BIC, modelos anidados |
+| 4 | Regularización: *ridge*, LASSO, *elastic net* (panorama) |
+| 5 | Validación y estabilidad de la selección (panorama) |
+| 6 | Aplicaciones en R y comparación de métodos |
+| 7 | Resolución de la tarea |
+
+::: small
+Objetivo: conocer y comparar los principales métodos de selección de variables en regresión lineal, sus fundamentos, ventajas, limitaciones y aplicaciones en investigación biomédica y genética. Todo lo de hoy se aplica igual a la **regresión logística** (próximo tema).
+:::
+
+## ¿Dónde nos quedamos?
+
+En la Parte 2 vimos estrategias en las que **decide el investigador**: por conocimiento, jerárquica y selección manual intencionada [@bursac2008purposeful].
+
+En la Parte 3 revisamos interacciones y confusores
+
+Hoy: estrategias en las que nos apoyamos de algoritmos para la seleccion de variables. 
+
+| Estrategia | Quién decide | Hoy |
+|---|---|---|
+| Por conocimiento / jerárquica / manual | Investigador | Repaso |
+| Secuencial (*forward*, *backward*, *stepwise*) | Algoritmo + criterio (*p*, AIC, BIC) | **Sí** |
+| Penalizada (*ridge*, LASSO, *elastic net*) | Algoritmo + validación cruzada | Panorama |
+
+## Librerías para la sesión
+
+```{r}
+#| label: setup2
+#| include: true
+#| eval: false
+library(ggplot2) # gr{aficos 
+library(patchwork) # Organización de gráficos 
+library(MASS)          # stepAIC(), birthwt, Pima.tr
+library(glmnet)        # ridge, LASSO, elastic net
+library(performance) # desempeño de los modelos
+```
+
+
+## Bases de datos de la sesión
+
+```{r}
+#| label: datos
+# 1) Peso al nacer (MASS::birthwt), n = 189
+data(birthwt, package = "MASS")
+bw <- birthwt
+bw$race  <- factor(bw$race, labels = c("Blanca", "Negra", "Otra"))
+bw$smoke <- factor(bw$smoke, labels = c("No", "Sí"))
+bw$ht    <- factor(bw$ht,    labels = c("No", "Sí"))   # hipertensión
+bw$ui    <- factor(bw$ui,    labels = c("No", "Sí"))   # irritabilidad uterina
+bw$low   <- NULL                                       # derivada de bwt: no es predictor
+
+# 2) Mujeres Pima (MASS::Pima.tr), n = 200
+data(Pima.tr, package = "MASS")
+
+# 3) Cirrosis biliar primaria (survival::pbc): casos completos
+data(pbc, package = "survival")
+vars_pbc <- c("bili", "age", "sex", "ascites", "hepato", "spiders", "edema", "chol",
+              "albumin", "copper", "alk.phos", "ast", "trig", "platelet", "protime", "stage")
+pbc2 <- na.omit(pbc[, vars_pbc])
+pbc2$log_bili <- log(pbc2$bili)   # la bilirrubina es muy asimétrica
+pbc2$bili <- NULL
+pbc2$mujer <- as.numeric(pbc2$sex == "f")   # sexo como 0/1 (facilita glmnet)
+pbc2$sex <- NULL
+c(birthwt = nrow(bw), Pima = nrow(Pima.tr), pbc = nrow(pbc2))
+```
+
+# 1. Fundamentos de la selección de variables {background-color="#1f4e79"}
+
+## Propósito de la selección de predictores
+
+Tenemos un desenlace $Y$ y **muchas** variables candidatas. ¿Cuáles incluir?
+
+-   **Explicar**: estimar el efecto de una exposición controlando confusores (¿el tabaquismo reduce el peso al nacer?).
+-   **Describir**: identificar qué factores se asocian con $Y$ (¿qué variables clínicas se asocian con la bilirrubina?).
+-   **Predecir**: construir el modelo que mejor anticipe $Y$ en pacientes **nuevos** [@shmueli2010explain].
+
+::: clave
+Antes de elegir un método hay que responder: **¿para qué quiero el modelo?** La respuesta cambia el método correcto [@heinze2018variable].
+:::
+
+## El problema: demasiados modelos posibles
+
+Con $k$ candidatas hay $2^k$ modelos posibles (cada variable entra o no).
+
+```{r}
+#| label: combinaciones
+#| echo: false
+#| fig-height: 3.6
+comb <- data.frame(k = 1:30, modelos = 2^(1:30))
+ggplot(comb, aes(k, modelos)) + geom_line(col = azul, linewidth = 1.2) + geom_point(col = azul) +
+  scale_y_log10(labels = scales::label_comma()) +
+  geom_point(data = data.frame(k = c(8, 15, 20), modelos = 2^c(8, 15, 20)), col = rojo, size = 4) +
+  annotate("label", x = c(8, 15, 20), y = 2^c(8, 15, 20) * 6,
+           label = c("birthwt: 256", "pbc: 32,768", "20 SNPs: 1,048,576"), size = 4) +
+  labs(x = "Número de variables candidatas (k)", y = "Modelos posibles (escala log)")
+```
+
+::: small
+Revisarlos todos ("mejor subconjunto") es posible con pocas variables. Con muchas, los algoritmos **secuenciales** recorren solo un camino entre ellos [@james2021introduction].
+:::
+
+## Parsimonia, interpretabilidad y sobreajuste
+
+- **Parsimonia**: entre modelos que explican lo mismo, el más simple; además es más **interpretable** [@denis2020univariate].
+- Se debe privilegiar los modelos interpetables. Menos variables más interpretabilidad  [@harrell2015regression].
+- Cuando se separan en conjunto de entrenamiento y validadción se debe de cuidar el sobreajuste
+
+## Selección para inferencia vs. para predicción
+
+| | **Inferencia** (explicar) | **Predicción** |
+|---|---|---|
+| Pregunta | ¿Cuál es el efecto de X sobre Y? | ¿Qué tan bien anticipo Y? |
+| Qué importa | Coeficientes **insesgados** con IC válidos | Error de predicción en datos nuevos |
+| Variables | Confusores definidos por teoría (DAG) | Las que mejoren la predicción validada |
+| Selección automática | **Desaconsejada** como estrategia principal | Aceptable si se **valida** |
+| Métodos típicos | Conocimiento previo, *purposeful*, cambio en el estimador | LASSO, *elastic net*, validación cruzada |
+
+::: alerta
+Un algoritmo **no sabe** qué es un confusor, un mediador o un colisionador (Parte 2 y 3). Puede eliminar un confusor o retener un mediador [@heinze2017five; @vanderweele2019principles].
+:::
+
+## Siempre tomar en cuenta
+
+- El objetivo del modelo (explicar vs. predecir) define qué variables entran
+- Seleccionar con conocimiento previo / DAG, no con p-valores ni stepwise
+- Incluir confusores; **no** ajustar por mediadores ni colisionadores
+- Interacciones: solo con hipótesis a priori (requieren mucho más n)
+- Tamaño de muestra robusto
+- Más variables de las que el n soporta → sobreajuste y coeficientes inestables
+- Colinealidad: infla errores estándar (revisar VIF)
+- Datos faltantes: más variables pueden reducir el n efectivo 
+- No hay un número exacto; ~10–20 por parámetro es una guía, no una regla
+- Revisar los IC: si son muy amplios (o absurdos), probablemente falta información
+  + Pero un IC razonable **no garantiza** que el n sea suficiente
+    (puede haber sobreajuste o sesgo con IC estrechos)
+
+
+# 2. Métodos de selección secuencial {background-color="#1f4e79"}
+
+## Idea general
+
+```{r}
+#| label: esquema-secuencial
+#| echo: false
+#| fig-height: 3.6
+#| fig-width: 12
+caja <- function(titulo, pasos, color) {
+  d <- data.frame(x = 1, y = rev(seq_along(pasos)), lab = pasos)
+  ggplot(d, aes(x, y, label = lab)) +
+    geom_label(fill = color, size = 4.4, label.padding = unit(0.45, "lines")) +
+    geom_segment(data = d[-nrow(d), ], aes(x = 1, xend = 1, y = y - 0.25, yend = y - 0.75),
+                 arrow = arrow(length = unit(0.2, "cm")), inherit.aes = FALSE) +
+    xlim(0.4, 1.6) + ylim(0.5, length(pasos) + 0.5) + labs(title = titulo) +
+    theme_void(base_size = 15) + theme(plot.title = element_text(hjust = 0.5, face = "bold"))
+}
+caja("Forward", c("Modelo vacío: Y ~ 1", "Agregar la MEJOR variable", "¿Mejora el criterio?", "Sí: repetir · No: parar"), "#dbe8f5") +
+  caja("Backward", c("Modelo completo: Y ~ todas", "Quitar la PEOR variable", "¿Mejora el criterio?", "Sí: repetir · No: parar"), "#fff1e0") +
+  caja("Stepwise", c("Inicio: vacío o completo", "Agregar o quitar", "¿Mejora el criterio?", "Sí: repetir · No: parar"), "#eef6ea")
+```
+
+-   En cada paso se compara un **criterio** (valor *p*, AIC o BIC) y se elige el mejor movimiento [@james2021introduction].
+-   En R: `step()` (base) o `MASS::stepAIC()` usan **AIC** por defecto [@venables2002modern].
+
+## Ejemplo: ¿qué factores se asocian con el peso al nacer?
+
+```{r}
+#| label: modelos-extremos
+# Modelo nulo (solo intercepto) y modelo completo (todas las candidatas)
+nulo     <- lm(bwt ~ 1, data = bw)
+completo <- lm(bwt ~ age + lwt + race + smoke + ptl + ht + ui + ftv, data = bw)
+```
+
+| Variable | Descripción |
+|---|---|
+| `age`, `lwt` | Edad (años) y peso materno previo (lb) |
+| `race`, `smoke` | Raza y tabaquismo en el embarazo |
+| `ptl`, `ftv` | Partos prematuros previos; visitas médicas en el 1.er trimestre |
+| `ht`, `ui` | Hipertensión; irritabilidad uterina |
+
+## 2.1 Forward selection
+
+Empieza con el modelo **vacío** y agrega, una a una, la variable que **más mejora** el criterio. Se detiene cuando ninguna mejora.
+
+```{r}
+#| label: forward
+m_forward <- step(nulo,
+                  scope = formula(completo),   # variables que puede agregar
+                  direction = "forward",
+                  trace = 1)                   # muestra cada paso
+```
+
+## Lectura de la salida de `step()`
+
+-   Cada bloque es un **paso**. `<none>` = quedarse como está.
+-   La tabla ordena las opciones por **AIC**: la primera fila es el mejor movimiento.
+-   El algoritmo se detiene cuando `<none>` queda **arriba** (ningún cambio reduce el AIC).
+
+```{r}
+#| label: forward-resultado
+formula(m_forward)
+```
+
+::: small
+Ventaja: funciona aun con muchas candidatas (incluso más variables que observaciones). Limitación: una variable que entra **no vuelve a salir**, aunque otra posterior la vuelva redundante [@james2021introduction].
+:::
+
+## 2.2 Backward elimination
+
+Empieza con el modelo **completo** y elimina, una a una, la variable cuya salida **más mejora** el criterio.
+
+```{r}
+#| label: backward
+m_backward <- step(completo, direction = "backward", trace = 1)
+```
+
+## Backward: resultado
+
+```{r}
+#| label: backward-resultado
+formula(m_backward)
+```
+
+-   Ventaja: evalúa cada variable **en presencia de todas las demás** (no pierde variables que solo importan juntas) [@heinze2018variable].
+-   Limitación: requiere **más observaciones que variables**; el modelo completo debe poder ajustarse.
+-   Suele preferirse a *forward* cuando es posible [@heinze2018variable].
+
+## 2.3 Stepwise (en ambas direcciones)
+
+En cada paso evalúa **agregar** una variable nueva **o quitar** una que ya está.
+
+```{r}
+#| label: stepwise
+m_stepwise <- step(nulo, scope = formula(completo), direction = "both", trace = 0)
+formula(m_stepwise)
+
+# Con MASS::stepAIC() el resultado es el mismo
+m_stepAIC <- stepAIC(completo, direction = "both", trace = 0)
+formula(m_stepAIC)
+```
+
+## Comparación de los tres métodos
+
+```{r}
+#| label: comparacion-metodos
+candidatas <- c("age", "lwt", "race", "smoke", "ptl", "ht", "ui", "ftv")
+tabla_sel <- data.frame(
+  variable = candidatas,
+  forward  = candidatas %in% variables(m_forward),
+  backward = candidatas %in% variables(m_backward),
+  stepwise = candidatas %in% variables(m_stepwise))
+tabla_sel
+```
+
+::: small
+Aquí los tres coinciden: `lwt`, `race`, `smoke`, `ht` y `ui`. **No siempre ocurre**: en la tarea (base `diabetes`) *forward* y *backward* eligen modelos distintos.
+:::
+
+## Ventajas y limitaciones de los métodos secuenciales
+
+| Ventajas | Limitaciones |
+|---|---|
+| Rápidos y automáticos | Recorren **un solo camino**: no garantizan el "mejor" modelo |
+| Reproducibles | Resultados **inestables**: pequeños cambios en los datos cambian las variables elegidas |
+| Útiles para explorar muchas candidatas | Valores *p*, EE e IC del modelo final son **demasiado optimistas** |
+| Disponibles en todo software | Coeficientes **inflados** (sesgo de selección) |
+| | Ignoran confusión, mediación y plausibilidad biológica |
+
+::: alerta
+Estas limitaciones están bien documentadas desde hace décadas [@harrell2015regression; @whittingham2006why; @smith2018step]. Los revisaremos en el bloque 5.
+:::
+
+# 3. Criterios estadísticos para la selección {background-color="#1f4e79"}
+
+## 3.1 Pruebas de significación estadística
+
+El criterio clásico: entra la variable con menor *p* (si *p* < α de entrada); sale la de mayor *p* (si *p* > α de salida).
+
+```{r}
+#| label: drop1
+# Backward por valor p: prueba F de quitar cada variable del modelo completo
+drop1(completo, test = "F")
+```
+
+-   Se quita la de **mayor** *p* (`ftv`), se reajusta y se repite hasta que todas tengan *p* < α.
+-   No es lo más recomendado
+
+## 3.2 Criterio de información de Akaike (AIC)
+
+$$AIC = n\ln\left(\frac{SCE}{n}\right) + 2k \qquad \text{(regresión lineal)}$$
+
+-   **Ajuste** (primer término) + **penalización** por número de parámetros $k$ [@akaike1974new].
+-   **Menor AIC = mejor** balance. Solo se compara entre modelos ajustados con los **mismos datos**.
+-   $\Delta AIC < 2$: modelos prácticamente equivalentes [@burnham2002model].
+-   Pensado para **predicción**: tiende a incluir alguna variable de más.
+
+```{r}
+#| label: aic
+m_pima_completo <- lm(glu ~ npreg + bp + skin + bmi + ped + age, data = Pima.tr)
+m_pima_aic <- step(m_pima_completo, trace = 0)   # k = 2 (AIC) por defecto
+formula(m_pima_aic)
+```
+
+## 3.3 Criterio de información bayesiano (BIC)
+
+$$BIC = n\ln\left(\frac{SCE}{n}\right) + k\ln(n)$$
+
+-   La penalización crece con $n$: con $n \geq 8$, $\ln(n) > 2$ → BIC es **más estricto** que AIC [@schwarz1978estimating].
+-   Favorece modelos **más simples**; pensado para identificar el modelo "verdadero" si está entre los candidatos.
+
+```{r}
+#| label: bic
+n_pima <- nrow(Pima.tr)
+m_pima_bic <- step(m_pima_completo, k = log(n_pima), trace = 0)   # k = log(n) → BIC
+formula(m_pima_bic)
+```
+
+::: small
+AIC retuvo `bp` (presión diastólica); BIC la eliminó. ¿Cuál elegir? Depende del objetivo y del conocimiento previo.
+:::
+
+## AIC vs. BIC en imagen
+
+```{r}
+#| label: aic-bic-plot
+#| echo: false
+#| fig-height: 4
+pen <- data.frame(n = 5:1000)
+ggplot(pen, aes(n)) +
+  geom_hline(aes(yintercept = 2, col = "AIC: 2 por parámetro"), linewidth = 1.2) +
+  geom_line(aes(y = log(n), col = "BIC: ln(n) por parámetro"), linewidth = 1.2) +
+  geom_vline(xintercept = 200, lty = 2) +
+  annotate("label", x = 180, y = 6.3, label = "Pima.tr (n = 200):\nBIC penaliza 2.6 veces más", hjust = 1, size = 4.5) +
+  scale_color_manual(values = c(azul, rojo), name = NULL) + scale_x_log10() +
+  labs(x = "Tamaño de muestra (escala log)", y = "Penalización por parámetro")
+```
+
+## 3.4 Comparación de modelos anidados
+
+Dos modelos son **anidados** si uno contiene todas las variables del otro. Se comparan con la **prueba F parcial** (Parte 2):
+
+```{r}
+#| label: anidados
+anova(m_pima_bic, m_pima_aic)   # ¿agregar bp mejora significativamente?
+compare_performance(m_pima_bic, m_pima_aic, metrics = c("AIC", "BIC", "R2_adj", "RMSE"))
+```
+
+Responde: ¿agregar bp mejora significativamente?
+
+::: small
+La prueba F no es significativa a α = 0.05, pero AIC prefiere el modelo con `bp`: con 1 g.l., **AIC equivale a usar α ≈ 0.157** [@heinze2018variable]. Cada criterio implica un umbral distinto.
+:::
+
+## Resumen de criterios
+
+| Criterio | Penalización | Tiende a | Úselo para |
+|---|---|---|---|
+| Valor *p* (F, Wald) | Umbral α elegido | Depende de α | Modelos anidados, hipótesis específicas |
+| $R^2$ ajustado | Leve | Modelos grandes | Descripción |
+| **AIC** | $2k$ | Modelos algo más grandes | **Predicción** |
+| **BIC** | $k\ln(n)$ | Modelos más pequeños | Parsimonia, *n* grande |
+| Validación cruzada | Error en datos no usados | Depende de los datos | Predicción (bloque 5) |
+
+::: clave
+Ningún criterio sustituye al conocimiento del problema. Declare **siempre** el criterio y los umbrales usados.
+:::
+
+# 4. Métodos de regularización {background-color="#1f4e79"}
+
+## Idea: encoger en lugar de quitar
+
+Los métodos secuenciales deciden **dentro/fuera**. La regularización ajusta **todas** las variables, pero **penaliza** los coeficientes grandes [@james2021introduction; @hastie2009elements]:
+
+$$\text{minimizar: } \underbrace{\sum (y_i - \hat y_i)^2}_{\text{ajuste}} + \underbrace{\lambda \times \text{penalización}(\beta)}_{\text{encogimiento}}$$
+
+-   $\lambda = 0$: regresión lineal ordinaria.
+-   $\lambda$ grande: coeficientes cada vez más cerca de 0.
+-   $\lambda$ se elige por **validación cruzada**.
+-   Útiles con **muchas** variables, variables **correlacionadas** o $p > n$ (genómica, transcriptómica).
+
+## Trayectorias de los coeficientes
+
+```{r}
+#| label: trayectorias
+#| echo: false
+#| fig-height: 4.6
+#| fig-width: 12
+X_pbc <- model.matrix(log_bili ~ ., data = pbc2)[, -1]
+y_pbc <- pbc2$log_bili
+tray <- function(alpha, titulo) {
+  f <- glmnet(X_pbc, y_pbc, alpha = alpha)
+  b <- as.matrix(f$beta) * apply(X_pbc, 2, sd)        # coeficientes estandarizados
+  d <- data.frame(lambda = rep(log(f$lambda), each = nrow(b)), var = rep(rownames(b), ncol(b)),
+                  coef = as.vector(b))
+  ggplot(d, aes(lambda, coef, group = var, col = var)) + geom_line(linewidth = 0.9, show.legend = FALSE) +
+    geom_hline(yintercept = 0, lty = 2) + scale_x_reverse() +
+    labs(title = titulo, x = expression(log(lambda) %->% "menos penalización"), y = "Coeficiente estandarizado")
+}
+tray(0, "Ridge (L2): todos se encogen, ninguno llega a 0") +
+  tray(1, "LASSO (L1): varios llegan exactamente a 0")
+```
+
+::: small
+Datos `pbc`: log(bilirrubina) con 15 candidatas. De derecha a izquierda aumenta la penalización.
+:::
+
+## 4.1 Ridge Regression (L2)
+
+-   Penalización: $\lambda\sum\beta_j^2$ [@hoerl1970ridge].
+-   **Encoge** todos los coeficientes, pero **ninguno llega a 0** → **no selecciona** variables.
+-   Útil con **colinealidad**: estabiliza coeficientes de predictores correlacionados.
+-   Ejemplo: predecir un rasgo cuantitativo con miles de SNPs de efecto pequeño (base de algunos puntajes poligénicos).
+
+## 4.2 LASSO Regression (L1)
+
+-   Penalización: $\lambda\sum|\beta_j|$ [@tibshirani1996regression].
+-   Encoge y lleva **algunos coeficientes exactamente a 0** → **selecciona** variables.
+-   Ejemplo: de 20 000 genes, elegir una **firma de expresión** pequeña asociada a un fenotipo.
+-   Limitación: entre variables muy correlacionadas tiende a elegir **una** al azar.
+
+## 4.3 Elastic Net (L1 + L2)
+
+-   Combina ambas penalizaciones con un parámetro de mezcla $\alpha$ [@zou2005regularization]:
+    -   $\alpha = 0$ → ridge · $\alpha = 1$ → LASSO · $0 < \alpha < 1$ → *elastic net*.
+-   Selecciona variables **y** mantiene juntos **grupos** de predictores correlacionados (genes de una misma vía, SNPs en desequilibrio de ligamiento).
+
+| Método | Penalización | ¿Selecciona? | Mejor cuando… |
+|---|---|---|---|
+| Ridge | L2 | No | Muchas variables, todas aportan un poco; colinealidad |
+| LASSO | L1 | **Sí** | Pocas variables realmente importantes |
+| Elastic net | L1 + L2 | **Sí** | Grupos de variables correlacionadas; $p \gg n$ |
+
+::: small
+Precaución: los coeficientes están **sesgados hacia 0** a propósito; no se usan para inferencia clásica (IC, *p*) [@james2021introduction].
+:::
+
+# 5. Validación y estabilidad de la selección {background-color="#1f4e79"}
+
+## 5.1 Validación cruzada
+
+```{r}
+#| label: cv-esquema
+#| echo: false
+#| fig-height: 3
+#| fig-width: 11
+k <- 5
+cvd <- expand.grid(pliegue = 1:k, iter = 1:k)
+cvd$uso <- ifelse(cvd$pliegue == cvd$iter, "Prueba", "Entrenamiento")
+ggplot(cvd, aes(pliegue, factor(iter, levels = k:1), fill = uso)) +
+  geom_tile(col = "white", linewidth = 1.5) +
+  scale_fill_manual(values = c(Entrenamiento = "#dbe8f5", Prueba = rojo), name = NULL) +
+  labs(x = "Partes de los datos (pliegues)", y = "Iteración") + theme_minimal(base_size = 14)
+```
+
+-   Se divide la muestra en $k$ partes; se ajusta con $k-1$ y se **evalúa en la parte no usada**; se repite $k$ veces [@james2021introduction].
+-   Estima el error en **datos nuevos**. Sirve para elegir $\lambda$ y para comparar estrategias de selección.
+
+## 5.2 Bootstrap: ¿qué tan estable es la selección?
+
+Repetimos *backward* (AIC) en 200 muestras *bootstrap* de `birthwt` y contamos cuántas veces se elige cada variable [@sauerbrei1992bootstrap; @austin2004bootstrap].
+
+```{r}
+#| label: bootstrap-plot
+#| echo: false
+#| fig-height: 3.8
+set.seed(1)
+B <- 200
+incl <- matrix(0, B, length(candidatas), dimnames = list(NULL, candidatas))
+for (b in 1:B) {
+  d_b <- bw[sample(nrow(bw), replace = TRUE), ]
+  m_b <- step(lm(formula(completo), data = d_b), trace = 0)
+  incl[b, ] <- candidatas %in% variables(m_b)
+}
+frec <- data.frame(variable = candidatas, frecuencia = colMeans(incl) * 100,
+                   original = candidatas %in% variables(m_backward))
+ggplot(frec, aes(reorder(variable, frecuencia), frecuencia, fill = original)) +
+  geom_col() + coord_flip() + geom_hline(yintercept = c(50, 80), lty = 2) +
+  scale_fill_manual(values = c(`FALSE` = "grey70", `TRUE` = azul),
+                    labels = c("No elegida en la muestra original", "Elegida en la muestra original"), name = NULL) +
+  labs(x = NULL, y = "% de muestras bootstrap en que se eligió") + theme(legend.position = "bottom")
+```
+
+::: small
+Variables elegidas en > 80 % de las réplicas son **estables**; las que aparecen 20–50 % dependen del azar de la muestra. El modelo "final" de un solo *stepwise* oculta esta incertidumbre.
+:::
+
+## 5.3 Stability Selection
+
+-   Idea: repetir la selección (habitualmente LASSO) en muchas **submuestras** (50 % de los datos) y quedarse con las variables elegidas en una **alta proporción** (p. ej., > 60–80 %) [@meinshausen2010stability].
+-   Controla el número esperado de falsos positivos; muy usada en **genómica** de alta dimensión.
+
+```{r}
+#| label: stability-plot
+#| echo: false
+#| fig-height: 3.6
+set.seed(2)
+R <- 100
+sel_st <- matrix(0, R, ncol(X_pbc), dimnames = list(NULL, colnames(X_pbc)))
+for (r in 1:R) {
+  idx <- sample(nrow(X_pbc), floor(nrow(X_pbc) / 2))
+  cv_r <- cv.glmnet(X_pbc[idx, ], y_pbc[idx], alpha = 1, nfolds = 5)
+  sel_st[r, ] <- as.vector(coef(cv_r, s = "lambda.1se"))[-1] != 0
+}
+st <- data.frame(variable = colnames(X_pbc), prop = colMeans(sel_st))
+ggplot(st, aes(reorder(variable, prop), prop, fill = prop >= 0.8)) + geom_col() + coord_flip() +
+  geom_hline(yintercept = 0.8, lty = 2, col = rojo) +
+  scale_fill_manual(values = c("grey70", verde), labels = c("< 80 %", "≥ 80 %: estable"), name = NULL) +
+  labs(x = NULL, y = "Proporción de submuestras en que LASSO la eligió", title = "pbc: log(bilirrubina)")
+```
+
+
+# 6. Aplicaciones prácticas en R. Codigo de ejemplo. {background-color="#1f4e79"}
+
+## 6.1 `step()` y `stepAIC()`: argumentos clave
+
+| Argumento | Para qué |
+|---|---|
+| `object` | Modelo inicial (nulo para *forward*, completo para *backward*) |
+| `scope` | Límite superior (y opcionalmente inferior) de variables |
+| `direction` | `"forward"`, `"backward"` o `"both"` |
+| `k` | Penalización: `2` = AIC (por defecto); `log(n)` = BIC |
+| `trace` | `1` muestra cada paso; `0` lo oculta |
+
+```{r}
+#| label: forzar
+# Forzar variables en el modelo (p. ej., un confusor teórico): límite inferior del scope
+m_forzado <- step(completo, scope = list(lower = ~ age + smoke, upper = formula(completo)),
+                  direction = "both", trace = 0)
+formula(m_forzado)
+```
+
+::: alerta
+Todos los modelos deben ajustarse con las **mismas observaciones**: elimine los NA **antes** (`na.omit()` sobre las variables candidatas). Si no, `step()` se detiene con error o compara modelos con distinto *n*.
+:::
+
+## 6.2 Regularización con `glmnet`
+
+```{r}
+#| label: glmnet-cv
+# glmnet necesita una matriz de predictores (model.matrix crea las dummies) y un vector Y
+X_pbc <- model.matrix(log_bili ~ ., data = pbc2)[, -1]   # [, -1] quita el intercepto
+y_pbc <- pbc2$log_bili
+
+set.seed(123)
+cv_lasso <- cv.glmnet(X_pbc, y_pbc, alpha = 1)     # LASSO con validación cruzada de 10 pliegues
+plot(cv_lasso)                                      # error de VC según lambda
+```
+
+::: small
+Línea izquierda: λ con **mínimo** error (`lambda.min`). Línea derecha: λ más grande con error a 1 EE del mínimo (`lambda.1se`), un modelo **más simple** con error similar.
+:::
+
+## Coeficientes de LASSO, ridge y elastic net
+
+```{r}
+#| label: glmnet-coef
+set.seed(123); cv_ridge <- cv.glmnet(X_pbc, y_pbc, alpha = 0)     # ridge
+set.seed(123); cv_enet  <- cv.glmnet(X_pbc, y_pbc, alpha = 0.5)   # elastic net
+
+coefs <- cbind(ridge  = coef(cv_ridge, s = "lambda.1se")[, 1],
+               lasso  = coef(cv_lasso, s = "lambda.1se")[, 1],
+               e_net  = coef(cv_enet,  s = "lambda.1se")[, 1])
+round(coefs, 4)    # un 0 exacto = variable eliminada
+```
+
+## 6.3 Comparación de métodos y variables seleccionadas
+
+```{r}
+#| label: comparar-pbc
+completo_pbc <- lm(log_bili ~ ., data = pbc2)
+m_pbc_aic <- step(completo_pbc, trace = 0)                       # backward AIC
+m_pbc_bic <- step(completo_pbc, k = log(nrow(pbc2)), trace = 0)  # backward BIC
+
+todas <- colnames(X_pbc)
+comparacion <- data.frame(
+  variable = todas,
+  AIC   = todas %in% variables(m_pbc_aic),
+  BIC   = todas %in% variables(m_pbc_bic),
+  LASSO = coef(cv_lasso, s = "lambda.1se")[-1, 1] != 0,
+  e_net = coef(cv_enet,  s = "lambda.1se")[-1, 1] != 0)
+comparacion$n_metodos <- rowSums(comparacion[, -1])
+comparacion[order(-comparacion$n_metodos), ]
+```
+
+::: small
+Las variables elegidas por **todos** los métodos son las más confiables; las que dependen del método merecen cautela.
+:::
+
+## 6.4 Evaluación del rendimiento de los modelos
+
+```{r}
+#| label: rendimiento
+# Rendimiento aparente (en los mismos datos)
+compare_performance(completo_pbc, m_pbc_aic, m_pbc_bic, metrics = c("AIC", "BIC", "R2_adj", "RMSE"))
+
+# Rendimiento en datos no usados: validación cruzada de 10 pliegues
+rmse_cv <- function(modelo) {
+  set.seed(123)                                    # mismos pliegues para todos los modelos
+  performance_cv(modelo, method = "k_fold", k = 10)$RMSE
+}
+c(completo = rmse_cv(completo_pbc), AIC = rmse_cv(m_pbc_aic), BIC = rmse_cv(m_pbc_bic))
+```
+
+::: small
+Compare el RMSE aparente con el de validación cruzada: la diferencia es el **optimismo**. Un modelo más simple puede predecir igual o mejor en datos nuevos.
+:::
+
+## La puerta a la regresión logística
+
+Todo lo anterior funciona con un desenlace **binario** cambiando una línea:
+
+```{r}
+#| label: logistica-preview
+#| eval: false
+# Selección secuencial en regresión logística
+completo_log <- glm(low ~ age + lwt + race + smoke + ptl + ht + ui + ftv,
+                    data = birthwt, family = binomial)
+step(completo_log, direction = "backward")
+
+# LASSO logístico
+cv.glmnet(X, y_binaria, alpha = 1, family = "binomial")
+```
+
+::: clave
+Próximo tema: **regresión logística**. Los criterios (AIC, BIC, LRT), la validación y las advertencias sobre la selección automática son los mismos.
+:::
+
+# 7. Resolución de la tarea aplicando algoritmos {background-color="#1f4e79"}
+
+## Base 1: `faraway::diabetes`: preparación
+
+```{r}
+#| label: t1-datos
+data(diabetes, package = "faraway")
+diab <- diabetes
+diab$bmi <- 703 * diab$weight / diab$height^2      # libras y pulgadas → kg/m²
+diab <- na.omit(diab[, c("stab.glu", "chol", "hdl", "glyhb", "location", "age", "gender",
+                         "bmi", "frame", "bp.1s", "bp.1d", "waist", "hip", "time.ppn")])
+dim(diab)
+
+t1_completo <- lm(stab.glu ~ ., data = diab)
+t1_nulo     <- lm(stab.glu ~ 1, data = diab)
+```
+
+## Base 1: forward, backward y stepwise
+
+```{r}
+#| label: t1-seleccion
+t1_forward  <- step(t1_nulo, scope = formula(t1_completo), direction = "forward", trace = 0)
+t1_backward <- step(t1_completo, direction = "backward", trace = 0)
+t1_stepwise <- step(t1_nulo, scope = formula(t1_completo), direction = "both", trace = 0)
+
+formula(t1_forward)
+formula(t1_backward)
+formula(t1_stepwise)
+```
+
+## Base 1:  modelos seleccionados
+
+```{r}
+#| label: t1-resultados
+compare_performance(t1_forward, t1_backward, t1_stepwise, metrics = c("AIC", "BIC", "R2_adj", "RMSE"))
+round(summary(t1_backward)$coefficients, 4)
+```
+
+## Base 2: `NHANES`: preparación
+
+```{r}
+#| label: t2-datos
+data(NHANES, package = "NHANES")
+nh <- NHANES[!duplicated(NHANES$ID) & NHANES$Age >= 20, ]   # una fila por persona, adultos
+nh <- na.omit(nh[, c("BPSysAve", "Age", "Gender", "Race1", "Education", "Poverty", "BMI",
+                     "Pulse", "TotChol", "DirectChol", "Diabetes", "PhysActive",
+                     "Smoke100", "SleepHrsNight")])
+dim(nh)
+
+t2_completo <- lm(BPSysAve ~ ., data = nh)
+t2_nulo     <- lm(BPSysAve ~ 1, data = nh)
+```
+
+## Base 2: forward, backward y stepwise
+
+```{r}
+#| label: t2-seleccion
+t2_forward  <- step(t2_nulo, scope = formula(t2_completo), direction = "forward", trace = 0)
+t2_backward <- step(t2_completo, direction = "backward", trace = 0)
+t2_stepwise <- step(t2_nulo, scope = formula(t2_completo), direction = "both", trace = 0)
+t2_bic      <- step(t2_nulo, scope = formula(t2_completo), direction = "both",
+                    k = log(nrow(nh)), trace = 0)
+
+formula(t2_forward)
+formula(t2_backward)
+formula(t2_stepwise)
+formula(t2_bic)
+```
+
+## Base 2: modelos seleccionados
+
+```{r}
+#| label: t2-resultados
+compare_performance(t2_stepwise, t2_bic, metrics = c("AIC", "BIC", "R2_adj", "RMSE"))
+round(summary(t2_bic)$coefficients, 4)
+```
+
+## Base 3: `riskCommunicator::framingham`: preparación
+
+```{r}
+#| label: t3-datos
+data(framingham, package = "riskCommunicator")
+fr <- subset(framingham, PERIOD == 1)                         # visita basal
+fr$SEX  <- factor(fr$SEX, levels = 1:2, labels = c("Hombre", "Mujer"))
+fr$educ <- factor(fr$educ)
+fr <- na.omit(fr[, c("TOTCHOL", "SEX", "AGE", "SYSBP", "DIABP", "CURSMOKE", "CIGPDAY", "BMI",
+                     "DIABETES", "BPMEDS", "HEARTRTE", "GLUCOSE", "educ", "PREVCHD", "PREVHYP")])
+dim(fr)
+
+t3_completo <- lm(TOTCHOL ~ ., data = fr)
+t3_nulo     <- lm(TOTCHOL ~ 1, data = fr)
+```
+
+## Base 3: forward, backward y stepwise
+
+```{r}
+#| label: t3-seleccion
+t3_forward  <- step(t3_nulo, scope = formula(t3_completo), direction = "forward", trace = 0)
+t3_backward <- step(t3_completo, direction = "backward", trace = 0)
+t3_stepwise <- step(t3_nulo, scope = formula(t3_completo), direction = "both", trace = 0)
+t3_bic      <- step(t3_nulo, scope = formula(t3_completo), direction = "both",
+                    k = log(nrow(fr)), trace = 0)
+
+formula(t3_forward)
+formula(t3_backward)
+formula(t3_stepwise)
+formula(t3_bic)
+```
+
+## Base 3: modelos seleccionados
+
+```{r}
+#| label: t3-resultados
+compare_performance(t3_stepwise, t3_bic, metrics = c("AIC", "BIC", "R2_adj", "RMSE"))
+round(summary(t3_bic)$coefficients, 4)
+```
+
+## Resumen de variables seleccionadas
+
+```{r}
+#| label: tarea-resumen
+resumen <- function(completo, forward, backward, stepwise) {
+  v <- variables(completo)
+  data.frame(variable = v, forward = v %in% variables(forward),
+             backward = v %in% variables(backward), stepwise = v %in% variables(stepwise))
+}
+resumen(t1_completo, t1_forward, t1_backward, t1_stepwise)
+resumen(t2_completo, t2_forward, t2_backward, t2_stepwise)
+resumen(t3_completo, t3_forward, t3_backward, t3_stepwise)
+```
+
+# Cierre {background-color="#1f4e79"}
+
+## Mensajes clave
+
+
+
+## Referencias
+
+::: {#refs .small}
+:::

@@ -14,6 +14,8 @@ title: "Tema 5: Modelo lineal"
 
 - Modelos lineales parte 3. Interacciones
 
+- Modelos lineales parte 4. Algoritmos para la selección de variables · Forward · Backward · Stepwise · AIC/BIC · Regularización (ridge, LASSO, elastic net) · Validación y estabilidad
+
 ## Material de clase
 
 [Modelos lineales parte 1. Presentacion](Modelos_lineales_P1/Modelos_lineales_P1.qmd)
@@ -21,6 +23,10 @@ title: "Tema 5: Modelo lineal"
 [Modelos lineales parte 2. Presentacion](Modelos_lineales_P2/Modelos_lineales_P2.qmd)
 
 [Modelos lineales parte 3. Presentacion](Modelos_lineales_P3/Modelos_lineales_P3.qmd)
+
+[Modelos lineales parte 4. Presentacion](Modelos_lineales_P4/Modelos_lineales_P4_original.qmd)
+
+
 
 ## Base de datos tema-05
 

@@ -32,6 +32,8 @@ website:
             text: "Tema 4: Pos hoc y comparaciones múltiples"
           - href: temas/tema-05/index-05.qmd
             text: "Tema 4: Modelos lineales"
+          - href: temas/tema-06/index-06.qmd
+            text: "Tema 6: Regresión logística"
 
   page-footer:
     left: "© 2026 Edsaúl E. Pérez-Guerrero"

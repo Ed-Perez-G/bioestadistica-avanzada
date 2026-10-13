@@ -1,0 +1,621 @@
+---
+title: "Regresión logística III"
+subtitle: "Diagnóstico del modelo · Capacidad predictiva · Interpretación crítica y comunicación"
+author: "Edsaúl Emilio Pérez-Guerrero"
+date: today
+lang: es
+format:
+  revealjs:
+    theme: simple
+    css: estilos.css
+    slide-number: true
+    progress: true
+    chalkboard: true
+    code-copy: true
+    code-line-numbers: false
+    code-overflow: wrap
+    highlight-style: github
+    fig-align: center
+    fig-width: 8
+    fig-height: 4.5
+    fig-dpi: 150
+    transition: fade
+    footer: "Bioestadística con R · Regresión logística — Parte 3"
+    width: 1600
+    height: 900
+    scrollable: true
+execute:
+  echo: true
+  warning: false
+  message: false
+bibliography: referencias.bib
+---
+
+```{r}
+#| label: setup
+#| include: false
+library(ggplot2)
+library(patchwork)
+library(broom)
+library(performance)
+library(see)
+library(pROC)
+options(scipen = 999, digits = 4)
+theme_set(theme_linedraw(base_size = 14))
+azul <- "#1f4e79"; naranja <- "#F0A05B"; rojo <- "#c0392b"; verde <- "#6aa84f"
+```
+
+## Objetivos de la sesión
+
+| Bloque | Tema | Pregunta del caso |
+|---|---|---|
+| 6 | Evaluación y diagnóstico | ¿Podemos **confiar** en el OR del SNP? |
+| 7 | Capacidad predictiva | ¿El genotipo **sirve para predecir** quién tendrá AR? |
+| 8 | Interpretación crítica y comunicación | ¿Cómo lo **reportamos** sin exagerar? |
+
+Paquetes: `performance` (+ `see` para gráficos), `pROC`, `broom`, `ggplot2`.
+
+## Datos y modelo de trabajo
+
+```{r}
+#| label: datos
+datos <- read.csv("../Bases/estudio_AR_STAT4.csv")
+datos$sexo       <- factor(datos$sexo, levels = c("Hombre", "Mujer"))
+datos$tabaquismo <- factor(datos$tabaquismo, levels = c("Nunca", "Exfumador", "Actual"))
+datos$rs7574865  <- factor(datos$rs7574865, levels = c("GG", "GT", "TT"))
+datos$dosis_T    <- as.numeric(datos$rs7574865) - 1
+
+# Modelo final de la Parte 2: aditivo, ajustado por sexo, edad, tabaquismo y PC1
+m_final <- glm(caso ~ dosis_T + sexo + edad + tabaquismo + PC1,
+               data = datos, family = binomial)
+```
+
+# 6. Evaluación y diagnóstico del modelo {background-color="#1f4e79"}
+
+## 6.1 Supuestos y condiciones de la regresión logística
+
+| Condición | ¿Cómo se evalúa? |
+|---|---|
+| Desenlace **binario** codificado 0/1 | Diseño |
+| **Independencia** de las observaciones | Diseño (en genética: sin parientes ni relación críptica) |
+| **Linealidad** entre predictores continuos y el **logit** | Gráfico de logit empírico, términos no lineales + LRT |
+| Ausencia de **multicolinealidad** | `check_collinearity()` (VIF) |
+| Sin **separación** completa o cuasicompleta | Tablas cruzadas, coeficientes y EE enormes |
+| Sin observaciones excesivamente **influyentes** | `check_outliers()` (distancia de Cook) |
+| Tamaño de muestra suficiente (≈ 10 EPV) | Conteo de eventos / parámetros |
+
+::: clave
+**No** se requiere normalidad de residuos ni homocedasticidad, a diferencia de la regresión lineal [@hosmer2013applied; @perezguerrero2024bioestadistica].
+:::
+
+## Panorama general con `check_model()`
+
+```{r}
+#| label: check-model
+#| fig-height: 8
+#| fig-width: 12
+#| output-location: slide
+check_model(m_final)
+```
+
+## ¿Cómo leer `check_model()` en regresión logística?
+
+-   ***Posterior predictive check***: las predicciones del modelo deben **reproducir** la proporción observada de 0 y 1.
+-   ***Binned residuals***: residuos promedio por grupos de probabilidad predicha; ≈ 95 % deben caer **dentro** de las bandas de error [@gelman2007data].
+-   ***Influential observations***: puntos fuera de las líneas de contorno de Cook son influyentes.
+-   ***Collinearity***: VIF de cada predictor.
+-   ***Uniformity of residuals***: residuos cuantílicos simulados; deben seguir la diagonal.
+
+::: small
+Cada panel se revisa a detalle en las siguientes diapositivas [@ludecke2021performance].
+:::
+
+## 6.2 Linealidad entre predictores continuos y log-odds
+
+```{r}
+#| label: logit-empirico
+#| fig-height: 3.8
+# Logit empírico por deciles de edad: si es lineal, los puntos siguen una recta
+datos$decil_edad <- cut(datos$edad, quantile(datos$edad, seq(0, 1, 0.1)), include.lowest = TRUE)
+lin <- aggregate(cbind(edad, caso) ~ decil_edad, data = datos, FUN = mean)
+lin$logit <- log(lin$caso / (1 - lin$caso))
+
+ggplot(lin, aes(edad, logit)) + geom_point(size = 3, col = azul) +
+  geom_smooth(method = "lm", se = FALSE, col = rojo) +
+  labs(x = "Edad (media del decil)", y = "logit empírico de AR")
+```
+
+## Prueba formal: ¿mejora un término no lineal?
+
+```{r}
+#| label: linealidad-lrt
+m_cuad <- glm(caso ~ dosis_T + sexo + edad + I(edad^2) + tabaquismo + PC1,
+              data = datos, family = binomial)
+anova(m_final, m_cuad, test = "Chisq")
+```
+
+-   Si el término cuadrático (o un *spline*) **no mejora** el ajuste → se acepta la linealidad en el logit.
+-   Si no es lineal: **transformar** (log, polinomio, *splines*) o **categorizar** con *dummy* [@celis2014bioestadistica].
+-   Alternativa clásica: Box–Tidwell, agregando $X \cdot \ln(X)$ [@hosmer2013applied; @perezguerrero2024bioestadistica].
+
+## Así se ve una violación de linealidad
+
+```{r}
+#| label: no-lineal-demo
+#| echo: false
+#| fig-height: 4
+set.seed(3)
+x <- runif(800, 15, 45)                                  # p. ej., IMC
+y <- rbinom(800, 1, plogis(-1 + 0.02 * (x - 27)^2))       # relación en U
+dl <- data.frame(x, y); dl$g <- cut(dl$x, quantile(dl$x, seq(0, 1, .1)), include.lowest = TRUE)
+al <- aggregate(cbind(x, y) ~ g, dl, mean); al$logit <- log(al$y / (1 - al$y))
+ggplot(al, aes(x, logit)) + geom_point(size = 3, col = azul) +
+  geom_smooth(method = "lm", se = FALSE, col = rojo, lty = 2) +
+  geom_smooth(method = "loess", se = FALSE, col = verde, span = 1) +
+  labs(x = "Predictor continuo (ej. IMC)", y = "logit empírico",
+       title = "Relación en U: una recta (roja) no la representa")
+```
+
+## 6.3 Multicolinealidad entre predictores
+
+PC1 y la proporción de ancestría miden **casi lo mismo** (r = `r round(cor(datos$PC1, datos$ancestria), 2)`). ¿Qué pasa si incluimos ambas?
+
+```{r}
+#| label: colinealidad
+m_colin <- glm(caso ~ dosis_T + sexo + edad + tabaquismo + PC1 + ancestria,
+               data = datos, family = binomial)
+check_collinearity(m_colin)
+```
+
+## Consecuencias de la colinealidad
+
+```{r}
+#| label: colin-ee
+comparar <- rbind(
+  data.frame(modelo = "Solo PC1",        tidy(m_final)[tidy(m_final)$term == "PC1", ]),
+  data.frame(modelo = "PC1 + ancestría", tidy(m_colin)[tidy(m_colin)$term == "PC1", ]))
+comparar[, c("modelo", "term", "estimate", "std.error", "p.value")]
+check_collinearity(m_final)   # modelo final: VIF ≈ 1
+```
+
+-   El coeficiente de PC1 **cambia de signo** y su EE se multiplica: no es posible separar dos variables casi idénticas.
+-   VIF > 5–10 suele indicar problema, aunque son puntos de corte orientativos [@obrien2007caution]. Solución: conservar **una** de las variables.
+
+## 6.4 Separación completa y cuasicompleta
+
+Ocurre cuando un predictor (o combinación) **separa perfectamente** casos de controles [@heinze2002solution].
+
+```{r}
+#| label: separacion-tabla
+table(Variante_rara = datos$var_rara, Caso = datos$caso)
+
+m_sep <- glm(caso ~ var_rara + dosis_T + sexo + edad + tabaquismo + PC1,
+             data = datos, family = binomial)
+summary(m_sep)$coefficients["var_rara", ]
+```
+
+-   **Todos** los portadores de la variante rara son casos (celda con 0) → el OR "tiende a infinito".
+-   Señales: β enormes (> 10), **EE gigantes**, *p* ≈ 1, advertencia *"fitted probabilities numerically 0 or 1"*.
+-   **Cuasicompleta**: separación casi perfecta (típica del modelo recesivo con alelos raros).
+
+## ¿Qué hacer ante separación?
+
+1.  **No** eliminar la variable solo por eso: es probablemente un efecto **fuerte**.
+2.  **Regresión logística penalizada de Firth**: estimaciones finitas y con menor sesgo en muestras pequeñas [@firth1993bias; @heinze2002solution].
+3.  Agrupar categorías raras (p. ej., modelo dominante en lugar de genotípico), regresión logística exacta o métodos bayesianos.
+
+```{r}
+#| label: firth
+#| eval: false
+# install.packages("logistf")
+library(logistf)
+m_firth <- logistf(caso ~ var_rara + dosis_T + sexo + edad + tabaquismo + PC1, data = datos)
+summary(m_firth)   # OR finito con IC por verosimilitud perfilada penalizada
+```
+
+## 6.5 Residuos agrupados (*binned residuals*)
+
+```{r}
+#| label: binned
+#| fig-height: 4
+residuos_agrupados <- binned_residuals(m_final)
+residuos_agrupados
+plot(residuos_agrupados)
+```
+
+## Interpretación de los residuos agrupados
+
+-   Con un desenlace 0/1, los residuos individuales no son informativos; se **agrupan** por probabilidad predicha [@gelman2007data; @ludecke2021performance].
+-   Aquí ≈ `r round(mean(residuos_agrupados$group == "yes") * 100)` % de los grupos cae dentro de las bandas (lo ideal es ≥ 95 %): **señal de desajuste moderado**.
+-   ¿Por qué? Sabemos cómo se simularon los datos: el modelo **omite** predictores reales (SNP03, SNP11, la variante rara y la interacción G × E).
+
+::: clave
+Un diagnóstico "imperfecto" no invalida automáticamente el OR del SNP, pero obliga a **investigar**: ¿variables omitidas?, ¿términos no lineales?, ¿interacciones?
+:::
+
+## Observaciones influyentes
+
+```{r}
+#| label: influyentes
+check_outliers(m_final)
+
+# Las 5 observaciones con mayor distancia de Cook
+cook <- cooks.distance(m_final)
+datos[order(cook, decreasing = TRUE)[1:5], c("id", "caso", "rs7574865", "sexo", "edad", "tabaquismo")]
+```
+
+::: small
+Una observación influyente no se elimina por defecto: se **revisa** (¿error de captura o genotipificación?) y se evalúa si las conclusiones cambian sin ella (análisis de sensibilidad).
+:::
+
+## 6.6 Prueba de razón de verosimilitudes (LRT)
+
+Compara **modelos anidados** mediante la diferencia de devianzas, que sigue una $\chi^2$ con $k - k^*$ g.l. [@celis2014bioestadistica].
+
+```{r}
+#| label: lrt
+m_covariables <- glm(caso ~ sexo + edad + tabaquismo + PC1, data = datos, family = binomial)
+
+# ¿El SNP aporta información después de las covariables?
+anova(m_covariables, m_final, test = "Chisq")
+test_likelihoodratio(m_covariables, m_final)    # equivalente con performance
+```
+
+## LRT vs. prueba de Wald
+
+| | Wald | Razón de verosimilitudes |
+|---|---|---|
+| Estadístico | $z = \hat\beta / EE$ | $D = -2\ln V_{reducido} - (-2\ln V_{completo})$ |
+| Prueba | Un coeficiente | Uno **o varios** coeficientes a la vez |
+| En R | `summary()` | `anova(m1, m2, test = "Chisq")` |
+| Ventaja | Rápida | Más confiable; necesaria para variables con varias *dummy* o interacciones [@celis2014bioestadistica; @hosmer2013applied] |
+
+```{r}
+#| label: lrt-global
+# Prueba global: ¿el modelo es mejor que el modelo nulo (solo intercepto)?
+m_nulo <- glm(caso ~ 1, data = datos, family = binomial)
+anova(m_nulo, m_final, test = "Chisq")
+```
+
+## 6.7 Comparación de modelos: AIC y BIC
+
+$$AIC = -2\ln L + 2k \qquad BIC = -2\ln L + k\ln(n)$$
+
+```{r}
+#| label: aic-bic
+datos$dominante <- ifelse(datos$dosis_T >= 1, 1, 0)
+datos$recesivo  <- ifelse(datos$dosis_T == 2, 1, 0)
+m_dom <- glm(caso ~ dominante + sexo + edad + tabaquismo + PC1, data = datos, family = binomial)
+m_rec <- glm(caso ~ recesivo  + sexo + edad + tabaquismo + PC1, data = datos, family = binomial)
+m_gen <- glm(caso ~ rs7574865 + sexo + edad + tabaquismo + PC1, data = datos, family = binomial)
+
+compare_performance(m_final, m_dom, m_rec, m_gen, metrics = c("AIC", "BIC", "R2"))
+```
+
+-   **Menor** AIC/BIC = mejor balance entre ajuste y complejidad. Diferencias < 2 son poco relevantes [@burnham2002model].
+-   BIC penaliza más los parámetros (favorece modelos simples). Sirven también para modelos **no anidados**.
+-   $R^2$ en logística: **pseudo-$R^2$** (Tjur, Nagelkerke); no se interpretan como en regresión lineal [@tjur2009coefficients].
+
+# 7. Evaluación de la capacidad predictiva {background-color="#1f4e79"}
+
+## 7.1 Probabilidades predichas
+
+```{r}
+#| label: prob-predichas
+datos$prob <- predict(m_final, type = "response")
+
+# Dos perfiles: mujer de 55 años, fumadora actual, PC1 = 0, con GG o TT
+perfiles <- data.frame(dosis_T = c(0, 2), sexo = "Mujer", edad = 55,
+                       tabaquismo = "Actual", PC1 = 0)
+predict(m_final, newdata = perfiles, type = "response")
+```
+
+::: alerta
+En casos y controles (50 % casos por diseño) estas probabilidades **no** son riesgos reales. Si se conoce la prevalencia (π), se corrige el intercepto: $\beta_0^* = \beta_0 + \ln\frac{\pi}{1-\pi} - \ln\frac{\bar y}{1-\bar y}$ [@king2001logistic].
+:::
+
+```{r}
+#| label: correccion-prevalencia
+prevalencia <- 0.015                                   # prevalencia poblacional (simulada)
+logit_muestra <- predict(m_final, newdata = perfiles)  # escala logit
+plogis(logit_muestra + log(prevalencia / (1 - prevalencia)) - log(0.5 / 0.5))
+```
+
+## Distribución de probabilidades predichas
+
+```{r}
+#| label: dist-prob
+#| fig-height: 4
+datos$grupo <- factor(datos$caso, labels = c("Control", "Caso"))
+ggplot(datos, aes(prob, fill = grupo)) +
+  geom_density(alpha = .5) +
+  geom_vline(xintercept = 0.5, lty = 2) +
+  scale_fill_manual(values = c(azul, rojo), name = NULL) +
+  labs(x = "Probabilidad predicha de AR", y = "Densidad")
+```
+
+::: small
+Un buen modelo **separa** las dos curvas. Aquí se traslapan bastante: discriminación moderada.
+:::
+
+## 7.2 Umbral de clasificación y matriz de confusión
+
+```{r}
+#| label: matriz
+umbral <- 0.5
+datos$clasificado <- ifelse(datos$prob >= umbral, 1, 0)
+
+matriz <- table(Predicho = datos$clasificado, Observado = datos$caso)
+matriz
+```
+
+|  | Observado: caso | Observado: control |
+|---|---|---|
+| **Predicho: caso** | VP (verdadero positivo) | FP (falso positivo) |
+| **Predicho: control** | FN (falso negativo) | VN (verdadero negativo) |
+
+::: small
+El umbral 0.5 es arbitrario. Cambiarlo intercambia sensibilidad por especificidad.
+:::
+
+## 7.3 Sensibilidad, especificidad y valores predictivos
+
+```{r}
+#| label: metricas
+VP <- matriz["1", "1"]; FP <- matriz["1", "0"]
+FN <- matriz["0", "1"]; VN <- matriz["0", "0"]
+
+sensibilidad  <- VP / (VP + FN)   # casos correctamente identificados
+especificidad <- VN / (VN + FP)   # controles correctamente identificados
+VPP <- VP / (VP + FP)             # de los clasificados como caso, ¿cuántos lo son?
+VPN <- VN / (VN + FN)
+round(c(sensibilidad = sensibilidad, especificidad = especificidad, VPP = VPP, VPN = VPN), 3)
+```
+
+## Los valores predictivos dependen de la prevalencia
+
+```{r}
+#| label: vpp-prevalencia
+# VPP en la población real (teorema de Bayes), prevalencia de AR = 1.5 %
+prev <- 0.015
+VPP_poblacion <- (sensibilidad * prev) / (sensibilidad * prev + (1 - especificidad) * (1 - prev))
+round(VPP_poblacion, 3)
+```
+
+::: alerta
+En la muestra (50 % casos) el VPP es `r round(VPP, 2)`; en la población (1.5 % de AR) baja a `r round(VPP_poblacion, 3)`. La mayoría de los "positivos" serían **falsos positivos**. Sensibilidad y especificidad no dependen de la prevalencia; VPP y VPN sí.
+:::
+
+## 7.4 Curva ROC y área bajo la curva (AUC)
+
+```{r}
+#| label: roc
+m_solo_snp <- glm(caso ~ dosis_T, data = datos, family = binomial)
+
+roc_snp   <- roc(datos$caso, predict(m_solo_snp, type = "response"), quiet = TRUE)
+roc_final <- roc(datos$caso, datos$prob, quiet = TRUE)
+
+ci.auc(roc_snp)     # AUC con IC 95 % (DeLong)
+ci.auc(roc_final)
+```
+
+## Comparación de curvas ROC
+
+```{r}
+#| label: roc-plot
+#| fig-height: 4.5
+ggroc(list("Solo rs7574865" = roc_snp, "Modelo completo" = roc_final), linewidth = 1.2) +
+  geom_abline(intercept = 1, slope = 1, lty = 2, col = "grey50") +
+  scale_color_manual(values = c(naranja, azul), name = NULL) +
+  labs(x = "Especificidad", y = "Sensibilidad")
+```
+
+-   AUC = probabilidad de que un caso al azar tenga mayor probabilidad predicha que un control al azar. 0.5 = azar; 1 = perfecto [@robin2011proc].
+-   El SNP está **claramente asociado**, pero por sí solo discrimina poco (AUC = `r round(auc(roc_snp), 2)`). **Asociación ≠ predicción**.
+
+## 7.5 Calibración del modelo
+
+¿Las probabilidades predichas **coinciden** con las frecuencias observadas? [@vancalster2019calibration]
+
+```{r}
+#| label: calibracion
+#| fig-height: 4
+datos$decil_prob <- cut(datos$prob, quantile(datos$prob, seq(0, 1, 0.1)), include.lowest = TRUE)
+calib <- aggregate(cbind(prob, caso) ~ decil_prob, data = datos, FUN = mean)
+
+ggplot(calib, aes(prob, caso)) +
+  geom_abline(lty = 2, col = "grey50") +
+  geom_line(col = azul) + geom_point(size = 3, col = azul) +
+  coord_equal(xlim = c(0, 1), ylim = c(0, 1)) +
+  labs(x = "Probabilidad predicha (media del decil)", y = "Proporción observada de casos")
+```
+
+## Prueba de Hosmer–Lemeshow
+
+```{r}
+#| label: hosmer
+performance_hosmer(m_final, n_bins = 10)
+```
+
+-   *p* > 0.05 → no hay evidencia de mal ajuste [@hosmer2013applied].
+-   Limitaciones: depende del número de grupos, tiene poca potencia en muestras pequeñas y casi siempre es significativa en muestras muy grandes. Prefiera el **gráfico de calibración** [@vancalster2019calibration].
+-   **Discriminación** (AUC) y **calibración** son propiedades distintas: un modelo puede ordenar bien a los pacientes y aun así dar probabilidades erróneas.
+
+## 7.6 Sobreajuste
+
+El rendimiento medido en los **mismos datos** con que se construyó el modelo es **optimista** [@steyerberg2019clinical].
+
+```{r}
+#| label: sobreajuste
+# Modelo "inflado": agregamos los 20 SNPs del panel
+f_inflado <- as.formula(paste("caso ~ dosis_T + sexo + edad + tabaquismo + PC1 +",
+                              paste(sprintf("SNP%02d", 1:20), collapse = " + ")))
+m_inflado <- glm(f_inflado, data = datos, family = binomial)
+
+c(AUC_aparente_final   = auc(datos$caso, fitted(m_final)),
+  AUC_aparente_inflado = auc(datos$caso, fitted(m_inflado)))
+```
+
+## Validación interna: validación cruzada de 10 pliegues
+
+```{r}
+#| label: cv
+auc_cv <- function(formula, datos, k = 10) {
+  set.seed(123)
+  pliegue <- sample(rep(1:k, length.out = nrow(datos)))   # asigna cada persona a un pliegue
+  prob_cv <- rep(NA, nrow(datos))
+  for (i in 1:k) {
+    m_i <- glm(formula, data = datos[pliegue != i, ], family = binomial)          # entrena sin el pliegue i
+    prob_cv[pliegue == i] <- predict(m_i, newdata = datos[pliegue == i, ], type = "response")  # predice el pliegue i
+  }
+  as.numeric(auc(datos$caso, prob_cv, quiet = TRUE))
+}
+c(AUC_cv_final = auc_cv(formula(m_final), datos), AUC_cv_inflado = auc_cv(f_inflado, datos))
+```
+
+::: small
+La ventaja aparente del modelo inflado se reduce casi por completo al validar: la mayor parte era **ruido**. Lo poco que conserva proviene de SNP03 y SNP11, los únicos SNPs del panel con efecto real en la simulación.
+:::
+
+## Validación interna y externa
+
+| Tipo | ¿Qué es? | Ejemplo |
+|---|---|---|
+| **Aparente** | Evaluar en los mismos datos | AUC de `fitted()` (optimista) |
+| **Interna: división** | Entrenar 70 %, probar 30 % | Desperdicia datos en muestras pequeñas |
+| **Interna: validación cruzada** | k pliegues | La que acabamos de hacer |
+| **Interna: *bootstrap*** | Estimar el optimismo con remuestreo | Recomendada [@steyerberg2019clinical; @harrell2015regression] |
+| **Externa** | Otra población, centro o época | Cohorte de AR de otro estado o de otra ancestría |
+
+::: clave
+Para reportar modelos de predicción, siga la guía **TRIPOD** [@collins2015tripod].
+:::
+
+# 8. Interpretación crítica y comunicación {background-color="#1f4e79"}
+
+## 8.1 Interpretación de tablas de regresión logística
+
+```{r}
+#| label: summary-final
+summary(m_final)
+```
+
+## ¿Qué significa cada columna?
+
+| Elemento | Significado |
+|---|---|
+| `Estimate` | $\hat\beta$: cambio en el **log-odds** |
+| `Std. Error` | Error estándar de $\hat\beta$ (precisión) |
+| `z value` | Estadístico de Wald $= \hat\beta / EE$ |
+| `Pr(>|z|)` | Valor *p* de Wald ($H_0: \beta = 0$, es decir, OR = 1) |
+| `Null deviance` | Devianza del modelo solo con intercepto |
+| `Residual deviance` | Devianza del modelo ajustado (menor = mejor ajuste) |
+| `AIC` | Criterio de información para comparar modelos |
+| $e^{\hat\beta}$ (no aparece) | **OR**: hay que calcularlo con `exp()` o `tidy(exponentiate = TRUE)` |
+
+## 8.2 Tabla para publicación
+
+```{r}
+#| label: tabla-publicacion
+tabla <- tidy(m_final, exponentiate = TRUE, conf.int = TRUE)[-1, ]
+tabla$OR_IC <- sprintf("%.2f (%.2f–%.2f)", tabla$estimate, tabla$conf.low, tabla$conf.high)
+tabla$p     <- format.pval(tabla$p.value, digits = 2, eps = 0.001)
+tabla$Variable <- c("rs7574865 (por alelo T)", "Sexo: mujer vs. hombre", "Edad (por año)",
+                    "Exfumador vs. nunca", "Fumador actual vs. nunca", "PC1 (por unidad)")
+knitr::kable(tabla[, c("Variable", "OR_IC", "p")], col.names = c("Variable", "OR ajustado (IC 95 %)", "p"))
+```
+
+::: small
+Nota al pie sugerida: "OR ajustados por sexo, edad, tabaquismo y PC1 mediante regresión logística múltiple; modelo genético aditivo". Presente crudos y ajustados juntos cuando sea posible [@celis2014bioestadistica; @little2009strega].
+:::
+
+## *Forest plot*
+
+```{r}
+#| label: forest
+#| fig-height: 4.3
+ggplot(tabla, aes(x = estimate, y = reorder(Variable, estimate))) +
+  geom_vline(xintercept = 1, lty = 2, col = "grey40") +             # línea de no efecto
+  geom_errorbarh(aes(xmin = conf.low, xmax = conf.high), height = 0.2, col = azul) +
+  geom_point(size = 3.5, col = rojo) +
+  scale_x_log10() +                                                   # los OR se grafican en escala log
+  labs(x = "OR ajustado (IC 95 %, escala log)", y = NULL)
+```
+
+## 8.3 Asociación, predicción y causalidad
+
+| | Asociación (explicar) | Predicción | Causalidad |
+|---|---|---|---|
+| Pregunta | ¿El SNP se relaciona con AR? | ¿Quién desarrollará AR? | ¿Modificar X cambia Y? |
+| Métrica clave | OR ajustado + IC | AUC, calibración | Efecto causal |
+| Selección de variables | Confusores (DAG) | Lo que mejore la predicción validada | Diseño + supuestos causales |
+| Nuestro caso | OR = `r round(exp(coef(m_final)["dosis_T"]), 2)` ✔ | AUC solo SNP = `r round(auc(roc_snp), 2)` ✘ | No demostrada |
+
+-   Explicar y predecir son objetivos **distintos** que llevan a modelos distintos [@shmueli2010explain].
+-   rs7574865 puede ser un **marcador** en desequilibrio de ligamiento con la variante causal; la causalidad requiere replicación, mapeo fino y evidencia funcional.
+
+## 8.4 Errores frecuentes de interpretación
+
+1.  Interpretar el **OR como RR** ("el doble de riesgo") cuando el evento es frecuente [@celis2014bioestadistica].
+2.  Interpretar el **OR como probabilidad** ("1.46 = 46 % de probabilidad") [@sperandei2014understanding].
+3.  "*p* > 0.05 → **no hay efecto**" (ver G × E en la Parte 2) [@wasserstein2016asa].
+4.  Reportar probabilidades absolutas de un estudio de **casos y controles** sin corregir.
+5.  Interpretar los OR de las **covariables** de ajuste como efectos causales (falacia de la Tabla 2) [@westreich2013table2].
+6.  Probar muchos SNPs o modelos de herencia **sin corregir** comparaciones múltiples.
+7.  Selección automática *stepwise* y reportar el modelo como si fuera pre-especificado [@heinze2018variable].
+8.  Ignorar la **separación** y reportar OR = 21 000 000.
+9.  Confundir asociación significativa con **utilidad clínica** para predecir [@ranganathan2017common].
+
+## 8.5 Limitaciones metodológicas y estadísticas
+
+-   **Diseño**: casos y controles → sesgo de selección y de memoria (tabaquismo); no estima riesgos absolutos.
+-   **Medición**: errores de genotipificación (revisar HWE), clasificación del desenlace.
+-   **Confusión residual**: un solo PC puede no capturar toda la estructura poblacional.
+-   **Potencia**: insuficiente para interacciones y variantes raras.
+-   **Generalización**: frecuencias alélicas y efectos pueden variar entre poblaciones.
+-   **Modelo**: linealidad en el logit, variables omitidas (binned residuals), sobreajuste.
+-   **Datos faltantes**: el análisis de casos completos puede sesgar los OR (ver Tema 2).
+
+::: clave
+Para estudios de asociación genética, la guía **STREGA** indica qué reportar: genotipificación, HWE, estratificación, modelo genético y comparaciones múltiples [@little2009strega].
+:::
+
+# Cierre {background-color="#1f4e79"}
+
+## Respuesta a la pregunta guía
+
+::: pregunta
+¿Cómo podemos determinar si una variante genética está asociada con una enfermedad, cuantificar esa asociación y evaluar si nuestras conclusiones son estadísticamente válidas?
+:::
+
+| Pregunta | Herramienta | Resultado en nuestro estudio |
+|---|---|---|
+| ¿Está asociada? | Regresión logística + LRT, corrección por comparaciones múltiples | Sí: *p* (LRT) = `r format.pval(anova(m_covariables, m_final, test = "Chisq")[2, "Pr(>Chi)"], digits = 2)` |
+| ¿Cuánto? | OR ajustado + IC 95 % (aditivo) | OR = `r round(exp(coef(m_final)["dosis_T"]), 2)` (`r round(exp(confint(m_final))["dosis_T", 1], 2)`–`r round(exp(confint(m_final))["dosis_T", 2], 2)`); verdadero = 1.30 |
+| ¿Es válido? | Ajuste por ancestría, linealidad, VIF, separación, residuos, influyentes | Confusión por ancestría corregida; residuos sugieren predictores omitidos |
+| ¿Predice? | AUC, calibración, validación cruzada | Discrimina poco por sí solo (AUC = `r round(auc(roc_snp), 2)`) |
+
+## Mensajes clave
+
+1.  Diagnostique **antes** de interpretar: linealidad en el logit, colinealidad, separación, influyentes y residuos agrupados.
+2.  Compare modelos anidados con **LRT** y no anidados con **AIC/BIC**.
+3.  Discriminación (**AUC**) y **calibración** son cosas distintas; ambas se validan fuera de la muestra de entrenamiento.
+4.  En casos y controles, VPP y probabilidades dependen de la **prevalencia**.
+5.  Un SNP puede estar asociado y ser un mal predictor: **asociación ≠ predicción ≠ causalidad**.
+6.  Comunique con **tablas OR (IC 95 %)**, *forest plots* y las guías **STREGA/TRIPOD**.
+
+## Práctica integradora
+
+Con `estudio_AR_STAT4.csv`:
+
+1.  Agregue `SNP03` y `SNP11` al modelo final. ¿Mejoran los *binned residuals*, el AIC y el AUC validado?
+2.  Evalúe la linealidad de `PC1` en el logit con el gráfico de logit empírico y un término cuadrático.
+3.  Cambie el umbral de clasificación a 0.3 y a 0.7. Construya ambas matrices de confusión y discuta el intercambio sensibilidad/especificidad.
+4.  Calcule el VPP del modelo final si la prevalencia fuera 0.5 % y 5 %.
+5.  Elabore una tabla de publicación con **OR crudos y ajustados** lado a lado y su *forest plot*.
+6.  Redacte un párrafo de resultados y uno de limitaciones siguiendo STREGA.
+
+## Referencias
+
+::: {#refs .small}
+:::
