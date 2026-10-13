@@ -1,0 +1,1741 @@
+<!DOCTYPE html>
+<html lang="es"><head>
+<script src="../../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../../site_libs/quarto-html/tabby.min.js"></script>
+<script src="../../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<link href="../../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../../site_libs/quarto-html/light-border.css" rel="stylesheet">
+<link href="../../../site_libs/quarto-html/quarto-syntax-highlighting-065a5179aebd64318d7ea99d77b64a9e.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
+  <meta name="generator" content="quarto-1.8.25">
+
+  <meta name="author" content="Edsaúl Emilio Pérez-Guerrero">
+  <meta name="dcterms.date" content="2026-10-13">
+  <title>Bioestadística avanzada – Regresión logística III</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <link rel="stylesheet" href="../../../site_libs/revealjs/dist/reset.css">
+  <link rel="stylesheet" href="../../../site_libs/revealjs/dist/reveal.css">
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+      vertical-align: middle;
+    }
+    /* CSS for syntax highlighting */
+    html { -webkit-text-size-adjust: 100%; }
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+      }
+    pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+    div.sourceCode
+      { color: #24292e;  }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span { color: #24292e; } /* Normal */
+    code span.al { color: #ff5555; font-weight: bold; } /* Alert */
+    code span.an { color: #6a737d; } /* Annotation */
+    code span.at { color: #d73a49; } /* Attribute */
+    code span.bn { color: #005cc5; } /* BaseN */
+    code span.bu { color: #d73a49; } /* BuiltIn */
+    code span.cf { color: #d73a49; } /* ControlFlow */
+    code span.ch { color: #032f62; } /* Char */
+    code span.cn { color: #005cc5; } /* Constant */
+    code span.co { color: #6a737d; } /* Comment */
+    code span.cv { color: #6a737d; } /* CommentVar */
+    code span.do { color: #6a737d; } /* Documentation */
+    code span.dt { color: #d73a49; } /* DataType */
+    code span.dv { color: #005cc5; } /* DecVal */
+    code span.er { color: #ff5555; text-decoration: underline; } /* Error */
+    code span.ex { color: #d73a49; font-weight: bold; } /* Extension */
+    code span.fl { color: #005cc5; } /* Float */
+    code span.fu { color: #6f42c1; } /* Function */
+    code span.im { color: #032f62; } /* Import */
+    code span.in { color: #6a737d; } /* Information */
+    code span.kw { color: #d73a49; } /* Keyword */
+    code span.op { color: #24292e; } /* Operator */
+    code span.ot { color: #6f42c1; } /* Other */
+    code span.pp { color: #d73a49; } /* Preprocessor */
+    code span.re { color: #6a737d; } /* RegionMarker */
+    code span.sc { color: #005cc5; } /* SpecialChar */
+    code span.ss { color: #032f62; } /* SpecialString */
+    code span.st { color: #032f62; } /* String */
+    code span.va { color: #e36209; } /* Variable */
+    code span.vs { color: #032f62; } /* VerbatimString */
+    code span.wa { color: #ff5555; } /* Warning */
+    /* CSS for citations */
+    div.csl-bib-body { }
+    div.csl-entry {
+      clear: both;
+      margin-bottom: 0em;
+    }
+    .hanging-indent div.csl-entry {
+      margin-left:2em;
+      text-indent:-2em;
+    }
+    div.csl-left-margin {
+      min-width:2em;
+      float:left;
+    }
+    div.csl-right-inline {
+      margin-left:2em;
+      padding-left:1em;
+    }
+    div.csl-indent {
+      margin-left: 2em;
+    }  </style>
+  <link rel="stylesheet" href="../../../site_libs/revealjs/dist/theme/quarto-992ed520baf37567c43dc1d740a96f26.css">
+  <link rel="stylesheet" href="estilos.css">
+  <link href="../../../site_libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
+  <link href="../../../site_libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
+  <link href="../../../site_libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
+  <link href="../../../site_libs/revealjs/plugin/reveal-chalkboard/font-awesome/css/all.css" rel="stylesheet">
+  <link href="../../../site_libs/revealjs/plugin/reveal-chalkboard/style.css" rel="stylesheet">
+  <link href="../../../site_libs/revealjs/plugin/quarto-support/footer.css" rel="stylesheet">
+  <style type="text/css">
+    .reveal div.sourceCode {
+      margin: 0;
+      overflow: auto;
+    }
+    .reveal div.hanging-indent {
+      margin-left: 1em;
+      text-indent: -1em;
+    }
+    .reveal .slide:not(.center) {
+      height: 100%;
+      overflow-y: auto;
+    }
+    .reveal .slide.scrollable {
+      overflow-y: auto;
+    }
+    .reveal .footnotes {
+      height: 100%;
+      overflow-y: auto;
+    }
+    .reveal .slide .absolute {
+      position: absolute;
+      display: block;
+    }
+    .reveal .footnotes ol {
+      counter-reset: ol;
+      list-style-type: none; 
+      margin-left: 0;
+    }
+    .reveal .footnotes ol li:before {
+      counter-increment: ol;
+      content: counter(ol) ". "; 
+    }
+    .reveal .footnotes ol li > p:first-child {
+      display: inline-block;
+    }
+    .reveal .slide ul,
+    .reveal .slide ol {
+      margin-bottom: 0.5em;
+    }
+    .reveal .slide ul li,
+    .reveal .slide ol li {
+      margin-top: 0.4em;
+      margin-bottom: 0.2em;
+    }
+    .reveal .slide ul[role="tablist"] li {
+      margin-bottom: 0;
+    }
+    .reveal .slide ul li > *:first-child,
+    .reveal .slide ol li > *:first-child {
+      margin-block-start: 0;
+    }
+    .reveal .slide ul li > *:last-child,
+    .reveal .slide ol li > *:last-child {
+      margin-block-end: 0;
+    }
+    .reveal .slide .columns:nth-child(3) {
+      margin-block-start: 0.8em;
+    }
+    .reveal blockquote {
+      box-shadow: none;
+    }
+    .reveal .tippy-content>* {
+      margin-top: 0.2em;
+      margin-bottom: 0.7em;
+    }
+    .reveal .tippy-content>*:last-child {
+      margin-bottom: 0.2em;
+    }
+    .reveal .slide > img.stretch.quarto-figure-center,
+    .reveal .slide > img.r-stretch.quarto-figure-center {
+      display: block;
+      margin-left: auto;
+      margin-right: auto; 
+    }
+    .reveal .slide > img.stretch.quarto-figure-left,
+    .reveal .slide > img.r-stretch.quarto-figure-left  {
+      display: block;
+      margin-left: 0;
+      margin-right: auto; 
+    }
+    .reveal .slide > img.stretch.quarto-figure-right,
+    .reveal .slide > img.r-stretch.quarto-figure-right  {
+      display: block;
+      margin-left: auto;
+      margin-right: 0; 
+    }
+  </style>
+</head>
+<body class="quarto-light">
+  <div class="reveal">
+    <div class="slides">
+
+<section id="title-slide" class="quarto-title-block center">
+  <h1 class="title">Regresión logística III</h1>
+  <p class="subtitle">Diagnóstico del modelo · Capacidad predictiva · Interpretación crítica y comunicación</p>
+
+<div class="quarto-title-authors">
+<div class="quarto-title-author">
+<div class="quarto-title-author-name">
+Edsaúl Emilio Pérez-Guerrero 
+</div>
+</div>
+</div>
+
+  <p class="date">2026-10-13</p>
+</section>
+<section id="objetivos-de-la-sesión" class="slide level2">
+<h2>Objetivos de la sesión</h2>
+<table class="caption-top">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Bloque</th>
+<th>Tema</th>
+<th>Pregunta del caso</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>6</td>
+<td>Evaluación y diagnóstico</td>
+<td>¿Podemos <strong>confiar</strong> en el OR del SNP?</td>
+</tr>
+<tr class="even">
+<td>7</td>
+<td>Capacidad predictiva</td>
+<td>¿El genotipo <strong>sirve para predecir</strong> quién tendrá AR?</td>
+</tr>
+<tr class="odd">
+<td>8</td>
+<td>Interpretación crítica y comunicación</td>
+<td>¿Cómo lo <strong>reportamos</strong> sin exagerar?</td>
+</tr>
+</tbody>
+</table>
+<p>Paquetes: <code>performance</code> (+ <code>see</code> para gráficos), <code>pROC</code>, <code>broom</code>, <code>ggplot2</code>.</p>
+</section>
+<section id="datos-y-modelo-de-trabajo" class="slide level2">
+<h2>Datos y modelo de trabajo</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a aria-hidden="true" tabindex="-1"></a>datos <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"../Bases/estudio_AR_STAT4.csv"</span>)</span>
+<span id="cb1-2"><a aria-hidden="true" tabindex="-1"></a>datos<span class="sc">$</span>sexo       <span class="ot">&lt;-</span> <span class="fu">factor</span>(datos<span class="sc">$</span>sexo, <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"Hombre"</span>, <span class="st">"Mujer"</span>))</span>
+<span id="cb1-3"><a aria-hidden="true" tabindex="-1"></a>datos<span class="sc">$</span>tabaquismo <span class="ot">&lt;-</span> <span class="fu">factor</span>(datos<span class="sc">$</span>tabaquismo, <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"Nunca"</span>, <span class="st">"Exfumador"</span>, <span class="st">"Actual"</span>))</span>
+<span id="cb1-4"><a aria-hidden="true" tabindex="-1"></a>datos<span class="sc">$</span>rs7574865  <span class="ot">&lt;-</span> <span class="fu">factor</span>(datos<span class="sc">$</span>rs7574865, <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"GG"</span>, <span class="st">"GT"</span>, <span class="st">"TT"</span>))</span>
+<span id="cb1-5"><a aria-hidden="true" tabindex="-1"></a>datos<span class="sc">$</span>dosis_T    <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(datos<span class="sc">$</span>rs7574865) <span class="sc">-</span> <span class="dv">1</span></span>
+<span id="cb1-6"><a aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-7"><a aria-hidden="true" tabindex="-1"></a><span class="co"># Modelo final de la Parte 2: aditivo, ajustado por sexo, edad, tabaquismo y PC1</span></span>
+<span id="cb1-8"><a aria-hidden="true" tabindex="-1"></a>m_final <span class="ot">&lt;-</span> <span class="fu">glm</span>(caso <span class="sc">~</span> dosis_T <span class="sc">+</span> sexo <span class="sc">+</span> edad <span class="sc">+</span> tabaquismo <span class="sc">+</span> PC1,</span>
+<span id="cb1-9"><a aria-hidden="true" tabindex="-1"></a>               <span class="at">data =</span> datos, <span class="at">family =</span> binomial)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section>
+<section id="evaluación-y-diagnóstico-del-modelo" class="title-slide slide level1 center" data-background-color="#1f4e79">
+<h1>6. Evaluación y diagnóstico del modelo</h1>
+
+</section>
+<section id="supuestos-y-condiciones-de-la-regresión-logística" class="slide level2">
+<h2>6.1 Supuestos y condiciones de la regresión logística</h2>
+<table class="caption-top">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Condición</th>
+<th>¿Cómo se evalúa?</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Desenlace <strong>binario</strong> codificado 0/1</td>
+<td>Diseño</td>
+</tr>
+<tr class="even">
+<td><strong>Independencia</strong> de las observaciones</td>
+<td>Diseño (en genética: sin parientes ni relación críptica)</td>
+</tr>
+<tr class="odd">
+<td><strong>Linealidad</strong> entre predictores continuos y el <strong>logit</strong></td>
+<td>Gráfico de logit empírico, términos no lineales + LRT</td>
+</tr>
+<tr class="even">
+<td>Ausencia de <strong>multicolinealidad</strong></td>
+<td><code>check_collinearity()</code> (VIF)</td>
+</tr>
+<tr class="odd">
+<td>Sin <strong>separación</strong> completa o cuasicompleta</td>
+<td>Tablas cruzadas, coeficientes y EE enormes</td>
+</tr>
+<tr class="even">
+<td>Sin observaciones excesivamente <strong>influyentes</strong></td>
+<td><code>check_outliers()</code> (distancia de Cook)</td>
+</tr>
+<tr class="odd">
+<td>Tamaño de muestra suficiente (≈ 10 EPV)</td>
+<td>Conteo de eventos / parámetros</td>
+</tr>
+</tbody>
+</table>
+<div class="clave">
+<p><strong>No</strong> se requiere normalidad de residuos ni homocedasticidad, a diferencia de la regresión lineal <span class="citation" data-cites="hosmer2013applied perezguerrero2024bioestadistica">(<a href="#/referencias" role="doc-biblioref" onclick="">Hosmer, Lemeshow, y Sturdivant 2013</a>; <a href="#/referencias" role="doc-biblioref" onclick="">Pérez Guerrero 2024</a>)</span>.</p>
+</div>
+</section>
+<section id="panorama-general-con-check_model" class="slide level2">
+<h2>Panorama general con <code>check_model()</code></h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">check_model</span>(m_final)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+
+</section>
+<section id="panorama-general-con-check_model-output" class="slide level2 output-location-slide"><h2>Panorama general con <code>check_model()</code></h2><div class="cell output-location-slide">
+<div class="cell-output-display">
+<div>
+<figure>
+<p><img data-src="Regresion_logistica_P3_files/figure-revealjs/check-model-1.png" width="1800"></p>
+</figure>
+</div>
+</div>
+</div></section><section id="cómo-leer-check_model-en-regresión-logística" class="slide level2">
+<h2>¿Cómo leer <code>check_model()</code> en regresión logística?</h2>
+<ul>
+<li><strong><em>Posterior predictive check</em></strong>: las predicciones del modelo deben <strong>reproducir</strong> la proporción observada de 0 y 1.</li>
+<li><strong><em>Binned residuals</em></strong>: residuos promedio por grupos de probabilidad predicha; ≈ 95 % deben caer <strong>dentro</strong> de las bandas de error <span class="citation" data-cites="gelman2007data">(<a href="#/referencias" role="doc-biblioref" onclick="">Gelman y Hill 2007</a>)</span>.</li>
+<li><strong><em>Influential observations</em></strong>: puntos fuera de las líneas de contorno de Cook son influyentes.</li>
+<li><strong><em>Collinearity</em></strong>: VIF de cada predictor.</li>
+<li><strong><em>Uniformity of residuals</em></strong>: residuos cuantílicos simulados; deben seguir la diagonal.</li>
+</ul>
+<div class="small">
+<p>Cada panel se revisa a detalle en las siguientes diapositivas <span class="citation" data-cites="ludecke2021performance">(<a href="#/referencias" role="doc-biblioref" onclick="">Lüdecke et&nbsp;al. 2021</a>)</span>.</p>
+</div>
+</section>
+<section id="linealidad-entre-predictores-continuos-y-log-odds" class="slide level2">
+<h2>6.2 Linealidad entre predictores continuos y log-odds</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a aria-hidden="true" tabindex="-1"></a><span class="co"># Logit empírico por deciles de edad: si es lineal, los puntos siguen una recta</span></span>
+<span id="cb3-2"><a aria-hidden="true" tabindex="-1"></a>datos<span class="sc">$</span>decil_edad <span class="ot">&lt;-</span> <span class="fu">cut</span>(datos<span class="sc">$</span>edad, <span class="fu">quantile</span>(datos<span class="sc">$</span>edad, <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">1</span>, <span class="fl">0.1</span>)), <span class="at">include.lowest =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb3-3"><a aria-hidden="true" tabindex="-1"></a>lin <span class="ot">&lt;-</span> <span class="fu">aggregate</span>(<span class="fu">cbind</span>(edad, caso) <span class="sc">~</span> decil_edad, <span class="at">data =</span> datos, <span class="at">FUN =</span> mean)</span>
+<span id="cb3-4"><a aria-hidden="true" tabindex="-1"></a>lin<span class="sc">$</span>logit <span class="ot">&lt;-</span> <span class="fu">log</span>(lin<span class="sc">$</span>caso <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">-</span> lin<span class="sc">$</span>caso))</span>
+<span id="cb3-5"><a aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-6"><a aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(lin, <span class="fu">aes</span>(edad, logit)) <span class="sc">+</span> <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">3</span>, <span class="at">col =</span> azul) <span class="sc">+</span></span>
+<span id="cb3-7"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"lm"</span>, <span class="at">se =</span> <span class="cn">FALSE</span>, <span class="at">col =</span> rojo) <span class="sc">+</span></span>
+<span id="cb3-8"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Edad (media del decil)"</span>, <span class="at">y =</span> <span class="st">"logit empírico de AR"</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+
+</div>
+<img data-src="Regresion_logistica_P3_files/figure-revealjs/logit-empirico-1.png" width="1200" class="r-stretch"></section>
+<section id="prueba-formal-mejora-un-término-no-lineal" class="slide level2">
+<h2>Prueba formal: ¿mejora un término no lineal?</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a aria-hidden="true" tabindex="-1"></a>m_cuad <span class="ot">&lt;-</span> <span class="fu">glm</span>(caso <span class="sc">~</span> dosis_T <span class="sc">+</span> sexo <span class="sc">+</span> edad <span class="sc">+</span> <span class="fu">I</span>(edad<span class="sc">^</span><span class="dv">2</span>) <span class="sc">+</span> tabaquismo <span class="sc">+</span> PC1,</span>
+<span id="cb4-2"><a aria-hidden="true" tabindex="-1"></a>              <span class="at">data =</span> datos, <span class="at">family =</span> binomial)</span>
+<span id="cb4-3"><a aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(m_final, m_cuad, <span class="at">test =</span> <span class="st">"Chisq"</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Analysis of Deviance Table
+
+Model 1: caso ~ dosis_T + sexo + edad + tabaquismo + PC1
+Model 2: caso ~ dosis_T + sexo + edad + I(edad^2) + tabaquismo + PC1
+  Resid. Df Resid. Dev Df  Deviance Pr(&gt;Chi)
+1       793        928                      
+2       792        928  1 0.0000248        1</code></pre>
+</div>
+</div>
+<ul>
+<li>Si el término cuadrático (o un <em>spline</em>) <strong>no mejora</strong> el ajuste → se acepta la linealidad en el logit.</li>
+<li>Si no es lineal: <strong>transformar</strong> (log, polinomio, <em>splines</em>) o <strong>categorizar</strong> con <em>dummy</em> <span class="citation" data-cites="celis2014bioestadistica">(<a href="#/referencias" role="doc-biblioref" onclick="">Celis de la Rosa y Labrada Martagón 2014</a>)</span>.</li>
+<li>Alternativa clásica: Box–Tidwell, agregando <span class="math inline">\(X \cdot \ln(X)\)</span> <span class="citation" data-cites="hosmer2013applied perezguerrero2024bioestadistica">(<a href="#/referencias" role="doc-biblioref" onclick="">Hosmer, Lemeshow, y Sturdivant 2013</a>; <a href="#/referencias" role="doc-biblioref" onclick="">Pérez Guerrero 2024</a>)</span>.</li>
+</ul>
+</section>
+<section id="así-se-ve-una-violación-de-linealidad" class="slide level2">
+<h2>Así se ve una violación de linealidad</h2>
+
+<img data-src="Regresion_logistica_P3_files/figure-revealjs/no-lineal-demo-1.png" width="1200" class="r-stretch"></section>
+<section id="multicolinealidad-entre-predictores" class="slide level2">
+<h2>6.3 Multicolinealidad entre predictores</h2>
+<p>PC1 y la proporción de ancestría miden <strong>casi lo mismo</strong> (r = 0.96). ¿Qué pasa si incluimos ambas?</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a aria-hidden="true" tabindex="-1"></a>m_colin <span class="ot">&lt;-</span> <span class="fu">glm</span>(caso <span class="sc">~</span> dosis_T <span class="sc">+</span> sexo <span class="sc">+</span> edad <span class="sc">+</span> tabaquismo <span class="sc">+</span> PC1 <span class="sc">+</span> ancestria,</span>
+<span id="cb6-2"><a aria-hidden="true" tabindex="-1"></a>               <span class="at">data =</span> datos, <span class="at">family =</span> binomial)</span>
+<span id="cb6-3"><a aria-hidden="true" tabindex="-1"></a><span class="fu">check_collinearity</span>(m_colin)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># Check for Multicollinearity
+
+Low Correlation
+
+       Term  VIF        VIF 95% CI adj. VIF Tolerance Tolerance 95% CI
+    dosis_T 1.08 [ 1.03,     1.22]     1.04      0.92     [0.82, 0.97]
+       sexo 1.00 [ 1.00,      Inf]     1.00      1.00     [0.00, 1.00]
+       edad 1.01 [ 1.00,     3.74]     1.01      0.99     [0.27, 1.00]
+ tabaquismo 1.01 [ 1.00,     3.54]     1.00      0.99     [0.28, 1.00]
+
+High Correlation
+
+      Term   VIF        VIF 95% CI adj. VIF Tolerance Tolerance 95% CI
+       PC1 11.72 [10.29,    13.37]     3.42      0.09     [0.07, 0.10]
+ ancestria 11.88 [10.43,    13.56]     3.45      0.08     [0.07, 0.10]</code></pre>
+</div>
+</div>
+</section>
+<section id="consecuencias-de-la-colinealidad" class="slide level2">
+<h2>Consecuencias de la colinealidad</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a aria-hidden="true" tabindex="-1"></a>comparar <span class="ot">&lt;-</span> <span class="fu">rbind</span>(</span>
+<span id="cb8-2"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">data.frame</span>(<span class="at">modelo =</span> <span class="st">"Solo PC1"</span>,        <span class="fu">tidy</span>(m_final)[<span class="fu">tidy</span>(m_final)<span class="sc">$</span>term <span class="sc">==</span> <span class="st">"PC1"</span>, ]),</span>
+<span id="cb8-3"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">data.frame</span>(<span class="at">modelo =</span> <span class="st">"PC1 + ancestría"</span>, <span class="fu">tidy</span>(m_colin)[<span class="fu">tidy</span>(m_colin)<span class="sc">$</span>term <span class="sc">==</span> <span class="st">"PC1"</span>, ]))</span>
+<span id="cb8-4"><a aria-hidden="true" tabindex="-1"></a>comparar[, <span class="fu">c</span>(<span class="st">"modelo"</span>, <span class="st">"term"</span>, <span class="st">"estimate"</span>, <span class="st">"std.error"</span>, <span class="st">"p.value"</span>)]</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>           modelo term estimate std.error           p.value
+1        Solo PC1  PC1   0.6486    0.0942 0.000000000005782
+2 PC1 + ancestría  PC1  -0.1335    0.3117 0.668476151190942</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">check_collinearity</span>(m_final)   <span class="co"># modelo final: VIF ≈ 1</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># Check for Multicollinearity
+
+Low Correlation
+
+       Term  VIF       VIF 95% CI adj. VIF Tolerance Tolerance 95% CI
+    dosis_T 1.07 [1.02,     1.21]     1.03      0.93     [0.82, 0.98]
+       sexo 1.00 [1.00,      Inf]     1.00      1.00     [0.00, 1.00]
+       edad 1.01 [1.00,    10.38]     1.01      0.99     [0.10, 1.00]
+ tabaquismo 1.01 [1.00,     6.15]     1.00      0.99     [0.16, 1.00]
+        PC1 1.07 [1.03,     1.21]     1.04      0.93     [0.82, 0.98]</code></pre>
+</div>
+</div>
+<ul>
+<li>El coeficiente de PC1 <strong>cambia de signo</strong> y su EE se multiplica: no es posible separar dos variables casi idénticas.</li>
+<li>VIF &gt; 5–10 suele indicar problema, aunque son puntos de corte orientativos <span class="citation" data-cites="obrien2007caution">(<a href="#/referencias" role="doc-biblioref" onclick="">O’Brien 2007</a>)</span>. Solución: conservar <strong>una</strong> de las variables.</li>
+</ul>
+</section>
+<section id="separación-completa-y-cuasicompleta" class="slide level2">
+<h2>6.4 Separación completa y cuasicompleta</h2>
+<p>Ocurre cuando un predictor (o combinación) <strong>separa perfectamente</strong> casos de controles <span class="citation" data-cites="heinze2002solution">(<a href="#/referencias" role="doc-biblioref" onclick="">Heinze y Schemper 2002</a>)</span>.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(<span class="at">Variante_rara =</span> datos<span class="sc">$</span>var_rara, <span class="at">Caso =</span> datos<span class="sc">$</span>caso)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>             Caso
+Variante_rara   0   1
+            0 400 393
+            1   0   7</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a aria-hidden="true" tabindex="-1"></a>m_sep <span class="ot">&lt;-</span> <span class="fu">glm</span>(caso <span class="sc">~</span> var_rara <span class="sc">+</span> dosis_T <span class="sc">+</span> sexo <span class="sc">+</span> edad <span class="sc">+</span> tabaquismo <span class="sc">+</span> PC1,</span>
+<span id="cb14-2"><a aria-hidden="true" tabindex="-1"></a>             <span class="at">data =</span> datos, <span class="at">family =</span> binomial)</span>
+<span id="cb14-3"><a aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(m_sep)<span class="sc">$</span>coefficients[<span class="st">"var_rara"</span>, ]</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  Estimate Std. Error    z value   Pr(&gt;|z|) 
+   16.8739   516.0436     0.0327     0.9739 </code></pre>
+</div>
+</div>
+<ul>
+<li><strong>Todos</strong> los portadores de la variante rara son casos (celda con 0) → el OR “tiende a infinito”.</li>
+<li>Señales: β enormes (&gt; 10), <strong>EE gigantes</strong>, <em>p</em> ≈ 1, advertencia <em>“fitted probabilities numerically 0 or 1”</em>.</li>
+<li><strong>Cuasicompleta</strong>: separación casi perfecta (típica del modelo recesivo con alelos raros).</li>
+</ul>
+</section>
+<section id="qué-hacer-ante-separación" class="slide level2 scrollable">
+<h2>¿Qué hacer ante separación?</h2>
+<ol type="1">
+<li><strong>No</strong> eliminar la variable solo por eso: es probablemente un efecto <strong>fuerte</strong>.</li>
+<li><strong>Regresión logística penalizada de Firth</strong>: estimaciones finitas y con menor sesgo en muestras pequeñas <span class="citation" data-cites="firth1993bias heinze2002solution">(<a href="#/referencias" role="doc-biblioref" onclick="">Firth 1993</a>; <a href="#/referencias" role="doc-biblioref" onclick="">Heinze y Schemper 2002</a>)</span>.</li>
+<li>Agrupar categorías raras (p.&nbsp;ej., modelo dominante en lugar de genotípico), regresión logística exacta o métodos bayesianos.</li>
+</ol>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a aria-hidden="true" tabindex="-1"></a><span class="co"># install.packages("logistf")</span></span>
+<span id="cb16-2"><a aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(logistf)</span>
+<span id="cb16-3"><a aria-hidden="true" tabindex="-1"></a>m_firth <span class="ot">&lt;-</span> <span class="fu">logistf</span>(caso <span class="sc">~</span> var_rara <span class="sc">+</span> dosis_T <span class="sc">+</span> sexo <span class="sc">+</span> edad <span class="sc">+</span> tabaquismo <span class="sc">+</span> PC1, <span class="at">data =</span> datos)</span>
+<span id="cb16-4"><a aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(m_firth)   <span class="co"># OR finito con IC por verosimilitud perfilada penalizada</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="residuos-agrupados-binned-residuals" class="slide level2">
+<h2>6.5 Residuos agrupados (<em>binned residuals</em>)</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a aria-hidden="true" tabindex="-1"></a>residuos_agrupados <span class="ot">&lt;-</span> <span class="fu">binned_residuals</span>(m_final)</span>
+<span id="cb17-2"><a aria-hidden="true" tabindex="-1"></a>residuos_agrupados</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Warning: About 86% of the residuals are inside the error bounds (~95% or higher would be good).</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(residuos_agrupados)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+
+</div>
+<img data-src="Regresion_logistica_P3_files/figure-revealjs/binned-1.png" width="1200" class="r-stretch"></section>
+<section id="interpretación-de-los-residuos-agrupados" class="slide level2">
+<h2>Interpretación de los residuos agrupados</h2>
+<ul>
+<li>Con un desenlace 0/1, los residuos individuales no son informativos; se <strong>agrupan</strong> por probabilidad predicha <span class="citation" data-cites="gelman2007data ludecke2021performance">(<a href="#/referencias" role="doc-biblioref" onclick="">Gelman y Hill 2007</a>; <a href="#/referencias" role="doc-biblioref" onclick="">Lüdecke et&nbsp;al. 2021</a>)</span>.</li>
+<li>Aquí ≈ 86 % de los grupos cae dentro de las bandas (lo ideal es ≥ 95 %): <strong>señal de desajuste moderado</strong>.</li>
+<li>¿Por qué? Sabemos cómo se simularon los datos: el modelo <strong>omite</strong> predictores reales (SNP03, SNP11, la variante rara y la interacción G × E).</li>
+</ul>
+<div class="clave">
+<p>Un diagnóstico “imperfecto” no invalida automáticamente el OR del SNP, pero obliga a <strong>investigar</strong>: ¿variables omitidas?, ¿términos no lineales?, ¿interacciones?</p>
+</div>
+</section>
+<section id="observaciones-influyentes" class="slide level2">
+<h2>Observaciones influyentes</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">check_outliers</span>(m_final)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>OK: No outliers detected.
+- Based on the following method and threshold: cook (0.8).
+- For variable: (Whole model)</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a aria-hidden="true" tabindex="-1"></a><span class="co"># Las 5 observaciones con mayor distancia de Cook</span></span>
+<span id="cb22-2"><a aria-hidden="true" tabindex="-1"></a>cook <span class="ot">&lt;-</span> <span class="fu">cooks.distance</span>(m_final)</span>
+<span id="cb22-3"><a aria-hidden="true" tabindex="-1"></a>datos[<span class="fu">order</span>(cook, <span class="at">decreasing =</span> <span class="cn">TRUE</span>)[<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>], <span class="fu">c</span>(<span class="st">"id"</span>, <span class="st">"caso"</span>, <span class="st">"rs7574865"</span>, <span class="st">"sexo"</span>, <span class="st">"edad"</span>, <span class="st">"tabaquismo"</span>)]</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>       id caso rs7574865   sexo edad tabaquismo
+159 ID159    0        GT Hombre   75     Actual
+307 ID307    0        TT  Mujer   75     Actual
+624 ID624    1        GG Hombre   27      Nunca
+561 ID561    0        GG  Mujer   58     Actual
+473 ID473    0        GG  Mujer   67     Actual</code></pre>
+</div>
+</div>
+<div class="small">
+<p>Una observación influyente no se elimina por defecto: se <strong>revisa</strong> (¿error de captura o genotipificación?) y se evalúa si las conclusiones cambian sin ella (análisis de sensibilidad).</p>
+</div>
+</section>
+<section id="prueba-de-razón-de-verosimilitudes-lrt" class="slide level2">
+<h2>6.6 Prueba de razón de verosimilitudes (LRT)</h2>
+<p>Compara <strong>modelos anidados</strong> mediante la diferencia de devianzas, que sigue una <span class="math inline">\(\chi^2\)</span> con <span class="math inline">\(k - k^*\)</span> g.l. <span class="citation" data-cites="celis2014bioestadistica">(<a href="#/referencias" role="doc-biblioref" onclick="">Celis de la Rosa y Labrada Martagón 2014</a>)</span>.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a aria-hidden="true" tabindex="-1"></a>m_covariables <span class="ot">&lt;-</span> <span class="fu">glm</span>(caso <span class="sc">~</span> sexo <span class="sc">+</span> edad <span class="sc">+</span> tabaquismo <span class="sc">+</span> PC1, <span class="at">data =</span> datos, <span class="at">family =</span> binomial)</span>
+<span id="cb24-2"><a aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-3"><a aria-hidden="true" tabindex="-1"></a><span class="co"># ¿El SNP aporta información después de las covariables?</span></span>
+<span id="cb24-4"><a aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(m_covariables, m_final, <span class="at">test =</span> <span class="st">"Chisq"</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Analysis of Deviance Table
+
+Model 1: caso ~ sexo + edad + tabaquismo + PC1
+Model 2: caso ~ dosis_T + sexo + edad + tabaquismo + PC1
+  Resid. Df Resid. Dev Df Deviance Pr(&gt;Chi)   
+1       794        938                        
+2       793        928  1     10.4   0.0012 **
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">test_likelihoodratio</span>(m_covariables, m_final)    <span class="co"># equivalente con performance</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># Likelihood-Ratio-Test (LRT) for Model Comparison (ML-estimator)
+
+Name          | Model | df | df_diff |  Chi2 |     p
+----------------------------------------------------
+m_covariables |   glm |  6 |         |       |      
+m_final       |   glm |  7 |       1 | 10.45 | 0.001</code></pre>
+</div>
+</div>
+</section>
+<section id="lrt-vs.-prueba-de-wald" class="slide level2">
+<h2>LRT vs.&nbsp;prueba de Wald</h2>
+<table class="caption-top">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th></th>
+<th>Wald</th>
+<th>Razón de verosimilitudes</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Estadístico</td>
+<td><span class="math inline">\(z = \hat\beta / EE\)</span></td>
+<td><span class="math inline">\(D = -2\ln V_{reducido} - (-2\ln V_{completo})\)</span></td>
+</tr>
+<tr class="even">
+<td>Prueba</td>
+<td>Un coeficiente</td>
+<td>Uno <strong>o varios</strong> coeficientes a la vez</td>
+</tr>
+<tr class="odd">
+<td>En R</td>
+<td><code>summary()</code></td>
+<td><code>anova(m1, m2, test = "Chisq")</code></td>
+</tr>
+<tr class="even">
+<td>Ventaja</td>
+<td>Rápida</td>
+<td>Más confiable; necesaria para variables con varias <em>dummy</em> o interacciones <span class="citation" data-cites="celis2014bioestadistica hosmer2013applied">(<a href="#/referencias" role="doc-biblioref" onclick="">Celis de la Rosa y Labrada Martagón 2014</a>; <a href="#/referencias" role="doc-biblioref" onclick="">Hosmer, Lemeshow, y Sturdivant 2013</a>)</span></td>
+</tr>
+</tbody>
+</table>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a aria-hidden="true" tabindex="-1"></a><span class="co"># Prueba global: ¿el modelo es mejor que el modelo nulo (solo intercepto)?</span></span>
+<span id="cb28-2"><a aria-hidden="true" tabindex="-1"></a>m_nulo <span class="ot">&lt;-</span> <span class="fu">glm</span>(caso <span class="sc">~</span> <span class="dv">1</span>, <span class="at">data =</span> datos, <span class="at">family =</span> binomial)</span>
+<span id="cb28-3"><a aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(m_nulo, m_final, <span class="at">test =</span> <span class="st">"Chisq"</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Analysis of Deviance Table
+
+Model 1: caso ~ 1
+Model 2: caso ~ dosis_T + sexo + edad + tabaquismo + PC1
+  Resid. Df Resid. Dev Df Deviance            Pr(&gt;Chi)    
+1       799       1109                                    
+2       793        928  6      181 &lt;0.0000000000000002 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
+</div>
+</div>
+</section>
+<section id="comparación-de-modelos-aic-y-bic" class="slide level2">
+<h2>6.7 Comparación de modelos: AIC y BIC</h2>
+<p><span class="math display">\[AIC = -2\ln L + 2k \qquad BIC = -2\ln L + k\ln(n)\]</span></p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a aria-hidden="true" tabindex="-1"></a>datos<span class="sc">$</span>dominante <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(datos<span class="sc">$</span>dosis_T <span class="sc">&gt;=</span> <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">0</span>)</span>
+<span id="cb30-2"><a aria-hidden="true" tabindex="-1"></a>datos<span class="sc">$</span>recesivo  <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(datos<span class="sc">$</span>dosis_T <span class="sc">==</span> <span class="dv">2</span>, <span class="dv">1</span>, <span class="dv">0</span>)</span>
+<span id="cb30-3"><a aria-hidden="true" tabindex="-1"></a>m_dom <span class="ot">&lt;-</span> <span class="fu">glm</span>(caso <span class="sc">~</span> dominante <span class="sc">+</span> sexo <span class="sc">+</span> edad <span class="sc">+</span> tabaquismo <span class="sc">+</span> PC1, <span class="at">data =</span> datos, <span class="at">family =</span> binomial)</span>
+<span id="cb30-4"><a aria-hidden="true" tabindex="-1"></a>m_rec <span class="ot">&lt;-</span> <span class="fu">glm</span>(caso <span class="sc">~</span> recesivo  <span class="sc">+</span> sexo <span class="sc">+</span> edad <span class="sc">+</span> tabaquismo <span class="sc">+</span> PC1, <span class="at">data =</span> datos, <span class="at">family =</span> binomial)</span>
+<span id="cb30-5"><a aria-hidden="true" tabindex="-1"></a>m_gen <span class="ot">&lt;-</span> <span class="fu">glm</span>(caso <span class="sc">~</span> rs7574865 <span class="sc">+</span> sexo <span class="sc">+</span> edad <span class="sc">+</span> tabaquismo <span class="sc">+</span> PC1, <span class="at">data =</span> datos, <span class="at">family =</span> binomial)</span>
+<span id="cb30-6"><a aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-7"><a aria-hidden="true" tabindex="-1"></a><span class="fu">compare_performance</span>(m_final, m_dom, m_rec, m_gen, <span class="at">metrics =</span> <span class="fu">c</span>(<span class="st">"AIC"</span>, <span class="st">"BIC"</span>, <span class="st">"R2"</span>))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># Comparison of Model Performance Indices
+
+Name    | Model | AIC (weights) | BIC (weights) | Tjur's R2
+-----------------------------------------------------------
+m_final |   glm | 941.9 (0.521) | 974.7 (0.670) |     0.209
+m_dom   |   glm | 946.5 (0.054) | 979.3 (0.069) |     0.204
+m_rec   |   glm | 944.1 (0.179) | 976.8 (0.230) |     0.207
+m_gen   |   glm | 943.4 (0.246) | 980.9 (0.030) |     0.209</code></pre>
+</div>
+</div>
+<ul>
+<li><strong>Menor</strong> AIC/BIC = mejor balance entre ajuste y complejidad. Diferencias &lt; 2 son poco relevantes <span class="citation" data-cites="burnham2002model">(<a href="#/referencias" role="doc-biblioref" onclick="">Burnham y Anderson 2002</a>)</span>.</li>
+<li>BIC penaliza más los parámetros (favorece modelos simples). Sirven también para modelos <strong>no anidados</strong>.</li>
+<li><span class="math inline">\(R^2\)</span> en logística: <strong>pseudo-<span class="math inline">\(R^2\)</span></strong> (Tjur, Nagelkerke); no se interpretan como en regresión lineal <span class="citation" data-cites="tjur2009coefficients">(<a href="#/referencias" role="doc-biblioref" onclick="">Tjur 2009</a>)</span>.</li>
+</ul>
+</section></section>
+<section>
+<section id="evaluación-de-la-capacidad-predictiva" class="title-slide slide level1 center" data-background-color="#1f4e79">
+<h1>7. Evaluación de la capacidad predictiva</h1>
+
+</section>
+<section id="probabilidades-predichas" class="slide level2">
+<h2>7.1 Probabilidades predichas</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a aria-hidden="true" tabindex="-1"></a>datos<span class="sc">$</span>prob <span class="ot">&lt;-</span> <span class="fu">predict</span>(m_final, <span class="at">type =</span> <span class="st">"response"</span>)</span>
+<span id="cb32-2"><a aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-3"><a aria-hidden="true" tabindex="-1"></a><span class="co"># Dos perfiles: mujer de 55 años, fumadora actual, PC1 = 0, con GG o TT</span></span>
+<span id="cb32-4"><a aria-hidden="true" tabindex="-1"></a>perfiles <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">dosis_T =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">2</span>), <span class="at">sexo =</span> <span class="st">"Mujer"</span>, <span class="at">edad =</span> <span class="dv">55</span>,</span>
+<span id="cb32-5"><a aria-hidden="true" tabindex="-1"></a>                       <span class="at">tabaquismo =</span> <span class="st">"Actual"</span>, <span class="at">PC1 =</span> <span class="dv">0</span>)</span>
+<span id="cb32-6"><a aria-hidden="true" tabindex="-1"></a><span class="fu">predict</span>(m_final, <span class="at">newdata =</span> perfiles, <span class="at">type =</span> <span class="st">"response"</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     1      2 
+0.5593 0.7313 </code></pre>
+</div>
+</div>
+<div class="alerta">
+<p>En casos y controles (50 % casos por diseño) estas probabilidades <strong>no</strong> son riesgos reales. Si se conoce la prevalencia (π), se corrige el intercepto: <span class="math inline">\(\beta_0^* = \beta_0 + \ln\frac{\pi}{1-\pi} - \ln\frac{\bar y}{1-\bar y}\)</span> <span class="citation" data-cites="king2001logistic">(<a href="#/referencias" role="doc-biblioref" onclick="">King y Zeng 2001</a>)</span>.</p>
+</div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a aria-hidden="true" tabindex="-1"></a>prevalencia <span class="ot">&lt;-</span> <span class="fl">0.015</span>                                   <span class="co"># prevalencia poblacional (simulada)</span></span>
+<span id="cb34-2"><a aria-hidden="true" tabindex="-1"></a>logit_muestra <span class="ot">&lt;-</span> <span class="fu">predict</span>(m_final, <span class="at">newdata =</span> perfiles)  <span class="co"># escala logit</span></span>
+<span id="cb34-3"><a aria-hidden="true" tabindex="-1"></a><span class="fu">plogis</span>(logit_muestra <span class="sc">+</span> <span class="fu">log</span>(prevalencia <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">-</span> prevalencia)) <span class="sc">-</span> <span class="fu">log</span>(<span class="fl">0.5</span> <span class="sc">/</span> <span class="fl">0.5</span>))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>      1       2 
+0.01896 0.03979 </code></pre>
+</div>
+</div>
+</section>
+<section id="distribución-de-probabilidades-predichas" class="slide level2">
+<h2>Distribución de probabilidades predichas</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a aria-hidden="true" tabindex="-1"></a>datos<span class="sc">$</span>grupo <span class="ot">&lt;-</span> <span class="fu">factor</span>(datos<span class="sc">$</span>caso, <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"Control"</span>, <span class="st">"Caso"</span>))</span>
+<span id="cb36-2"><a aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(datos, <span class="fu">aes</span>(prob, <span class="at">fill =</span> grupo)) <span class="sc">+</span></span>
+<span id="cb36-3"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_density</span>(<span class="at">alpha =</span> .<span class="dv">5</span>) <span class="sc">+</span></span>
+<span id="cb36-4"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="fl">0.5</span>, <span class="at">lty =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
+<span id="cb36-5"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(azul, rojo), <span class="at">name =</span> <span class="cn">NULL</span>) <span class="sc">+</span></span>
+<span id="cb36-6"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Probabilidad predicha de AR"</span>, <span class="at">y =</span> <span class="st">"Densidad"</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+
+</div>
+<img data-src="Regresion_logistica_P3_files/figure-revealjs/dist-prob-1.png" width="1200" class="r-stretch"><div class="small">
+<p>Un buen modelo <strong>separa</strong> las dos curvas. Aquí se traslapan bastante: discriminación moderada.</p>
+</div>
+</section>
+<section id="umbral-de-clasificación-y-matriz-de-confusión" class="slide level2">
+<h2>7.2 Umbral de clasificación y matriz de confusión</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a aria-hidden="true" tabindex="-1"></a>umbral <span class="ot">&lt;-</span> <span class="fl">0.5</span></span>
+<span id="cb37-2"><a aria-hidden="true" tabindex="-1"></a>datos<span class="sc">$</span>clasificado <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(datos<span class="sc">$</span>prob <span class="sc">&gt;=</span> umbral, <span class="dv">1</span>, <span class="dv">0</span>)</span>
+<span id="cb37-3"><a aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-4"><a aria-hidden="true" tabindex="-1"></a>matriz <span class="ot">&lt;-</span> <span class="fu">table</span>(<span class="at">Predicho =</span> datos<span class="sc">$</span>clasificado, <span class="at">Observado =</span> datos<span class="sc">$</span>caso)</span>
+<span id="cb37-5"><a aria-hidden="true" tabindex="-1"></a>matriz</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>        Observado
+Predicho   0   1
+       0 276 117
+       1 124 283</code></pre>
+</div>
+</div>
+<table class="caption-top">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th></th>
+<th>Observado: caso</th>
+<th>Observado: control</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Predicho: caso</strong></td>
+<td>VP (verdadero positivo)</td>
+<td>FP (falso positivo)</td>
+</tr>
+<tr class="even">
+<td><strong>Predicho: control</strong></td>
+<td>FN (falso negativo)</td>
+<td>VN (verdadero negativo)</td>
+</tr>
+</tbody>
+</table>
+<div class="small">
+<p>El umbral 0.5 es arbitrario. Cambiarlo intercambia sensibilidad por especificidad.</p>
+</div>
+</section>
+<section id="sensibilidad-especificidad-y-valores-predictivos" class="slide level2">
+<h2>7.3 Sensibilidad, especificidad y valores predictivos</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a aria-hidden="true" tabindex="-1"></a>VP <span class="ot">&lt;-</span> matriz[<span class="st">"1"</span>, <span class="st">"1"</span>]; FP <span class="ot">&lt;-</span> matriz[<span class="st">"1"</span>, <span class="st">"0"</span>]</span>
+<span id="cb39-2"><a aria-hidden="true" tabindex="-1"></a>FN <span class="ot">&lt;-</span> matriz[<span class="st">"0"</span>, <span class="st">"1"</span>]; VN <span class="ot">&lt;-</span> matriz[<span class="st">"0"</span>, <span class="st">"0"</span>]</span>
+<span id="cb39-3"><a aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-4"><a aria-hidden="true" tabindex="-1"></a>sensibilidad  <span class="ot">&lt;-</span> VP <span class="sc">/</span> (VP <span class="sc">+</span> FN)   <span class="co"># casos correctamente identificados</span></span>
+<span id="cb39-5"><a aria-hidden="true" tabindex="-1"></a>especificidad <span class="ot">&lt;-</span> VN <span class="sc">/</span> (VN <span class="sc">+</span> FP)   <span class="co"># controles correctamente identificados</span></span>
+<span id="cb39-6"><a aria-hidden="true" tabindex="-1"></a>VPP <span class="ot">&lt;-</span> VP <span class="sc">/</span> (VP <span class="sc">+</span> FP)             <span class="co"># de los clasificados como caso, ¿cuántos lo son?</span></span>
+<span id="cb39-7"><a aria-hidden="true" tabindex="-1"></a>VPN <span class="ot">&lt;-</span> VN <span class="sc">/</span> (VN <span class="sc">+</span> FN)</span>
+<span id="cb39-8"><a aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(<span class="fu">c</span>(<span class="at">sensibilidad =</span> sensibilidad, <span class="at">especificidad =</span> especificidad, <span class="at">VPP =</span> VPP, <span class="at">VPN =</span> VPN), <span class="dv">3</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> sensibilidad especificidad           VPP           VPN 
+        0.708         0.690         0.695         0.702 </code></pre>
+</div>
+</div>
+</section>
+<section id="los-valores-predictivos-dependen-de-la-prevalencia" class="slide level2">
+<h2>Los valores predictivos dependen de la prevalencia</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a aria-hidden="true" tabindex="-1"></a><span class="co"># VPP en la población real (teorema de Bayes), prevalencia de AR = 1.5 %</span></span>
+<span id="cb41-2"><a aria-hidden="true" tabindex="-1"></a>prev <span class="ot">&lt;-</span> <span class="fl">0.015</span></span>
+<span id="cb41-3"><a aria-hidden="true" tabindex="-1"></a>VPP_poblacion <span class="ot">&lt;-</span> (sensibilidad <span class="sc">*</span> prev) <span class="sc">/</span> (sensibilidad <span class="sc">*</span> prev <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">-</span> especificidad) <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> prev))</span>
+<span id="cb41-4"><a aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(VPP_poblacion, <span class="dv">3</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.034</code></pre>
+</div>
+</div>
+<div class="alerta">
+<p>En la muestra (50 % casos) el VPP es 0.7; en la población (1.5 % de AR) baja a 0.034. La mayoría de los “positivos” serían <strong>falsos positivos</strong>. Sensibilidad y especificidad no dependen de la prevalencia; VPP y VPN sí.</p>
+</div>
+</section>
+<section id="curva-roc-y-área-bajo-la-curva-auc" class="slide level2">
+<h2>7.4 Curva ROC y área bajo la curva (AUC)</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a aria-hidden="true" tabindex="-1"></a>m_solo_snp <span class="ot">&lt;-</span> <span class="fu">glm</span>(caso <span class="sc">~</span> dosis_T, <span class="at">data =</span> datos, <span class="at">family =</span> binomial)</span>
+<span id="cb43-2"><a aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-3"><a aria-hidden="true" tabindex="-1"></a>roc_snp   <span class="ot">&lt;-</span> <span class="fu">roc</span>(datos<span class="sc">$</span>caso, <span class="fu">predict</span>(m_solo_snp, <span class="at">type =</span> <span class="st">"response"</span>), <span class="at">quiet =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb43-4"><a aria-hidden="true" tabindex="-1"></a>roc_final <span class="ot">&lt;-</span> <span class="fu">roc</span>(datos<span class="sc">$</span>caso, datos<span class="sc">$</span>prob, <span class="at">quiet =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb43-5"><a aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-6"><a aria-hidden="true" tabindex="-1"></a><span class="fu">ci.auc</span>(roc_snp)     <span class="co"># AUC con IC 95 % (DeLong)</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>95% CI: 0.583-0.654 (DeLong)</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">ci.auc</span>(roc_final)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>95% CI: 0.732-0.797 (DeLong)</code></pre>
+</div>
+</div>
+</section>
+<section id="comparación-de-curvas-roc" class="slide level2">
+<h2>Comparación de curvas ROC</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">ggroc</span>(<span class="fu">list</span>(<span class="st">"Solo rs7574865"</span> <span class="ot">=</span> roc_snp, <span class="st">"Modelo completo"</span> <span class="ot">=</span> roc_final), <span class="at">linewidth =</span> <span class="fl">1.2</span>) <span class="sc">+</span></span>
+<span id="cb47-2"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_abline</span>(<span class="at">intercept =</span> <span class="dv">1</span>, <span class="at">slope =</span> <span class="dv">1</span>, <span class="at">lty =</span> <span class="dv">2</span>, <span class="at">col =</span> <span class="st">"grey50"</span>) <span class="sc">+</span></span>
+<span id="cb47-3"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(naranja, azul), <span class="at">name =</span> <span class="cn">NULL</span>) <span class="sc">+</span></span>
+<span id="cb47-4"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Especificidad"</span>, <span class="at">y =</span> <span class="st">"Sensibilidad"</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+
+</div>
+<img data-src="Regresion_logistica_P3_files/figure-revealjs/roc-plot-1.png" width="1200" class="r-stretch"><ul>
+<li>AUC = probabilidad de que un caso al azar tenga mayor probabilidad predicha que un control al azar. 0.5 = azar; 1 = perfecto <span class="citation" data-cites="robin2011proc">(<a href="#/referencias" role="doc-biblioref" onclick="">Robin et&nbsp;al. 2011</a>)</span>.</li>
+<li>El SNP está <strong>claramente asociado</strong>, pero por sí solo discrimina poco (AUC = 0.62). <strong>Asociación ≠ predicción</strong>.</li>
+</ul>
+</section>
+<section id="calibración-del-modelo" class="slide level2">
+<h2>7.5 Calibración del modelo</h2>
+<p>¿Las probabilidades predichas <strong>coinciden</strong> con las frecuencias observadas? <span class="citation" data-cites="vancalster2019calibration">(<a href="#/referencias" role="doc-biblioref" onclick="">Van Calster et&nbsp;al. 2019</a>)</span></p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a aria-hidden="true" tabindex="-1"></a>datos<span class="sc">$</span>decil_prob <span class="ot">&lt;-</span> <span class="fu">cut</span>(datos<span class="sc">$</span>prob, <span class="fu">quantile</span>(datos<span class="sc">$</span>prob, <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">1</span>, <span class="fl">0.1</span>)), <span class="at">include.lowest =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb48-2"><a aria-hidden="true" tabindex="-1"></a>calib <span class="ot">&lt;-</span> <span class="fu">aggregate</span>(<span class="fu">cbind</span>(prob, caso) <span class="sc">~</span> decil_prob, <span class="at">data =</span> datos, <span class="at">FUN =</span> mean)</span>
+<span id="cb48-3"><a aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb48-4"><a aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(calib, <span class="fu">aes</span>(prob, caso)) <span class="sc">+</span></span>
+<span id="cb48-5"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_abline</span>(<span class="at">lty =</span> <span class="dv">2</span>, <span class="at">col =</span> <span class="st">"grey50"</span>) <span class="sc">+</span></span>
+<span id="cb48-6"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">col =</span> azul) <span class="sc">+</span> <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">3</span>, <span class="at">col =</span> azul) <span class="sc">+</span></span>
+<span id="cb48-7"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_equal</span>(<span class="at">xlim =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>), <span class="at">ylim =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>)) <span class="sc">+</span></span>
+<span id="cb48-8"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Probabilidad predicha (media del decil)"</span>, <span class="at">y =</span> <span class="st">"Proporción observada de casos"</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+
+</div>
+<img data-src="Regresion_logistica_P3_files/figure-revealjs/calibracion-1.png" width="1200" class="r-stretch"></section>
+<section id="prueba-de-hosmerlemeshow" class="slide level2">
+<h2>Prueba de Hosmer–Lemeshow</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">performance_hosmer</span>(m_final, <span class="at">n_bins =</span> <span class="dv">10</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># Hosmer-Lemeshow Goodness-of-Fit Test
+
+  Chi-squared: 11.745
+           df:  8    
+      p-value:  0.163</code></pre>
+</div>
+</div>
+<ul>
+<li><em>p</em> &gt; 0.05 → no hay evidencia de mal ajuste <span class="citation" data-cites="hosmer2013applied">(<a href="#/referencias" role="doc-biblioref" onclick="">Hosmer, Lemeshow, y Sturdivant 2013</a>)</span>.</li>
+<li>Limitaciones: depende del número de grupos, tiene poca potencia en muestras pequeñas y casi siempre es significativa en muestras muy grandes. Prefiera el <strong>gráfico de calibración</strong> <span class="citation" data-cites="vancalster2019calibration">(<a href="#/referencias" role="doc-biblioref" onclick="">Van Calster et&nbsp;al. 2019</a>)</span>.</li>
+<li><strong>Discriminación</strong> (AUC) y <strong>calibración</strong> son propiedades distintas: un modelo puede ordenar bien a los pacientes y aun así dar probabilidades erróneas.</li>
+</ul>
+</section>
+<section id="sobreajuste" class="slide level2">
+<h2>7.6 Sobreajuste</h2>
+<p>El rendimiento medido en los <strong>mismos datos</strong> con que se construyó el modelo es <strong>optimista</strong> <span class="citation" data-cites="steyerberg2019clinical">(<a href="#/referencias" role="doc-biblioref" onclick="">Steyerberg 2019</a>)</span>.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a aria-hidden="true" tabindex="-1"></a><span class="co"># Modelo "inflado": agregamos los 20 SNPs del panel</span></span>
+<span id="cb51-2"><a aria-hidden="true" tabindex="-1"></a>f_inflado <span class="ot">&lt;-</span> <span class="fu">as.formula</span>(<span class="fu">paste</span>(<span class="st">"caso ~ dosis_T + sexo + edad + tabaquismo + PC1 +"</span>,</span>
+<span id="cb51-3"><a aria-hidden="true" tabindex="-1"></a>                              <span class="fu">paste</span>(<span class="fu">sprintf</span>(<span class="st">"SNP%02d"</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">20</span>), <span class="at">collapse =</span> <span class="st">" + "</span>)))</span>
+<span id="cb51-4"><a aria-hidden="true" tabindex="-1"></a>m_inflado <span class="ot">&lt;-</span> <span class="fu">glm</span>(f_inflado, <span class="at">data =</span> datos, <span class="at">family =</span> binomial)</span>
+<span id="cb51-5"><a aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-6"><a aria-hidden="true" tabindex="-1"></a><span class="fu">c</span>(<span class="at">AUC_aparente_final   =</span> <span class="fu">auc</span>(datos<span class="sc">$</span>caso, <span class="fu">fitted</span>(m_final)),</span>
+<span id="cb51-7"><a aria-hidden="true" tabindex="-1"></a>  <span class="at">AUC_aparente_inflado =</span> <span class="fu">auc</span>(datos<span class="sc">$</span>caso, <span class="fu">fitted</span>(m_inflado)))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  AUC_aparente_final AUC_aparente_inflado 
+              0.7647               0.7937 </code></pre>
+</div>
+</div>
+</section>
+<section id="validación-interna-validación-cruzada-de-10-pliegues" class="slide level2">
+<h2>Validación interna: validación cruzada de 10 pliegues</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb53"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a aria-hidden="true" tabindex="-1"></a>auc_cv <span class="ot">&lt;-</span> <span class="cf">function</span>(formula, datos, <span class="at">k =</span> <span class="dv">10</span>) {</span>
+<span id="cb53-2"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
+<span id="cb53-3"><a aria-hidden="true" tabindex="-1"></a>  pliegue <span class="ot">&lt;-</span> <span class="fu">sample</span>(<span class="fu">rep</span>(<span class="dv">1</span><span class="sc">:</span>k, <span class="at">length.out =</span> <span class="fu">nrow</span>(datos)))   <span class="co"># asigna cada persona a un pliegue</span></span>
+<span id="cb53-4"><a aria-hidden="true" tabindex="-1"></a>  prob_cv <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="cn">NA</span>, <span class="fu">nrow</span>(datos))</span>
+<span id="cb53-5"><a aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>k) {</span>
+<span id="cb53-6"><a aria-hidden="true" tabindex="-1"></a>    m_i <span class="ot">&lt;-</span> <span class="fu">glm</span>(formula, <span class="at">data =</span> datos[pliegue <span class="sc">!=</span> i, ], <span class="at">family =</span> binomial)          <span class="co"># entrena sin el pliegue i</span></span>
+<span id="cb53-7"><a aria-hidden="true" tabindex="-1"></a>    prob_cv[pliegue <span class="sc">==</span> i] <span class="ot">&lt;-</span> <span class="fu">predict</span>(m_i, <span class="at">newdata =</span> datos[pliegue <span class="sc">==</span> i, ], <span class="at">type =</span> <span class="st">"response"</span>)  <span class="co"># predice el pliegue i</span></span>
+<span id="cb53-8"><a aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb53-9"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">as.numeric</span>(<span class="fu">auc</span>(datos<span class="sc">$</span>caso, prob_cv, <span class="at">quiet =</span> <span class="cn">TRUE</span>))</span>
+<span id="cb53-10"><a aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb53-11"><a aria-hidden="true" tabindex="-1"></a><span class="fu">c</span>(<span class="at">AUC_cv_final =</span> <span class="fu">auc_cv</span>(<span class="fu">formula</span>(m_final), datos), <span class="at">AUC_cv_inflado =</span> <span class="fu">auc_cv</span>(f_inflado, datos))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  AUC_cv_final AUC_cv_inflado 
+        0.7536         0.7594 </code></pre>
+</div>
+</div>
+<div class="small">
+<p>La ventaja aparente del modelo inflado se reduce casi por completo al validar: la mayor parte era <strong>ruido</strong>. Lo poco que conserva proviene de SNP03 y SNP11, los únicos SNPs del panel con efecto real en la simulación.</p>
+</div>
+</section>
+<section id="validación-interna-y-externa" class="slide level2">
+<h2>Validación interna y externa</h2>
+<table class="caption-top">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Tipo</th>
+<th>¿Qué es?</th>
+<th>Ejemplo</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Aparente</strong></td>
+<td>Evaluar en los mismos datos</td>
+<td>AUC de <code>fitted()</code> (optimista)</td>
+</tr>
+<tr class="even">
+<td><strong>Interna: división</strong></td>
+<td>Entrenar 70 %, probar 30 %</td>
+<td>Desperdicia datos en muestras pequeñas</td>
+</tr>
+<tr class="odd">
+<td><strong>Interna: validación cruzada</strong></td>
+<td>k pliegues</td>
+<td>La que acabamos de hacer</td>
+</tr>
+<tr class="even">
+<td><strong>Interna: <em>bootstrap</em></strong></td>
+<td>Estimar el optimismo con remuestreo</td>
+<td>Recomendada <span class="citation" data-cites="steyerberg2019clinical harrell2015regression">(<a href="#/referencias" role="doc-biblioref" onclick="">Steyerberg 2019</a>; <a href="#/referencias" role="doc-biblioref" onclick="">Harrell 2015</a>)</span></td>
+</tr>
+<tr class="odd">
+<td><strong>Externa</strong></td>
+<td>Otra población, centro o época</td>
+<td>Cohorte de AR de otro estado o de otra ancestría</td>
+</tr>
+</tbody>
+</table>
+<div class="clave">
+<p>Para reportar modelos de predicción, siga la guía <strong>TRIPOD</strong> <span class="citation" data-cites="collins2015tripod">(<a href="#/referencias" role="doc-biblioref" onclick="">Collins et&nbsp;al. 2015</a>)</span>.</p>
+</div>
+</section></section>
+<section>
+<section id="interpretación-crítica-y-comunicación" class="title-slide slide level1 center" data-background-color="#1f4e79">
+<h1>8. Interpretación crítica y comunicación</h1>
+
+</section>
+<section id="interpretación-de-tablas-de-regresión-logística" class="slide level2">
+<h2>8.1 Interpretación de tablas de regresión logística</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb55"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb55-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(m_final)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+glm(formula = caso ~ dosis_T + sexo + edad + tabaquismo + PC1, 
+    family = binomial, data = datos)
+
+Coefficients:
+                    Estimate Std. Error z value             Pr(&gt;|z|)    
+(Intercept)         -3.20641    0.35994   -8.91 &lt; 0.0000000000000002 ***
+dosis_T              0.38127    0.11872    3.21               0.0013 ** 
+sexoMujer            0.63425    0.16337    3.88               0.0001 ***
+edad                 0.03725    0.00571    6.52      0.0000000000687 ***
+tabaquismoExfumador  0.36720    0.20724    1.77               0.0764 .  
+tabaquismoActual     0.76177    0.18448    4.13      0.0000363790531 ***
+PC1                  0.64856    0.09420    6.88      0.0000000000058 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 1109.04  on 799  degrees of freedom
+Residual deviance:  927.92  on 793  degrees of freedom
+AIC: 941.9
+
+Number of Fisher Scoring iterations: 3</code></pre>
+</div>
+</div>
+</section>
+<section id="qué-significa-cada-columna" class="slide level2">
+<h2>¿Qué significa cada columna?</h2>
+<table class="caption-top">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Elemento</th>
+<th>Significado</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>Estimate</code></td>
+<td><span class="math inline">\(\hat\beta\)</span>: cambio en el <strong>log-odds</strong></td>
+</tr>
+<tr class="even">
+<td><code>Std. Error</code></td>
+<td>Error estándar de <span class="math inline">\(\hat\beta\)</span> (precisión)</td>
+</tr>
+<tr class="odd">
+<td><code>z value</code></td>
+<td>Estadístico de Wald <span class="math inline">\(= \hat\beta / EE\)</span></td>
+</tr>
+<tr class="even">
+<td><code>Pr(&gt;|z|)</code></td>
+<td>Valor <em>p</em> de Wald (<span class="math inline">\(H_0: \beta = 0\)</span>, es decir, OR = 1)</td>
+</tr>
+<tr class="odd">
+<td><code>Null deviance</code></td>
+<td>Devianza del modelo solo con intercepto</td>
+</tr>
+<tr class="even">
+<td><code>Residual deviance</code></td>
+<td>Devianza del modelo ajustado (menor = mejor ajuste)</td>
+</tr>
+<tr class="odd">
+<td><code>AIC</code></td>
+<td>Criterio de información para comparar modelos</td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(e^{\hat\beta}\)</span> (no aparece)</td>
+<td><strong>OR</strong>: hay que calcularlo con <code>exp()</code> o <code>tidy(exponentiate = TRUE)</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="tabla-para-publicación" class="slide level2">
+<h2>8.2 Tabla para publicación</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb57"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb57-1"><a aria-hidden="true" tabindex="-1"></a>tabla <span class="ot">&lt;-</span> <span class="fu">tidy</span>(m_final, <span class="at">exponentiate =</span> <span class="cn">TRUE</span>, <span class="at">conf.int =</span> <span class="cn">TRUE</span>)[<span class="sc">-</span><span class="dv">1</span>, ]</span>
+<span id="cb57-2"><a aria-hidden="true" tabindex="-1"></a>tabla<span class="sc">$</span>OR_IC <span class="ot">&lt;-</span> <span class="fu">sprintf</span>(<span class="st">"%.2f (%.2f–%.2f)"</span>, tabla<span class="sc">$</span>estimate, tabla<span class="sc">$</span>conf.low, tabla<span class="sc">$</span>conf.high)</span>
+<span id="cb57-3"><a aria-hidden="true" tabindex="-1"></a>tabla<span class="sc">$</span>p     <span class="ot">&lt;-</span> <span class="fu">format.pval</span>(tabla<span class="sc">$</span>p.value, <span class="at">digits =</span> <span class="dv">2</span>, <span class="at">eps =</span> <span class="fl">0.001</span>)</span>
+<span id="cb57-4"><a aria-hidden="true" tabindex="-1"></a>tabla<span class="sc">$</span>Variable <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"rs7574865 (por alelo T)"</span>, <span class="st">"Sexo: mujer vs. hombre"</span>, <span class="st">"Edad (por año)"</span>,</span>
+<span id="cb57-5"><a aria-hidden="true" tabindex="-1"></a>                    <span class="st">"Exfumador vs. nunca"</span>, <span class="st">"Fumador actual vs. nunca"</span>, <span class="st">"PC1 (por unidad)"</span>)</span>
+<span id="cb57-6"><a aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(tabla[, <span class="fu">c</span>(<span class="st">"Variable"</span>, <span class="st">"OR_IC"</span>, <span class="st">"p"</span>)], <span class="at">col.names =</span> <span class="fu">c</span>(<span class="st">"Variable"</span>, <span class="st">"OR ajustado (IC 95 %)"</span>, <span class="st">"p"</span>))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Variable</th>
+<th style="text-align: left;">OR ajustado (IC 95 %)</th>
+<th style="text-align: left;">p</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">rs7574865 (por alelo T)</td>
+<td style="text-align: left;">1.46 (1.16–1.85)</td>
+<td style="text-align: left;">0.0013</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Sexo: mujer vs.&nbsp;hombre</td>
+<td style="text-align: left;">1.89 (1.37–2.60)</td>
+<td style="text-align: left;">&lt;0.001</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Edad (por año)</td>
+<td style="text-align: left;">1.04 (1.03–1.05)</td>
+<td style="text-align: left;">&lt;0.001</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Exfumador vs.&nbsp;nunca</td>
+<td style="text-align: left;">1.44 (0.96–2.17)</td>
+<td style="text-align: left;">0.0764</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Fumador actual vs.&nbsp;nunca</td>
+<td style="text-align: left;">2.14 (1.50–3.08)</td>
+<td style="text-align: left;">&lt;0.001</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">PC1 (por unidad)</td>
+<td style="text-align: left;">1.91 (1.59–2.31)</td>
+<td style="text-align: left;">&lt;0.001</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="small">
+<p>Nota al pie sugerida: “OR ajustados por sexo, edad, tabaquismo y PC1 mediante regresión logística múltiple; modelo genético aditivo”. Presente crudos y ajustados juntos cuando sea posible <span class="citation" data-cites="celis2014bioestadistica little2009strega">(<a href="#/referencias" role="doc-biblioref" onclick="">Celis de la Rosa y Labrada Martagón 2014</a>; <a href="#/referencias" role="doc-biblioref" onclick="">Little et&nbsp;al. 2009</a>)</span>.</p>
+</div>
+</section>
+<section id="forest-plot" class="slide level2">
+<h2><em>Forest plot</em></h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb58"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb58-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(tabla, <span class="fu">aes</span>(<span class="at">x =</span> estimate, <span class="at">y =</span> <span class="fu">reorder</span>(Variable, estimate))) <span class="sc">+</span></span>
+<span id="cb58-2"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="dv">1</span>, <span class="at">lty =</span> <span class="dv">2</span>, <span class="at">col =</span> <span class="st">"grey40"</span>) <span class="sc">+</span>             <span class="co"># línea de no efecto</span></span>
+<span id="cb58-3"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_errorbarh</span>(<span class="fu">aes</span>(<span class="at">xmin =</span> conf.low, <span class="at">xmax =</span> conf.high), <span class="at">height =</span> <span class="fl">0.2</span>, <span class="at">col =</span> azul) <span class="sc">+</span></span>
+<span id="cb58-4"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="fl">3.5</span>, <span class="at">col =</span> rojo) <span class="sc">+</span></span>
+<span id="cb58-5"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_log10</span>() <span class="sc">+</span>                                                   <span class="co"># los OR se grafican en escala log</span></span>
+<span id="cb58-6"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"OR ajustado (IC 95 %, escala log)"</span>, <span class="at">y =</span> <span class="cn">NULL</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+
+</div>
+<img data-src="Regresion_logistica_P3_files/figure-revealjs/forest-1.png" width="1200" class="r-stretch"></section>
+<section id="asociación-predicción-y-causalidad" class="slide level2">
+<h2>8.3 Asociación, predicción y causalidad</h2>
+<table class="caption-top">
+<colgroup>
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+</colgroup>
+<thead>
+<tr class="header">
+<th></th>
+<th>Asociación (explicar)</th>
+<th>Predicción</th>
+<th>Causalidad</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Pregunta</td>
+<td>¿El SNP se relaciona con AR?</td>
+<td>¿Quién desarrollará AR?</td>
+<td>¿Modificar X cambia Y?</td>
+</tr>
+<tr class="even">
+<td>Métrica clave</td>
+<td>OR ajustado + IC</td>
+<td>AUC, calibración</td>
+<td>Efecto causal</td>
+</tr>
+<tr class="odd">
+<td>Selección de variables</td>
+<td>Confusores (DAG)</td>
+<td>Lo que mejore la predicción validada</td>
+<td>Diseño + supuestos causales</td>
+</tr>
+<tr class="even">
+<td>Nuestro caso</td>
+<td>OR = 1.46 ✔</td>
+<td>AUC solo SNP = 0.62 ✘</td>
+<td>No demostrada</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>Explicar y predecir son objetivos <strong>distintos</strong> que llevan a modelos distintos <span class="citation" data-cites="shmueli2010explain">(<a href="#/referencias" role="doc-biblioref" onclick="">Shmueli 2010</a>)</span>.</li>
+<li>rs7574865 puede ser un <strong>marcador</strong> en desequilibrio de ligamiento con la variante causal; la causalidad requiere replicación, mapeo fino y evidencia funcional.</li>
+</ul>
+</section>
+<section id="errores-frecuentes-de-interpretación" class="slide level2 scrollable">
+<h2>8.4 Errores frecuentes de interpretación</h2>
+<ol type="1">
+<li>Interpretar el <strong>OR como RR</strong> (“el doble de riesgo”) cuando el evento es frecuente <span class="citation" data-cites="celis2014bioestadistica">(<a href="#/referencias" role="doc-biblioref" onclick="">Celis de la Rosa y Labrada Martagón 2014</a>)</span>.</li>
+<li>Interpretar el <strong>OR como probabilidad</strong> (“1.46 = 46 % de probabilidad”) <span class="citation" data-cites="sperandei2014understanding">(<a href="#/referencias" role="doc-biblioref" onclick="">Sperandei 2014</a>)</span>.</li>
+<li>“<em>p</em> &gt; 0.05 → <strong>no hay efecto</strong>” (ver G × E en la Parte 2) <span class="citation" data-cites="wasserstein2016asa">(<a href="#/referencias" role="doc-biblioref" onclick="">Wasserstein y Lazar 2016</a>)</span>.</li>
+<li>Reportar probabilidades absolutas de un estudio de <strong>casos y controles</strong> sin corregir.</li>
+<li>Interpretar los OR de las <strong>covariables</strong> de ajuste como efectos causales (falacia de la Tabla 2) <span class="citation" data-cites="westreich2013table2">(<a href="#/referencias" role="doc-biblioref" onclick="">Westreich y Greenland 2013</a>)</span>.</li>
+<li>Probar muchos SNPs o modelos de herencia <strong>sin corregir</strong> comparaciones múltiples.</li>
+<li>Selección automática <em>stepwise</em> y reportar el modelo como si fuera pre-especificado <span class="citation" data-cites="heinze2018variable">(<a href="#/referencias" role="doc-biblioref" onclick="">Heinze, Wallisch, y Dunkler 2018</a>)</span>.</li>
+<li>Ignorar la <strong>separación</strong> y reportar OR = 21 000 000.</li>
+<li>Confundir asociación significativa con <strong>utilidad clínica</strong> para predecir <span class="citation" data-cites="ranganathan2017common">(<a href="#/referencias" role="doc-biblioref" onclick="">Ranganathan, Pramesh, y Aggarwal 2017</a>)</span>.</li>
+</ol>
+</section>
+<section id="limitaciones-metodológicas-y-estadísticas" class="slide level2">
+<h2>8.5 Limitaciones metodológicas y estadísticas</h2>
+<ul>
+<li><strong>Diseño</strong>: casos y controles → sesgo de selección y de memoria (tabaquismo); no estima riesgos absolutos.</li>
+<li><strong>Medición</strong>: errores de genotipificación (revisar HWE), clasificación del desenlace.</li>
+<li><strong>Confusión residual</strong>: un solo PC puede no capturar toda la estructura poblacional.</li>
+<li><strong>Potencia</strong>: insuficiente para interacciones y variantes raras.</li>
+<li><strong>Generalización</strong>: frecuencias alélicas y efectos pueden variar entre poblaciones.</li>
+<li><strong>Modelo</strong>: linealidad en el logit, variables omitidas (binned residuals), sobreajuste.</li>
+<li><strong>Datos faltantes</strong>: el análisis de casos completos puede sesgar los OR (ver Tema 2).</li>
+</ul>
+<div class="clave">
+<p>Para estudios de asociación genética, la guía <strong>STREGA</strong> indica qué reportar: genotipificación, HWE, estratificación, modelo genético y comparaciones múltiples <span class="citation" data-cites="little2009strega">(<a href="#/referencias" role="doc-biblioref" onclick="">Little et&nbsp;al. 2009</a>)</span>.</p>
+</div>
+</section></section>
+<section>
+<section id="cierre" class="title-slide slide level1 center" data-background-color="#1f4e79">
+<h1>Cierre</h1>
+
+</section>
+<section id="respuesta-a-la-pregunta-guía" class="slide level2">
+<h2>Respuesta a la pregunta guía</h2>
+<div class="pregunta">
+<p>¿Cómo podemos determinar si una variante genética está asociada con una enfermedad, cuantificar esa asociación y evaluar si nuestras conclusiones son estadísticamente válidas?</p>
+</div>
+<table class="caption-top">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Pregunta</th>
+<th>Herramienta</th>
+<th>Resultado en nuestro estudio</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>¿Está asociada?</td>
+<td>Regresión logística + LRT, corrección por comparaciones múltiples</td>
+<td>Sí: <em>p</em> (LRT) = 0.0012</td>
+</tr>
+<tr class="even">
+<td>¿Cuánto?</td>
+<td>OR ajustado + IC 95 % (aditivo)</td>
+<td>OR = 1.46 (1.16–1.85); verdadero = 1.30</td>
+</tr>
+<tr class="odd">
+<td>¿Es válido?</td>
+<td>Ajuste por ancestría, linealidad, VIF, separación, residuos, influyentes</td>
+<td>Confusión por ancestría corregida; residuos sugieren predictores omitidos</td>
+</tr>
+<tr class="even">
+<td>¿Predice?</td>
+<td>AUC, calibración, validación cruzada</td>
+<td>Discrimina poco por sí solo (AUC = 0.62)</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="mensajes-clave" class="slide level2 scrollable">
+<h2>Mensajes clave</h2>
+<ol type="1">
+<li>Diagnostique <strong>antes</strong> de interpretar: linealidad en el logit, colinealidad, separación, influyentes y residuos agrupados.</li>
+<li>Compare modelos anidados con <strong>LRT</strong> y no anidados con <strong>AIC/BIC</strong>.</li>
+<li>Discriminación (<strong>AUC</strong>) y <strong>calibración</strong> son cosas distintas; ambas se validan fuera de la muestra de entrenamiento.</li>
+<li>En casos y controles, VPP y probabilidades dependen de la <strong>prevalencia</strong>.</li>
+<li>Un SNP puede estar asociado y ser un mal predictor: <strong>asociación ≠ predicción ≠ causalidad</strong>.</li>
+<li>Comunique con <strong>tablas OR (IC 95 %)</strong>, <em>forest plots</em> y las guías <strong>STREGA/TRIPOD</strong>.</li>
+</ol>
+</section>
+<section id="práctica-integradora" class="slide level2 scrollable">
+<h2>Práctica integradora</h2>
+<p>Con <code>estudio_AR_STAT4.csv</code>:</p>
+<ol type="1">
+<li>Agregue <code>SNP03</code> y <code>SNP11</code> al modelo final. ¿Mejoran los <em>binned residuals</em>, el AIC y el AUC validado?</li>
+<li>Evalúe la linealidad de <code>PC1</code> en el logit con el gráfico de logit empírico y un término cuadrático.</li>
+<li>Cambie el umbral de clasificación a 0.3 y a 0.7. Construya ambas matrices de confusión y discuta el intercambio sensibilidad/especificidad.</li>
+<li>Calcule el VPP del modelo final si la prevalencia fuera 0.5 % y 5 %.</li>
+<li>Elabore una tabla de publicación con <strong>OR crudos y ajustados</strong> lado a lado y su <em>forest plot</em>.</li>
+<li>Redacte un párrafo de resultados y uno de limitaciones siguiendo STREGA.</li>
+</ol>
+</section>
+<section id="referencias" class="slide level2 smaller scrollable">
+<h2>Referencias</h2>
+<div id="refs" class="small references csl-bib-body hanging-indent" data-entry-spacing="0" role="list">
+<div id="ref-burnham2002model" class="csl-entry" role="listitem">
+Burnham, Kenneth P., y David R. Anderson. 2002. <em>Model Selection and Multimodel Inference: A Practical Information-Theoretic Approach</em>. 2.ª ed. New York: Springer.
+</div>
+<div id="ref-celis2014bioestadistica" class="csl-entry" role="listitem">
+Celis de la Rosa, Alfredo de Jesús, y Vanessa Labrada Martagón. 2014. <span>«Análisis estratificado y regresión logística»</span>. En <em>Bioestadística</em>, 3.ª ed., 209-30. Ciudad de México: El Manual Moderno.
+</div>
+<div id="ref-collins2015tripod" class="csl-entry" role="listitem">
+Collins, Gary S., Johannes B. Reitsma, Douglas G. Altman, y Karel G. M. Moons. 2015. <span>«Transparent Reporting of a Multivariable Prediction Model for Individual Prognosis or Diagnosis (<span>TRIPOD</span>): The <span>TRIPOD</span> Statement»</span>. <em>BMJ</em> 350: g7594. <a href="https://doi.org/10.1136/bmj.g7594">https://doi.org/10.1136/bmj.g7594</a>.
+</div>
+<div id="ref-firth1993bias" class="csl-entry" role="listitem">
+Firth, David. 1993. <span>«Bias Reduction of Maximum Likelihood Estimates»</span>. <em>Biometrika</em> 80 (1): 27-38. <a href="https://doi.org/10.1093/biomet/80.1.27">https://doi.org/10.1093/biomet/80.1.27</a>.
+</div>
+<div id="ref-gelman2007data" class="csl-entry" role="listitem">
+Gelman, Andrew, y Jennifer Hill. 2007. <em>Data Analysis Using Regression and Multilevel/Hierarchical Models</em>. Cambridge: Cambridge University Press.
+</div>
+<div id="ref-harrell2015regression" class="csl-entry" role="listitem">
+Harrell, Jr., Frank E. 2015. <em>Regression Modeling Strategies: With Applications to Linear Models, Logistic and Ordinal Regression, and Survival Analysis</em>. 2.ª ed. Cham: Springer.
+</div>
+<div id="ref-heinze2002solution" class="csl-entry" role="listitem">
+Heinze, Georg, y Michael Schemper. 2002. <span>«A Solution to the Problem of Separation in Logistic Regression»</span>. <em>Statistics in Medicine</em> 21 (16): 2409-19. <a href="https://doi.org/10.1002/sim.1047">https://doi.org/10.1002/sim.1047</a>.
+</div>
+<div id="ref-heinze2018variable" class="csl-entry" role="listitem">
+Heinze, Georg, Christine Wallisch, y Daniela Dunkler. 2018. <span>«Variable Selection – A Review and Recommendations for the Practicing Statistician»</span>. <em>Biometrical Journal</em> 60 (3): 431-49. <a href="https://doi.org/10.1002/bimj.201700067">https://doi.org/10.1002/bimj.201700067</a>.
+</div>
+<div id="ref-hosmer2013applied" class="csl-entry" role="listitem">
+Hosmer, David W., Stanley Lemeshow, y Rodney X. Sturdivant. 2013. <em>Applied Logistic Regression</em>. 3.ª ed. Hoboken, NJ: John Wiley &amp; Sons. <a href="https://doi.org/10.1002/9781118548387">https://doi.org/10.1002/9781118548387</a>.
+</div>
+<div id="ref-king2001logistic" class="csl-entry" role="listitem">
+King, Gary, y Langche Zeng. 2001. <span>«Logistic Regression in Rare Events Data»</span>. <em>Political Analysis</em> 9 (2): 137-63. <a href="https://doi.org/10.1093/oxfordjournals.pan.a004868">https://doi.org/10.1093/oxfordjournals.pan.a004868</a>.
+</div>
+<div id="ref-little2009strega" class="csl-entry" role="listitem">
+Little, Julian, Julian P. T. Higgins, John P. A. Ioannidis, David Moher, France Gagnon, Erik von Elm, et&nbsp;al. 2009. <span>«<span>STrengthening the REporting of Genetic Association Studies (STREGA)</span>: An Extension of the <span>STROBE</span> Statement»</span>. <em>PLoS Medicine</em> 6 (2): e1000022. <a href="https://doi.org/10.1371/journal.pmed.1000022">https://doi.org/10.1371/journal.pmed.1000022</a>.
+</div>
+<div id="ref-ludecke2021performance" class="csl-entry" role="listitem">
+Lüdecke, Daniel, Mattan S. Ben-Shachar, Indrajeet Patil, Philip Waggoner, y Dominique Makowski. 2021. <span>«performance: An <span>R</span> Package for Assessment, Comparison and Testing of Statistical Models»</span>. <em>Journal of Open Source Software</em> 6 (60): 3139. <a href="https://doi.org/10.21105/joss.03139">https://doi.org/10.21105/joss.03139</a>.
+</div>
+<div id="ref-obrien2007caution" class="csl-entry" role="listitem">
+O’Brien, Robert M. 2007. <span>«A Caution Regarding Rules of Thumb for Variance Inflation Factors»</span>. <em>Quality &amp; Quantity</em> 41 (5): 673-90. <a href="https://doi.org/10.1007/s11135-006-9018-6">https://doi.org/10.1007/s11135-006-9018-6</a>.
+</div>
+<div id="ref-perezguerrero2024bioestadistica" class="csl-entry" role="listitem">
+Pérez Guerrero, Edsaúl Emilio. 2024. <em>Bioestadística en R para ciencias de la salud: Guía práctica</em>. 1.ª ed. Zapopan, Jalisco, México: Editorial Innovación Educativa. <a href="https://www.cucs.udg.mx/libros/lectura_cucs.php?libro=Bioestadistica_enR_digital">https://www.cucs.udg.mx/libros/lectura_cucs.php?libro=Bioestadistica_enR_digital</a>.
+</div>
+<div id="ref-ranganathan2017common" class="csl-entry" role="listitem">
+Ranganathan, Priya, C. S. Pramesh, y Rakesh Aggarwal. 2017. <span>«Common Pitfalls in Statistical Analysis: Logistic Regression»</span>. <em>Perspectives in Clinical Research</em> 8 (3): 148-51. <a href="https://doi.org/10.4103/picr.PICR_87_17">https://doi.org/10.4103/picr.PICR_87_17</a>.
+</div>
+<div id="ref-robin2011proc" class="csl-entry" role="listitem">
+Robin, Xavier, Natacha Turck, Alexandre Hainard, Natalia Tiberti, Frédérique Lisacek, Jean-Charles Sanchez, y Markus Müller. 2011. <span>«<span>pROC</span>: An Open-Source Package for <span>R</span> and <span>S+</span> to Analyze and Compare <span>ROC</span> Curves»</span>. <em>BMC Bioinformatics</em> 12: 77. <a href="https://doi.org/10.1186/1471-2105-12-77">https://doi.org/10.1186/1471-2105-12-77</a>.
+</div>
+<div id="ref-shmueli2010explain" class="csl-entry" role="listitem">
+Shmueli, Galit. 2010. <span>«To Explain or to Predict?»</span> <em>Statistical Science</em> 25 (3): 289-310. <a href="https://doi.org/10.1214/10-STS330">https://doi.org/10.1214/10-STS330</a>.
+</div>
+<div id="ref-sperandei2014understanding" class="csl-entry" role="listitem">
+Sperandei, Sandro. 2014. <span>«Understanding Logistic Regression Analysis»</span>. <em>Biochemia Medica</em> 24 (1): 12-18. <a href="https://doi.org/10.11613/BM.2014.003">https://doi.org/10.11613/BM.2014.003</a>.
+</div>
+<div id="ref-steyerberg2019clinical" class="csl-entry" role="listitem">
+Steyerberg, Ewout W. 2019. <em>Clinical Prediction Models: A Practical Approach to Development, Validation, and Updating</em>. 2.ª ed. Cham: Springer. <a href="https://doi.org/10.1007/978-3-030-16399-0">https://doi.org/10.1007/978-3-030-16399-0</a>.
+</div>
+<div id="ref-tjur2009coefficients" class="csl-entry" role="listitem">
+Tjur, Tue. 2009. <span>«Coefficients of Determination in Logistic Regression Models—A New Proposal: The Coefficient of Discrimination»</span>. <em>The American Statistician</em> 63 (4): 366-72. <a href="https://doi.org/10.1198/tast.2009.08210">https://doi.org/10.1198/tast.2009.08210</a>.
+</div>
+<div id="ref-vancalster2019calibration" class="csl-entry" role="listitem">
+Van Calster, Ben, David J. McLernon, Maarten van Smeden, Laure Wynants, y Ewout W. Steyerberg. 2019. <span>«Calibration: the <span>A</span>chilles Heel of Predictive Analytics»</span>. <em>BMC Medicine</em> 17: 230. <a href="https://doi.org/10.1186/s12916-019-1466-7">https://doi.org/10.1186/s12916-019-1466-7</a>.
+</div>
+<div id="ref-wasserstein2016asa" class="csl-entry" role="listitem">
+Wasserstein, Ronald L., y Nicole A. Lazar. 2016. <span>«The <span>ASA</span> Statement on p-Values: Context, Process, and Purpose»</span>. <em>The American Statistician</em> 70 (2): 129-33. <a href="https://doi.org/10.1080/00031305.2016.1154108">https://doi.org/10.1080/00031305.2016.1154108</a>.
+</div>
+<div id="ref-westreich2013table2" class="csl-entry" role="listitem">
+Westreich, Daniel, y Sander Greenland. 2013. <span>«The Table 2 Fallacy: Presenting and Interpreting Confounder and Modifier Coefficients»</span>. <em>American Journal of Epidemiology</em> 177 (4): 292-98. <a href="https://doi.org/10.1093/aje/kws412">https://doi.org/10.1093/aje/kws412</a>.
+</div>
+</div>
+
+
+</section></section>
+    </div>
+  <div class="quarto-auto-generated-content" style="display: none;">
+<div class="footer footer-default">
+<p>Bioestadística con R · Regresión logística — Parte 3</p>
+</div>
+</div></div>
+
+  <script>window.backupDefine = window.define; window.define = undefined;</script>
+  <script src="../../../site_libs/revealjs/dist/reveal.js"></script>
+  <!-- reveal.js plugins -->
+  <script src="../../../site_libs/revealjs/plugin/quarto-line-highlight/line-highlight.js"></script>
+  <script src="../../../site_libs/revealjs/plugin/pdf-export/pdfexport.js"></script>
+  <script src="../../../site_libs/revealjs/plugin/reveal-menu/menu.js"></script>
+  <script src="../../../site_libs/revealjs/plugin/reveal-menu/quarto-menu.js"></script>
+  <script src="../../../site_libs/revealjs/plugin/reveal-chalkboard/plugin.js"></script>
+  <script src="../../../site_libs/revealjs/plugin/quarto-support/support.js"></script>
+  
+
+  <script src="../../../site_libs/revealjs/plugin/notes/notes.js"></script>
+  <script src="../../../site_libs/revealjs/plugin/search/search.js"></script>
+  <script src="../../../site_libs/revealjs/plugin/zoom/zoom.js"></script>
+  <script src="../../../site_libs/revealjs/plugin/math/math.js"></script>
+  <script>window.define = window.backupDefine; window.backupDefine = undefined;</script>
+
+  <script>
+
+      // Full list of configuration options available at:
+      // https://revealjs.com/config/
+      Reveal.initialize({
+'controlsAuto': true,
+'previewLinksAuto': false,
+'pdfSeparateFragments': false,
+'autoAnimateEasing': "ease",
+'autoAnimateDuration': 1,
+'autoAnimateUnmatched': true,
+'jumpToSlide': true,
+'menu': {"side":"left","useTextContentForMissingTitles":true,"markers":false,"loadIcons":false,"custom":[{"title":"Tools","icon":"<i class=\"fas fa-gear\"></i>","content":"<ul class=\"slide-menu-items\">\n<li class=\"slide-tool-item active\" data-item=\"0\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.fullscreen(event)\"><kbd>f</kbd> Fullscreen</a></li>\n<li class=\"slide-tool-item\" data-item=\"1\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.speakerMode(event)\"><kbd>s</kbd> Speaker View</a></li>\n<li class=\"slide-tool-item\" data-item=\"2\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.overview(event)\"><kbd>o</kbd> Slide Overview</a></li>\n<li class=\"slide-tool-item\" data-item=\"3\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.togglePdfExport(event)\"><kbd>e</kbd> PDF Export Mode</a></li>\n<li class=\"slide-tool-item\" data-item=\"4\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.toggleScrollView(event)\"><kbd>r</kbd> Scroll View Mode</a></li>\n<li class=\"slide-tool-item\" data-item=\"5\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.toggleChalkboard(event)\"><kbd>b</kbd> Toggle Chalkboard</a></li>\n<li class=\"slide-tool-item\" data-item=\"6\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.toggleNotesCanvas(event)\"><kbd>c</kbd> Toggle Notes Canvas</a></li>\n<li class=\"slide-tool-item\" data-item=\"7\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.downloadDrawings(event)\"><kbd>d</kbd> Download Drawings</a></li>\n<li class=\"slide-tool-item\" data-item=\"8\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.keyboardHelp(event)\"><kbd>?</kbd> Keyboard Help</a></li>\n</ul>"}],"openButton":true},
+'chalkboard': {"buttons":true},
+'smaller': false,
+ 
+        // Display controls in the bottom right corner
+        controls: false,
+
+        // Help the user learn the controls by providing hints, for example by
+        // bouncing the down arrow when they first encounter a vertical slide
+        controlsTutorial: false,
+
+        // Determines where controls appear, "edges" or "bottom-right"
+        controlsLayout: 'edges',
+
+        // Visibility rule for backwards navigation arrows; "faded", "hidden"
+        // or "visible"
+        controlsBackArrows: 'faded',
+
+        // Display a presentation progress bar
+        progress: true,
+
+        // Display the page number of the current slide
+        slideNumber: 'c/t',
+
+        // 'all', 'print', or 'speaker'
+        showSlideNumber: 'all',
+
+        // Add the current slide number to the URL hash so that reloading the
+        // page/copying the URL will return you to the same slide
+        hash: true,
+
+        // Start with 1 for the hash rather than 0
+        hashOneBasedIndex: false,
+
+        // Flags if we should monitor the hash and change slides accordingly
+        respondToHashChanges: true,
+
+        // Push each slide change to the browser history
+        history: true,
+
+        // Enable keyboard shortcuts for navigation
+        keyboard: true,
+
+        // Enable the slide overview mode
+        overview: true,
+
+        // Disables the default reveal.js slide layout (scaling and centering)
+        // so that you can use custom CSS layout
+        disableLayout: false,
+
+        // Vertical centering of slides
+        center: false,
+
+        // Enables touch navigation on devices with touch input
+        touch: true,
+
+        // Loop the presentation
+        loop: false,
+
+        // Change the presentation direction to be RTL
+        rtl: false,
+
+        // see https://revealjs.com/vertical-slides/#navigation-mode
+        navigationMode: 'linear',
+
+        // Randomizes the order of slides each time the presentation loads
+        shuffle: false,
+
+        // Turns fragments on and off globally
+        fragments: true,
+
+        // Flags whether to include the current fragment in the URL,
+        // so that reloading brings you to the same fragment position
+        fragmentInURL: false,
+
+        // Flags if the presentation is running in an embedded mode,
+        // i.e. contained within a limited portion of the screen
+        embedded: false,
+
+        // Flags if we should show a help overlay when the questionmark
+        // key is pressed
+        help: true,
+
+        // Flags if it should be possible to pause the presentation (blackout)
+        pause: true,
+
+        // Flags if speaker notes should be visible to all viewers
+        showNotes: false,
+
+        // Global override for autoplaying embedded media (null/true/false)
+        autoPlayMedia: null,
+
+        // Global override for preloading lazy-loaded iframes (null/true/false)
+        preloadIframes: null,
+
+        // Number of milliseconds between automatically proceeding to the
+        // next slide, disabled when set to 0, this value can be overwritten
+        // by using a data-autoslide attribute on your slides
+        autoSlide: 0,
+
+        // Stop auto-sliding after user input
+        autoSlideStoppable: true,
+
+        // Use this method for navigation when auto-sliding
+        autoSlideMethod: null,
+
+        // Specify the average time in seconds that you think you will spend
+        // presenting each slide. This is used to show a pacing timer in the
+        // speaker view
+        defaultTiming: null,
+
+        // Enable slide navigation via mouse wheel
+        mouseWheel: false,
+
+        // The display mode that will be used to show slides
+        display: 'block',
+
+        // Hide cursor if inactive
+        hideInactiveCursor: true,
+
+        // Time before the cursor is hidden (in ms)
+        hideCursorTime: 5000,
+
+        // Opens links in an iframe preview overlay
+        previewLinks: false,
+
+        // Transition style (none/fade/slide/convex/concave/zoom)
+        transition: 'fade',
+
+        // Transition speed (default/fast/slow)
+        transitionSpeed: 'default',
+
+        // Transition style for full page slide backgrounds
+        // (none/fade/slide/convex/concave/zoom)
+        backgroundTransition: 'none',
+
+        // Number of slides away from the current that are visible
+        viewDistance: 3,
+
+        // Number of slides away from the current that are visible on mobile
+        // devices. It is advisable to set this to a lower number than
+        // viewDistance in order to save resources.
+        mobileViewDistance: 2,
+
+        // The "normal" size of the presentation, aspect ratio will be preserved
+        // when the presentation is scaled to fit different resolutions. Can be
+        // specified using percentage units.
+        width: 1600,
+
+        height: 900,
+
+        // Factor of the display size that should remain empty around the content
+        margin: 0.1,
+
+        math: {
+          mathjax: 'https://cdn.jsdelivr.net/npm/mathjax@2.7.9/MathJax.js',
+          config: 'TeX-AMS_HTML-full',
+          tex2jax: {
+            inlineMath: [['\\(','\\)']],
+            displayMath: [['\\[','\\]']],
+            balanceBraces: true,
+            processEscapes: false,
+            processRefs: true,
+            processEnvironments: true,
+            preview: 'TeX',
+            skipTags: ['script','noscript','style','textarea','pre','code'],
+            ignoreClass: 'tex2jax_ignore',
+            processClass: 'tex2jax_process'
+          },
+        },
+
+        // reveal.js plugins
+        plugins: [QuartoLineHighlight, PdfExport, RevealMenu, RevealChalkboard, QuartoSupport,
+
+          RevealMath,
+          RevealNotes,
+          RevealSearch,
+          RevealZoom
+        ]
+      });
+    </script>
+    
+    <script>
+      // htmlwidgets need to know to resize themselves when slides are shown/hidden.
+      // Fire the "slideenter" event (handled by htmlwidgets.js) when the current
+      // slide changes (different for each slide format).
+      (function () {
+        // dispatch for htmlwidgets
+        function fireSlideEnter() {
+          const event = window.document.createEvent("Event");
+          event.initEvent("slideenter", true, true);
+          window.document.dispatchEvent(event);
+        }
+
+        function fireSlideChanged(previousSlide, currentSlide) {
+          fireSlideEnter();
+
+          // dispatch for shiny
+          if (window.jQuery) {
+            if (previousSlide) {
+              window.jQuery(previousSlide).trigger("hidden");
+            }
+            if (currentSlide) {
+              window.jQuery(currentSlide).trigger("shown");
+            }
+          }
+        }
+
+        // hookup for slidy
+        if (window.w3c_slidy) {
+          window.w3c_slidy.add_observer(function (slide_num) {
+            // slide_num starts at position 1
+            fireSlideChanged(null, w3c_slidy.slides[slide_num - 1]);
+          });
+        }
+
+      })();
+    </script>
+
+    <script id="quarto-html-after-body" type="application/javascript">
+      window.document.addEventListener("DOMContentLoaded", function (event) {
+        const tabsets =  window.document.querySelectorAll(".panel-tabset-tabby")
+        tabsets.forEach(function(tabset) {
+          const tabby = new Tabby('#' + tabset.id);
+        });
+        const isCodeAnnotation = (el) => {
+          for (const clz of el.classList) {
+            if (clz.startsWith('code-annotation-')) {                     
+              return true;
+            }
+          }
+          return false;
+        }
+        const onCopySuccess = function(e) {
+          // button target
+          const button = e.trigger;
+          // don't keep focus
+          button.blur();
+          // flash "checked"
+          button.classList.add('code-copy-button-checked');
+          var currentTitle = button.getAttribute("title");
+          button.setAttribute("title", "Copiado");
+          let tooltip;
+          if (window.bootstrap) {
+            button.setAttribute("data-bs-toggle", "tooltip");
+            button.setAttribute("data-bs-placement", "left");
+            button.setAttribute("data-bs-title", "Copiado");
+            tooltip = new bootstrap.Tooltip(button, 
+              { trigger: "manual", 
+                customClass: "code-copy-button-tooltip",
+                offset: [0, -8]});
+            tooltip.show();    
+          }
+          setTimeout(function() {
+            if (tooltip) {
+              tooltip.hide();
+              button.removeAttribute("data-bs-title");
+              button.removeAttribute("data-bs-toggle");
+              button.removeAttribute("data-bs-placement");
+            }
+            button.setAttribute("title", currentTitle);
+            button.classList.remove('code-copy-button-checked');
+          }, 1000);
+          // clear code selection
+          e.clearSelection();
+        }
+        const getTextToCopy = function(trigger) {
+          const outerScaffold = trigger.parentElement.cloneNode(true);
+          const codeEl = outerScaffold.querySelector('code');
+          for (const childEl of codeEl.children) {
+            if (isCodeAnnotation(childEl)) {
+              childEl.remove();
+            }
+          }
+          return codeEl.innerText;
+        }
+        const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+          text: getTextToCopy
+        });
+        clipboard.on('success', onCopySuccess);
+        if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+          const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+            text: getTextToCopy,
+            container: window.document.getElementById('quarto-embedded-source-code-modal')
+          });
+          clipboardModal.on('success', onCopySuccess);
+        }
+          var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+          var mailtoRegex = new RegExp(/^mailto:/);
+            var filterRegex = new RegExp("https:\/\/Ed-Perez-G\.github\.io\/bioestadistica-avanzada\/");
+          var isInternal = (href) => {
+              return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+          }
+          // Inspect non-navigation links and adorn them if external
+         var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+          for (var i=0; i<links.length; i++) {
+            const link = links[i];
+            if (!isInternal(link.href)) {
+              // undo the damage that might have been done by quarto-nav.js in the case of
+              // links that we want to consider external
+              if (link.dataset.originalHref !== undefined) {
+                link.href = link.dataset.originalHref;
+              }
+            }
+          }
+        function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+          const config = {
+            allowHTML: true,
+            maxWidth: 500,
+            delay: 100,
+            arrow: false,
+            appendTo: function(el) {
+                return el.closest('section.slide') || el.parentElement;
+            },
+            interactive: true,
+            interactiveBorder: 10,
+            theme: 'light-border',
+            placement: 'bottom-start',
+          };
+          if (contentFn) {
+            config.content = contentFn;
+          }
+          if (onTriggerFn) {
+            config.onTrigger = onTriggerFn;
+          }
+          if (onUntriggerFn) {
+            config.onUntrigger = onUntriggerFn;
+          }
+            config['offset'] = [0,0];
+            config['maxWidth'] = 700;
+          window.tippy(el, config); 
+        }
+        const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+        for (var i=0; i<noterefs.length; i++) {
+          const ref = noterefs[i];
+          tippyHover(ref, function() {
+            // use id or data attribute instead here
+            let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+            try { href = new URL(href).hash; } catch {}
+            const id = href.replace(/^#\/?/, "");
+            const note = window.document.getElementById(id);
+            if (note) {
+              return note.innerHTML;
+            } else {
+              return "";
+            }
+          });
+        }
+        const findCites = (el) => {
+          const parentEl = el.parentElement;
+          if (parentEl) {
+            const cites = parentEl.dataset.cites;
+            if (cites) {
+              return {
+                el,
+                cites: cites.split(' ')
+              };
+            } else {
+              return findCites(el.parentElement)
+            }
+          } else {
+            return undefined;
+          }
+        };
+        var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+        for (var i=0; i<bibliorefs.length; i++) {
+          const ref = bibliorefs[i];
+          const citeInfo = findCites(ref);
+          if (citeInfo) {
+            tippyHover(citeInfo.el, function() {
+              var popup = window.document.createElement('div');
+              citeInfo.cites.forEach(function(cite) {
+                var citeDiv = window.document.createElement('div');
+                citeDiv.classList.add('hanging-indent');
+                citeDiv.classList.add('csl-entry');
+                var biblioDiv = window.document.getElementById('ref-' + cite);
+                if (biblioDiv) {
+                  citeDiv.innerHTML = biblioDiv.innerHTML;
+                }
+                popup.appendChild(citeDiv);
+              });
+              return popup.innerHTML;
+            });
+          }
+        }
+      });
+      </script>
+    
+
+</body></html>
