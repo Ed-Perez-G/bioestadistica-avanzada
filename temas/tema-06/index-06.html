@@ -183,7 +183,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
    
   <ul>
   <li><a href="#objetivo" id="toc-objetivo" class="nav-link active" data-scroll-target="#objetivo">Objetivo</a></li>
-  <li><a href="#pregunta-guía" id="toc-pregunta-guía" class="nav-link" data-scroll-target="#pregunta-guía">Pregunta guía</a></li>
   <li><a href="#contenidos" id="toc-contenidos" class="nav-link" data-scroll-target="#contenidos">Contenidos</a></li>
   <li><a href="#material-de-clase" id="toc-material-de-clase" class="nav-link" data-scroll-target="#material-de-clase">Material de clase</a></li>
   <li><a href="#base-de-datos-tema-06" id="toc-base-de-datos-tema-06" class="nav-link" data-scroll-target="#base-de-datos-tema-06">Base de datos tema-06</a></li>
@@ -215,24 +214,33 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <section id="objetivo" class="level2">
 <h2 class="anchored" data-anchor-id="objetivo">Objetivo</h2>
-</section>
-<section id="pregunta-guía" class="level2">
-<h2 class="anchored" data-anchor-id="pregunta-guía">Pregunta guía</h2>
+<ul>
+<li>Entender las generalidades del modelo lineal generalizado y sus diferencias con la regresión lineal múltiple.</li>
+<li>Comprender por las variables binarias requieren un modelo diferente al de las variables continuas cuando se usas como variable de desenlace.</li>
+<li>Comprender los fundamentos matemáticos detrás del OR que se obtiene en la regresión logística</li>
+<li>Construir un modelo de regresión logística e interpretarlo.</li>
+</ul>
 </section>
 <section id="contenidos" class="level2">
 <h2 class="anchored" data-anchor-id="contenidos">Contenidos</h2>
 <ul>
-<li>Regresión logística parte 1.</li>
-<li>Regresión logística parte 2.</li>
-<li>Regresión logística parte 3.</li>
+<li>Introducción a los modelos lineales generalizados</li>
+<li>Diferencias entre Odds, probabilidad y OR</li>
+<li>Fundamentos de la regresión logística</li>
+<li>Creación y evaluación de modelos de regresión logística</li>
+<li>Interpretación de OR de deviance</li>
 </ul>
 </section>
 <section id="material-de-clase" class="level2">
 <h2 class="anchored" data-anchor-id="material-de-clase">Material de clase</h2>
+<ul>
+<li><a href="../../temas/tema-06/Regresion_logistica_final1/Regresiion logistica part 1.html">Regresión logística parte 1</a></li>
+</ul>
 </section>
 <section id="base-de-datos-tema-06" class="level2">
 <h2 class="anchored" data-anchor-id="base-de-datos-tema-06">Base de datos tema-06</h2>
 <p><a href="Bases/estudio_AR_STAT4.csv" download="estudio_AR_STAT4.csv">estudio_AR_STAT4</a></p>
+<p><a href="Bases/sal_tension_arterial.csv" download="sal_tension_arterial.csv">sal_tension_arterial.csv</a></p>
 <p><a href="Bases/simular_estudio_AR_STAT4.R" download="simular_estudio_AR_STAT4.R">Script de simulación</a></p>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
@@ -245,13 +253,14 @@ Note
 </div>
 <div class="callout-body-container callout-body">
 <p>Los datos son simulados con fines didácticos. Los parámetros están inspirados en Remmers et al.&nbsp;(2007, <em>NEJM</em>), pero no corresponden a pacientes reales.</p>
+<p>los datos de la base de datos sal_tension_arterial.csv son del libro Bioestadística en R para ciencias de la salud: Guía práctica</p>
 </div>
 </div>
 </section>
 <section id="paquetes-necesarios" class="level2">
 <h2 class="anchored" data-anchor-id="paquetes-necesarios">Paquetes necesarios</h2>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="fu">c</span>(<span class="st">"ggplot2"</span>, <span class="st">"patchwork"</span>, <span class="st">"broom"</span>, <span class="st">"ggeffects"</span>,</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>                   <span class="st">"performance"</span>, <span class="st">"see"</span>, <span class="st">"pROC"</span>, <span class="st">"logistf"</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>                   <span class="st">"performance"</span>, <span class="st">"see"</span>, <span class="st">"pROC"</span>, <span class="st">"logistf"</span>, <span class="st">"gtsummary"</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 
 
 </section>
