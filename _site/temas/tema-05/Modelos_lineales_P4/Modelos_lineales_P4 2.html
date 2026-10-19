@@ -1,0 +1,2112 @@
+<!DOCTYPE html>
+<html lang="es"><head>
+<script src="../../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../../site_libs/quarto-html/tabby.min.js"></script>
+<script src="../../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<link href="../../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../../site_libs/quarto-html/light-border.css" rel="stylesheet">
+<link href="../../../site_libs/quarto-html/quarto-syntax-highlighting-065a5179aebd64318d7ea99d77b64a9e.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
+  <meta name="generator" content="quarto-1.8.25">
+
+  <meta name="author" content="Edsaúl Emilio Pérez-Guerrero">
+  <meta name="dcterms.date" content="2026-10-12">
+  <title>Bioestadística avanzada – Modelos lineales IV</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <link rel="stylesheet" href="../../../site_libs/revealjs/dist/reset.css">
+  <link rel="stylesheet" href="../../../site_libs/revealjs/dist/reveal.css">
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+      vertical-align: middle;
+    }
+    /* CSS for syntax highlighting */
+    html { -webkit-text-size-adjust: 100%; }
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+      }
+    pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+    div.sourceCode
+      { color: #24292e;  }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span { color: #24292e; } /* Normal */
+    code span.al { color: #ff5555; font-weight: bold; } /* Alert */
+    code span.an { color: #6a737d; } /* Annotation */
+    code span.at { color: #d73a49; } /* Attribute */
+    code span.bn { color: #005cc5; } /* BaseN */
+    code span.bu { color: #d73a49; } /* BuiltIn */
+    code span.cf { color: #d73a49; } /* ControlFlow */
+    code span.ch { color: #032f62; } /* Char */
+    code span.cn { color: #005cc5; } /* Constant */
+    code span.co { color: #6a737d; } /* Comment */
+    code span.cv { color: #6a737d; } /* CommentVar */
+    code span.do { color: #6a737d; } /* Documentation */
+    code span.dt { color: #d73a49; } /* DataType */
+    code span.dv { color: #005cc5; } /* DecVal */
+    code span.er { color: #ff5555; text-decoration: underline; } /* Error */
+    code span.ex { color: #d73a49; font-weight: bold; } /* Extension */
+    code span.fl { color: #005cc5; } /* Float */
+    code span.fu { color: #6f42c1; } /* Function */
+    code span.im { color: #032f62; } /* Import */
+    code span.in { color: #6a737d; } /* Information */
+    code span.kw { color: #d73a49; } /* Keyword */
+    code span.op { color: #24292e; } /* Operator */
+    code span.ot { color: #6f42c1; } /* Other */
+    code span.pp { color: #d73a49; } /* Preprocessor */
+    code span.re { color: #6a737d; } /* RegionMarker */
+    code span.sc { color: #005cc5; } /* SpecialChar */
+    code span.ss { color: #032f62; } /* SpecialString */
+    code span.st { color: #032f62; } /* String */
+    code span.va { color: #e36209; } /* Variable */
+    code span.vs { color: #032f62; } /* VerbatimString */
+    code span.wa { color: #ff5555; } /* Warning */
+    /* CSS for citations */
+    div.csl-bib-body { }
+    div.csl-entry {
+      clear: both;
+      margin-bottom: 0em;
+    }
+    .hanging-indent div.csl-entry {
+      margin-left:2em;
+      text-indent:-2em;
+    }
+    div.csl-left-margin {
+      min-width:2em;
+      float:left;
+    }
+    div.csl-right-inline {
+      margin-left:2em;
+      padding-left:1em;
+    }
+    div.csl-indent {
+      margin-left: 2em;
+    }  </style>
+  <link rel="stylesheet" href="../../../site_libs/revealjs/dist/theme/quarto-992ed520baf37567c43dc1d740a96f26.css">
+  <link rel="stylesheet" href="estilos.css">
+  <link href="../../../site_libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
+  <link href="../../../site_libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
+  <link href="../../../site_libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
+  <link href="../../../site_libs/revealjs/plugin/reveal-chalkboard/font-awesome/css/all.css" rel="stylesheet">
+  <link href="../../../site_libs/revealjs/plugin/reveal-chalkboard/style.css" rel="stylesheet">
+  <link href="../../../site_libs/revealjs/plugin/quarto-support/footer.css" rel="stylesheet">
+  <style type="text/css">
+    .reveal div.sourceCode {
+      margin: 0;
+      overflow: auto;
+    }
+    .reveal div.hanging-indent {
+      margin-left: 1em;
+      text-indent: -1em;
+    }
+    .reveal .slide:not(.center) {
+      height: 100%;
+      overflow-y: auto;
+    }
+    .reveal .slide.scrollable {
+      overflow-y: auto;
+    }
+    .reveal .footnotes {
+      height: 100%;
+      overflow-y: auto;
+    }
+    .reveal .slide .absolute {
+      position: absolute;
+      display: block;
+    }
+    .reveal .footnotes ol {
+      counter-reset: ol;
+      list-style-type: none; 
+      margin-left: 0;
+    }
+    .reveal .footnotes ol li:before {
+      counter-increment: ol;
+      content: counter(ol) ". "; 
+    }
+    .reveal .footnotes ol li > p:first-child {
+      display: inline-block;
+    }
+    .reveal .slide ul,
+    .reveal .slide ol {
+      margin-bottom: 0.5em;
+    }
+    .reveal .slide ul li,
+    .reveal .slide ol li {
+      margin-top: 0.4em;
+      margin-bottom: 0.2em;
+    }
+    .reveal .slide ul[role="tablist"] li {
+      margin-bottom: 0;
+    }
+    .reveal .slide ul li > *:first-child,
+    .reveal .slide ol li > *:first-child {
+      margin-block-start: 0;
+    }
+    .reveal .slide ul li > *:last-child,
+    .reveal .slide ol li > *:last-child {
+      margin-block-end: 0;
+    }
+    .reveal .slide .columns:nth-child(3) {
+      margin-block-start: 0.8em;
+    }
+    .reveal blockquote {
+      box-shadow: none;
+    }
+    .reveal .tippy-content>* {
+      margin-top: 0.2em;
+      margin-bottom: 0.7em;
+    }
+    .reveal .tippy-content>*:last-child {
+      margin-bottom: 0.2em;
+    }
+    .reveal .slide > img.stretch.quarto-figure-center,
+    .reveal .slide > img.r-stretch.quarto-figure-center {
+      display: block;
+      margin-left: auto;
+      margin-right: auto; 
+    }
+    .reveal .slide > img.stretch.quarto-figure-left,
+    .reveal .slide > img.r-stretch.quarto-figure-left  {
+      display: block;
+      margin-left: 0;
+      margin-right: auto; 
+    }
+    .reveal .slide > img.stretch.quarto-figure-right,
+    .reveal .slide > img.r-stretch.quarto-figure-right  {
+      display: block;
+      margin-left: auto;
+      margin-right: 0; 
+    }
+  </style>
+</head>
+<body class="quarto-light">
+  <div class="reveal">
+    <div class="slides">
+
+<section id="title-slide" class="quarto-title-block center">
+  <h1 class="title">Modelos lineales IV</h1>
+  <p class="subtitle">Algoritmos para la selección de variables · Forward · Backward · Stepwise · AIC/BIC · Regularización · Validación</p>
+
+<div class="quarto-title-authors">
+<div class="quarto-title-author">
+<div class="quarto-title-author-name">
+Edsaúl Emilio Pérez-Guerrero 
+</div>
+</div>
+</div>
+
+  <p class="date">2026-10-12</p>
+</section>
+<section id="objetivos-de-la-sesión" class="slide level2">
+<h2>Objetivos de la sesión</h2>
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th>Bloque</th>
+<th>Tema</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>1</td>
+<td>Fundamentos: ¿para qué seleccionar variables?</td>
+</tr>
+<tr class="even">
+<td>2</td>
+<td>Métodos secuenciales: <em>forward</em>, <em>backward</em>, <em>stepwise</em></td>
+</tr>
+<tr class="odd">
+<td>3</td>
+<td>Criterios: valores <em>p</em>, AIC, BIC, modelos anidados</td>
+</tr>
+<tr class="even">
+<td>4</td>
+<td>Regularización: <em>ridge</em>, LASSO, <em>elastic net</em> (panorama)</td>
+</tr>
+<tr class="odd">
+<td>5</td>
+<td>Validación y estabilidad de la selección (panorama)</td>
+</tr>
+<tr class="even">
+<td>6</td>
+<td>Aplicaciones en R y comparación de métodos</td>
+</tr>
+<tr class="odd">
+<td>7</td>
+<td>Resolución de la tarea</td>
+</tr>
+</tbody>
+</table>
+<div class="small">
+<p>Objetivo: conocer y comparar los principales métodos de selección de variables en regresión lineal, sus fundamentos, ventajas, limitaciones y aplicaciones en investigación biomédica y genética. Todo lo de hoy se aplica igual a la <strong>regresión logística</strong> (próximo tema).</p>
+</div>
+</section>
+<section id="dónde-nos-quedamos" class="slide level2">
+<h2>¿Dónde nos quedamos?</h2>
+<p>En la Parte 2 vimos estrategias en las que <strong>decide el investigador</strong>: por conocimiento, jerárquica y selección manual intencionada <span class="citation" data-cites="bursac2008purposeful">(<a href="#/referencias" role="doc-biblioref" onclick="">Bursac et&nbsp;al. 2008</a>)</span>.</p>
+<p>En la Parte 3 revisamos interacciones y confusores</p>
+<p>Hoy: estrategias en las que nos apoyamos de algoritmos para la seleccion de variables.</p>
+<table class="caption-top">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Estrategia</th>
+<th>Quién decide</th>
+<th>Hoy</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Por conocimiento / jerárquica / manual</td>
+<td>Investigador</td>
+<td>Repaso</td>
+</tr>
+<tr class="even">
+<td>Secuencial (<em>forward</em>, <em>backward</em>, <em>stepwise</em>)</td>
+<td>Algoritmo + criterio (<em>p</em>, AIC, BIC)</td>
+<td><strong>Sí</strong></td>
+</tr>
+<tr class="odd">
+<td>Penalizada (<em>ridge</em>, LASSO, <em>elastic net</em>)</td>
+<td>Algoritmo + validación cruzada</td>
+<td>Panorama</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="librerías-para-la-sesión" class="slide level2">
+<h2>Librerías para la sesión</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2) <span class="co"># gr{aficos </span></span>
+<span id="cb1-2"><a aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(patchwork) <span class="co"># Organización de gráficos </span></span>
+<span id="cb1-3"><a aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(MASS)          <span class="co"># stepAIC(), birthwt, Pima.tr</span></span>
+<span id="cb1-4"><a aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(glmnet)        <span class="co"># ridge, LASSO, elastic net</span></span>
+<span id="cb1-5"><a aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(performance) <span class="co"># desempeño de los modelos</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="bases-de-datos-de-la-sesión" class="slide level2">
+<h2>Bases de datos de la sesión</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a aria-hidden="true" tabindex="-1"></a><span class="co"># 1) Peso al nacer (MASS::birthwt), n = 189</span></span>
+<span id="cb2-2"><a aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(birthwt, <span class="at">package =</span> <span class="st">"MASS"</span>)</span>
+<span id="cb2-3"><a aria-hidden="true" tabindex="-1"></a>bw <span class="ot">&lt;-</span> birthwt</span>
+<span id="cb2-4"><a aria-hidden="true" tabindex="-1"></a>bw<span class="sc">$</span>race  <span class="ot">&lt;-</span> <span class="fu">factor</span>(bw<span class="sc">$</span>race, <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"Blanca"</span>, <span class="st">"Negra"</span>, <span class="st">"Otra"</span>))</span>
+<span id="cb2-5"><a aria-hidden="true" tabindex="-1"></a>bw<span class="sc">$</span>smoke <span class="ot">&lt;-</span> <span class="fu">factor</span>(bw<span class="sc">$</span>smoke, <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"No"</span>, <span class="st">"Sí"</span>))</span>
+<span id="cb2-6"><a aria-hidden="true" tabindex="-1"></a>bw<span class="sc">$</span>ht    <span class="ot">&lt;-</span> <span class="fu">factor</span>(bw<span class="sc">$</span>ht,    <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"No"</span>, <span class="st">"Sí"</span>))   <span class="co"># hipertensión</span></span>
+<span id="cb2-7"><a aria-hidden="true" tabindex="-1"></a>bw<span class="sc">$</span>ui    <span class="ot">&lt;-</span> <span class="fu">factor</span>(bw<span class="sc">$</span>ui,    <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"No"</span>, <span class="st">"Sí"</span>))   <span class="co"># irritabilidad uterina</span></span>
+<span id="cb2-8"><a aria-hidden="true" tabindex="-1"></a>bw<span class="sc">$</span>low   <span class="ot">&lt;-</span> <span class="cn">NULL</span>                                       <span class="co"># derivada de bwt: no es predictor</span></span>
+<span id="cb2-9"><a aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-10"><a aria-hidden="true" tabindex="-1"></a><span class="co"># 2) Mujeres Pima (MASS::Pima.tr), n = 200</span></span>
+<span id="cb2-11"><a aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(Pima.tr, <span class="at">package =</span> <span class="st">"MASS"</span>)</span>
+<span id="cb2-12"><a aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-13"><a aria-hidden="true" tabindex="-1"></a><span class="co"># 3) Cirrosis biliar primaria (survival::pbc): casos completos</span></span>
+<span id="cb2-14"><a aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(pbc, <span class="at">package =</span> <span class="st">"survival"</span>)</span>
+<span id="cb2-15"><a aria-hidden="true" tabindex="-1"></a>vars_pbc <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"bili"</span>, <span class="st">"age"</span>, <span class="st">"sex"</span>, <span class="st">"ascites"</span>, <span class="st">"hepato"</span>, <span class="st">"spiders"</span>, <span class="st">"edema"</span>, <span class="st">"chol"</span>,</span>
+<span id="cb2-16"><a aria-hidden="true" tabindex="-1"></a>              <span class="st">"albumin"</span>, <span class="st">"copper"</span>, <span class="st">"alk.phos"</span>, <span class="st">"ast"</span>, <span class="st">"trig"</span>, <span class="st">"platelet"</span>, <span class="st">"protime"</span>, <span class="st">"stage"</span>)</span>
+<span id="cb2-17"><a aria-hidden="true" tabindex="-1"></a>pbc2 <span class="ot">&lt;-</span> <span class="fu">na.omit</span>(pbc[, vars_pbc])</span>
+<span id="cb2-18"><a aria-hidden="true" tabindex="-1"></a>pbc2<span class="sc">$</span>log_bili <span class="ot">&lt;-</span> <span class="fu">log</span>(pbc2<span class="sc">$</span>bili)   <span class="co"># la bilirrubina es muy asimétrica</span></span>
+<span id="cb2-19"><a aria-hidden="true" tabindex="-1"></a>pbc2<span class="sc">$</span>bili <span class="ot">&lt;-</span> <span class="cn">NULL</span></span>
+<span id="cb2-20"><a aria-hidden="true" tabindex="-1"></a>pbc2<span class="sc">$</span>mujer <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(pbc2<span class="sc">$</span>sex <span class="sc">==</span> <span class="st">"f"</span>)   <span class="co"># sexo como 0/1 (facilita glmnet)</span></span>
+<span id="cb2-21"><a aria-hidden="true" tabindex="-1"></a>pbc2<span class="sc">$</span>sex <span class="ot">&lt;-</span> <span class="cn">NULL</span></span>
+<span id="cb2-22"><a aria-hidden="true" tabindex="-1"></a><span class="fu">c</span>(<span class="at">birthwt =</span> <span class="fu">nrow</span>(bw), <span class="at">Pima =</span> <span class="fu">nrow</span>(Pima.tr), <span class="at">pbc =</span> <span class="fu">nrow</span>(pbc2))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>birthwt    Pima     pbc 
+    189     200     276 </code></pre>
+</div>
+</div>
+</section>
+<section>
+<section id="fundamentos-de-la-selección-de-variables" class="title-slide slide level1 center" data-background-color="#1f4e79">
+<h1>1. Fundamentos de la selección de variables</h1>
+
+</section>
+<section id="propósito-de-la-selección-de-predictores" class="slide level2">
+<h2>Propósito de la selección de predictores</h2>
+<p>Tenemos un desenlace <span class="math inline">\(Y\)</span> y <strong>muchas</strong> variables candidatas. ¿Cuáles incluir?</p>
+<ul>
+<li><strong>Explicar</strong>: estimar el efecto de una exposición controlando confusores (¿el tabaquismo reduce el peso al nacer?).</li>
+<li><strong>Describir</strong>: identificar qué factores se asocian con <span class="math inline">\(Y\)</span> (¿qué variables clínicas se asocian con la bilirrubina?).</li>
+<li><strong>Predecir</strong>: construir el modelo que mejor anticipe <span class="math inline">\(Y\)</span> en pacientes <strong>nuevos</strong> <span class="citation" data-cites="shmueli2010explain">(<a href="#/referencias" role="doc-biblioref" onclick="">Shmueli 2010</a>)</span>.</li>
+</ul>
+<div class="clave">
+<p>Antes de elegir un método hay que responder: <strong>¿para qué quiero el modelo?</strong> La respuesta cambia el método correcto <span class="citation" data-cites="heinze2018variable">(<a href="#/referencias" role="doc-biblioref" onclick="">Heinze, Wallisch, y Dunkler 2018</a>)</span>.</p>
+</div>
+</section>
+<section id="el-problema-demasiados-modelos-posibles" class="slide level2">
+<h2>El problema: demasiados modelos posibles</h2>
+<p>Con <span class="math inline">\(k\)</span> candidatas hay <span class="math inline">\(2^k\)</span> modelos posibles (cada variable entra o no).</p>
+
+<img data-src="Modelos_lineales_P4_files/figure-revealjs/combinaciones-1.png" width="1200" class="r-stretch"><div class="small">
+<p>Revisarlos todos (“mejor subconjunto”) es posible con pocas variables. Con muchas, los algoritmos <strong>secuenciales</strong> recorren solo un camino entre ellos <span class="citation" data-cites="james2021introduction">(<a href="#/referencias" role="doc-biblioref" onclick="">James et&nbsp;al. 2021</a>)</span>.</p>
+</div>
+</section>
+<section id="parsimonia-interpretabilidad-y-sobreajuste" class="slide level2">
+<h2>Parsimonia, interpretabilidad y sobreajuste</h2>
+<ul>
+<li><strong>Parsimonia</strong>: entre modelos que explican lo mismo, el más simple; además es más <strong>interpretable</strong> <span class="citation" data-cites="denis2020univariate">(<a href="#/referencias" role="doc-biblioref" onclick="">Denis 2020</a>)</span>.</li>
+<li>Se debe privilegiar los modelos interpetables. Menos variables más interpretabilidad <span class="citation" data-cites="harrell2015regression">(<a href="#/referencias" role="doc-biblioref" onclick="">Harrell 2015</a>)</span>.</li>
+<li>Cuando se separan en conjunto de entrenamiento y validadción se debe de cuidar el sobreajuste</li>
+</ul>
+</section>
+<section id="selección-para-inferencia-vs.-para-predicción" class="slide level2">
+<h2>Selección para inferencia vs.&nbsp;para predicción</h2>
+<table class="caption-top">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Inferencia</strong> (explicar)</th>
+<th><strong>Predicción</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Pregunta</td>
+<td>¿Cuál es el efecto de X sobre Y?</td>
+<td>¿Qué tan bien anticipo Y?</td>
+</tr>
+<tr class="even">
+<td>Qué importa</td>
+<td>Coeficientes <strong>insesgados</strong> con IC válidos</td>
+<td>Error de predicción en datos nuevos</td>
+</tr>
+<tr class="odd">
+<td>Variables</td>
+<td>Confusores definidos por teoría (DAG)</td>
+<td>Las que mejoren la predicción validada</td>
+</tr>
+<tr class="even">
+<td>Selección automática</td>
+<td><strong>Desaconsejada</strong> como estrategia principal</td>
+<td>Aceptable si se <strong>valida</strong></td>
+</tr>
+<tr class="odd">
+<td>Métodos típicos</td>
+<td>Conocimiento previo, <em>purposeful</em>, cambio en el estimador</td>
+<td>LASSO, <em>elastic net</em>, validación cruzada</td>
+</tr>
+</tbody>
+</table>
+<div class="alerta">
+<p>Un algoritmo <strong>no sabe</strong> qué es un confusor, un mediador o un colisionador (Parte 2 y 3). Puede eliminar un confusor o retener un mediador <span class="citation" data-cites="heinze2017five vanderweele2019principles">(<a href="#/referencias" role="doc-biblioref" onclick="">Heinze y Dunkler 2017</a>; <a href="#/referencias" role="doc-biblioref" onclick="">VanderWeele 2019</a>)</span>.</p>
+</div>
+</section>
+<section id="siempre-tomar-en-cuenta" class="slide level2">
+<h2>Siempre tomar en cuenta</h2>
+<ul>
+<li>El objetivo del modelo (explicar vs.&nbsp;predecir) define qué variables entran</li>
+<li>Seleccionar con conocimiento previo / DAG, no con p-valores ni stepwise</li>
+<li>Incluir confusores; <strong>no</strong> ajustar por mediadores ni colisionadores</li>
+<li>Interacciones: solo con hipótesis a priori (requieren mucho más n)</li>
+<li>Tamaño de muestra robusto</li>
+<li>Más variables de las que el n soporta → sobreajuste y coeficientes inestables</li>
+<li>Colinealidad: infla errores estándar (revisar VIF)</li>
+<li>Datos faltantes: más variables pueden reducir el n efectivo</li>
+<li>No hay un número exacto; ~10–20 por parámetro es una guía, no una regla</li>
+<li>Revisar los IC: si son muy amplios (o absurdos), probablemente falta información
+<ul>
+<li>Pero un IC razonable <strong>no garantiza</strong> que el n sea suficiente (puede haber sobreajuste o sesgo con IC estrechos)</li>
+</ul></li>
+</ul>
+</section></section>
+<section>
+<section id="métodos-de-selección-secuencial" class="title-slide slide level1 center" data-background-color="#1f4e79">
+<h1>2. Métodos de selección secuencial</h1>
+
+</section>
+<section id="idea-general" class="slide level2">
+<h2>Idea general</h2>
+
+<img data-src="Modelos_lineales_P4_files/figure-revealjs/esquema-secuencial-1.png" width="1800" class="r-stretch"><ul>
+<li>En cada paso se compara un <strong>criterio</strong> (valor <em>p</em>, AIC o BIC) y se elige el mejor movimiento <span class="citation" data-cites="james2021introduction">(<a href="#/referencias" role="doc-biblioref" onclick="">James et&nbsp;al. 2021</a>)</span>.</li>
+<li>En R: <code>step()</code> (base) o <code>MASS::stepAIC()</code> usan <strong>AIC</strong> por defecto <span class="citation" data-cites="venables2002modern">(<a href="#/referencias" role="doc-biblioref" onclick="">Venables y Ripley 2002</a>)</span>.</li>
+</ul>
+</section>
+<section id="ejemplo-qué-factores-se-asocian-con-el-peso-al-nacer" class="slide level2">
+<h2>Ejemplo: ¿qué factores se asocian con el peso al nacer?</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a aria-hidden="true" tabindex="-1"></a><span class="co"># Modelo nulo (solo intercepto) y modelo completo (todas las candidatas)</span></span>
+<span id="cb4-2"><a aria-hidden="true" tabindex="-1"></a>nulo     <span class="ot">&lt;-</span> <span class="fu">lm</span>(bwt <span class="sc">~</span> <span class="dv">1</span>, <span class="at">data =</span> bw)</span>
+<span id="cb4-3"><a aria-hidden="true" tabindex="-1"></a>completo <span class="ot">&lt;-</span> <span class="fu">lm</span>(bwt <span class="sc">~</span> age <span class="sc">+</span> lwt <span class="sc">+</span> race <span class="sc">+</span> smoke <span class="sc">+</span> ptl <span class="sc">+</span> ht <span class="sc">+</span> ui <span class="sc">+</span> ftv, <span class="at">data =</span> bw)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<table class="caption-top">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Variable</th>
+<th>Descripción</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>age</code>, <code>lwt</code></td>
+<td>Edad (años) y peso materno previo (lb)</td>
+</tr>
+<tr class="even">
+<td><code>race</code>, <code>smoke</code></td>
+<td>Raza y tabaquismo en el embarazo</td>
+</tr>
+<tr class="odd">
+<td><code>ptl</code>, <code>ftv</code></td>
+<td>Partos prematuros previos; visitas médicas en el 1.er trimestre</td>
+</tr>
+<tr class="even">
+<td><code>ht</code>, <code>ui</code></td>
+<td>Hipertensión; irritabilidad uterina</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="forward-selection" class="slide level2">
+<h2>2.1 Forward selection</h2>
+<p>Empieza con el modelo <strong>vacío</strong> y agrega, una a una, la variable que <strong>más mejora</strong> el criterio. Se detiene cuando ninguna mejora.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a aria-hidden="true" tabindex="-1"></a>m_forward <span class="ot">&lt;-</span> <span class="fu">step</span>(nulo,</span>
+<span id="cb5-2"><a aria-hidden="true" tabindex="-1"></a>                  <span class="at">scope =</span> <span class="fu">formula</span>(completo),   <span class="co"># variables que puede agregar</span></span>
+<span id="cb5-3"><a aria-hidden="true" tabindex="-1"></a>                  <span class="at">direction =</span> <span class="st">"forward"</span>,</span>
+<span id="cb5-4"><a aria-hidden="true" tabindex="-1"></a>                  <span class="at">trace =</span> <span class="dv">1</span>)                   <span class="co"># muestra cada paso</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Start:  AIC=2493
+bwt ~ 1
+
+        Df Sum of Sq      RSS  AIC
++ ui     1   8059031 91910625 2479
++ race   2   5015725 94953931 2487
++ smoke  1   3625946 96343710 2488
++ lwt    1   3448639 96521017 2488
++ ptl    1   2391041 97578614 2490
++ ht     1   2130425 97839231 2491
+&lt;none&gt;               99969656 2493
++ age    1    815483 99154173 2493
++ ftv    1    339993 99629663 2494
+
+Step:  AIC=2479
+bwt ~ ui
+
+        Df Sum of Sq      RSS  AIC
++ race   2   4716436 87194188 2473
++ ht     1   3162595 88748030 2474
++ smoke  1   2996636 88913988 2475
++ lwt    1   2074421 89836203 2477
+&lt;none&gt;               91910625 2479
++ ptl    1    854664 91055961 2479
++ age    1    478369 91432256 2480
++ ftv    1    172098 91738526 2481
+
+Step:  AIC=2473
+bwt ~ ui + race
+
+        Df Sum of Sq      RSS  AIC
++ smoke  1   6124507 81069681 2461
++ ht     1   2689932 84504256 2469
++ lwt    1   2239520 84954668 2470
++ ptl    1    930273 86263915 2473
+&lt;none&gt;               87194188 2473
++ ftv    1     65714 87128474 2475
++ age    1     60384 87133804 2475
+
+Step:  AIC=2461
+bwt ~ ui + race + smoke
+
+       Df Sum of Sq      RSS  AIC
++ ht    1   2457946 78611734 2457
++ lwt   1   1547337 79522343 2460
+&lt;none&gt;              81069681 2461
++ ptl   1    255755 80813926 2463
++ ftv   1     10936 81058745 2463
++ age   1       145 81069535 2463
+
+Step:  AIC=2457
+bwt ~ ui + race + smoke + ht
+
+       Df Sum of Sq      RSS  AIC
++ lwt   1   2674229 75937505 2453
+&lt;none&gt;              78611734 2457
++ ptl   1    245703 78366031 2459
++ age   1       562 78611172 2459
++ ftv   1       250 78611484 2459
+
+Step:  AIC=2453
+bwt ~ ui + race + smoke + ht + lwt
+
+       Df Sum of Sq      RSS  AIC
+&lt;none&gt;              75937505 2453
++ ptl   1    117366 75820139 2455
++ age   1    104920 75832585 2455
++ ftv   1     58307 75879197 2455</code></pre>
+</div>
+</div>
+</section>
+<section id="lectura-de-la-salida-de-step" class="slide level2">
+<h2>Lectura de la salida de <code>step()</code></h2>
+<ul>
+<li>Cada bloque es un <strong>paso</strong>. <code>&lt;none&gt;</code> = quedarse como está.</li>
+<li>La tabla ordena las opciones por <strong>AIC</strong>: la primera fila es el mejor movimiento.</li>
+<li>El algoritmo se detiene cuando <code>&lt;none&gt;</code> queda <strong>arriba</strong> (ningún cambio reduce el AIC).</li>
+</ul>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">formula</span>(m_forward)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>bwt ~ ui + race + smoke + ht + lwt</code></pre>
+</div>
+</div>
+<div class="small">
+<p>Ventaja: funciona aun con muchas candidatas (incluso más variables que observaciones). Limitación: una variable que entra <strong>no vuelve a salir</strong>, aunque otra posterior la vuelva redundante <span class="citation" data-cites="james2021introduction">(<a href="#/referencias" role="doc-biblioref" onclick="">James et&nbsp;al. 2021</a>)</span>.</p>
+</div>
+</section>
+<section id="backward-elimination" class="slide level2">
+<h2>2.2 Backward elimination</h2>
+<p>Empieza con el modelo <strong>completo</strong> y elimina, una a una, la variable cuya salida <strong>más mejora</strong> el criterio.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a aria-hidden="true" tabindex="-1"></a>m_backward <span class="ot">&lt;-</span> <span class="fu">step</span>(completo, <span class="at">direction =</span> <span class="st">"backward"</span>, <span class="at">trace =</span> <span class="dv">1</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Start:  AIC=2458
+bwt ~ age + lwt + race + smoke + ptl + ht + ui + ftv
+
+        Df Sum of Sq      RSS  AIC
+- ftv    1     38708 75741025 2456
+- age    1     58238 75760555 2456
+- ptl    1     95285 75797602 2456
+&lt;none&gt;               75702317 2458
+- lwt    1   2661604 78363921 2463
+- ht     1   3631032 79333349 2465
+- smoke  1   4623219 80325536 2467
+- race   2   6578597 82280914 2470
+- ui     1   5839544 81541861 2470
+
+Step:  AIC=2456
+bwt ~ age + lwt + race + smoke + ptl + ht + ui
+
+        Df Sum of Sq      RSS  AIC
+- age    1     79115 75820139 2455
+- ptl    1     91560 75832585 2455
+&lt;none&gt;               75741025 2456
+- lwt    1   2623988 78365013 2461
+- ht     1   3592430 79333455 2463
+- smoke  1   4606425 80347449 2465
+- race   2   6552496 82293521 2468
+- ui     1   5817995 81559020 2468
+
+Step:  AIC=2454
+bwt ~ lwt + race + smoke + ptl + ht + ui
+
+        Df Sum of Sq      RSS  AIC
+- ptl    1    117366 75937505 2453
+&lt;none&gt;               75820139 2455
+- lwt    1   2545892 78366031 2459
+- ht     1   3546591 79366731 2461
+- smoke  1   4530009 80350149 2463
+- race   2   6571668 82391807 2466
+- ui     1   5751122 81571261 2466
+
+Step:  AIC=2453
+bwt ~ lwt + race + smoke + ht + ui
+
+        Df Sum of Sq      RSS  AIC
+&lt;none&gt;               75937505 2453
+- lwt    1   2674229 78611734 2457
+- ht     1   3584838 79522343 2460
+- smoke  1   4950633 80888138 2463
+- race   2   6630123 82567628 2465
+- ui     1   6353218 82290723 2466</code></pre>
+</div>
+</div>
+</section>
+<section id="backward-resultado" class="slide level2">
+<h2>Backward: resultado</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">formula</span>(m_backward)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>bwt ~ lwt + race + smoke + ht + ui</code></pre>
+</div>
+</div>
+<ul>
+<li>Ventaja: evalúa cada variable <strong>en presencia de todas las demás</strong> (no pierde variables que solo importan juntas) <span class="citation" data-cites="heinze2018variable">(<a href="#/referencias" role="doc-biblioref" onclick="">Heinze, Wallisch, y Dunkler 2018</a>)</span>.</li>
+<li>Limitación: requiere <strong>más observaciones que variables</strong>; el modelo completo debe poder ajustarse.</li>
+<li>Suele preferirse a <em>forward</em> cuando es posible <span class="citation" data-cites="heinze2018variable">(<a href="#/referencias" role="doc-biblioref" onclick="">Heinze, Wallisch, y Dunkler 2018</a>)</span>.</li>
+</ul>
+</section>
+<section id="stepwise-en-ambas-direcciones" class="slide level2">
+<h2>2.3 Stepwise (en ambas direcciones)</h2>
+<p>En cada paso evalúa <strong>agregar</strong> una variable nueva <strong>o quitar</strong> una que ya está.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a aria-hidden="true" tabindex="-1"></a>m_stepwise <span class="ot">&lt;-</span> <span class="fu">step</span>(nulo, <span class="at">scope =</span> <span class="fu">formula</span>(completo), <span class="at">direction =</span> <span class="st">"both"</span>, <span class="at">trace =</span> <span class="dv">0</span>)</span>
+<span id="cb13-2"><a aria-hidden="true" tabindex="-1"></a><span class="fu">formula</span>(m_stepwise)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>bwt ~ ui + race + smoke + ht + lwt</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a aria-hidden="true" tabindex="-1"></a><span class="co"># Con MASS::stepAIC() el resultado es el mismo</span></span>
+<span id="cb15-2"><a aria-hidden="true" tabindex="-1"></a>m_stepAIC <span class="ot">&lt;-</span> <span class="fu">stepAIC</span>(completo, <span class="at">direction =</span> <span class="st">"both"</span>, <span class="at">trace =</span> <span class="dv">0</span>)</span>
+<span id="cb15-3"><a aria-hidden="true" tabindex="-1"></a><span class="fu">formula</span>(m_stepAIC)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>bwt ~ lwt + race + smoke + ht + ui</code></pre>
+</div>
+</div>
+</section>
+<section id="comparación-de-los-tres-métodos" class="slide level2">
+<h2>Comparación de los tres métodos</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a aria-hidden="true" tabindex="-1"></a>candidatas <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"age"</span>, <span class="st">"lwt"</span>, <span class="st">"race"</span>, <span class="st">"smoke"</span>, <span class="st">"ptl"</span>, <span class="st">"ht"</span>, <span class="st">"ui"</span>, <span class="st">"ftv"</span>)</span>
+<span id="cb17-2"><a aria-hidden="true" tabindex="-1"></a>tabla_sel <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb17-3"><a aria-hidden="true" tabindex="-1"></a>  <span class="at">variable =</span> candidatas,</span>
+<span id="cb17-4"><a aria-hidden="true" tabindex="-1"></a>  <span class="at">forward  =</span> candidatas <span class="sc">%in%</span> <span class="fu">variables</span>(m_forward),</span>
+<span id="cb17-5"><a aria-hidden="true" tabindex="-1"></a>  <span class="at">backward =</span> candidatas <span class="sc">%in%</span> <span class="fu">variables</span>(m_backward),</span>
+<span id="cb17-6"><a aria-hidden="true" tabindex="-1"></a>  <span class="at">stepwise =</span> candidatas <span class="sc">%in%</span> <span class="fu">variables</span>(m_stepwise))</span>
+<span id="cb17-7"><a aria-hidden="true" tabindex="-1"></a>tabla_sel</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  variable forward backward stepwise
+1      age   FALSE    FALSE    FALSE
+2      lwt    TRUE     TRUE     TRUE
+3     race    TRUE     TRUE     TRUE
+4    smoke    TRUE     TRUE     TRUE
+5      ptl   FALSE    FALSE    FALSE
+6       ht    TRUE     TRUE     TRUE
+7       ui    TRUE     TRUE     TRUE
+8      ftv   FALSE    FALSE    FALSE</code></pre>
+</div>
+</div>
+<div class="small">
+<p>Aquí los tres coinciden: <code>lwt</code>, <code>race</code>, <code>smoke</code>, <code>ht</code> y <code>ui</code>. <strong>No siempre ocurre</strong>: en la tarea (base <code>diabetes</code>) <em>forward</em> y <em>backward</em> eligen modelos distintos.</p>
+</div>
+</section>
+<section id="ventajas-y-limitaciones-de-los-métodos-secuenciales" class="slide level2">
+<h2>Ventajas y limitaciones de los métodos secuenciales</h2>
+<table class="caption-top">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Ventajas</th>
+<th>Limitaciones</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Rápidos y automáticos</td>
+<td>Recorren <strong>un solo camino</strong>: no garantizan el “mejor” modelo</td>
+</tr>
+<tr class="even">
+<td>Reproducibles</td>
+<td>Resultados <strong>inestables</strong>: pequeños cambios en los datos cambian las variables elegidas</td>
+</tr>
+<tr class="odd">
+<td>Útiles para explorar muchas candidatas</td>
+<td>Valores <em>p</em>, EE e IC del modelo final son <strong>demasiado optimistas</strong></td>
+</tr>
+<tr class="even">
+<td>Disponibles en todo software</td>
+<td>Coeficientes <strong>inflados</strong> (sesgo de selección)</td>
+</tr>
+<tr class="odd">
+<td></td>
+<td>Ignoran confusión, mediación y plausibilidad biológica</td>
+</tr>
+</tbody>
+</table>
+<div class="alerta">
+<p>Estas limitaciones están bien documentadas desde hace décadas <span class="citation" data-cites="harrell2015regression whittingham2006why smith2018step">(<a href="#/referencias" role="doc-biblioref" onclick="">Harrell 2015</a>; <a href="#/referencias" role="doc-biblioref" onclick="">Whittingham et&nbsp;al. 2006</a>; <a href="#/referencias" role="doc-biblioref" onclick="">Smith 2018</a>)</span>. Los revisaremos en el bloque 5.</p>
+</div>
+</section></section>
+<section>
+<section id="criterios-estadísticos-para-la-selección" class="title-slide slide level1 center" data-background-color="#1f4e79">
+<h1>3. Criterios estadísticos para la selección</h1>
+
+</section>
+<section id="pruebas-de-significación-estadística" class="slide level2">
+<h2>3.1 Pruebas de significación estadística</h2>
+<p>El criterio clásico: entra la variable con menor <em>p</em> (si <em>p</em> &lt; α de entrada); sale la de mayor <em>p</em> (si <em>p</em> &gt; α de salida).</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a aria-hidden="true" tabindex="-1"></a><span class="co"># Backward por valor p: prueba F de quitar cada variable del modelo completo</span></span>
+<span id="cb19-2"><a aria-hidden="true" tabindex="-1"></a><span class="fu">drop1</span>(completo, <span class="at">test =</span> <span class="st">"F"</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Single term deletions
+
+Model:
+bwt ~ age + lwt + race + smoke + ptl + ht + ui + ftv
+       Df Sum of Sq      RSS  AIC F value  Pr(&gt;F)    
+&lt;none&gt;              75702317 2458                    
+age     1     58238 75760555 2456    0.14 0.71101    
+lwt     1   2661604 78363921 2463    6.29 0.01301 *  
+race    2   6578597 82280914 2470    7.78 0.00058 ***
+smoke   1   4623219 80325536 2467   10.93 0.00114 ** 
+ptl     1     95285 75797602 2456    0.23 0.63561    
+ht      1   3631032 79333349 2465    8.59 0.00383 ** 
+ui      1   5839544 81541861 2470   13.81 0.00027 ***
+ftv     1     38708 75741025 2456    0.09 0.76260    
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
+</div>
+</div>
+<ul>
+<li>Se quita la de <strong>mayor</strong> <em>p</em> (<code>ftv</code>), se reajusta y se repite hasta que todas tengan <em>p</em> &lt; α.</li>
+</ul>
+</section>
+<section id="pruebas-de-significación-forward-con-add1" class="slide level2">
+<h2>Pruebas de significación: forward con <code>add1()</code></h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a aria-hidden="true" tabindex="-1"></a><span class="co"># Forward por valor p: prueba F de agregar cada variable al modelo nulo</span></span>
+<span id="cb21-2"><a aria-hidden="true" tabindex="-1"></a><span class="fu">add1</span>(nulo, <span class="at">scope =</span> <span class="fu">formula</span>(completo), <span class="at">test =</span> <span class="st">"F"</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Single term additions
+
+Model:
+bwt ~ 1
+       Df Sum of Sq      RSS  AIC F value   Pr(&gt;F)    
+&lt;none&gt;              99969656 2493                     
+age     1    815483 99154173 2493    1.54   0.2165    
+lwt     1   3448639 96521017 2488    6.68   0.0105 *  
+race    2   5015725 94953931 2487    4.91   0.0083 ** 
+smoke   1   3625946 96343710 2488    7.04   0.0087 ** 
+ptl     1   2391041 97578614 2490    4.58   0.0336 *  
+ht      1   2130425 97839231 2491    4.07   0.0450 *  
+ui      1   8059031 91910625 2479   16.40 0.000075 ***
+ftv     1    339993 99629663 2494    0.64   0.4254    
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
+</div>
+</div>
+<div class="small">
+<p>Entra la de <strong>menor</strong> <em>p</em>; se repite con el nuevo modelo. Los umbrales (0.05, 0.10, 0.157) son <strong>arbitrarios</strong> y deben declararse <span class="citation" data-cites="heinze2018variable">(<a href="#/referencias" role="doc-biblioref" onclick="">Heinze, Wallisch, y Dunkler 2018</a>)</span>.</p>
+</div>
+</section>
+<section id="criterio-de-información-de-akaike-aic" class="slide level2">
+<h2>3.2 Criterio de información de Akaike (AIC)</h2>
+<p><span class="math display">\[AIC = n\ln\left(\frac{SCE}{n}\right) + 2k \qquad \text{(regresión lineal)}\]</span></p>
+<ul>
+<li><strong>Ajuste</strong> (primer término) + <strong>penalización</strong> por número de parámetros <span class="math inline">\(k\)</span> <span class="citation" data-cites="akaike1974new">(<a href="#/referencias" role="doc-biblioref" onclick="">Akaike 1974</a>)</span>.</li>
+<li><strong>Menor AIC = mejor</strong> balance. Solo se compara entre modelos ajustados con los <strong>mismos datos</strong>.</li>
+<li><span class="math inline">\(\Delta AIC &lt; 2\)</span>: modelos prácticamente equivalentes <span class="citation" data-cites="burnham2002model">(<a href="#/referencias" role="doc-biblioref" onclick="">Burnham y Anderson 2002</a>)</span>.</li>
+<li>Pensado para <strong>predicción</strong>: tiende a incluir alguna variable de más.</li>
+</ul>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a aria-hidden="true" tabindex="-1"></a>m_pima_completo <span class="ot">&lt;-</span> <span class="fu">lm</span>(glu <span class="sc">~</span> npreg <span class="sc">+</span> bp <span class="sc">+</span> skin <span class="sc">+</span> bmi <span class="sc">+</span> ped <span class="sc">+</span> age, <span class="at">data =</span> Pima.tr)</span>
+<span id="cb23-2"><a aria-hidden="true" tabindex="-1"></a>m_pima_aic <span class="ot">&lt;-</span> <span class="fu">step</span>(m_pima_completo, <span class="at">trace =</span> <span class="dv">0</span>)   <span class="co"># k = 2 (AIC) por defecto</span></span>
+<span id="cb23-3"><a aria-hidden="true" tabindex="-1"></a><span class="fu">formula</span>(m_pima_aic)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>glu ~ bp + bmi + age</code></pre>
+</div>
+</div>
+</section>
+<section id="criterio-de-información-bayesiano-bic" class="slide level2">
+<h2>3.3 Criterio de información bayesiano (BIC)</h2>
+<p><span class="math display">\[BIC = n\ln\left(\frac{SCE}{n}\right) + k\ln(n)\]</span></p>
+<ul>
+<li>La penalización crece con <span class="math inline">\(n\)</span>: con <span class="math inline">\(n \geq 8\)</span>, <span class="math inline">\(\ln(n) &gt; 2\)</span> → BIC es <strong>más estricto</strong> que AIC <span class="citation" data-cites="schwarz1978estimating">(<a href="#/referencias" role="doc-biblioref" onclick="">Schwarz 1978</a>)</span>.</li>
+<li>Favorece modelos <strong>más simples</strong>; pensado para identificar el modelo “verdadero” si está entre los candidatos.</li>
+</ul>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a aria-hidden="true" tabindex="-1"></a>n_pima <span class="ot">&lt;-</span> <span class="fu">nrow</span>(Pima.tr)</span>
+<span id="cb25-2"><a aria-hidden="true" tabindex="-1"></a>m_pima_bic <span class="ot">&lt;-</span> <span class="fu">step</span>(m_pima_completo, <span class="at">k =</span> <span class="fu">log</span>(n_pima), <span class="at">trace =</span> <span class="dv">0</span>)   <span class="co"># k = log(n) → BIC</span></span>
+<span id="cb25-3"><a aria-hidden="true" tabindex="-1"></a><span class="fu">formula</span>(m_pima_bic)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>glu ~ bmi + age</code></pre>
+</div>
+</div>
+<div class="small">
+<p>AIC retuvo <code>bp</code> (presión diastólica); BIC la eliminó. ¿Cuál elegir? Depende del objetivo y del conocimiento previo.</p>
+</div>
+</section>
+<section id="aic-vs.-bic-en-imagen" class="slide level2">
+<h2>AIC vs.&nbsp;BIC en imagen</h2>
+
+<img data-src="Modelos_lineales_P4_files/figure-revealjs/aic-bic-plot-1.png" width="1200" class="r-stretch"></section>
+<section id="comparación-de-modelos-anidados" class="slide level2">
+<h2>3.4 Comparación de modelos anidados</h2>
+<p>Dos modelos son <strong>anidados</strong> si uno contiene todas las variables del otro. Se comparan con la <strong>prueba F parcial</strong> (Parte 2):</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(m_pima_bic, m_pima_aic)   <span class="co"># ¿agregar bp mejora significativamente?</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Analysis of Variance Table
+
+Model 1: glu ~ bmi + age
+Model 2: glu ~ bp + bmi + age
+  Res.Df    RSS Df Sum of Sq    F Pr(&gt;F)  
+1    197 170053                           
+2    196 167474  1      2579 3.02  0.084 .
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">compare_performance</span>(m_pima_bic, m_pima_aic, <span class="at">metrics =</span> <span class="fu">c</span>(<span class="st">"AIC"</span>, <span class="st">"BIC"</span>, <span class="st">"R2_adj"</span>, <span class="st">"RMSE"</span>))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># Comparison of Model Performance Indices
+
+Name       | Model |  AIC (weights) |  BIC (weights) | R2 (adj.) |   RMSE
+-------------------------------------------------------------------------
+m_pima_bic |    lm | 1924.7 (0.371) | 1937.9 (0.754) |     0.139 | 29.159
+m_pima_aic |    lm | 1923.6 (0.629) | 1940.1 (0.246) |     0.148 | 28.937</code></pre>
+</div>
+</div>
+<div class="small">
+<p>La prueba F no es significativa a α = 0.05, pero AIC prefiere el modelo con <code>bp</code>: con 1 g.l., <strong>AIC equivale a usar α ≈ 0.157</strong> <span class="citation" data-cites="heinze2018variable">(<a href="#/referencias" role="doc-biblioref" onclick="">Heinze, Wallisch, y Dunkler 2018</a>)</span>. Cada criterio implica un umbral distinto.</p>
+</div>
+</section>
+<section id="resumen-de-criterios" class="slide level2">
+<h2>Resumen de criterios</h2>
+<table class="caption-top">
+<colgroup>
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Criterio</th>
+<th>Penalización</th>
+<th>Tiende a</th>
+<th>Úselo para</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Valor <em>p</em> (F, Wald)</td>
+<td>Umbral α elegido</td>
+<td>Depende de α</td>
+<td>Modelos anidados, hipótesis específicas</td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(R^2\)</span> ajustado</td>
+<td>Leve</td>
+<td>Modelos grandes</td>
+<td>Descripción</td>
+</tr>
+<tr class="odd">
+<td><strong>AIC</strong></td>
+<td><span class="math inline">\(2k\)</span></td>
+<td>Modelos algo más grandes</td>
+<td><strong>Predicción</strong></td>
+</tr>
+<tr class="even">
+<td><strong>BIC</strong></td>
+<td><span class="math inline">\(k\ln(n)\)</span></td>
+<td>Modelos más pequeños</td>
+<td>Parsimonia, <em>n</em> grande</td>
+</tr>
+<tr class="odd">
+<td>Validación cruzada</td>
+<td>Error en datos no usados</td>
+<td>Depende de los datos</td>
+<td>Predicción (bloque 5)</td>
+</tr>
+</tbody>
+</table>
+<div class="clave">
+<p>Ningún criterio sustituye al conocimiento del problema. Declare <strong>siempre</strong> el criterio y los umbrales usados.</p>
+</div>
+</section></section>
+<section>
+<section id="métodos-de-regularización" class="title-slide slide level1 center" data-background-color="#1f4e79">
+<h1>4. Métodos de regularización</h1>
+
+</section>
+<section id="idea-encoger-en-lugar-de-quitar" class="slide level2">
+<h2>Idea: encoger en lugar de quitar</h2>
+<p>Los métodos secuenciales deciden <strong>dentro/fuera</strong>. La regularización ajusta <strong>todas</strong> las variables, pero <strong>penaliza</strong> los coeficientes grandes <span class="citation" data-cites="james2021introduction hastie2009elements">(<a href="#/referencias" role="doc-biblioref" onclick="">James et&nbsp;al. 2021</a>; <a href="#/referencias" role="doc-biblioref" onclick="">Hastie, Tibshirani, y Friedman 2009</a>)</span>:</p>
+<p><span class="math display">\[\text{minimizar: } \underbrace{\sum (y_i - \hat y_i)^2}_{\text{ajuste}} + \underbrace{\lambda \times \text{penalización}(\beta)}_{\text{encogimiento}}\]</span></p>
+<ul>
+<li><span class="math inline">\(\lambda = 0\)</span>: regresión lineal ordinaria.</li>
+<li><span class="math inline">\(\lambda\)</span> grande: coeficientes cada vez más cerca de 0.</li>
+<li><span class="math inline">\(\lambda\)</span> se elige por <strong>validación cruzada</strong>.</li>
+<li>Útiles con <strong>muchas</strong> variables, variables <strong>correlacionadas</strong> o <span class="math inline">\(p &gt; n\)</span> (genómica, transcriptómica).</li>
+</ul>
+</section>
+<section id="trayectorias-de-los-coeficientes" class="slide level2">
+<h2>Trayectorias de los coeficientes</h2>
+
+<img data-src="Modelos_lineales_P4_files/figure-revealjs/trayectorias-1.png" width="1800" class="r-stretch"><div class="small">
+<p>Datos <code>pbc</code>: log(bilirrubina) con 15 candidatas. De derecha a izquierda aumenta la penalización.</p>
+</div>
+</section>
+<section id="ridge-regression-l2" class="slide level2">
+<h2>4.1 Ridge Regression (L2)</h2>
+<ul>
+<li>Penalización: <span class="math inline">\(\lambda\sum\beta_j^2\)</span> <span class="citation" data-cites="hoerl1970ridge">(<a href="#/referencias" role="doc-biblioref" onclick="">Hoerl y Kennard 1970</a>)</span>.</li>
+<li><strong>Encoge</strong> todos los coeficientes, pero <strong>ninguno llega a 0</strong> → <strong>no selecciona</strong> variables.</li>
+<li>Útil con <strong>colinealidad</strong>: estabiliza coeficientes de predictores correlacionados.</li>
+<li>Ejemplo: predecir un rasgo cuantitativo con miles de SNPs de efecto pequeño (base de algunos puntajes poligénicos).</li>
+</ul>
+</section>
+<section id="lasso-regression-l1" class="slide level2">
+<h2>4.2 LASSO Regression (L1)</h2>
+<ul>
+<li>Penalización: <span class="math inline">\(\lambda\sum|\beta_j|\)</span> <span class="citation" data-cites="tibshirani1996regression">(<a href="#/referencias" role="doc-biblioref" onclick="">Tibshirani 1996</a>)</span>.</li>
+<li>Encoge y lleva <strong>algunos coeficientes exactamente a 0</strong> → <strong>selecciona</strong> variables.</li>
+<li>Ejemplo: de 20 000 genes, elegir una <strong>firma de expresión</strong> pequeña asociada a un fenotipo.</li>
+<li>Limitación: entre variables muy correlacionadas tiende a elegir <strong>una</strong> al azar.</li>
+</ul>
+</section>
+<section id="elastic-net-l1-l2" class="slide level2">
+<h2>4.3 Elastic Net (L1 + L2)</h2>
+<ul>
+<li>Combina ambas penalizaciones con un parámetro de mezcla <span class="math inline">\(\alpha\)</span> <span class="citation" data-cites="zou2005regularization">(<a href="#/referencias" role="doc-biblioref" onclick="">Zou y Hastie 2005</a>)</span>:
+<ul>
+<li><span class="math inline">\(\alpha = 0\)</span> → ridge · <span class="math inline">\(\alpha = 1\)</span> → LASSO · <span class="math inline">\(0 &lt; \alpha &lt; 1\)</span> → <em>elastic net</em>.</li>
+</ul></li>
+<li>Selecciona variables <strong>y</strong> mantiene juntos <strong>grupos</strong> de predictores correlacionados (genes de una misma vía, SNPs en desequilibrio de ligamiento).</li>
+</ul>
+<table class="caption-top">
+<colgroup>
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Método</th>
+<th>Penalización</th>
+<th>¿Selecciona?</th>
+<th>Mejor cuando…</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Ridge</td>
+<td>L2</td>
+<td>No</td>
+<td>Muchas variables, todas aportan un poco; colinealidad</td>
+</tr>
+<tr class="even">
+<td>LASSO</td>
+<td>L1</td>
+<td><strong>Sí</strong></td>
+<td>Pocas variables realmente importantes</td>
+</tr>
+<tr class="odd">
+<td>Elastic net</td>
+<td>L1 + L2</td>
+<td><strong>Sí</strong></td>
+<td>Grupos de variables correlacionadas; <span class="math inline">\(p \gg n\)</span></td>
+</tr>
+</tbody>
+</table>
+<div class="small">
+<p>Precaución: los coeficientes están <strong>sesgados hacia 0</strong> a propósito; no se usan para inferencia clásica (IC, <em>p</em>) <span class="citation" data-cites="james2021introduction">(<a href="#/referencias" role="doc-biblioref" onclick="">James et&nbsp;al. 2021</a>)</span>.</p>
+</div>
+</section></section>
+<section>
+<section id="validación-y-estabilidad-de-la-selección" class="title-slide slide level1 center" data-background-color="#1f4e79">
+<h1>5. Validación y estabilidad de la selección</h1>
+
+</section>
+<section id="validación-cruzada" class="slide level2">
+<h2>5.1 Validación cruzada</h2>
+
+<img data-src="Modelos_lineales_P4_files/figure-revealjs/cv-esquema-1.png" width="1650" class="r-stretch"><ul>
+<li>Se divide la muestra en <span class="math inline">\(k\)</span> partes; se ajusta con <span class="math inline">\(k-1\)</span> y se <strong>evalúa en la parte no usada</strong>; se repite <span class="math inline">\(k\)</span> veces <span class="citation" data-cites="james2021introduction">(<a href="#/referencias" role="doc-biblioref" onclick="">James et&nbsp;al. 2021</a>)</span>.</li>
+<li>Estima el error en <strong>datos nuevos</strong>. Sirve para elegir <span class="math inline">\(\lambda\)</span> y para comparar estrategias de selección.</li>
+</ul>
+</section>
+<section id="bootstrap-qué-tan-estable-es-la-selección" class="slide level2">
+<h2>5.2 Bootstrap: ¿qué tan estable es la selección?</h2>
+<p>Repetimos <em>backward</em> (AIC) en 200 muestras <em>bootstrap</em> de <code>birthwt</code> y contamos cuántas veces se elige cada variable <span class="citation" data-cites="sauerbrei1992bootstrap austin2004bootstrap">(<a href="#/referencias" role="doc-biblioref" onclick="">Sauerbrei y Schumacher 1992</a>; <a href="#/referencias" role="doc-biblioref" onclick="">Austin y Tu 2004</a>)</span>.</p>
+
+<img data-src="Modelos_lineales_P4_files/figure-revealjs/bootstrap-plot-1.png" width="1200" class="r-stretch"><div class="small">
+<p>Variables elegidas en &gt; 80 % de las réplicas son <strong>estables</strong>; las que aparecen 20–50 % dependen del azar de la muestra. El modelo “final” de un solo <em>stepwise</em> oculta esta incertidumbre.</p>
+</div>
+</section>
+<section id="stability-selection" class="slide level2">
+<h2>5.3 Stability Selection</h2>
+<ul>
+<li>Idea: repetir la selección (habitualmente LASSO) en muchas <strong>submuestras</strong> (50 % de los datos) y quedarse con las variables elegidas en una <strong>alta proporción</strong> (p.&nbsp;ej., &gt; 60–80 %) <span class="citation" data-cites="meinshausen2010stability">(<a href="#/referencias" role="doc-biblioref" onclick="">Meinshausen y Bühlmann 2010</a>)</span>.</li>
+<li>Controla el número esperado de falsos positivos; muy usada en <strong>genómica</strong> de alta dimensión.</li>
+</ul>
+
+<img data-src="Modelos_lineales_P4_files/figure-revealjs/stability-plot-1.png" width="1200" class="r-stretch"></section>
+<section id="sobreajuste-y-sesgo-posterior-a-la-selección" class="slide level2">
+<h2>5.4 Sobreajuste y sesgo posterior a la selección</h2>
+<p><strong>Paradoja de Freedman</strong>: aplicamos <em>stepwise</em> a 50 variables de <strong>puro ruido</strong> <span class="citation" data-cites="freedman1983note">(<a href="#/referencias" role="doc-biblioref" onclick="">Freedman 1983</a>)</span>.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">2026</span>)</span>
+<span id="cb31-2"><a aria-hidden="true" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="dv">100</span></span>
+<span id="cb31-3"><a aria-hidden="true" tabindex="-1"></a>ruido <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(<span class="fu">matrix</span>(<span class="fu">rnorm</span>(n <span class="sc">*</span> <span class="dv">50</span>), n))   <span class="co"># 50 predictores aleatorios</span></span>
+<span id="cb31-4"><a aria-hidden="true" tabindex="-1"></a>ruido<span class="sc">$</span>y <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(n)                                 <span class="co"># Y no depende de NINGUNO</span></span>
+<span id="cb31-5"><a aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-6"><a aria-hidden="true" tabindex="-1"></a>m_ruido <span class="ot">&lt;-</span> <span class="fu">step</span>(<span class="fu">lm</span>(y <span class="sc">~</span> <span class="dv">1</span>, <span class="at">data =</span> ruido), <span class="at">scope =</span> <span class="fu">formula</span>(<span class="fu">lm</span>(y <span class="sc">~</span> ., <span class="at">data =</span> ruido)),</span>
+<span id="cb31-7"><a aria-hidden="true" tabindex="-1"></a>                <span class="at">direction =</span> <span class="st">"both"</span>, <span class="at">trace =</span> <span class="dv">0</span>)</span>
+<span id="cb31-8"><a aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-9"><a aria-hidden="true" tabindex="-1"></a><span class="fu">length</span>(<span class="fu">variables</span>(m_ruido))                    <span class="co"># variables "seleccionadas"</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 9</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(m_ruido)<span class="sc">$</span>r.squared                     <span class="co"># R² aparente</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.2893</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a aria-hidden="true" tabindex="-1"></a>f <span class="ot">&lt;-</span> <span class="fu">summary</span>(m_ruido)<span class="sc">$</span>fstatistic</span>
+<span id="cb35-2"><a aria-hidden="true" tabindex="-1"></a><span class="fu">pf</span>(f[<span class="dv">1</span>], f[<span class="dv">2</span>], f[<span class="dv">3</span>], <span class="at">lower.tail =</span> <span class="cn">FALSE</span>)       <span class="co"># valor p global del modelo</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>    value 
+0.0002087 </code></pre>
+</div>
+</div>
+<div class="alerta">
+<p>Un modelo “significativo” construido <strong>solo con ruido</strong>. Los <em>p</em>, EE e IC después de seleccionar <strong>no son válidos</strong>: los datos se usaron dos veces (para elegir y para probar) <span class="citation" data-cites="berk2013valid harrell2015regression">(<a href="#/referencias" role="doc-biblioref" onclick="">Berk et&nbsp;al. 2013</a>; <a href="#/referencias" role="doc-biblioref" onclick="">Harrell 2015</a>)</span>.</p>
+</div>
+</section>
+<section id="sesgo-de-selección-la-maldición-del-ganador" class="slide level2">
+<h2>Sesgo de selección: la “maldición del ganador”</h2>
+
+<img data-src="Modelos_lineales_P4_files/figure-revealjs/winners-curse-1.png" width="1200" class="r-stretch"><ul>
+<li>Una variable débil solo “sobrevive” cuando, por azar, su efecto se <strong>sobreestimó</strong> (línea roja vs.&nbsp;línea punteada).</li>
+<li>En genética se llama <strong>maldición del ganador</strong>: los OR de los SNPs descubiertos en un GWAS suelen ser menores al replicarse <span class="citation" data-cites="zollner2007overcoming">(<a href="#/referencias" role="doc-biblioref" onclick="">Zöllner y Pritchard 2007</a>)</span>.</li>
+</ul>
+</section></section>
+<section>
+<section id="aplicaciones-prácticas-en-r" class="title-slide slide level1 center" data-background-color="#1f4e79">
+<h1>6. Aplicaciones prácticas en R</h1>
+
+</section>
+<section id="step-y-stepaic-argumentos-clave" class="slide level2">
+<h2>6.1 <code>step()</code> y <code>stepAIC()</code>: argumentos clave</h2>
+<table class="caption-top">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Argumento</th>
+<th>Para qué</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>object</code></td>
+<td>Modelo inicial (nulo para <em>forward</em>, completo para <em>backward</em>)</td>
+</tr>
+<tr class="even">
+<td><code>scope</code></td>
+<td>Límite superior (y opcionalmente inferior) de variables</td>
+</tr>
+<tr class="odd">
+<td><code>direction</code></td>
+<td><code>"forward"</code>, <code>"backward"</code> o <code>"both"</code></td>
+</tr>
+<tr class="even">
+<td><code>k</code></td>
+<td>Penalización: <code>2</code> = AIC (por defecto); <code>log(n)</code> = BIC</td>
+</tr>
+<tr class="odd">
+<td><code>trace</code></td>
+<td><code>1</code> muestra cada paso; <code>0</code> lo oculta</td>
+</tr>
+</tbody>
+</table>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a aria-hidden="true" tabindex="-1"></a><span class="co"># Forzar variables en el modelo (p. ej., un confusor teórico): límite inferior del scope</span></span>
+<span id="cb37-2"><a aria-hidden="true" tabindex="-1"></a>m_forzado <span class="ot">&lt;-</span> <span class="fu">step</span>(completo, <span class="at">scope =</span> <span class="fu">list</span>(<span class="at">lower =</span> <span class="sc">~</span> age <span class="sc">+</span> smoke, <span class="at">upper =</span> <span class="fu">formula</span>(completo)),</span>
+<span id="cb37-3"><a aria-hidden="true" tabindex="-1"></a>                  <span class="at">direction =</span> <span class="st">"both"</span>, <span class="at">trace =</span> <span class="dv">0</span>)</span>
+<span id="cb37-4"><a aria-hidden="true" tabindex="-1"></a><span class="fu">formula</span>(m_forzado)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>bwt ~ age + lwt + race + smoke + ht + ui</code></pre>
+</div>
+</div>
+<div class="alerta">
+<p>Todos los modelos deben ajustarse con las <strong>mismas observaciones</strong>: elimine los NA <strong>antes</strong> (<code>na.omit()</code> sobre las variables candidatas). Si no, <code>step()</code> se detiene con error o compara modelos con distinto <em>n</em>.</p>
+</div>
+</section>
+<section id="regularización-con-glmnet" class="slide level2">
+<h2>6.2 Regularización con <code>glmnet</code></h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a aria-hidden="true" tabindex="-1"></a><span class="co"># glmnet necesita una matriz de predictores (model.matrix crea las dummies) y un vector Y</span></span>
+<span id="cb39-2"><a aria-hidden="true" tabindex="-1"></a>X_pbc <span class="ot">&lt;-</span> <span class="fu">model.matrix</span>(log_bili <span class="sc">~</span> ., <span class="at">data =</span> pbc2)[, <span class="sc">-</span><span class="dv">1</span>]   <span class="co"># [, -1] quita el intercepto</span></span>
+<span id="cb39-3"><a aria-hidden="true" tabindex="-1"></a>y_pbc <span class="ot">&lt;-</span> pbc2<span class="sc">$</span>log_bili</span>
+<span id="cb39-4"><a aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-5"><a aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
+<span id="cb39-6"><a aria-hidden="true" tabindex="-1"></a>cv_lasso <span class="ot">&lt;-</span> <span class="fu">cv.glmnet</span>(X_pbc, y_pbc, <span class="at">alpha =</span> <span class="dv">1</span>)     <span class="co"># LASSO con validación cruzada de 10 pliegues</span></span>
+<span id="cb39-7"><a aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(cv_lasso)                                      <span class="co"># error de VC según lambda</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+
+</div>
+<img data-src="Modelos_lineales_P4_files/figure-revealjs/glmnet-cv-1.png" width="1200" class="r-stretch"><div class="small">
+<p>Línea izquierda: λ con <strong>mínimo</strong> error (<code>lambda.min</code>). Línea derecha: λ más grande con error a 1 EE del mínimo (<code>lambda.1se</code>), un modelo <strong>más simple</strong> con error similar.</p>
+</div>
+</section>
+<section id="coeficientes-de-lasso-ridge-y-elastic-net" class="slide level2">
+<h2>Coeficientes de LASSO, ridge y elastic net</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>); cv_ridge <span class="ot">&lt;-</span> <span class="fu">cv.glmnet</span>(X_pbc, y_pbc, <span class="at">alpha =</span> <span class="dv">0</span>)     <span class="co"># ridge</span></span>
+<span id="cb40-2"><a aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>); cv_enet  <span class="ot">&lt;-</span> <span class="fu">cv.glmnet</span>(X_pbc, y_pbc, <span class="at">alpha =</span> <span class="fl">0.5</span>)   <span class="co"># elastic net</span></span>
+<span id="cb40-3"><a aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-4"><a aria-hidden="true" tabindex="-1"></a>coefs <span class="ot">&lt;-</span> <span class="fu">cbind</span>(<span class="at">ridge  =</span> <span class="fu">coef</span>(cv_ridge, <span class="at">s =</span> <span class="st">"lambda.1se"</span>)[, <span class="dv">1</span>],</span>
+<span id="cb40-5"><a aria-hidden="true" tabindex="-1"></a>               <span class="at">lasso  =</span> <span class="fu">coef</span>(cv_lasso, <span class="at">s =</span> <span class="st">"lambda.1se"</span>)[, <span class="dv">1</span>],</span>
+<span id="cb40-6"><a aria-hidden="true" tabindex="-1"></a>               <span class="at">e_net  =</span> <span class="fu">coef</span>(cv_enet,  <span class="at">s =</span> <span class="st">"lambda.1se"</span>)[, <span class="dv">1</span>])</span>
+<span id="cb40-7"><a aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(coefs, <span class="dv">4</span>)    <span class="co"># un 0 exacto = variable eliminada</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>              ridge   lasso   e_net
+(Intercept) -0.9867 -1.4449 -1.3742
+age          0.0000  0.0000  0.0000
+ascites      0.2691  0.1768  0.1949
+hepato       0.1743  0.1745  0.1724
+spiders      0.1515  0.0692  0.0836
+edema        0.3256  0.4249  0.3943
+chol         0.0007  0.0009  0.0009
+albumin     -0.1523 -0.0453 -0.0654
+copper       0.0018  0.0026  0.0025
+alk.phos     0.0000  0.0000  0.0000
+ast          0.0032  0.0042  0.0040
+trig         0.0019  0.0019  0.0019
+platelet    -0.0004  0.0000 -0.0001
+protime      0.0687  0.0489  0.0526
+stage        0.0811  0.0571  0.0604
+mujer       -0.0579  0.0000  0.0000</code></pre>
+</div>
+</div>
+</section>
+<section id="comparación-de-métodos-y-variables-seleccionadas" class="slide level2">
+<h2>6.3 Comparación de métodos y variables seleccionadas</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a aria-hidden="true" tabindex="-1"></a>completo_pbc <span class="ot">&lt;-</span> <span class="fu">lm</span>(log_bili <span class="sc">~</span> ., <span class="at">data =</span> pbc2)</span>
+<span id="cb42-2"><a aria-hidden="true" tabindex="-1"></a>m_pbc_aic <span class="ot">&lt;-</span> <span class="fu">step</span>(completo_pbc, <span class="at">trace =</span> <span class="dv">0</span>)                       <span class="co"># backward AIC</span></span>
+<span id="cb42-3"><a aria-hidden="true" tabindex="-1"></a>m_pbc_bic <span class="ot">&lt;-</span> <span class="fu">step</span>(completo_pbc, <span class="at">k =</span> <span class="fu">log</span>(<span class="fu">nrow</span>(pbc2)), <span class="at">trace =</span> <span class="dv">0</span>)  <span class="co"># backward BIC</span></span>
+<span id="cb42-4"><a aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-5"><a aria-hidden="true" tabindex="-1"></a>todas <span class="ot">&lt;-</span> <span class="fu">colnames</span>(X_pbc)</span>
+<span id="cb42-6"><a aria-hidden="true" tabindex="-1"></a>comparacion <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb42-7"><a aria-hidden="true" tabindex="-1"></a>  <span class="at">variable =</span> todas,</span>
+<span id="cb42-8"><a aria-hidden="true" tabindex="-1"></a>  <span class="at">AIC   =</span> todas <span class="sc">%in%</span> <span class="fu">variables</span>(m_pbc_aic),</span>
+<span id="cb42-9"><a aria-hidden="true" tabindex="-1"></a>  <span class="at">BIC   =</span> todas <span class="sc">%in%</span> <span class="fu">variables</span>(m_pbc_bic),</span>
+<span id="cb42-10"><a aria-hidden="true" tabindex="-1"></a>  <span class="at">LASSO =</span> <span class="fu">coef</span>(cv_lasso, <span class="at">s =</span> <span class="st">"lambda.1se"</span>)[<span class="sc">-</span><span class="dv">1</span>, <span class="dv">1</span>] <span class="sc">!=</span> <span class="dv">0</span>,</span>
+<span id="cb42-11"><a aria-hidden="true" tabindex="-1"></a>  <span class="at">e_net =</span> <span class="fu">coef</span>(cv_enet,  <span class="at">s =</span> <span class="st">"lambda.1se"</span>)[<span class="sc">-</span><span class="dv">1</span>, <span class="dv">1</span>] <span class="sc">!=</span> <span class="dv">0</span>)</span>
+<span id="cb42-12"><a aria-hidden="true" tabindex="-1"></a>comparacion<span class="sc">$</span>n_metodos <span class="ot">&lt;-</span> <span class="fu">rowSums</span>(comparacion[, <span class="sc">-</span><span class="dv">1</span>])</span>
+<span id="cb42-13"><a aria-hidden="true" tabindex="-1"></a>comparacion[<span class="fu">order</span>(<span class="sc">-</span>comparacion<span class="sc">$</span>n_metodos), ]</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>         variable   AIC   BIC LASSO e_net n_metodos
+hepato     hepato  TRUE  TRUE  TRUE  TRUE         4
+edema       edema  TRUE  TRUE  TRUE  TRUE         4
+chol         chol  TRUE  TRUE  TRUE  TRUE         4
+copper     copper  TRUE  TRUE  TRUE  TRUE         4
+ast           ast  TRUE  TRUE  TRUE  TRUE         4
+trig         trig  TRUE  TRUE  TRUE  TRUE         4
+platelet platelet  TRUE  TRUE  TRUE  TRUE         4
+protime   protime  TRUE  TRUE  TRUE  TRUE         4
+spiders   spiders  TRUE FALSE  TRUE  TRUE         3
+stage       stage  TRUE FALSE  TRUE  TRUE         3
+ascites   ascites FALSE FALSE  TRUE  TRUE         2
+albumin   albumin FALSE FALSE  TRUE  TRUE         2
+age           age FALSE FALSE FALSE FALSE         0
+alk.phos alk.phos FALSE FALSE FALSE FALSE         0
+mujer       mujer FALSE FALSE FALSE FALSE         0</code></pre>
+</div>
+</div>
+<div class="small">
+<p>Las variables elegidas por <strong>todos</strong> los métodos son las más confiables; las que dependen del método merecen cautela.</p>
+</div>
+</section>
+<section id="evaluación-del-rendimiento-de-los-modelos" class="slide level2">
+<h2>6.4 Evaluación del rendimiento de los modelos</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a aria-hidden="true" tabindex="-1"></a><span class="co"># Rendimiento aparente (en los mismos datos)</span></span>
+<span id="cb44-2"><a aria-hidden="true" tabindex="-1"></a><span class="fu">compare_performance</span>(completo_pbc, m_pbc_aic, m_pbc_bic, <span class="at">metrics =</span> <span class="fu">c</span>(<span class="st">"AIC"</span>, <span class="st">"BIC"</span>, <span class="st">"R2_adj"</span>, <span class="st">"RMSE"</span>))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># Comparison of Model Performance Indices
+
+Name         | Model | AIC (weights) | BIC (weights) | R2 (adj.) |  RMSE
+------------------------------------------------------------------------
+completo_pbc |    lm | 538.9 (0.021) | 600.5 (&lt;.001) |     0.637 | 0.604
+m_pbc_aic    |    lm | 531.9 (0.729) | 575.3 (0.072) |     0.640 | 0.607
+m_pbc_bic    |    lm | 534.0 (0.250) | 570.2 (0.928) |     0.635 | 0.614</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a aria-hidden="true" tabindex="-1"></a><span class="co"># Rendimiento en datos no usados: validación cruzada de 10 pliegues</span></span>
+<span id="cb46-2"><a aria-hidden="true" tabindex="-1"></a>rmse_cv <span class="ot">&lt;-</span> <span class="cf">function</span>(modelo) {</span>
+<span id="cb46-3"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">set.seed</span>(<span class="dv">123</span>)                                    <span class="co"># mismos pliegues para todos los modelos</span></span>
+<span id="cb46-4"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">performance_cv</span>(modelo, <span class="at">method =</span> <span class="st">"k_fold"</span>, <span class="at">k =</span> <span class="dv">10</span>)<span class="sc">$</span>RMSE</span>
+<span id="cb46-5"><a aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb46-6"><a aria-hidden="true" tabindex="-1"></a><span class="fu">c</span>(<span class="at">completo =</span> <span class="fu">rmse_cv</span>(completo_pbc), <span class="at">AIC =</span> <span class="fu">rmse_cv</span>(m_pbc_aic), <span class="at">BIC =</span> <span class="fu">rmse_cv</span>(m_pbc_bic))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>completo      AIC      BIC 
+  0.6473   0.6387   0.6410 </code></pre>
+</div>
+</div>
+<div class="small">
+<p>Compare el RMSE aparente con el de validación cruzada: la diferencia es el <strong>optimismo</strong>. Un modelo más simple puede predecir igual o mejor en datos nuevos.</p>
+</div>
+</section>
+<section id="la-puerta-a-la-regresión-logística" class="slide level2">
+<h2>La puerta a la regresión logística</h2>
+<p>Todo lo anterior funciona con un desenlace <strong>binario</strong> cambiando una línea:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a aria-hidden="true" tabindex="-1"></a><span class="co"># Selección secuencial en regresión logística</span></span>
+<span id="cb48-2"><a aria-hidden="true" tabindex="-1"></a>completo_log <span class="ot">&lt;-</span> <span class="fu">glm</span>(low <span class="sc">~</span> age <span class="sc">+</span> lwt <span class="sc">+</span> race <span class="sc">+</span> smoke <span class="sc">+</span> ptl <span class="sc">+</span> ht <span class="sc">+</span> ui <span class="sc">+</span> ftv,</span>
+<span id="cb48-3"><a aria-hidden="true" tabindex="-1"></a>                    <span class="at">data =</span> birthwt, <span class="at">family =</span> binomial)</span>
+<span id="cb48-4"><a aria-hidden="true" tabindex="-1"></a><span class="fu">step</span>(completo_log, <span class="at">direction =</span> <span class="st">"backward"</span>)</span>
+<span id="cb48-5"><a aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb48-6"><a aria-hidden="true" tabindex="-1"></a><span class="co"># LASSO logístico</span></span>
+<span id="cb48-7"><a aria-hidden="true" tabindex="-1"></a><span class="fu">cv.glmnet</span>(X, y_binaria, <span class="at">alpha =</span> <span class="dv">1</span>, <span class="at">family =</span> <span class="st">"binomial"</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div class="clave">
+<p>Próximo tema: <strong>regresión logística</strong>. Los criterios (AIC, BIC, LRT), la validación y las advertencias sobre la selección automática son los mismos.</p>
+</div>
+</section></section>
+<section>
+<section id="resolución-de-la-tarea" class="title-slide slide level1 center" data-background-color="#1f4e79">
+<h1>7. Resolución de la tarea</h1>
+
+</section>
+<section id="base-1-farawaydiabetes-preparación" class="slide level2">
+<h2>Base 1 — <code>faraway::diabetes</code>: preparación</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(diabetes, <span class="at">package =</span> <span class="st">"faraway"</span>)</span>
+<span id="cb49-2"><a aria-hidden="true" tabindex="-1"></a>diab <span class="ot">&lt;-</span> diabetes</span>
+<span id="cb49-3"><a aria-hidden="true" tabindex="-1"></a>diab<span class="sc">$</span>bmi <span class="ot">&lt;-</span> <span class="dv">703</span> <span class="sc">*</span> diab<span class="sc">$</span>weight <span class="sc">/</span> diab<span class="sc">$</span>height<span class="sc">^</span><span class="dv">2</span>      <span class="co"># libras y pulgadas → kg/m²</span></span>
+<span id="cb49-4"><a aria-hidden="true" tabindex="-1"></a>diab <span class="ot">&lt;-</span> <span class="fu">na.omit</span>(diab[, <span class="fu">c</span>(<span class="st">"stab.glu"</span>, <span class="st">"chol"</span>, <span class="st">"hdl"</span>, <span class="st">"glyhb"</span>, <span class="st">"location"</span>, <span class="st">"age"</span>, <span class="st">"gender"</span>,</span>
+<span id="cb49-5"><a aria-hidden="true" tabindex="-1"></a>                         <span class="st">"bmi"</span>, <span class="st">"frame"</span>, <span class="st">"bp.1s"</span>, <span class="st">"bp.1d"</span>, <span class="st">"waist"</span>, <span class="st">"hip"</span>, <span class="st">"time.ppn"</span>)])</span>
+<span id="cb49-6"><a aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(diab)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 366  14</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a aria-hidden="true" tabindex="-1"></a>t1_completo <span class="ot">&lt;-</span> <span class="fu">lm</span>(stab.glu <span class="sc">~</span> ., <span class="at">data =</span> diab)</span>
+<span id="cb51-2"><a aria-hidden="true" tabindex="-1"></a>t1_nulo     <span class="ot">&lt;-</span> <span class="fu">lm</span>(stab.glu <span class="sc">~</span> <span class="dv">1</span>, <span class="at">data =</span> diab)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="base-1-forward-backward-y-stepwise" class="slide level2">
+<h2>Base 1 — forward, backward y stepwise</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a aria-hidden="true" tabindex="-1"></a>t1_forward  <span class="ot">&lt;-</span> <span class="fu">step</span>(t1_nulo, <span class="at">scope =</span> <span class="fu">formula</span>(t1_completo), <span class="at">direction =</span> <span class="st">"forward"</span>, <span class="at">trace =</span> <span class="dv">0</span>)</span>
+<span id="cb52-2"><a aria-hidden="true" tabindex="-1"></a>t1_backward <span class="ot">&lt;-</span> <span class="fu">step</span>(t1_completo, <span class="at">direction =</span> <span class="st">"backward"</span>, <span class="at">trace =</span> <span class="dv">0</span>)</span>
+<span id="cb52-3"><a aria-hidden="true" tabindex="-1"></a>t1_stepwise <span class="ot">&lt;-</span> <span class="fu">step</span>(t1_nulo, <span class="at">scope =</span> <span class="fu">formula</span>(t1_completo), <span class="at">direction =</span> <span class="st">"both"</span>, <span class="at">trace =</span> <span class="dv">0</span>)</span>
+<span id="cb52-4"><a aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-5"><a aria-hidden="true" tabindex="-1"></a><span class="fu">formula</span>(t1_forward)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>stab.glu ~ glyhb + time.ppn + frame</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb54"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">formula</span>(t1_backward)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>stab.glu ~ glyhb + gender + time.ppn</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb56"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">formula</span>(t1_stepwise)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>stab.glu ~ glyhb + time.ppn + frame</code></pre>
+</div>
+</div>
+</section>
+<section id="base-1-modelos-seleccionados" class="slide level2">
+<h2>Base 1 — modelos seleccionados</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb58"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb58-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">compare_performance</span>(t1_forward, t1_backward, t1_stepwise, <span class="at">metrics =</span> <span class="fu">c</span>(<span class="st">"AIC"</span>, <span class="st">"BIC"</span>, <span class="st">"R2_adj"</span>, <span class="st">"RMSE"</span>))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># Comparison of Model Performance Indices
+
+Name        | Model |  AIC (weights) |  BIC (weights) | R2 (adj.) |   RMSE
+--------------------------------------------------------------------------
+t1_forward  |    lm | 3669.8 (0.376) | 3693.2 (0.151) |     0.556 | 35.802
+t1_backward |    lm | 3670.6 (0.247) | 3690.1 (0.698) |     0.554 | 35.941
+t1_stepwise |    lm | 3669.8 (0.376) | 3693.2 (0.151) |     0.556 | 35.802</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb60"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb60-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(<span class="fu">summary</span>(t1_backward)<span class="sc">$</span>coefficients, <span class="dv">4</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>             Estimate Std. Error t value Pr(&gt;|t|)
+(Intercept)   14.6178     6.0125   2.431   0.0155
+glyhb         17.9762     0.8494  21.165   0.0000
+genderfemale  -5.8459     3.8397  -1.522   0.1288
+time.ppn      -0.0135     0.0061  -2.220   0.0271</code></pre>
+</div>
+</div>
+</section>
+<section id="base-2-nhanes-preparación" class="slide level2">
+<h2>Base 2 — <code>NHANES</code>: preparación</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb62"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb62-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(NHANES, <span class="at">package =</span> <span class="st">"NHANES"</span>)</span>
+<span id="cb62-2"><a aria-hidden="true" tabindex="-1"></a>nh <span class="ot">&lt;-</span> NHANES[<span class="sc">!</span><span class="fu">duplicated</span>(NHANES<span class="sc">$</span>ID) <span class="sc">&amp;</span> NHANES<span class="sc">$</span>Age <span class="sc">&gt;=</span> <span class="dv">20</span>, ]   <span class="co"># una fila por persona, adultos</span></span>
+<span id="cb62-3"><a aria-hidden="true" tabindex="-1"></a>nh <span class="ot">&lt;-</span> <span class="fu">na.omit</span>(nh[, <span class="fu">c</span>(<span class="st">"BPSysAve"</span>, <span class="st">"Age"</span>, <span class="st">"Gender"</span>, <span class="st">"Race1"</span>, <span class="st">"Education"</span>, <span class="st">"Poverty"</span>, <span class="st">"BMI"</span>,</span>
+<span id="cb62-4"><a aria-hidden="true" tabindex="-1"></a>                     <span class="st">"Pulse"</span>, <span class="st">"TotChol"</span>, <span class="st">"DirectChol"</span>, <span class="st">"Diabetes"</span>, <span class="st">"PhysActive"</span>,</span>
+<span id="cb62-5"><a aria-hidden="true" tabindex="-1"></a>                     <span class="st">"Smoke100"</span>, <span class="st">"SleepHrsNight"</span>)])</span>
+<span id="cb62-6"><a aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(nh)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 3869   14</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb64"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb64-1"><a aria-hidden="true" tabindex="-1"></a>t2_completo <span class="ot">&lt;-</span> <span class="fu">lm</span>(BPSysAve <span class="sc">~</span> ., <span class="at">data =</span> nh)</span>
+<span id="cb64-2"><a aria-hidden="true" tabindex="-1"></a>t2_nulo     <span class="ot">&lt;-</span> <span class="fu">lm</span>(BPSysAve <span class="sc">~</span> <span class="dv">1</span>, <span class="at">data =</span> nh)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="base-2-forward-backward-y-stepwise" class="slide level2">
+<h2>Base 2 — forward, backward y stepwise</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb65"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb65-1"><a aria-hidden="true" tabindex="-1"></a>t2_forward  <span class="ot">&lt;-</span> <span class="fu">step</span>(t2_nulo, <span class="at">scope =</span> <span class="fu">formula</span>(t2_completo), <span class="at">direction =</span> <span class="st">"forward"</span>, <span class="at">trace =</span> <span class="dv">0</span>)</span>
+<span id="cb65-2"><a aria-hidden="true" tabindex="-1"></a>t2_backward <span class="ot">&lt;-</span> <span class="fu">step</span>(t2_completo, <span class="at">direction =</span> <span class="st">"backward"</span>, <span class="at">trace =</span> <span class="dv">0</span>)</span>
+<span id="cb65-3"><a aria-hidden="true" tabindex="-1"></a>t2_stepwise <span class="ot">&lt;-</span> <span class="fu">step</span>(t2_nulo, <span class="at">scope =</span> <span class="fu">formula</span>(t2_completo), <span class="at">direction =</span> <span class="st">"both"</span>, <span class="at">trace =</span> <span class="dv">0</span>)</span>
+<span id="cb65-4"><a aria-hidden="true" tabindex="-1"></a>t2_bic      <span class="ot">&lt;-</span> <span class="fu">step</span>(t2_nulo, <span class="at">scope =</span> <span class="fu">formula</span>(t2_completo), <span class="at">direction =</span> <span class="st">"both"</span>,</span>
+<span id="cb65-5"><a aria-hidden="true" tabindex="-1"></a>                    <span class="at">k =</span> <span class="fu">log</span>(<span class="fu">nrow</span>(nh)), <span class="at">trace =</span> <span class="dv">0</span>)</span>
+<span id="cb65-6"><a aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-7"><a aria-hidden="true" tabindex="-1"></a><span class="fu">formula</span>(t2_forward)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>BPSysAve ~ Age + Gender + Poverty + BMI + TotChol + Race1 + Pulse + 
+    Diabetes + PhysActive + Education + DirectChol</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb67"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb67-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">formula</span>(t2_backward)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>BPSysAve ~ Age + Gender + Race1 + Education + Poverty + BMI + 
+    Pulse + TotChol + DirectChol + Diabetes + PhysActive</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb69"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb69-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">formula</span>(t2_stepwise)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>BPSysAve ~ Age + Gender + Poverty + BMI + TotChol + Race1 + Pulse + 
+    Diabetes + PhysActive + Education + DirectChol</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb71"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb71-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">formula</span>(t2_bic)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>BPSysAve ~ Age + Gender + Poverty + BMI + TotChol</code></pre>
+</div>
+</div>
+</section>
+<section id="base-2-modelos-seleccionados" class="slide level2">
+<h2>Base 2 — modelos seleccionados</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb73"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb73-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">compare_performance</span>(t2_stepwise, t2_bic, <span class="at">metrics =</span> <span class="fu">c</span>(<span class="st">"AIC"</span>, <span class="st">"BIC"</span>, <span class="st">"R2_adj"</span>, <span class="st">"RMSE"</span>))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># Comparison of Model Performance Indices
+
+Name        | Model |   AIC (weights) |   BIC (weights) | R2 (adj.) |   RMSE
+----------------------------------------------------------------------------
+t2_stepwise |    lm | 31964.1 (&gt;.999) | 32083.0 (&lt;.001) |     0.233 | 14.983
+t2_bic      |    lm | 32005.1 (&lt;.001) | 32048.9 (&gt;.999) |     0.223 | 15.110</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb75"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb75-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(<span class="fu">summary</span>(t2_bic)<span class="sc">$</span>coefficients, <span class="dv">4</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>            Estimate Std. Error t value Pr(&gt;|t|)
+(Intercept)  88.9292     1.7187  51.743        0
+Age           0.4293     0.0143  30.019        0
+Gendermale    4.9958     0.4885  10.226        0
+Poverty      -0.9733     0.1479  -6.583        0
+BMI           0.2103     0.0357   5.883        0
+TotChol       1.1828     0.2324   5.090        0</code></pre>
+</div>
+</div>
+</section>
+<section id="base-3-riskcommunicatorframingham-preparación" class="slide level2">
+<h2>Base 3 — <code>riskCommunicator::framingham</code>: preparación</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb77"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb77-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(framingham, <span class="at">package =</span> <span class="st">"riskCommunicator"</span>)</span>
+<span id="cb77-2"><a aria-hidden="true" tabindex="-1"></a>fr <span class="ot">&lt;-</span> <span class="fu">subset</span>(framingham, PERIOD <span class="sc">==</span> <span class="dv">1</span>)                         <span class="co"># visita basal</span></span>
+<span id="cb77-3"><a aria-hidden="true" tabindex="-1"></a>fr<span class="sc">$</span>SEX  <span class="ot">&lt;-</span> <span class="fu">factor</span>(fr<span class="sc">$</span>SEX, <span class="at">levels =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>, <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"Hombre"</span>, <span class="st">"Mujer"</span>))</span>
+<span id="cb77-4"><a aria-hidden="true" tabindex="-1"></a>fr<span class="sc">$</span>educ <span class="ot">&lt;-</span> <span class="fu">factor</span>(fr<span class="sc">$</span>educ)</span>
+<span id="cb77-5"><a aria-hidden="true" tabindex="-1"></a>fr <span class="ot">&lt;-</span> <span class="fu">na.omit</span>(fr[, <span class="fu">c</span>(<span class="st">"TOTCHOL"</span>, <span class="st">"SEX"</span>, <span class="st">"AGE"</span>, <span class="st">"SYSBP"</span>, <span class="st">"DIABP"</span>, <span class="st">"CURSMOKE"</span>, <span class="st">"CIGPDAY"</span>, <span class="st">"BMI"</span>,</span>
+<span id="cb77-6"><a aria-hidden="true" tabindex="-1"></a>                     <span class="st">"DIABETES"</span>, <span class="st">"BPMEDS"</span>, <span class="st">"HEARTRTE"</span>, <span class="st">"GLUCOSE"</span>, <span class="st">"educ"</span>, <span class="st">"PREVCHD"</span>, <span class="st">"PREVHYP"</span>)])</span>
+<span id="cb77-7"><a aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(fr)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 3826   15</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb79"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb79-1"><a aria-hidden="true" tabindex="-1"></a>t3_completo <span class="ot">&lt;-</span> <span class="fu">lm</span>(TOTCHOL <span class="sc">~</span> ., <span class="at">data =</span> fr)</span>
+<span id="cb79-2"><a aria-hidden="true" tabindex="-1"></a>t3_nulo     <span class="ot">&lt;-</span> <span class="fu">lm</span>(TOTCHOL <span class="sc">~</span> <span class="dv">1</span>, <span class="at">data =</span> fr)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="base-3-forward-backward-y-stepwise" class="slide level2">
+<h2>Base 3 — forward, backward y stepwise</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb80"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb80-1"><a aria-hidden="true" tabindex="-1"></a>t3_forward  <span class="ot">&lt;-</span> <span class="fu">step</span>(t3_nulo, <span class="at">scope =</span> <span class="fu">formula</span>(t3_completo), <span class="at">direction =</span> <span class="st">"forward"</span>, <span class="at">trace =</span> <span class="dv">0</span>)</span>
+<span id="cb80-2"><a aria-hidden="true" tabindex="-1"></a>t3_backward <span class="ot">&lt;-</span> <span class="fu">step</span>(t3_completo, <span class="at">direction =</span> <span class="st">"backward"</span>, <span class="at">trace =</span> <span class="dv">0</span>)</span>
+<span id="cb80-3"><a aria-hidden="true" tabindex="-1"></a>t3_stepwise <span class="ot">&lt;-</span> <span class="fu">step</span>(t3_nulo, <span class="at">scope =</span> <span class="fu">formula</span>(t3_completo), <span class="at">direction =</span> <span class="st">"both"</span>, <span class="at">trace =</span> <span class="dv">0</span>)</span>
+<span id="cb80-4"><a aria-hidden="true" tabindex="-1"></a>t3_bic      <span class="ot">&lt;-</span> <span class="fu">step</span>(t3_nulo, <span class="at">scope =</span> <span class="fu">formula</span>(t3_completo), <span class="at">direction =</span> <span class="st">"both"</span>,</span>
+<span id="cb80-5"><a aria-hidden="true" tabindex="-1"></a>                    <span class="at">k =</span> <span class="fu">log</span>(<span class="fu">nrow</span>(fr)), <span class="at">trace =</span> <span class="dv">0</span>)</span>
+<span id="cb80-6"><a aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb80-7"><a aria-hidden="true" tabindex="-1"></a><span class="fu">formula</span>(t3_forward)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>TOTCHOL ~ AGE + DIABP + HEARTRTE + SEX + BMI + CIGPDAY + educ + 
+    BPMEDS + PREVCHD</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb82"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb82-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">formula</span>(t3_backward)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>TOTCHOL ~ SEX + AGE + DIABP + CIGPDAY + BMI + BPMEDS + HEARTRTE + 
+    educ + PREVCHD</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb84"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb84-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">formula</span>(t3_stepwise)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>TOTCHOL ~ AGE + DIABP + HEARTRTE + SEX + BMI + CIGPDAY + educ + 
+    BPMEDS + PREVCHD</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb86"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb86-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">formula</span>(t3_bic)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>TOTCHOL ~ AGE + DIABP + HEARTRTE + SEX + BMI</code></pre>
+</div>
+</div>
+</section>
+<section id="base-3-modelos-seleccionados" class="slide level2">
+<h2>Base 3 — modelos seleccionados</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb88"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb88-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">compare_performance</span>(t3_stepwise, t3_bic, <span class="at">metrics =</span> <span class="fu">c</span>(<span class="st">"AIC"</span>, <span class="st">"BIC"</span>, <span class="st">"R2_adj"</span>, <span class="st">"RMSE"</span>))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># Comparison of Model Performance Indices
+
+Name        | Model |   AIC (weights) |   BIC (weights) | R2 (adj.) |   RMSE
+----------------------------------------------------------------------------
+t3_stepwise |    lm | 39479.7 (0.999) | 39560.9 (&lt;.001) |     0.097 | 41.974
+t3_bic      |    lm | 39493.9 (&lt;.001) | 39537.7 (&gt;.999) |     0.092 | 42.118</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb90"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb90-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(<span class="fu">summary</span>(t3_bic)<span class="sc">$</span>coefficients, <span class="dv">4</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>            Estimate Std. Error t value Pr(&gt;|t|)
+(Intercept) 111.2584     7.1505  15.559   0.0000
+AGE           1.1427     0.0806  14.180   0.0000
+DIABP         0.3514     0.0628   5.598   0.0000
+HEARTRTE      0.2538     0.0579   4.384   0.0000
+SEXMujer      5.9115     1.3824   4.276   0.0000
+BMI           0.6645     0.1813   3.666   0.0003</code></pre>
+</div>
+</div>
+</section>
+<section id="resumen-de-variables-seleccionadas" class="slide level2">
+<h2>Resumen de variables seleccionadas</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb92"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb92-1"><a aria-hidden="true" tabindex="-1"></a>resumen <span class="ot">&lt;-</span> <span class="cf">function</span>(completo, forward, backward, stepwise) {</span>
+<span id="cb92-2"><a aria-hidden="true" tabindex="-1"></a>  v <span class="ot">&lt;-</span> <span class="fu">variables</span>(completo)</span>
+<span id="cb92-3"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">data.frame</span>(<span class="at">variable =</span> v, <span class="at">forward =</span> v <span class="sc">%in%</span> <span class="fu">variables</span>(forward),</span>
+<span id="cb92-4"><a aria-hidden="true" tabindex="-1"></a>             <span class="at">backward =</span> v <span class="sc">%in%</span> <span class="fu">variables</span>(backward), <span class="at">stepwise =</span> v <span class="sc">%in%</span> <span class="fu">variables</span>(stepwise))</span>
+<span id="cb92-5"><a aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb92-6"><a aria-hidden="true" tabindex="-1"></a><span class="fu">resumen</span>(t1_completo, t1_forward, t1_backward, t1_stepwise)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   variable forward backward stepwise
+1      chol   FALSE    FALSE    FALSE
+2       hdl   FALSE    FALSE    FALSE
+3     glyhb    TRUE     TRUE     TRUE
+4  location   FALSE    FALSE    FALSE
+5       age   FALSE    FALSE    FALSE
+6    gender   FALSE     TRUE    FALSE
+7       bmi   FALSE    FALSE    FALSE
+8     frame    TRUE    FALSE     TRUE
+9     bp.1s   FALSE    FALSE    FALSE
+10    bp.1d   FALSE    FALSE    FALSE
+11    waist   FALSE    FALSE    FALSE
+12      hip   FALSE    FALSE    FALSE
+13 time.ppn    TRUE     TRUE     TRUE</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb94"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb94-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">resumen</span>(t2_completo, t2_forward, t2_backward, t2_stepwise)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>        variable forward backward stepwise
+1            Age    TRUE     TRUE     TRUE
+2         Gender    TRUE     TRUE     TRUE
+3          Race1    TRUE     TRUE     TRUE
+4      Education    TRUE     TRUE     TRUE
+5        Poverty    TRUE     TRUE     TRUE
+6            BMI    TRUE     TRUE     TRUE
+7          Pulse    TRUE     TRUE     TRUE
+8        TotChol    TRUE     TRUE     TRUE
+9     DirectChol    TRUE     TRUE     TRUE
+10      Diabetes    TRUE     TRUE     TRUE
+11    PhysActive    TRUE     TRUE     TRUE
+12      Smoke100   FALSE    FALSE    FALSE
+13 SleepHrsNight   FALSE    FALSE    FALSE</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb96"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb96-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">resumen</span>(t3_completo, t3_forward, t3_backward, t3_stepwise)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   variable forward backward stepwise
+1       SEX    TRUE     TRUE     TRUE
+2       AGE    TRUE     TRUE     TRUE
+3     SYSBP   FALSE    FALSE    FALSE
+4     DIABP    TRUE     TRUE     TRUE
+5  CURSMOKE   FALSE    FALSE    FALSE
+6   CIGPDAY    TRUE     TRUE     TRUE
+7       BMI    TRUE     TRUE     TRUE
+8  DIABETES   FALSE    FALSE    FALSE
+9    BPMEDS    TRUE     TRUE     TRUE
+10 HEARTRTE    TRUE     TRUE     TRUE
+11  GLUCOSE   FALSE    FALSE    FALSE
+12     educ    TRUE     TRUE     TRUE
+13  PREVCHD    TRUE     TRUE     TRUE
+14  PREVHYP   FALSE    FALSE    FALSE</code></pre>
+</div>
+</div>
+</section></section>
+<section>
+<section id="cierre" class="title-slide slide level1 center" data-background-color="#1f4e79">
+<h1>Cierre</h1>
+
+</section>
+<section id="mensajes-clave" class="slide level2 scrollable">
+<h2>Mensajes clave</h2>
+<ol type="1">
+<li>Defina primero el <strong>objetivo</strong>: explicar (inferencia) o predecir. Cambia el método adecuado.</li>
+<li><em>Forward</em>, <em>backward</em> y <em>stepwise</em> exploran un <strong>camino</strong> de modelos; pueden llegar a modelos distintos.</li>
+<li>El criterio importa: <strong>AIC</strong> (predicción, ≈ α 0.157) es más permisivo que <strong>BIC</strong> (parsimonia).</li>
+<li><strong>Ridge</strong> encoge, <strong>LASSO</strong> encoge y selecciona, <strong>elastic net</strong> maneja grupos correlacionados; λ se elige por <strong>validación cruzada</strong>.</li>
+<li>La selección automática es <strong>inestable</strong> (bootstrap) y produce <em>p</em>, IC y coeficientes <strong>optimistas</strong> (Freedman, maldición del ganador).</li>
+<li>Para inferencia: <strong>conocimiento previo primero</strong>; si usa algoritmos, fuerce confusores, reporte el método y evalúe la estabilidad <span class="citation" data-cites="heinze2018variable heinze2017five">(<a href="#/referencias" role="doc-biblioref" onclick="">Heinze, Wallisch, y Dunkler 2018</a>; <a href="#/referencias" role="doc-biblioref" onclick="">Heinze y Dunkler 2017</a>)</span>.</li>
+</ol>
+</section>
+<section id="recomendaciones-prácticas" class="slide level2">
+<h2>Recomendaciones prácticas</h2>
+<table class="caption-top">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Situación</th>
+<th>Recomendación</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Pocas candidatas, objetivo explicativo</td>
+<td>Modelo por conocimiento (DAG) o <em>purposeful</em>; sin selección automática</td>
+</tr>
+<tr class="even">
+<td>Muchas candidatas, objetivo exploratorio</td>
+<td><em>Backward</em> con AIC + bootstrap de estabilidad; resultados como <strong>hipótesis</strong></td>
+</tr>
+<tr class="odd">
+<td>Objetivo predictivo</td>
+<td>LASSO / <em>elastic net</em> con validación cruzada; validar externamente</td>
+</tr>
+<tr class="even">
+<td>Alta dimensión (genómica, <span class="math inline">\(p \gg n\)</span>)</td>
+<td><em>Elastic net</em>, <em>stability selection</em></td>
+</tr>
+<tr class="odd">
+<td>Siempre</td>
+<td>Mismo <em>n</em> (sin NA), declarar criterios, diagnosticar el modelo final</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="referencias" class="slide level2 smaller scrollable">
+<h2>Referencias</h2>
+<div id="refs" class="small references csl-bib-body hanging-indent" data-entry-spacing="0" role="list">
+<div id="ref-akaike1974new" class="csl-entry" role="listitem">
+Akaike, Hirotugu. 1974. <span>«A New Look at the Statistical Model Identification»</span>. <em>IEEE Transactions on Automatic Control</em> 19 (6): 716-23. <a href="https://doi.org/10.1109/TAC.1974.1100705">https://doi.org/10.1109/TAC.1974.1100705</a>.
+</div>
+<div id="ref-austin2004bootstrap" class="csl-entry" role="listitem">
+Austin, Peter C., y Jack V. Tu. 2004. <span>«Bootstrap Methods for Developing Predictive Models»</span>. <em>The American Statistician</em> 58 (2): 131-37. <a href="https://doi.org/10.1198/0003130043277">https://doi.org/10.1198/0003130043277</a>.
+</div>
+<div id="ref-berk2013valid" class="csl-entry" role="listitem">
+Berk, Richard, Lawrence Brown, Andreas Buja, Kai Zhang, y Linda Zhao. 2013. <span>«Valid Post-Selection Inference»</span>. <em>The Annals of Statistics</em> 41 (2): 802-37. <a href="https://doi.org/10.1214/12-AOS1077">https://doi.org/10.1214/12-AOS1077</a>.
+</div>
+<div id="ref-burnham2002model" class="csl-entry" role="listitem">
+Burnham, Kenneth P., y David R. Anderson. 2002. <em>Model Selection and Multimodel Inference: A Practical Information-Theoretic Approach</em>. 2.ª ed. New York: Springer.
+</div>
+<div id="ref-bursac2008purposeful" class="csl-entry" role="listitem">
+Bursac, Zoran, C. Heath Gauss, David Keith Williams, y David W. Hosmer. 2008. <span>«Purposeful Selection of Variables in Logistic Regression»</span>. <em>Source Code for Biology and Medicine</em> 3: 17. <a href="https://doi.org/10.1186/1751-0473-3-17">https://doi.org/10.1186/1751-0473-3-17</a>.
+</div>
+<div id="ref-denis2020univariate" class="csl-entry" role="listitem">
+Denis, Daniel J. 2020. <em>Univariate, Bivariate, and Multivariate Statistics Using R: Quantitative Tools for Data Analysis and Data Science</em>. Hoboken, NJ: John Wiley &amp; Sons, Inc.
+</div>
+<div id="ref-freedman1983note" class="csl-entry" role="listitem">
+Freedman, David A. 1983. <span>«A Note on Screening Regression Equations»</span>. <em>The American Statistician</em> 37 (2): 152-55. <a href="https://doi.org/10.1080/00031305.1983.10482729">https://doi.org/10.1080/00031305.1983.10482729</a>.
+</div>
+<div id="ref-harrell2015regression" class="csl-entry" role="listitem">
+Harrell, Jr., Frank E. 2015. <em>Regression Modeling Strategies: With Applications to Linear Models, Logistic and Ordinal Regression, and Survival Analysis</em>. 2.ª ed. Cham: Springer.
+</div>
+<div id="ref-hastie2009elements" class="csl-entry" role="listitem">
+Hastie, Trevor, Robert Tibshirani, y Jerome Friedman. 2009. <em>The Elements of Statistical Learning: Data Mining, Inference, and Prediction</em>. 2.ª ed. New York: Springer. <a href="https://doi.org/10.1007/978-0-387-84858-7">https://doi.org/10.1007/978-0-387-84858-7</a>.
+</div>
+<div id="ref-heinze2017five" class="csl-entry" role="listitem">
+Heinze, Georg, y Daniela Dunkler. 2017. <span>«Five Myths about Variable Selection»</span>. <em>Transplant International</em> 30 (1): 6-10. <a href="https://doi.org/10.1111/tri.12895">https://doi.org/10.1111/tri.12895</a>.
+</div>
+<div id="ref-heinze2018variable" class="csl-entry" role="listitem">
+Heinze, Georg, Christine Wallisch, y Daniela Dunkler. 2018. <span>«Variable Selection – A Review and Recommendations for the Practicing Statistician»</span>. <em>Biometrical Journal</em> 60 (3): 431-49. <a href="https://doi.org/10.1002/bimj.201700067">https://doi.org/10.1002/bimj.201700067</a>.
+</div>
+<div id="ref-hoerl1970ridge" class="csl-entry" role="listitem">
+Hoerl, Arthur E., y Robert W. Kennard. 1970. <span>«Ridge Regression: Biased Estimation for Nonorthogonal Problems»</span>. <em>Technometrics</em> 12 (1): 55-67. <a href="https://doi.org/10.1080/00401706.1970.10488634">https://doi.org/10.1080/00401706.1970.10488634</a>.
+</div>
+<div id="ref-james2021introduction" class="csl-entry" role="listitem">
+James, Gareth, Daniela Witten, Trevor Hastie, y Robert Tibshirani. 2021. <em>An Introduction to Statistical Learning: With Applications in <span>R</span></em>. 2.ª ed. New York: Springer. <a href="https://doi.org/10.1007/978-1-0716-1418-1">https://doi.org/10.1007/978-1-0716-1418-1</a>.
+</div>
+<div id="ref-meinshausen2010stability" class="csl-entry" role="listitem">
+Meinshausen, Nicolai, y Peter Bühlmann. 2010. <span>«Stability Selection»</span>. <em>Journal of the Royal Statistical Society. Series B (Statistical Methodology)</em> 72 (4): 417-73. <a href="https://doi.org/10.1111/j.1467-9868.2010.00740.x">https://doi.org/10.1111/j.1467-9868.2010.00740.x</a>.
+</div>
+<div id="ref-sauerbrei1992bootstrap" class="csl-entry" role="listitem">
+Sauerbrei, Willi, y Martin Schumacher. 1992. <span>«A Bootstrap Resampling Procedure for Model Building: Application to the <span>C</span>ox Regression Model»</span>. <em>Statistics in Medicine</em> 11 (16): 2093-2109. <a href="https://doi.org/10.1002/sim.4780111607">https://doi.org/10.1002/sim.4780111607</a>.
+</div>
+<div id="ref-schwarz1978estimating" class="csl-entry" role="listitem">
+Schwarz, Gideon. 1978. <span>«Estimating the Dimension of a Model»</span>. <em>The Annals of Statistics</em> 6 (2): 461-64. <a href="https://doi.org/10.1214/aos/1176344136">https://doi.org/10.1214/aos/1176344136</a>.
+</div>
+<div id="ref-shmueli2010explain" class="csl-entry" role="listitem">
+Shmueli, Galit. 2010. <span>«To Explain or to Predict?»</span> <em>Statistical Science</em> 25 (3): 289-310. <a href="https://doi.org/10.1214/10-STS330">https://doi.org/10.1214/10-STS330</a>.
+</div>
+<div id="ref-smith2018step" class="csl-entry" role="listitem">
+Smith, Gary. 2018. <span>«Step Away from Stepwise»</span>. <em>Journal of Big Data</em> 5: 32. <a href="https://doi.org/10.1186/s40537-018-0143-6">https://doi.org/10.1186/s40537-018-0143-6</a>.
+</div>
+<div id="ref-tibshirani1996regression" class="csl-entry" role="listitem">
+Tibshirani, Robert. 1996. <span>«Regression Shrinkage and Selection via the Lasso»</span>. <em>Journal of the Royal Statistical Society. Series B (Methodological)</em> 58 (1): 267-88. <a href="https://doi.org/10.1111/j.2517-6161.1996.tb02080.x">https://doi.org/10.1111/j.2517-6161.1996.tb02080.x</a>.
+</div>
+<div id="ref-vanderweele2019principles" class="csl-entry" role="listitem">
+VanderWeele, Tyler J. 2019. <span>«Principles of Confounder Selection»</span>. <em>European Journal of Epidemiology</em> 34 (3): 211-19. <a href="https://doi.org/10.1007/s10654-019-00494-6">https://doi.org/10.1007/s10654-019-00494-6</a>.
+</div>
+<div id="ref-venables2002modern" class="csl-entry" role="listitem">
+Venables, W. N., y B. D. Ripley. 2002. <em>Modern Applied Statistics with <span>S</span></em>. 4.ª ed. New York: Springer.
+</div>
+<div id="ref-whittingham2006why" class="csl-entry" role="listitem">
+Whittingham, Mark J., Philip A. Stephens, Richard B. Bradbury, y Robert P. Freckleton. 2006. <span>«Why Do We Still Use Stepwise Modelling in Ecology and Behaviour?»</span> <em>Journal of Animal Ecology</em> 75 (5): 1182-89. <a href="https://doi.org/10.1111/j.1365-2656.2006.01141.x">https://doi.org/10.1111/j.1365-2656.2006.01141.x</a>.
+</div>
+<div id="ref-zollner2007overcoming" class="csl-entry" role="listitem">
+Zöllner, Sebastian, y Jonathan K. Pritchard. 2007. <span>«Overcoming the Winner’s Curse: Estimating Penetrance Parameters from Case-Control Data»</span>. <em>American Journal of Human Genetics</em> 80 (4): 605-15. <a href="https://doi.org/10.1086/512821">https://doi.org/10.1086/512821</a>.
+</div>
+<div id="ref-zou2005regularization" class="csl-entry" role="listitem">
+Zou, Hui, y Trevor Hastie. 2005. <span>«Regularization and Variable Selection via the Elastic Net»</span>. <em>Journal of the Royal Statistical Society. Series B (Statistical Methodology)</em> 67 (2): 301-20. <a href="https://doi.org/10.1111/j.1467-9868.2005.00503.x">https://doi.org/10.1111/j.1467-9868.2005.00503.x</a>.
+</div>
+</div>
+
+
+</section></section>
+    </div>
+  <div class="quarto-auto-generated-content" style="display: none;">
+<div class="footer footer-default">
+<p>Bioestadística con R · Modelos lineales — Parte 4</p>
+</div>
+</div></div>
+
+  <script>window.backupDefine = window.define; window.define = undefined;</script>
+  <script src="../../../site_libs/revealjs/dist/reveal.js"></script>
+  <!-- reveal.js plugins -->
+  <script src="../../../site_libs/revealjs/plugin/quarto-line-highlight/line-highlight.js"></script>
+  <script src="../../../site_libs/revealjs/plugin/pdf-export/pdfexport.js"></script>
+  <script src="../../../site_libs/revealjs/plugin/reveal-menu/menu.js"></script>
+  <script src="../../../site_libs/revealjs/plugin/reveal-menu/quarto-menu.js"></script>
+  <script src="../../../site_libs/revealjs/plugin/reveal-chalkboard/plugin.js"></script>
+  <script src="../../../site_libs/revealjs/plugin/quarto-support/support.js"></script>
+  
+
+  <script src="../../../site_libs/revealjs/plugin/notes/notes.js"></script>
+  <script src="../../../site_libs/revealjs/plugin/search/search.js"></script>
+  <script src="../../../site_libs/revealjs/plugin/zoom/zoom.js"></script>
+  <script src="../../../site_libs/revealjs/plugin/math/math.js"></script>
+  <script>window.define = window.backupDefine; window.backupDefine = undefined;</script>
+
+  <script>
+
+      // Full list of configuration options available at:
+      // https://revealjs.com/config/
+      Reveal.initialize({
+'controlsAuto': true,
+'previewLinksAuto': false,
+'pdfSeparateFragments': false,
+'autoAnimateEasing': "ease",
+'autoAnimateDuration': 1,
+'autoAnimateUnmatched': true,
+'jumpToSlide': true,
+'menu': {"side":"left","useTextContentForMissingTitles":true,"markers":false,"loadIcons":false,"custom":[{"title":"Tools","icon":"<i class=\"fas fa-gear\"></i>","content":"<ul class=\"slide-menu-items\">\n<li class=\"slide-tool-item active\" data-item=\"0\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.fullscreen(event)\"><kbd>f</kbd> Fullscreen</a></li>\n<li class=\"slide-tool-item\" data-item=\"1\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.speakerMode(event)\"><kbd>s</kbd> Speaker View</a></li>\n<li class=\"slide-tool-item\" data-item=\"2\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.overview(event)\"><kbd>o</kbd> Slide Overview</a></li>\n<li class=\"slide-tool-item\" data-item=\"3\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.togglePdfExport(event)\"><kbd>e</kbd> PDF Export Mode</a></li>\n<li class=\"slide-tool-item\" data-item=\"4\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.toggleScrollView(event)\"><kbd>r</kbd> Scroll View Mode</a></li>\n<li class=\"slide-tool-item\" data-item=\"5\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.toggleChalkboard(event)\"><kbd>b</kbd> Toggle Chalkboard</a></li>\n<li class=\"slide-tool-item\" data-item=\"6\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.toggleNotesCanvas(event)\"><kbd>c</kbd> Toggle Notes Canvas</a></li>\n<li class=\"slide-tool-item\" data-item=\"7\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.downloadDrawings(event)\"><kbd>d</kbd> Download Drawings</a></li>\n<li class=\"slide-tool-item\" data-item=\"8\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.keyboardHelp(event)\"><kbd>?</kbd> Keyboard Help</a></li>\n</ul>"}],"openButton":true},
+'chalkboard': {"buttons":true},
+'smaller': false,
+ 
+        // Display controls in the bottom right corner
+        controls: false,
+
+        // Help the user learn the controls by providing hints, for example by
+        // bouncing the down arrow when they first encounter a vertical slide
+        controlsTutorial: false,
+
+        // Determines where controls appear, "edges" or "bottom-right"
+        controlsLayout: 'edges',
+
+        // Visibility rule for backwards navigation arrows; "faded", "hidden"
+        // or "visible"
+        controlsBackArrows: 'faded',
+
+        // Display a presentation progress bar
+        progress: true,
+
+        // Display the page number of the current slide
+        slideNumber: 'c/t',
+
+        // 'all', 'print', or 'speaker'
+        showSlideNumber: 'all',
+
+        // Add the current slide number to the URL hash so that reloading the
+        // page/copying the URL will return you to the same slide
+        hash: true,
+
+        // Start with 1 for the hash rather than 0
+        hashOneBasedIndex: false,
+
+        // Flags if we should monitor the hash and change slides accordingly
+        respondToHashChanges: true,
+
+        // Push each slide change to the browser history
+        history: true,
+
+        // Enable keyboard shortcuts for navigation
+        keyboard: true,
+
+        // Enable the slide overview mode
+        overview: true,
+
+        // Disables the default reveal.js slide layout (scaling and centering)
+        // so that you can use custom CSS layout
+        disableLayout: false,
+
+        // Vertical centering of slides
+        center: false,
+
+        // Enables touch navigation on devices with touch input
+        touch: true,
+
+        // Loop the presentation
+        loop: false,
+
+        // Change the presentation direction to be RTL
+        rtl: false,
+
+        // see https://revealjs.com/vertical-slides/#navigation-mode
+        navigationMode: 'linear',
+
+        // Randomizes the order of slides each time the presentation loads
+        shuffle: false,
+
+        // Turns fragments on and off globally
+        fragments: true,
+
+        // Flags whether to include the current fragment in the URL,
+        // so that reloading brings you to the same fragment position
+        fragmentInURL: false,
+
+        // Flags if the presentation is running in an embedded mode,
+        // i.e. contained within a limited portion of the screen
+        embedded: false,
+
+        // Flags if we should show a help overlay when the questionmark
+        // key is pressed
+        help: true,
+
+        // Flags if it should be possible to pause the presentation (blackout)
+        pause: true,
+
+        // Flags if speaker notes should be visible to all viewers
+        showNotes: false,
+
+        // Global override for autoplaying embedded media (null/true/false)
+        autoPlayMedia: null,
+
+        // Global override for preloading lazy-loaded iframes (null/true/false)
+        preloadIframes: null,
+
+        // Number of milliseconds between automatically proceeding to the
+        // next slide, disabled when set to 0, this value can be overwritten
+        // by using a data-autoslide attribute on your slides
+        autoSlide: 0,
+
+        // Stop auto-sliding after user input
+        autoSlideStoppable: true,
+
+        // Use this method for navigation when auto-sliding
+        autoSlideMethod: null,
+
+        // Specify the average time in seconds that you think you will spend
+        // presenting each slide. This is used to show a pacing timer in the
+        // speaker view
+        defaultTiming: null,
+
+        // Enable slide navigation via mouse wheel
+        mouseWheel: false,
+
+        // The display mode that will be used to show slides
+        display: 'block',
+
+        // Hide cursor if inactive
+        hideInactiveCursor: true,
+
+        // Time before the cursor is hidden (in ms)
+        hideCursorTime: 5000,
+
+        // Opens links in an iframe preview overlay
+        previewLinks: false,
+
+        // Transition style (none/fade/slide/convex/concave/zoom)
+        transition: 'fade',
+
+        // Transition speed (default/fast/slow)
+        transitionSpeed: 'default',
+
+        // Transition style for full page slide backgrounds
+        // (none/fade/slide/convex/concave/zoom)
+        backgroundTransition: 'none',
+
+        // Number of slides away from the current that are visible
+        viewDistance: 3,
+
+        // Number of slides away from the current that are visible on mobile
+        // devices. It is advisable to set this to a lower number than
+        // viewDistance in order to save resources.
+        mobileViewDistance: 2,
+
+        // The "normal" size of the presentation, aspect ratio will be preserved
+        // when the presentation is scaled to fit different resolutions. Can be
+        // specified using percentage units.
+        width: 1600,
+
+        height: 900,
+
+        // Factor of the display size that should remain empty around the content
+        margin: 0.1,
+
+        math: {
+          mathjax: 'https://cdn.jsdelivr.net/npm/mathjax@2.7.9/MathJax.js',
+          config: 'TeX-AMS_HTML-full',
+          tex2jax: {
+            inlineMath: [['\\(','\\)']],
+            displayMath: [['\\[','\\]']],
+            balanceBraces: true,
+            processEscapes: false,
+            processRefs: true,
+            processEnvironments: true,
+            preview: 'TeX',
+            skipTags: ['script','noscript','style','textarea','pre','code'],
+            ignoreClass: 'tex2jax_ignore',
+            processClass: 'tex2jax_process'
+          },
+        },
+
+        // reveal.js plugins
+        plugins: [QuartoLineHighlight, PdfExport, RevealMenu, RevealChalkboard, QuartoSupport,
+
+          RevealMath,
+          RevealNotes,
+          RevealSearch,
+          RevealZoom
+        ]
+      });
+    </script>
+    
+    <script>
+      // htmlwidgets need to know to resize themselves when slides are shown/hidden.
+      // Fire the "slideenter" event (handled by htmlwidgets.js) when the current
+      // slide changes (different for each slide format).
+      (function () {
+        // dispatch for htmlwidgets
+        function fireSlideEnter() {
+          const event = window.document.createEvent("Event");
+          event.initEvent("slideenter", true, true);
+          window.document.dispatchEvent(event);
+        }
+
+        function fireSlideChanged(previousSlide, currentSlide) {
+          fireSlideEnter();
+
+          // dispatch for shiny
+          if (window.jQuery) {
+            if (previousSlide) {
+              window.jQuery(previousSlide).trigger("hidden");
+            }
+            if (currentSlide) {
+              window.jQuery(currentSlide).trigger("shown");
+            }
+          }
+        }
+
+        // hookup for slidy
+        if (window.w3c_slidy) {
+          window.w3c_slidy.add_observer(function (slide_num) {
+            // slide_num starts at position 1
+            fireSlideChanged(null, w3c_slidy.slides[slide_num - 1]);
+          });
+        }
+
+      })();
+    </script>
+
+    <script id="quarto-html-after-body" type="application/javascript">
+      window.document.addEventListener("DOMContentLoaded", function (event) {
+        const tabsets =  window.document.querySelectorAll(".panel-tabset-tabby")
+        tabsets.forEach(function(tabset) {
+          const tabby = new Tabby('#' + tabset.id);
+        });
+        const isCodeAnnotation = (el) => {
+          for (const clz of el.classList) {
+            if (clz.startsWith('code-annotation-')) {                     
+              return true;
+            }
+          }
+          return false;
+        }
+        const onCopySuccess = function(e) {
+          // button target
+          const button = e.trigger;
+          // don't keep focus
+          button.blur();
+          // flash "checked"
+          button.classList.add('code-copy-button-checked');
+          var currentTitle = button.getAttribute("title");
+          button.setAttribute("title", "Copiado");
+          let tooltip;
+          if (window.bootstrap) {
+            button.setAttribute("data-bs-toggle", "tooltip");
+            button.setAttribute("data-bs-placement", "left");
+            button.setAttribute("data-bs-title", "Copiado");
+            tooltip = new bootstrap.Tooltip(button, 
+              { trigger: "manual", 
+                customClass: "code-copy-button-tooltip",
+                offset: [0, -8]});
+            tooltip.show();    
+          }
+          setTimeout(function() {
+            if (tooltip) {
+              tooltip.hide();
+              button.removeAttribute("data-bs-title");
+              button.removeAttribute("data-bs-toggle");
+              button.removeAttribute("data-bs-placement");
+            }
+            button.setAttribute("title", currentTitle);
+            button.classList.remove('code-copy-button-checked');
+          }, 1000);
+          // clear code selection
+          e.clearSelection();
+        }
+        const getTextToCopy = function(trigger) {
+          const outerScaffold = trigger.parentElement.cloneNode(true);
+          const codeEl = outerScaffold.querySelector('code');
+          for (const childEl of codeEl.children) {
+            if (isCodeAnnotation(childEl)) {
+              childEl.remove();
+            }
+          }
+          return codeEl.innerText;
+        }
+        const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+          text: getTextToCopy
+        });
+        clipboard.on('success', onCopySuccess);
+        if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+          const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+            text: getTextToCopy,
+            container: window.document.getElementById('quarto-embedded-source-code-modal')
+          });
+          clipboardModal.on('success', onCopySuccess);
+        }
+          var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+          var mailtoRegex = new RegExp(/^mailto:/);
+            var filterRegex = new RegExp('/' + window.location.host + '/');
+          var isInternal = (href) => {
+              return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+          }
+          // Inspect non-navigation links and adorn them if external
+         var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+          for (var i=0; i<links.length; i++) {
+            const link = links[i];
+            if (!isInternal(link.href)) {
+              // undo the damage that might have been done by quarto-nav.js in the case of
+              // links that we want to consider external
+              if (link.dataset.originalHref !== undefined) {
+                link.href = link.dataset.originalHref;
+              }
+            }
+          }
+        function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+          const config = {
+            allowHTML: true,
+            maxWidth: 500,
+            delay: 100,
+            arrow: false,
+            appendTo: function(el) {
+                return el.closest('section.slide') || el.parentElement;
+            },
+            interactive: true,
+            interactiveBorder: 10,
+            theme: 'light-border',
+            placement: 'bottom-start',
+          };
+          if (contentFn) {
+            config.content = contentFn;
+          }
+          if (onTriggerFn) {
+            config.onTrigger = onTriggerFn;
+          }
+          if (onUntriggerFn) {
+            config.onUntrigger = onUntriggerFn;
+          }
+            config['offset'] = [0,0];
+            config['maxWidth'] = 700;
+          window.tippy(el, config); 
+        }
+        const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+        for (var i=0; i<noterefs.length; i++) {
+          const ref = noterefs[i];
+          tippyHover(ref, function() {
+            // use id or data attribute instead here
+            let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+            try { href = new URL(href).hash; } catch {}
+            const id = href.replace(/^#\/?/, "");
+            const note = window.document.getElementById(id);
+            if (note) {
+              return note.innerHTML;
+            } else {
+              return "";
+            }
+          });
+        }
+        const findCites = (el) => {
+          const parentEl = el.parentElement;
+          if (parentEl) {
+            const cites = parentEl.dataset.cites;
+            if (cites) {
+              return {
+                el,
+                cites: cites.split(' ')
+              };
+            } else {
+              return findCites(el.parentElement)
+            }
+          } else {
+            return undefined;
+          }
+        };
+        var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+        for (var i=0; i<bibliorefs.length; i++) {
+          const ref = bibliorefs[i];
+          const citeInfo = findCites(ref);
+          if (citeInfo) {
+            tippyHover(citeInfo.el, function() {
+              var popup = window.document.createElement('div');
+              citeInfo.cites.forEach(function(cite) {
+                var citeDiv = window.document.createElement('div');
+                citeDiv.classList.add('hanging-indent');
+                citeDiv.classList.add('csl-entry');
+                var biblioDiv = window.document.getElementById('ref-' + cite);
+                if (biblioDiv) {
+                  citeDiv.innerHTML = biblioDiv.innerHTML;
+                }
+                popup.appendChild(citeDiv);
+              });
+              return popup.innerHTML;
+            });
+          }
+        }
+      });
+      </script>
+    
+
+</body></html>

@@ -1,0 +1,1331 @@
+---
+title: "Regresión logística. Parte 1"
+subtitle: "Modelos lineales generalizados · Fundamentos matemáticos · Construccion de un modelo básico · Interpretacion"
+author: "Edsaúl Emilio Pérez-Guerrero"
+date: today
+lang: es
+format:
+  revealjs:
+    theme: simple
+    css: estilos.css
+    slide-number: true
+    progress: true
+    chalkboard: true
+    code-copy: true
+    code-line-numbers: false
+    code-overflow: wrap
+    highlight-style: github
+    fig-align: center
+    fig-width: 8
+    fig-height: 4.5
+    fig-dpi: 150
+    transition: fade
+    footer: "Bioestadística con R · Regresión logística — Parte 1"
+    width: 1600
+    height: 900
+    scrollable: true
+execute:
+  echo: true
+  warning: false
+  message: false
+bibliography: referencias.bib
+---
+
+```{r}
+#| label: setup
+#| include: false
+library(ggplot2)
+library(patchwork)
+library(broom)
+library(performance)
+library(see)
+library(pROC)
+options(scipen = 999, digits = 4)
+theme_set(theme_linedraw(base_size = 14))
+azul <- "#1f4e79"; naranja <- "#F0A05B"; rojo <- "#c0392b"; verde <- "#6aa84f"
+```
+
+## Objetivos de la sesión
+
+- Entender las generalidades del modelo lineal generalizado y sus diferencias con la regresión lineal múltiple.
+- Comprender por las variables binarias requieren un modelo diferente al de las variables continuas cuando se usas como variable de desenlace.
+- Comprender los fundamentos matemáticos detrás del OR que se obtiene en la regresión logística
+- Construir un modelo de regresión logística e interpretarlo. 
+
+::: small
+- Paquetes: `ggplot2`, `broom`, `performance`. 
+- Base de datos: 
+  + `estudio_AR_STAT4.csv` (carpeta `Bases/` del tema).
+  + `sal_tension_arterial.csv` (carpeta `Bases/` del tema).
+
+:::
+
+# ¿Cómo construir una regresión para identificar la asociación del gen *STAT4* rs7574865 (alelo de riesgo **T**) con la Artritis Reumatoíde? {background-color="#1f4e79"}
+
+# ¿Cómo podemos indentificar factores asociados la hipertensión en un grupo de pacientes? {background-color="#1f4e79"}
+
+
+## Nuestros datos. Variantes en STAT4
+
+::: pregunta
+**¿Cómo podemos determinar si una variante genética está asociada con una enfermedad, cuantificar esa asociación y evaluar si nuestras conclusiones son estadísticamente válidas?**
+:::
+
+-   **Estudio de casos y controles**: 400 pacientes con **artritis reumatoide (AR)** y 400 controles sin AR.
+-   **Variante de interés**: *STAT4* rs7574865 (alelo de riesgo **T**). En el estudio original el alelo T se encontró en 27 % de los cromosomas de casos y 22 % de controles; OR ≈ 1.32 [@remmers2007stat4].
+-   **Covariables**: sexo, edad, tabaquismo, ancestría amerindia y el primer componente principal genético (PC1).
+
+::: alerta
+Los datos que utilizaremos fueron simulados con base al estudio de @remmers2007stat4, la idea fue preservar datos lo más parecidos a la realidad.
+:::
+
+## La base de datos sal
+
+::: pregunta
+**¿Cómo podemos indentificar factores asociados a la hipertensión?**
+:::
+
+- También utilizaremos la base de datos "sal_tension_arterial.csv" con algunas modificaciones.
+
+```{r eval=FALSE}
+df$Hipertension <- cut(df$Tension_Arterial,breaks = c(0,140,Inf),
+                       labels = c("Sin hipetensión", "Hipertensión"))
+```
+
+-   **Estudio transversal**: con 80 pacientes y 6 variables.
+- Se sabe por antecedentes previos del grupo de investigación que se puede establecer un punto de corte para las cifras de tensión arterial sistólica para diagnosticar a un paciente con hipertensión o sin hipertensión. Este punto de corte es 140 mmHg. 
+- Esta base tiene datos sobre el promedio del consumo de sal y su relación con la tensión arterial (ya la hemos utilizado). Contiene datos sobre comorbilidades, sexo, edad y sobre tabaquismo. En esta ocasión nos enfocaremos en la hipertensión. 
+
+
+# 0. El modelo lineal generalizado (GLM) {background-color="#1f4e79"}
+
+## Un mismo paciente, tres preguntas distintas
+
+```{r fig.align='center'}
+#| label: mlg-datos
+#| echo: false
+set.seed(10)
+n <- 150
+salud <- data.frame(edad = round(runif(n, 25, 80)))
+salud$glucosa <- round(70 + 0.6 * salud$edad + rnorm(n, 0, 12))
+salud$diabetes <- rbinom(n, 1, plogis(-6 + 0.1 * salud$edad))
+salud$hospitalizaciones <- rpois(n, exp(-2.5 + 0.045 * salud$edad))
+
+g1 <- ggplot(salud, aes(edad, glucosa)) + geom_point(alpha = .6, col = azul) +
+  labs(title = "Glucosa (mg/dL)", subtitle = "Continua → Normal", x = "Edad", y = NULL)
+g2 <- ggplot(salud, aes(edad, diabetes)) +
+  geom_jitter(height = .04, alpha = .6, col = rojo) +
+  scale_y_continuous(breaks = 0:1, labels = c("No", "Sí")) +
+  labs(title = "Diabetes (sí/no)", subtitle = "Binaria → Binomial", x = "Edad", y = NULL)
+g3 <- ggplot(salud, aes(edad, hospitalizaciones)) +
+  geom_jitter(height = .1, alpha = .6, col = verde) +
+  labs(title = "Hospitalizaciones", subtitle = "Conteo → Poisson", x = "Edad", y = NULL)
+g1 + g2 + g3
+```
+
+-   La **variable dependiente** cambia de naturaleza: continua, binaria, conteo.
+-   El predictor (edad) es el mismo. ¿Podemos usar `lm()` para las tres?
+
+## ¿Qué pasa si usamos regresión lineal para todo?
+
+```{r fig.align='center'}
+#| label: mlg-problema
+#| echo: false
+#| fig-height: 4.3
+nuevos <- data.frame(edad = 0:110)
+fit_b_lm  <- lm(diabetes ~ edad, salud)
+fit_b_glm <- glm(diabetes ~ edad, binomial, salud)
+fit_c_lm  <- lm(hospitalizaciones ~ edad, salud)
+fit_c_glm <- glm(hospitalizaciones ~ edad, poisson, salud)
+nuevos$b_lm  <- predict(fit_b_lm, nuevos)
+nuevos$b_glm <- predict(fit_b_glm, nuevos, type = "response")
+nuevos$c_lm  <- predict(fit_c_lm, nuevos)
+nuevos$c_glm <- predict(fit_c_glm, nuevos, type = "response")
+
+p1 <- ggplot(nuevos, aes(edad)) +
+  annotate("rect", xmin = -Inf, xmax = Inf, ymin = 1, ymax = Inf, fill = rojo, alpha = .12) +
+  annotate("rect", xmin = -Inf, xmax = Inf, ymin = -Inf, ymax = 0, fill = rojo, alpha = .12) +
+  geom_jitter(data = salud, aes(edad, diabetes), height = .03, alpha = .4) +
+  geom_line(aes(y = b_lm, col = "Lineal (lm)"), linewidth = 1.2) +
+  geom_line(aes(y = b_glm, col = "MLG (glm)"), linewidth = 1.2) +
+  scale_color_manual(values = c(rojo, azul), name = NULL) +
+  labs(title = "Binaria: p < 0 y p > 1", x = "Edad", y = "P(diabetes)")
+p2 <- ggplot(nuevos, aes(edad)) +
+  annotate("rect", xmin = -Inf, xmax = Inf, ymin = -Inf, ymax = 0, fill = rojo, alpha = .12) +
+  geom_jitter(data = salud, aes(edad, hospitalizaciones), height = .1, alpha = .4) +
+  geom_line(aes(y = c_lm, col = "Lineal (lm)"), linewidth = 1.2) +
+  geom_line(aes(y = c_glm, col = "MLG (glm)"), linewidth = 1.2) +
+  scale_color_manual(values = c(rojo, azul), name = NULL) +
+  labs(title = "Conteo: valores negativos", x = "Edad", y = "Hospitalizaciones esperadas")
+p1 + p2 + plot_layout(guides = "collect") & theme(legend.position = "bottom")
+```
+
+::: alerta
+La recta predice **valores imposibles** (zonas rojas). Además, en datos binarios y de conteo la varianza depende de la media, así que el supuesto de varianza constante no se cumple [@radecic2026glm].
+:::
+
+## ¿Qué es un modelo lineal generalizado?
+
+Un **marco** que extiende la regresión lineal a variables dependientes **no normales** [@nelder1972generalized; @radecic2026glm]. 
+
+| Componente | ¿Qué define? | Ejemplo (diabetes sí/no) |
+|---|---|---|
+| **Aleatorio** (distribución) | Tipo de dato que genera $Y$ | Binomial |
+| **Sistemático** (predictor lineal) | $\eta = \beta_0 + \beta_1X_1 + \dots + \beta_kX_k$ | $\beta_0 + \beta_1 \cdot \text{edad}$ |
+| **Función de enlace** $g(\cdot)$ | Conecta la media de $Y$ con el predictor lineal | logit: $\ln\frac{p}{1-p} = \eta$ |
+
+::: clave
+El predictor lineal es **el mismo** que ya conoce. Lo nuevo es que el modelo es lineal en la **escala del enlace** (log-odds, log-conteo), no en la escala original de $Y$.
+:::
+
+
+## ¿Qué es un modelo lineal generalizado?
+
+Un GLM es una extensión de la regresión lineal que permite modelar variables dependientes con diferentes distribuciones de probabilidad.
+
+Su formulación general es:
+
+$$\boxed{g(\mu_i)=\beta_0+\beta_1X_{1i}+\cdots+\beta_pX_{pi}}$$
+
+Donde:
+
+* $\mu_i=E(Y_i\mid X_i)$: valor esperado de la variable dependiente.
+* $g(\cdot)$: función de enlace (link function).
+* $\beta$: coeficientes del modelo.
+* $X$: variables independientes.
+
+::: clave
+- La principal diferencia respecto a la regresión lineal es que el GLM no necesita modelar directamente la media de Y como una función lineal de X
+
+- En su lugar, modela una transformación de esa media mediante la función de enlace.
+:::
+
+## Diferentes tipos de desenlace para el GLM
+
+| Tipo de variable dependiente | Distribución | Ejemplo biomédico |
+|:-----------------------------|:-------------|:------------------|
+| Continua | Normal (gaussiana) | Presión arterial |
+| Binaria (0/1) | Bernoulli/binomial | Presencia de artritis reumatoide |
+| Conteos | Poisson | Número de hospitalizaciones |
+| Proporción de éxitos | Binomial | Número de respondedores entre pacientes evaluados |
+| Continua positiva y asimétrica | Gamma | Concentración de biomarcadores positivos |
+
+: Distribuciones utilizadas en modelos lineales generalizados {#tbl-distribuciones-glm}
+
+## Modelo lineal vs GLM
+
+| Aspecto | Modelo lineal (`lm`) | MLG (`glm`) |
+|---|---|---|
+| Distribución de $Y$ | Normal | Familia exponencial (binomial, Poisson, Gamma…) |
+| Enlace | Identidad | Logit, log, probit, identidad… |
+| Rango de predicciones | $-\infty$ a $+\infty$ | Restringido (0–1 para probabilidades; ≥ 0 para conteos) |
+| Varianza | Constante | Depende de la media |
+| Estimación | Mínimos cuadrados | **Máxima verosimilitud** |
+| Coeficientes | Cambio en $Y$ | Cambio en la escala del enlace → se transforman (OR, RR) |
+| Bondad de ajuste | $R^2$, prueba F | Devianza, AIC/BIC, razón de verosimilitudes |
+
+::: small
+Fuentes: @radecic2026glm; @fox2016applied; @denis2020univariate.
+:::
+
+## Ejemplos de GLM
+
+| Tipo de $Y$ | Distribución | Enlace | Ejemplo | En R |
+|---|---|---|---|---|
+| Continua | Normal | Identidad | Presión arterial | `glm(y ~ x, family = gaussian)` |
+| **Binaria** | **Binomial** | **Logit** | **AR sí/no** | `glm(y ~ x, family = binomial)` |
+| Binaria | Binomial | Probit | Respuesta a fármaco | `binomial(link = "probit")` |
+| Conteo | Poisson | Log | N.º de brotes de lupus | `glm(y ~ x, family = poisson)` |
+| Conteo sobredisperso | Binomial negativa | Log | N.º de lesiones | `MASS::glm.nb()` |
+| Continua positiva y sesgada | Gamma | Log | Costos hospitalarios | `Gamma(link = "log")` |
+
+::: clave
+Misma sintaxis, mismo predictor lineal; solo cambia `family`. A partir de aquí nos concentramos en la fila resaltada: **regresión logística**.
+:::
+
+
+# 1. Introducción a la regresión logística {background-color="#1f4e79"}
+
+## 1.1 Tipos de variables dependientes
+
+| Tipo | Subtipo | Ejemplo | Modelo |
+|---|---|---|---|
+| **Continua** | — | Nivel de anti-CCP, PCR, expresión génica | Regresión lineal |
+| **Categórica** | **Binaria (dicotómica)** | **AR sí/no**, respuesta a metotrexato sí/no | **Regresión logística** |
+| | Nominal (> 2 categorías) | Subtipo de leucemia | Logística multinomial |
+| | Ordinal | Actividad DAS28: baja/moderada/alta | Logística ordinal |
+| Conteo | — | Número de articulaciones inflamadas | Poisson / binomial negativa |
+
+::: small
+La regresión logística modela una variable **dicotómica** codificada como **1 = presenta el evento** y **0 = no lo presenta** [@celis2014bioestadistica].
+:::
+
+## 1.2 Regresión lineal vs. regresión logística
+
+```{r fig.align='center'}
+#| label: lineal-vs-logistica
+#| echo: false
+#| fig-height: 4.3
+datos_demo <- read.csv("../Bases/estudio_AR_STAT4.csv")
+ggplot(datos_demo, aes(edad, caso)) +
+  geom_jitter(height = .04, width = .3, alpha = .25) +
+  geom_smooth(method = "lm", se = FALSE, aes(col = "Recta (lineal)"), linewidth = 1.3, fullrange = TRUE) +
+  geom_smooth(method = "glm", method.args = list(family = binomial), se = FALSE,
+              aes(col = "Curva S (logística)"), linewidth = 1.3, fullrange = TRUE) +
+  scale_color_manual(values = c(azul, rojo), name = NULL) +
+  scale_y_continuous(breaks = c(0, .5, 1), labels = c("0 = control", "0.5", "1 = caso")) +
+  xlim(0, 100) +
+  labs(x = "Edad (años)", y = "P(AR)", title = "AR según edad en nuestro estudio")
+```
+
+| | Lineal | Logística |
+|---|---|---|
+| Predice | El **valor** de $Y$ | La **probabilidad** de que $Y = 1$ |
+| Forma | Recta | Curva en **S** (sigmoide) |
+| Coeficiente | Cambio en unidades de $Y$ | Cambio en **log-odds** → **OR** |
+
+## 1.3 Limitaciones de la regresión lineal con respuestas binarias
+
+```{r fig.align='center'}
+#| label: limitaciones-lm
+#| echo: false
+#| fig-height: 3.8
+m_lm <- lm(caso ~ edad, data = datos_demo)
+d1 <- data.frame(ajustado = fitted(m_lm), residuo = resid(m_lm))
+p_res <- ggplot(d1, aes(ajustado, residuo)) + geom_point(alpha = .3, col = azul) +
+  labs(title = "Residuos: dos bandas", x = "Valor ajustado", y = "Residuo")
+pv <- data.frame(p = seq(0, 1, .01)); pv$var <- pv$p * (1 - pv$p)
+p_var <- ggplot(pv, aes(p, var)) + geom_line(linewidth = 1.3, col = rojo) +
+  labs(title = "Varianza = p(1 − p)", x = "Probabilidad del evento", y = "Varianza de Y")
+p_res + p_var
+```
+
+1.  **Predicciones imposibles**: probabilidades < 0 o > 1.
+2.  **Residuos no normales**: para cada valor ajustado solo hay dos residuos posibles.
+3.  **Heterocedasticidad**: la varianza es $p(1-p)$, máxima en $p = 0.5$.
+4.  **Relación no lineal**: la probabilidad cambia poco en los extremos y mucho en el centro [@hosmer2013applied; @sperandei2014understanding].
+
+## ¿Qué pasa si quiero asociar el consumo de sal con hipertensión?
+
+```{r echo=FALSE, warning=FALSE, message=FALSE}
+library(tidyverse)
+library(scales)
+
+# Coloca sal_tension_arterial.csv junto a este archivo .qmd
+df <- readr::read_csv("../Bases/sal_tension_arterial.csv", show_col_types = FALSE) |>
+  mutate(HTA = as.integer(Tension_Arterial >= 140))
+
+m_lineal <- lm(HTA ~ Consumo_Sal, data = df)
+m_logit <- glm(HTA ~ Consumo_Sal, family = binomial(link = "logit"), data = df)
+
+x_obs <- range(df$Consumo_Sal)
+# Se amplía el dominio para mostrar extrapolación de la regresión lineal.
+x_ext <- c(min(x_obs) - 300, max(x_obs) + 1400)
+rejilla <- tibble(Consumo_Sal = seq(x_ext[1], x_ext[2], length.out = 400)) |>
+  mutate(
+    lineal = predict(m_lineal, newdata = cur_data()),
+    prob = predict(m_logit, newdata = cur_data(), type = "response"),
+    eta = predict(m_logit, newdata = cur_data(), type = "link"),
+    odds = exp(eta)
+  )
+
+base_plot <- theme_bw(base_size = 18) +
+  theme(plot.title = element_text(face = "bold"), legend.position = "bottom")
+set.seed(123)
+```
+
+```{r echo=FALSE, warning=FALSE, message=FALSE}
+#| fig-width: 11
+#| fig-height: 5.2
+ggplot(df, aes(Consumo_Sal, HTA)) +
+  geom_jitter(width = 0, height = 0.035, alpha = 0.65, size = 2.7,
+              color = "#5B7CA7") +
+  scale_y_continuous(breaks = c(0, 1), labels = c("No (0)", "Sí (1)"),
+                     limits = c(-0.12, 1.12)) +
+  labs(title = "Cada persona tiene un desenlace: 0 o 1",
+       subtitle = "Clasificación didáctica: tensión arterial ≥ 140 mmHg",
+       x = "Consumo de sal (unidades de la base)", y = "HTA") + base_plot
+```
+
+## ¿Qué pasa si usamos regresión lineal para asociar el consumo de sal con la hipertensión (variable dependiente)?
+
+```{r echo=FALSE}
+#| fig-width: 11
+#| fig-height: 5.2
+ggplot(df, aes(Consumo_Sal, HTA)) +
+  annotate("rect", xmin = -Inf, xmax = Inf, ymin = -Inf, ymax = 0,
+           fill = "#C63D2B", alpha = 0.09) +
+  annotate("rect", xmin = -Inf, xmax = Inf, ymin = 1, ymax = Inf,
+           fill = "#C63D2B", alpha = 0.09) +
+  geom_jitter(width = 0, height = 0.025, alpha = 0.55, size = 2.5) +
+  geom_line(data = rejilla, aes(y = lineal), color = "#C63D2B", linewidth = 1.5) +
+  geom_hline(yintercept = c(0, 1), linetype = "dashed", color = "gray50") +
+  coord_cartesian(xlim = x_ext, ylim = c(-0.6, 1.4)) +
+  labs(title = "La recta puede predecir valores imposibles",
+       subtitle = "La zona roja indica predicciones fuera del intervalo [0, 1]",
+       x = "Consumo de sal", y = "Predicción lineal / HTA") + base_plot
+```
+
+## Regresión lineal frente a logística para el consumo de sal con factor asociado a la hipertensión. 
+
+```{r echo=FALSE}
+#| fig-width: 11
+#| fig-height: 5.2
+curvas <- rejilla |>
+  select(Consumo_Sal, `Lineal` = lineal, `Logística` = prob) |>
+  pivot_longer(-Consumo_Sal, names_to = "Modelo", values_to = "Prediccion")
+ggplot(df, aes(Consumo_Sal, HTA)) +
+  geom_jitter(width = 0, height = 0.025, alpha = 0.45, size = 2.2) +
+  geom_line(data = curvas, aes(y = Prediccion, color = Modelo), linewidth = 1.5) +
+  geom_hline(yintercept = c(0, 1), linetype = "dotted", color = "gray60") +
+  scale_color_manual(values = c("Lineal" = "#C63D2B", "Logística" = "#22577A")) +
+  coord_cartesian(xlim = x_ext, ylim = c(-0.6, 1.4)) +
+  labs(title = "Mismos datos, dos funciones de predicción",
+       subtitle = "La logística restringe las probabilidades a (0, 1)",
+       x = "Consumo de sal", y = "Probabilidad estimada / valor lineal") + base_plot
+```
+
+
+
+
+## Tercera escala: logit
+
+```{r echo=FALSE}
+#| fig-width: 11
+#| fig-height: 5.2
+ggplot(rejilla, aes(Consumo_Sal, eta)) +
+  geom_line(color = "#985A71", linewidth = 1.7) +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  labs(title = "Logit = ln[p / (1 − p)] = β₀ + β₁X",
+       subtitle = "En esta escala la relación con el consumo de sal es lineal",
+       x = "Consumo de sal", y = "Log-odds de HTA") + base_plot
+```
+
+## Regreso a probabilidades: función logística inversa
+
+```{r echo=FALSE}
+#| fig-width: 11
+#| fig-height: 5.2
+eta_grid <- tibble(eta = seq(-8, 8, length.out = 400)) |>
+  mutate(p = plogis(eta))
+ggplot(eta_grid, aes(eta, p)) +
+  geom_line(color = "#22577A", linewidth = 1.7) +
+  geom_vline(xintercept = 0, linetype = "dashed", color = "gray60") +
+  geom_hline(yintercept = 0.5, linetype = "dashed", color = "gray60") +
+  geom_point(aes(x = 0, y = 0.5), color = "#C63D2B", size = 3,
+             inherit.aes = FALSE) +
+  scale_y_continuous(limits = c(0, 1), labels = label_percent()) +
+  labs(title = "Transformación inversa: p = 1 / (1 + e^(−η))",
+       subtitle = "Cuando logit = 0, odds = 1 y probabilidad = 50 %",
+       x = "Predictor lineal (η = β₀ + β₁X)", y = "Probabilidad") + base_plot
+```
+
+
+## 1.5 Aplicaciones de la regresión logística (algunas)
+-   **Variables binarias**: Asociaciones con variables binarias: Diagnóstico, asociación, desempeño
+-   **Estudios de asociación genética** (candidato o GWAS): ¿el genotipo se asocia con la enfermedad? [@clarke2011basic].
+-   **Alelos HLA** y autoinmunidad: OR de portar un alelo (p. ej., epítope compartido en AR).
+-   **Interacciones gen–ambiente**: alelo de riesgo × tabaquismo [@cordell2009detecting].
+-   **Farmacogenómica**: respuesta (sí/no) a un tratamiento según genotipo.
+-   **Modelos de predicción clínica**: puntajes de riesgo poligénico + factores clínicos [@steyerberg2019clinical].
+-   **Epidemiología**: ajuste por confusores en estudios de casos y controles, cohortes y transversales [@celis2014bioestadistica].
+
+::: clave
+Ventaja frente al análisis estratificado (Mantel–Haenszel): admite **predictores continuos** y **muchas covariables simultáneamente** [@sperandei2014understanding ; @celis2014bioestadistica].
+:::
+
+
+## 1.5 Aplicaciones de la regresión logisitica
+
+1. Identificación de factores de riesgo: evaluar la asociación entre exposiciones y la presencia de enfermedades.
+2. Identificación de factores protectores: determinar si determinadas características o intervenciones se asocian con menores odds de presentar un evento.
+3. Predicción de enfermedades: estimar la probabilidad de que un individuo presente una enfermedad a partir de sus características clínicas, demográficas o biológicas.
+4. Evaluación de biomarcadores: estudiar la asociación entre biomarcadores y desenlaces clínicos, como diagnóstico, progresión o respuesta al tratamiento.
+5. Evaluación de tratamientos: analizar la asociación entre intervenciones terapéuticas y desenlaces binarios, como respuesta/no respuesta o remisión/no remisión.
+
+## 1.5 Aplicaciones de la regresión logisitica
+6. Análisis de eventos adversos: identificar factores asociados con la aparición de complicaciones o efectos secundarios.
+7. Desarrollo de modelos de pronóstico: estimar la probabilidad de eventos clínicos, como mortalidad, hospitalización, recaída o complicaciones.
+8. Control de variables de confusión: estimar asociaciones ajustadas por otras variables que podrían influir en la relación estudiada.
+9. Evaluación de interacciones: determinar si la asociación entre una exposición y un desenlace cambia según características como edad, sexo o presencia de comorbilidades.
+10. Investigación epidemiológica: analizar asociaciones entre factores ambientales, ocupacionales, conductuales o sociodemográficos y desenlaces de salud.
+11. Investigación en salud pública: identificar factores asociados con vacunación, adherencia terapéutica, utilización de servicios de salud o participación en programas preventivos.
+12. Desarrollo de herramientas de apoyo a decisiones clínicas: combinar múltiples predictores para estimar probabilidades individuales y apoyar la estratificación del riesgo
+
+
+
+## Manos a la obra: cargar y preparar los datos
+
+```{r}
+#| label: cargar
+datos <- read.csv("../Bases/estudio_AR_STAT4.csv") # Cambie la ruta, en mi caso necesito moverme una carpeta arriba
+
+# Desenlace: 1 = caso (AR), 0 = control. La categoría "evento" debe ser 1.
+datos$caso_f <- factor(datos$caso, levels = c(0, 1), labels = c("Control", "Caso"))
+# Los factores deben de estar correctamente etiquetados y en el orden correcto
+# Para algunas situaciones se prefiere mantenet 0 y 1
+
+# Factores con su categoría de referencia en primer lugar
+datos$sexo       <- factor(datos$sexo, levels = c("Hombre", "Mujer"))
+datos$tabaquismo <- factor(datos$tabaquismo, levels = c("Nunca", "Exfumador", "Actual"))
+datos$rs7574865  <- factor(datos$rs7574865, levels = c("GG", "GT", "TT"))
+
+# Dosis alélica: número de copias del alelo de riesgo T (0, 1, 2)
+datos$dosis_T <- as.numeric(datos$rs7574865) - 1
+# as.numeric() sobre un factor no devuelve las etiquetas. Devuelve el código interno, es decir, la posición de cada nivel: GG = 1, GT = 2, TT = 3.
+# Al restar 1 se obtiene exactamente el número de alelos T:
+
+str(datos[, c("caso", "sexo", "edad", "tabaquismo", "PC1", "rs7574865", "dosis_T")])
+```
+
+
+# ¿El polimorfismo se asocia con la rs7574865 AR? {background-color="#1f4e79"}
+
+## Primera mirada: genotipo por grupo
+
+```{r}
+#| label: tabla-genotipo
+tabla <- table(Genotipo = datos$rs7574865, Grupo = datos$caso_f)
+tabla
+round(prop.table(tabla, margin = 2) * 100, 1)   # % por columna (como en Celis)
+```
+
+::: pregunta
+¿Qué genotipo es más frecuente en los casos? ¿Qué esperaría si el alelo T **no** tuviera relación con la AR?
+:::
+
+## Primera mirada: genotipo por grupo
+
+```{r fig.align="center"}
+datos |> 
+  ggplot(aes(x = caso_f, fill = factor(rs7574865))) +
+  geom_bar(position = "dodge") +
+  labs(
+    x = "Grupo",
+    y = "Frecuencia",
+    fill = "Genotipo"
+  ) +
+  theme_bw()
+```
+
+## Primera mirada: genotipo por grupo
+
+```{r fig.align="center"}
+datos |> 
+  ggstatsplot::ggbarstats(x = caso_f, y= rs7574865)
+```
+
+
+# 2. Fundamentos matemáticos de la regresión logística {background-color="#1f4e79"}
+
+## 2.1 Probabilidad
+
+**Probabilidad** = eventos favorables / total de eventos. Va de **0 a 1** [@sperandei2014understanding].
+
+```{r}
+#| label: probabilidad
+# Probabilidad de ser caso dentro de cada genotipo (% por fila)
+prop_fila <- prop.table(tabla, margin = 1)
+round(prop_fila, 3)
+```
+
+::: alerta
+En un estudio de **casos y controles** el investigador fija cuántos casos y controles incluye (400 y 400). Estas "probabilidades" reflejan el muestreo, **no** el riesgo de AR en la población. Lo que sí es válido comparar son los **odds ratio** [@celis2014bioestadistica].
+:::
+
+## 2.2 Odds: definición e interpretación
+
+$$\text{Odds} = \frac{p}{1-p} = \frac{\text{probabilidad de que ocurra}}{\text{probabilidad de que no ocurra}}$$
+
+```{r}
+#| label: odds
+p_caso <- prop_fila[, "Caso"]
+odds   <- p_caso / (1 - p_caso)
+round(data.frame(p = p_caso, odds = odds), 3)
+```
+
+-   Odds = 1 → tantos casos como controles. Odds = 2 → **2 casos por cada control**.
+-   El odds va de **0 a $+\infty$**; la probabilidad de 0 a 1. **No son sinónimos** [@sperandei2014understanding].
+
+## Probabilidad y odds no son lo mismo
+
+```{r}
+#| label: prob-odds-plot
+#| echo: false
+#| fig-height: 4
+po <- data.frame(p = seq(0.01, 0.95, 0.01)); po$odds <- po$p / (1 - po$p)
+ggplot(po, aes(p, odds)) + geom_line(linewidth = 1.3, col = azul) +
+  geom_hline(yintercept = 1, lty = 2) + geom_vline(xintercept = .5, lty = 2) +
+  annotate("label", x = .2, y = 6, label = "p pequeña:\nodds ≈ p", size = 5) +
+  annotate("label", x = .8, y = 12, label = "p grande:\nel odds se dispara", size = 5) +
+  labs(x = "Probabilidad (p)", y = "Odds = p / (1 − p)")
+```
+
+| p | 0.01 | 0.10 | 0.25 | 0.50 | 0.75 | 0.90 |
+|---|---|---|---|---|---|---|
+| Odds | 0.01 | 0.11 | 0.33 | 1 | 3 | 9 |
+
+## 2.3 Transformación logit (log-odds)
+
+$$\text{logit}(p) = \ln\left(\frac{p}{1-p}\right)$$
+
+```{r}
+#| label: logit-plot
+#| echo: false
+#| fig-height: 3.6
+lo <- data.frame(p = seq(0.005, 0.995, 0.005)); lo$logit <- log(lo$p / (1 - lo$p))
+ggplot(lo, aes(p, logit)) + geom_line(linewidth = 1.3, col = rojo) +
+  geom_hline(yintercept = 0, lty = 2) + geom_vline(xintercept = .5, lty = 2) +
+  labs(x = "Probabilidad (p)", y = "logit(p)", title = "El logit 'estira' el intervalo 0–1 a toda la recta real")
+```
+
+| Escala | Rango | Valor "neutro" |
+|---|---|---|
+| Probabilidad | 0 a 1 | 0.5 |
+| Odds | 0 a $+\infty$ | 1 |
+| **Log-odds (logit)** | $-\infty$ a $+\infty$ | **0** |
+
+::: clave
+En la escala logit **sí** podemos usar un predictor lineal $\beta_0 + \beta_1X$ sin predecir valores imposibles.
+:::
+
+## 2.4 Función logística (sigmoide)
+
+$$f(z) = \frac{1}{1 + e^{-z}}$$
+
+```{r}
+#| label: sigmoide
+#| echo: false
+#| fig-height: 3.8
+sg <- data.frame(z = seq(-8, 8, .05)); sg$f <- 1 / (1 + exp(-sg$z))
+ggplot(sg, aes(z, f)) + geom_line(linewidth = 1.4, col = azul) +
+  geom_hline(yintercept = c(0, 1), lty = 3) +
+  geom_point(aes(x = 0, y = .5), size = 4, col = rojo) +
+  annotate("text", x = 1.2, y = .45, label = "z = 0 → f(z) = 0.5", size = 5, hjust = 0) +
+  annotate("text", x = -6, y = .12, label = "cambio lento", size = 5) +
+  annotate("text", x = 6, y = .88, label = "cambio lento", size = 5) +
+  annotate("text", x = -1.5, y = .75, label = "cambio rápido", size = 5) +
+  labs(x = "z (cualquier número real)", y = "f(z)")
+```
+
+Cualquier valor de $z$ se transforma en un número **entre 0 y 1**: ideal para probabilidades. Es la **inversa del logit** [@celis2014bioestadistica]. En R: `plogis(z)`.
+
+## 2.5 Ecuación del modelo
+
+Sustituyendo $z$ por el predictor lineal [@celis2014bioestadistica]:
+
+$$P(Y = 1 \mid X_1, \dots, X_k) = \frac{1}{1 + e^{-(\beta_0 + \beta_1X_1 + \dots + \beta_kX_k)}}$$
+
+Forma equivalente (la que estima R):
+
+$$\ln\left(\frac{p}{1-p}\right) = \beta_0 + \beta_1X_1 + \beta_2X_2 + \dots + \beta_kX_k$$
+
+-   $\beta_0$: log-odds del evento cuando todas las $X = 0$ (grupo de referencia).
+-   $\beta_j$: cambio en el log-odds por cada unidad de $X_j$.
+
+## Nuestro primer modelo: AR según número de alelos T
+
+```{r}
+#| label: modelo-simple
+modelo_snp <- glm(caso ~ dosis_T, data = datos, family = binomial) # binomial es para la regresión logística
+summary(modelo_snp)
+```
+
+También podemos obtener los OR
+```{r}
+exp(modelo_snp$coefficients)
+```
+
+
+::: alerta
+La interpretación de los OR la veremos unas diapositivas adelante.
+:::
+
+
+## Nuestro primer modelo: AR según número de alelos T
+
+Una forma más fácil:
+
+Con los log Odds:
+
+```{r}
+modelo_snp |> 
+  gtsummary::tbl_regression(exponentiate = FALSE)
+```
+
+
+Con los OR:
+```{r}
+modelo_snp |> 
+  gtsummary::tbl_regression(exponentiate = TRUE)
+```
+
+::: alerta
+La interpretación de los OR la veremos unas diapositivas adelante.
+:::
+
+## Otra forma de realizar la regresión con la dosis como factor
+
+En lugar de utilizar la dosis como una variable numérica también podemos utilizarla como factor
+
+```{r}
+glm(caso ~ as.factor(dosis_T), data = datos, family = binomial) |> 
+  gtsummary::tbl_regression(exponentiate = TRUE)
+```
+
+
+## 2.6 ¿Cómo se estiman los coeficientes? Máxima verosimilitud
+
+- No hay mínimos cuadrados, sino que los coeficientes se estima mediante máxima verosimilitud (Maximum Likelihood Estimation, MLE) [@perezguerrero2024bioestadistica; @celis2014bioestadistica]:
+
+- La máxima verosimilitud busca los valores de los coeficientes β que hacen que los resultados que observamos sean lo más probables posible según nuestro modelo.
+
+- La idea es calcular qué tan probable sería observar nuestros resultados si las probabilidades estimadas por cada modelo fueran correctas.
+
+Más o menos así:
+
+1.  Proponer una curva (valores de $\beta_0, \beta_1$).
+2.  Calcular, para **cada persona**, la probabilidad de lo que realmente le pasó: $\hat p_i$ si es caso, $1 - \hat p_i$ si es control.
+3.  **Multiplicar** todas esas probabilidades → **verosimilitud** (en la práctica se suman sus logaritmos: *log-likelihood*).
+4.  Cambiar la curva y repetir hasta encontrar la que hace **más probables** los datos observados.
+
+R lo hace por un algoritmo iterativo (IRLS); `summary()` reporta *"Number of Fisher Scoring iterations"*. El Fisher Scoring es un algoritmo numérico utilizado para encontrar los parámetros que maximizan una función de verosimilitud.
+
+## Los valores de `p` y la devianza
+
+- Los valores de $p$ para los $\beta$ en la regresión logística se obtienen mediante la prueba de Wald:
+
+$$ z = \frac{\hat{\beta}-0}{SE(\hat{\beta})}$$
+
+- La devianza es una medida de qué tan bien se ajusta un modelo de regresión logística a los datos observados.
+
+- La devianza mide cuánto pierde nuestro modelo, en términos de log-verosimilitud, respecto a un modelo ideal que reproduce perfectamente los datos observados.
+
+- Una devianza residual (devianza del intercepto - devianza del coeficiente) mejor puede indicar que el modelo bueno
+
+
+# 3. Interpretación de los coeficientes {background-color="#1f4e79"}
+
+## 3.1 Interpretación de los coeficientes β
+
+```{r}
+#| label: coef
+coef(modelo_snp)
+```
+
+-   $\hat\beta_1 =$ `r round(coef(modelo_snp)[2], 3)`: cada alelo T **aumenta el log-odds** de AR en `r round(coef(modelo_snp)[2], 3)`.
+-   **Signo**: positivo → factor de riesgo; negativo → factor protector; 0 → sin asociación.
+-   El log-odds es difícil de comunicar. Por eso se transforma: $e^{\beta}$.
+
+::: clave
+$\beta > 0 \Leftrightarrow OR > 1$  ·  $\beta = 0 \Leftrightarrow OR = 1$  ·  $\beta < 0 \Leftrightarrow OR < 1$
+:::
+
+## 3.2 Odds Ratio: cálculo e interpretación
+
+El OR compara los odds de dos grupos. Con una tabla 2 × 2: $OR = \dfrac{a \cdot d}{b \cdot c}$ [@celis2014bioestadistica].
+
+```{r}
+#| label: or-2x2
+# Portador de al menos un alelo T (sí/no)
+datos$portador_T <- ifelse(datos$dosis_T >= 1, 1, 0)
+t2 <- table(Portador = datos$portador_T, Caso = datos$caso)[2:1, 2:1]
+t2
+(t2[1, 1] * t2[2, 2]) / (t2[1, 2] * t2[2, 1])   # OR = ad / bc
+
+# El mismo OR desde la regresión logística
+exp(coef(glm(caso ~ portador_T, data = datos, family = binomial)))
+```
+
+::: clave
+Con un predictor dicotómico, $e^{\beta_1}$ es **exactamente** el OR de la tabla 2 × 2 [@celis2014bioestadistica].
+:::
+
+## OR por alelo (modelo aditivo)
+
+```{r}
+#| label: or-aditivo
+exp(coef(modelo_snp))
+```
+
+**Interpretación**: por cada copia adicional del alelo T, los **odds** de tener AR se multiplican por `r round(exp(coef(modelo_snp)[2]), 2)` (aumentan `r round((exp(coef(modelo_snp)[2]) - 1) * 100)` %).
+
+-   Dos alelos (TT vs. GG): $OR = e^{2\beta_1}$ = `r round(exp(2 * coef(modelo_snp)[2]), 2)`.
+-   El intercepto $e^{\beta_0}$ = odds de ser caso en GG. En casos y controles **no** se interpreta como riesgo poblacional [@sperandei2014understanding; @celis2014bioestadistica].
+
+
+
+## 3.3 Predictores continuos
+
+```{r}
+#| label: continua
+modelo_edad <- glm(caso ~ edad, data = datos, family = binomial)
+exp(coef(modelo_edad))            # OR por cada año
+exp(coef(modelo_edad)[2] * 10)    # OR por cada 10 años
+```
+
+-   OR por **1 año**: `r round(exp(coef(modelo_edad)[2]), 3)` → los odds aumentan `r round((exp(coef(modelo_edad)[2]) - 1) * 100, 1)` % por año.
+-   OR por **10 años**: $e^{10\beta}$ = `r round(exp(10 * coef(modelo_edad)[2]), 2)`. Elija una unidad con sentido clínico.
+-   El intercepto corresponde a **edad = 0**: no tiene interpretación práctica [@sperandei2014understanding].
+
+## 3.3 Predictores categóricos
+
+```{r}
+#| label: categorica
+modelo_gen <- glm(caso ~ rs7574865, data = datos, family = binomial)
+round(exp(coef(modelo_gen)), 3)
+```
+
+-   R crea **variables dummy** ($k - 1$) automáticamente [@sperandei2014understanding].
+-   `rs7574865GT`: odds de AR en **GT vs. GG** (referencia).
+-   `rs7574865TT`: odds de AR en **TT vs. GG**.
+-   Cada OR se interpreta **respecto a la categoría de referencia**.
+
+## 3.4 Probabilidad, Odds Ratio y Riesgo Relativo
+
+| Medida | Fórmula | Pregunta | ¿En casos y controles? |
+|---|---|---|---|
+| Probabilidad (riesgo) | $a/(a+b)$ | ¿Qué tan probable es el evento? | No (muestreo fijado) |
+| Riesgo relativo (RR) | $\dfrac{a/(a+b)}{c/(c+d)}$ | ¿Cuántas veces más **riesgo**? | **No** se puede estimar |
+| Odds ratio (OR) | $\dfrac{ad}{bc}$ | ¿Cuántas veces más **odds**? | **Sí** |
+
+-   Si el evento es **raro** (< 10 %), OR ≈ RR. Si es frecuente, el OR se aleja de 1 **más** que el RR [@celis2014bioestadistica; @zhang1998whats].
+-   Un OR grande puede corresponder a una **probabilidad pequeña** si el riesgo basal es bajo [@sperandei2014understanding].
+
+## OR vs. RR según la frecuencia del evento
+
+```{r}
+#| label: or-rr
+#| echo: false
+#| fig-height: 4.2
+rr <- 2
+p0 <- seq(0.005, 0.45, 0.005)
+orr <- data.frame(p0 = p0, RR = rr, OR = (rr * p0 / (1 - rr * p0)) / (p0 / (1 - p0)))
+ggplot(orr, aes(p0 * 100)) +
+  geom_line(aes(y = OR, col = "OR"), linewidth = 1.3) +
+  geom_line(aes(y = RR, col = "RR verdadero = 2"), linewidth = 1.3, lty = 2) +
+  annotate("rect", xmin = 0, xmax = 10, ymin = -Inf, ymax = Inf, alpha = .1, fill = verde) +
+  annotate("text", x = 5, y = 6, label = "Evento raro:\nOR ≈ RR", size = 5) +
+  scale_color_manual(values = c(rojo, azul), name = NULL) +
+  labs(x = "Riesgo en no expuestos (%)", y = "Medida de asociación",
+       title = "Con el mismo RR = 2, el OR crece cuando el evento es frecuente")
+```
+
+::: small
+La AR es poco frecuente (prevalencia < 1–2 %), por lo que el OR de nuestro estudio aproxima razonablemente al RR [@celis2014bioestadistica].
+:::
+
+## 3.5 Intervalos de confianza del 95 %
+
+```{r}
+#| label: ic
+# IC por perfil de verosimilitud (recomendado), en escala OR
+exp(confint(modelo_snp))
+
+# IC de Wald: exp(β ± 1.96·EE)  (fórmula de Celis)
+exp(confint.default(modelo_snp))
+```
+
+-   Si el IC **no incluye 1** → asociación estadísticamente significativa (α = 0.05).
+-   El **ancho** indica **precisión**: estrecho = estimación precisa.
+-   Wald y perfil coinciden con muestras grandes; con muestras pequeñas o OR extremos prefiera el de perfil [@hosmer2013applied].
+
+La forma más fácil de obtener los IC es `tbl_regression` de `gtsummary`
+
+```{r}
+modelo_snp |> 
+  gtsummary::tbl_regression(exponetiate=T)
+```
+
+
+## 3.6 Significancia estadística vs. relevancia biológica
+
+```{r}
+#| label: n-vs-ic
+#| echo: false
+#| fig-height: 3.8
+b <- coef(modelo_snp)[2]; ee <- sqrt(vcov(modelo_snp)[2, 2])
+ns <- c(100, 200, 400, 800, 2000, 10000, 100000)
+ic <- data.frame(n = factor(format(ns, big.mark = ","), levels = format(ns, big.mark = ",")),
+                 or = exp(b), li = exp(b - 1.96 * ee * sqrt(800 / ns)),
+                 ls = exp(b + 1.96 * ee * sqrt(800 / ns)))
+ggplot(ic, aes(n, or, ymin = li, ymax = ls)) +
+  geom_pointrange(col = azul, linewidth = 1.1) + geom_hline(yintercept = 1, lty = 2, col = rojo) +
+  scale_y_log10() + labs(x = "Tamaño de muestra", y = "OR (IC 95 %)",
+                         title = "Mismo OR, distinto tamaño de muestra")
+```
+
+-   El valor *p* depende del **tamaño de muestra**; el OR no. En un GWAS con 100 000 personas, un OR de 1.05 es "muy significativo" [@wasserstein2016asa].
+-   **Relevancia biológica**: ¿el efecto es grande? ¿es plausible (función de *STAT4* en la vía de IL-12/IL-23)? ¿se replica en otras poblaciones? ¿cambia decisiones clínicas?
+-   Un OR de 50 puede llegar a no ser importante, por ejemplo para un estudio de un tamaño de muestra pequeño. 
+-   A veces los OR con IC gigantes pueden reflejar la realidad. 
+
+# Cierre {background-color="#1f4e79"}
+
+## Mensajes clave
+
+1.  Un **MLG** = distribución + predictor lineal + función de enlace. La regresión logística es el MLG con distribución **binomial** y enlace **logit**.
+2.  La regresión lineal falla con respuestas binarias: predicciones imposibles, residuos no normales, heterocedasticidad.
+3.  **Probabilidad ≠ odds ≠ log-odds**. El modelo es lineal en el **log-odds**.
+4.  Los coeficientes se estiman por **máxima verosimilitud**.
+5.  $e^{\beta}$ = **OR**. Por alelo, por año o respecto a una categoría de referencia.
+6.  En casos y controles se estima el **OR**, no el RR ni el riesgo absoluto.
+7.  Reporte siempre **OR + IC 95 %** y discuta la **relevancia**, no solo el valor *p*.
+
+
+# Practica {background-color="#1f4e79"}
+## Práctica en clase
+
+Con `estudio_AR_STAT4.csv`:
+
+1.  Calcule a mano (tabla 2 × 2) el OR de **ser mujer** para AR y compruébelo con `glm()`.
+2.  Ajuste `glm(caso ~ tabaquismo, family = binomial)`. Interprete cada OR respecto a "Nunca".
+3.  Calcule la probabilidad predicha de ser caso para una persona de 30, 50 y 70 años con `predict(..., type = "response")`. ¿Por qué esa probabilidad **no** es el riesgo poblacional?
+4.  Para el modelo de edad, obtenga el OR por cada **5 años** con su IC 95 %.
+5. Utilice los algoritmos `step` para encontrar un modelo en el que identifique factores asociados a la AR. Ajuste por todas las variables de la base. 
+
+## Práctica en clase 2
+
+Con `sal_tension_arterial.csv`:
+
+
+1. Identifique de forma individual y mediante regresión logística los factores asociados a la hipertensión (más de 140 mm/Hg)
+2. Construya un modelo ajustado de forma manual, incluya interacciones y confusores el caso de ser necesario.
+3. Ajute el modelo con los algoritmos `step`
+
+
+# Interpretación de OR. {background-color="#1f4e79"}
+## Interpretación de Odds Ratios (OR)
+
+El **Odds Ratio (OR)** expresa cuántas veces son las *odds* de un evento en un grupo respecto a otro.
+
+- **OR = 1:** ausencia de asociación en la escala de odds.
+- **OR > 1:** mayores odds del evento.
+- **OR < 1:** menores odds del evento.
+
+::: {.callout-important}
+Un OR no representa directamente un cambio en la probabilidad ni en el riesgo.
+:::
+
+
+::: {.callout-important}
+La forma más fácil de interpretar un OR siempre es utilizando los odds. Así evita hablar de riesgos, probabilidades etc. Hablar de riesgos no es incorrecto, pero depende mucho del contexto del estudio. 
+:::
+
+::: {.callout-important}
+Cuando un OR es menor a 1 puede utilizar el reciproco para facilitar su interpretación. 
+:::
+
+Los ejemplos que se muestran a continuación son genéricos. Úselos con precaución. 
+
+
+---
+
+## Ejemplo 1. Tabaquismo y cáncer pulmonar
+
+$$
+OR = 3.50 \qquad IC_{95\%}: 2.80-4.40
+$$
+
+**Interpretación:**
+
+Las personas fumadoras presentan odds de cáncer pulmonar **3.5 veces las de las personas no fumadoras**.
+
+El intervalo de confianza indica que los datos son compatibles con OR entre 2.80 y 4.40.
+
+**Preguntas:**
+
+- ¿La asociación es estadísticamente significativa?
+- ¿La magnitud de la asociación es importante?
+- ¿El intervalo de confianza es preciso?
+
+---
+
+## Ejemplo 2. Obesidad e hipertensión
+
+$$
+OR = 1.80 \qquad IC_{95\%}: 1.40-2.30
+$$
+
+**Interpretación:**
+
+Las personas con obesidad presentan odds de hipertensión **80% mayores** que las personas sin obesidad.
+
+El intervalo de confianza es compatible con incrementos en las odds de entre **40% y 130%**.
+
+**Preguntas:**
+
+- ¿Existe evidencia estadística de asociación?
+- ¿Qué nos dice el intervalo sobre la magnitud del efecto?
+
+---
+
+## Ejemplo 3. Tratamiento y mortalidad
+
+$$
+OR = 0.40 \qquad IC_{95\%}: 0.25-0.64
+$$
+
+**Interpretación:**
+
+Los pacientes tratados presentan odds de mortalidad **60% menores** que los pacientes no tratados.
+
+El intervalo de confianza es compatible con reducciones en las odds de entre **36% y 75%**.
+
+**Preguntas:**
+
+- ¿El tratamiento presenta una asociación protectora?
+- ¿La asociación es estadísticamente significativa?
+- ¿Podemos afirmar que el riesgo de morir disminuye 60%?
+
+---
+
+## Ejemplo 4. Actividad física y diabetes
+
+$$
+OR = 0.75 \qquad IC_{95\%}: 0.60-0.93
+$$
+
+**Interpretación:**
+
+Las personas físicamente activas presentan odds de diabetes **25% menores** que las personas sedentarias.
+
+El intervalo de confianza es compatible con reducciones en las odds de entre **7% y 40%**.
+
+**Preguntas:**
+
+- ¿La asociación es estadísticamente significativa?
+- ¿Qué tan precisa es la estimación?
+- ¿Podemos interpretar esta asociación como causal?
+
+---
+
+## Ejemplo 5. Significativo, pero con efecto pequeño
+
+**Exposición ambiental y enfermedad respiratoria**
+
+$$
+OR = 1.08 \qquad IC_{95\%}: 1.03-1.13
+$$
+
+**Interpretación:**
+
+Las personas expuestas presentan odds de enfermedad respiratoria **8% mayores** que las no expuestas.
+
+El resultado es estadísticamente significativo.
+
+**Preguntas:**
+
+- ¿Un efecto estadísticamente significativo es necesariamente importante?
+- ¿Una asociación pequeña puede tener relevancia poblacional?
+- ¿Qué información adicional necesitaríamos?
+
+---
+
+## Ejemplo 6. Asociación grande, pero imprecisa
+
+**Biomarcador y respuesta al tratamiento**
+
+$$
+OR = 2.50 \qquad IC_{95\%}: 0.80-7.80
+$$
+
+**Interpretación:**
+
+Los pacientes positivos al biomarcador presentan odds estimadas de respuesta **2.5 veces las de los pacientes negativos**.
+
+Sin embargo, el intervalo es compatible tanto con una reducción del 20% como con un aumento del 680% en las odds.
+
+**Preguntas:**
+
+- ¿La asociación es estadísticamente significativa?
+- ¿Podemos concluir que no existe asociación?
+- ¿Qué indica la amplitud del intervalo de confianza?
+
+---
+
+## Ejemplo 7. Asociación protectora, pero incierta
+
+**Tratamiento preventivo y hospitalización**
+
+$$
+OR = 0.35 \qquad IC_{95\%}: 0.08-1.50
+$$
+
+**Interpretación:**
+
+Los pacientes tratados presentan odds estimadas de hospitalización **65% menores** que los no tratados.
+
+Sin embargo, el intervalo es compatible con una reducción de hasta 92% o un aumento de hasta 50% en las odds.
+
+**Preguntas:**
+
+- ¿Podemos afirmar que el tratamiento es protector?
+- ¿Qué significa que el intervalo incluya OR = 1?
+- ¿La falta de significancia demuestra ausencia de efecto?
+
+---
+
+## Ejemplo 8. Dos estudios con el mismo OR
+
+**Exposición a contaminación y enfermedad respiratoria**
+
+| Característica | Estudio A | Estudio B |
+|---|---:|---:|
+| OR | 1.80 | 1.80 |
+| IC del 95% | 1.70–1.91 | 1.01–3.20 |
+| Significativo | Sí | Sí |
+
+**Preguntas:**
+
+- ¿Ambos estudios estiman la misma magnitud de asociación?
+- ¿Cuál presenta mayor precisión?
+- ¿Cuál proporciona una estimación más informativa?
+
+---
+
+## Ejemplo 9. No significativo, pero preciso
+
+**Exposición ocupacional y enfermedad cardiovascular**
+
+$$
+OR = 1.01 \qquad IC_{95\%}: 0.99-1.03
+$$
+
+**Interpretación:**
+
+Las personas expuestas presentan odds estimadas de enfermedad cardiovascular **1% mayores**.
+
+El intervalo es compatible con una reducción del 1% o un incremento del 3% en las odds.
+
+**Preguntas:**
+
+- ¿El resultado es estadísticamente significativo?
+- ¿El intervalo permite descartar asociaciones grandes?
+- ¿Qué diferencia existe entre ausencia de significancia y ausencia de asociación?
+
+---
+
+## Ejemplo 10. Dos resultados no significativos
+
+| Característica | Estudio A | Estudio B |
+|---|---:|---:|
+| OR | 1.01 | 2.50 |
+| IC del 95% | 0.99–1.03 | 0.80–7.80 |
+| Significativo | No | No |
+
+**Preguntas:**
+
+- ¿Ambos estudios permiten llegar a la misma conclusión?
+- ¿Cuál tiene mayor incertidumbre?
+- ¿Cuál permite descartar asociaciones de gran magnitud?
+- ¿En cuál sería más importante obtener información adicional?
+
+---
+
+## Ejemplo 11. Significancia estadística y relevancia clínica
+
+**Tratamiento y complicaciones cardiovasculares**
+
+$$
+OR = 0.98 \qquad IC_{95\%}: 0.97-0.99
+$$
+
+**Interpretación:**
+
+Los pacientes tratados presentan odds de complicaciones cardiovasculares **2% menores** que los no tratados.
+
+El resultado es estadísticamente significativo.
+
+**Preguntas:**
+
+- ¿Una reducción del 2% en las odds justifica utilizar el tratamiento?
+- ¿Qué importancia tiene el riesgo basal?
+- ¿Qué papel tienen los efectos adversos y el costo?
+- ¿Es suficiente conocer el OR para tomar una decisión clínica?
+
+---
+
+## Ejercicio. Interpreta los resultados
+
+| Estudio | OR | IC del 95% |
+|---|---:|---|
+| A | 3.50 | 2.80–4.40 |
+| B | 1.08 | 1.03–1.13 |
+| C | 0.40 | 0.25–0.64 |
+| D | 2.50 | 0.80–7.80 |
+| E | 1.01 | 0.99–1.03 |
+| F | 1.80 | 1.01–3.20 |
+
+**Para cada estudio:**
+
+1. Interpreta el OR.
+2. Determina si es estadísticamente significativo.
+3. Evalúa la precisión de la estimación.
+4. Discute su posible relevancia clínica o biológica.
+
+---
+
+## Significancia estadística vs. relevancia biológica
+
+**Significancia estadística**
+
+- Evalúa la evidencia contra la hipótesis nula.
+- Depende de la estimación y su incertidumbre.
+- No establece la importancia del efecto.
+
+**Relevancia biológica o clínica**
+
+- Depende de la magnitud y el contexto del efecto.
+- Considera mecanismos biológicos y consecuencias clínicas.
+- No puede determinarse únicamente mediante el valor de p.
+
+$$
+\boxed{
+\text{Significancia estadística}
+\neq
+\text{Relevancia biológica}
+}
+$$
+
+---
+
+## Mensajes principales
+
+- El **OR** describe la magnitud y dirección de una asociación en la escala de odds.
+- El **intervalo de confianza** informa sobre la precisión de la estimación.
+- Un resultado estadísticamente significativo puede tener un efecto pequeño.
+- Un resultado no significativo puede ser compatible con efectos importantes.
+- Un intervalo estrecho permite estimar la asociación con mayor precisión.
+- La relevancia clínica o biológica requiere considerar el contexto.
+
+::: {.callout-important}
+La interpretación de un resultado no debe depender exclusivamente del valor de p.
+:::
+
+---
+
+## Consideraciones finales
+
+**Al interpretar un OR, debemos preguntarnos:**
+
+1. ¿Cuál es la dirección de la asociación?
+2. ¿Qué tan grande es el efecto estimado?
+3. ¿Qué tan precisa es la estimación?
+4. ¿El intervalo de confianza incluye el valor nulo?
+5. ¿Qué magnitudes de asociación son compatibles con los datos?
+6. ¿La asociación tiene relevancia biológica o clínica?
+
+**Nota:** Todos los resultados presentados son hipotéticos y se utilizan exclusivamente con fines didácticos.
+
+# Interpretación de OR parte 2. {background-color="#1f4e79"}
+## Ejemplo 1. Significativo, IC estrecho, efecto pequeño
+
+> GWAS de diabetes tipo 2, *n* = 200 000. Alelo de riesgo de un SNP: **OR = 1.08 (IC 95 %: 1.05–1.11)**, p = 1 × 10⁻⁹.
+
+- **Interpretación:** cada copia del alelo se asocia con odds de diabetes 8 % mayores. Con 95 % de confianza, el aumento real está entre 5 % y 11 %.
+- **Estadística:** asociación muy sólida; el IC está lejos de 1 y es estrecho.
+- **Biológica/clínica:** el efecto individual es **muy pequeño**. No sirve para predecir quién enfermará, pero puede señalar un gen o una vía biológica relevante.
+- **Pregunta:** ¿le diría a un paciente portador que tiene "alto riesgo"?
+
+## Ejemplo 2. No significativo, IC muy amplio, efecto potencialmente grande
+
+> Variante rara en un gen candidato de lupus, 75 casos y 75 controles: **OR = 3.2 (IC 95 %: 0.85–12.0)**, p = 0.08.
+
+- **Interpretación:** el resultado es compatible con desde una ligera reducción de los odds (−15 %) hasta un aumento de 12 veces.
+- **Estadística:** no significativo, pero el IC es tan amplio que **no descarta un efecto grande**.
+- **Error frecuente:** concluir que "la variante no se asocia con lupus". Lo correcto es decir que el estudio **no tiene precisión** para responder; es **inconcluso**.
+- **Pregunta:** ¿qué cambiaría para estrechar el IC? (más casos, más portadores, un metaanálisis).
+
+## Ejemplo 3. Significativo, IC amplio
+
+> Portadores de una mutación en un gen de reparación del ADN vs. no portadores en cáncer de mama de inicio temprano: **OR = 6.5 (IC 95 %: 1.4–30.2)**, p = 0.02.
+
+- **Interpretación:** los odds en portadores son 6.5 veces los de no portadores. El efecto real podría ser modesto (1.4) o enorme (30).
+- **Estadística:** significativo, pero **muy impreciso**. Pocos portadores generan celdas con conteos bajos, y con datos escasos los OR tienden a **sobreestimarse**.
+- **Biológica:** si el límite inferior es plausible (1.4), el hallazgo aún podría importar, pero el 6.5 no debe citarse como "el efecto".
+- **Pregunta:** ¿qué número reportaría en el resumen del artículo? ¿Solo 6.5?
+
+# OR menores que 1 (factores protectores)
+
+## Ejemplo 4. Protector, significativo, IC estrecho
+
+> Alelo A de un SNP en *IL23R* y enfermedad inflamatoria intestinal: **OR = 0.62 (IC 95 %: 0.51–0.75)**, p < 0.001.
+
+- **Interpretación correcta:** cada copia del alelo A se asocia con odds **38 % menores** (1 − 0.62 = 0.38). La reducción real está entre 25 % y 49 %.
+- **Equivalencia útil:** visto desde el otro alelo, OR = 1/0.62 = **1.61** (IC 1.33–1.96). Es la misma información con otra referencia.
+- **Error frecuente:** "reduce el riesgo un 38 %". Es una reducción de **odds**; solo se parece al riesgo si la enfermedad es rara.
+
+## Ejemplo 5. Protector, no significativo, IC amplio
+
+> Consumo de omega-3 (sí/no) y AR, 120 casos y 120 controles: **OR = 0.70 (IC 95 %: 0.35–1.40)**, p = 0.31.
+
+- **Interpretación:** compatible con desde una reducción de 65 % de los odds hasta un aumento de 40 %.
+- **Estadística y biológica:** **inconcluso**. No apoya ni descarta un efecto protector.
+- **Pregunta:** compárelo con el Ejemplo 6. ¿Cuál aporta más información sobre la "ausencia de efecto"?
+
+## Ejemplo 6. OR ≈ 1 con IC estrecho: un "nulo informativo"
+
+> SNP candidato y AR en un consorcio con 50 000 participantes: **OR = 1.01 (IC 95 %: 0.97–1.05)**, p = 0.62.
+
+- **Interpretación:** el estudio **descarta** efectos mayores de ±5 % en los odds.
+- **Contraste clave:** el Ejemplo 5 y este son ambos "no significativos", pero aquí sí hay **evidencia de ausencia de un efecto relevante**. En el 5 solo hay **ausencia de evidencia**.
+
+# Trampas de interpretación
+
+## Ejemplo 7. La unidad del predictor cambia todo
+
+> Colesterol LDL (mg/dL) y enfermedad coronaria: **OR = 1.005 por mg/dL (IC 95 %: 1.003–1.007)**.
+
+- Parece trivial, pero por cada **40 mg/dL**: OR = 1.005⁴⁰ = **1.22 (IC 95 %: 1.13–1.32)**.
+- **Lección:** un OR "pequeño" puede deberse a una unidad pequeña. Reporte el OR en una unidad con **sentido clínico** (10 años, 1 DE, 40 mg/dL).
+
+## Ejemplo 8. El mismo OR, distinta relevancia según el riesgo basal
+
+> **OR = 2.0** en ambos escenarios:
+
+| Escenario | Riesgo sin exposición | Riesgo con exposición | Diferencia absoluta |
+|---|---|---|---|
+| Enfermedad rara | 0.1 % | ≈ 0.2 % | +0.1 puntos (1 caso extra por cada 1 000 expuestos) |
+| Desenlace frecuente | 20 % | ≈ 33 % | +13 puntos (13 casos extra por cada 100 expuestos) |
+
+- **Lección:** el OR es **relativo**. El impacto clínico o poblacional depende del riesgo basal.
+- Además, con un desenlace frecuente el OR (2.0) **exagera** el riesgo relativo, que aquí es 1.67.
+
+## Ejemplo 9. El umbral de 0.05 es arbitrario
+
+| Estudio | OR | IC 95 % | p |
+|---|---|---|---|
+| A | 1.35 | 1.00–1.82 | 0.049 |
+| B | 1.34 | 0.99–1.81 | 0.051 |
+
+- Según la regla del *p* < 0.05, A "encontró asociación" y B "no la encontró".
+- En realidad son **prácticamente idénticos**: mismo efecto y misma precisión.
+- **Lección:** interprete el **OR y su IC completo**, no la etiqueta de "significativo / no significativo".
+
+# Resumen
+
+## Significancia estadística vs. relevancia biológica
+
+| | **Efecto biológicamente relevante** | **Efecto biológicamente irrelevante** |
+|---|---|---|
+| **Estadísticamente significativo** | Ej. 3 y 4: hallazgo importante (en el 3, confirmar la magnitud) | Ej. 1: real pero pequeño; típico de muestras enormes |
+| **No significativo, IC amplio** | Ej. 2 y 5: **inconcluso**, puede haber un efecto importante | — |
+| **No significativo, IC estrecho alrededor de 1** | — | Ej. 6: evidencia de **ausencia** de efecto relevante |
+
+## Ideas clave
+
+1. **La significancia estadística responde:** ¿es compatible con el azar? Depende mucho del **tamaño de muestra**.
+2. **La relevancia biológica responde:** ¿el efecto es lo bastante grande para importar? Depende de la magnitud, el riesgo basal, la plausibilidad y el contexto.
+3. **El IC 95 % une ambas:** su **posición** respecto a 1 indica la dirección y la significancia; su **ancho** indica la precisión; sus **límites** muestran los efectos más pequeños y más grandes compatibles con los datos.
+4. **Antes de concluir "no hay efecto"**, mire el ancho del IC.
+
+## Referencias
+
+::: {#refs .small}
+:::
+
+
+
+
+

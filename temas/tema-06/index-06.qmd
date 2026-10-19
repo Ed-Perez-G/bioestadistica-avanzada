@@ -4,35 +4,41 @@ title: "Tema 6: Regresión logística"
 
 ## Objetivo
 
-
-
-## Pregunta guía
-
-
+- Entender las generalidades del modelo lineal generalizado y sus diferencias con la regresión lineal múltiple.
+- Comprender por las variables binarias requieren un modelo diferente al de las variables continuas cuando se usas como variable de desenlace.
+- Comprender los fundamentos matemáticos detrás del OR que se obtiene en la regresión logística
+- Construir un modelo de regresión logística e interpretarlo. 
 
 ## Contenidos
 
-- Regresión logística parte 1. 
-- Regresión logística parte 2.
-- Regresión logística parte 3.
+- Introducción a los modelos lineales generalizados
+- Diferencias entre Odds, probabilidad y OR
+- Fundamentos de la regresión logística
+- Creación y evaluación de modelos de regresión logística
+- Interpretación de OR de deviance 
+
 
 ## Material de clase
 
-
+- [Regresión logística parte 1](Regresion_logistica_final1/Regresiion logistica part 1.qmd) 
 
 ## Base de datos tema-06
 
 [estudio_AR_STAT4](Bases/estudio_AR_STAT4.csv){download="estudio_AR_STAT4.csv"}
 
+[sal_tension_arterial.csv](Bases/sal_tension_arterial.csv){download="sal_tension_arterial.csv"}
+
 [Script de simulación](Bases/simular_estudio_AR_STAT4.R){download="simular_estudio_AR_STAT4.R"}
 
 ::: {.callout-note}
 Los datos son simulados con fines didácticos. Los parámetros están inspirados en Remmers et al. (2007, *NEJM*), pero no corresponden a pacientes reales.
+
+los datos de la base de datos sal_tension_arterial.csv son del libro Bioestadística en R para ciencias de la salud: Guía práctica
 :::
 
 ## Paquetes necesarios
 
 ```r
 install.packages(c("ggplot2", "patchwork", "broom", "ggeffects",
-                   "performance", "see", "pROC", "logistf"))
+                   "performance", "see", "pROC", "logistf", "gtsummary"))
 ```

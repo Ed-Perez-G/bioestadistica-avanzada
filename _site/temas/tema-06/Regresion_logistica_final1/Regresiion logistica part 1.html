@@ -1,0 +1,4245 @@
+<!DOCTYPE html>
+<html lang="es"><head>
+<script src="../../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../../site_libs/quarto-html/tabby.min.js"></script>
+<script src="../../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<link href="../../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../../site_libs/quarto-html/light-border.css" rel="stylesheet">
+<link href="../../../site_libs/quarto-html/quarto-syntax-highlighting-065a5179aebd64318d7ea99d77b64a9e.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
+  <meta name="generator" content="quarto-1.8.25">
+
+  <meta name="author" content="Edsaúl Emilio Pérez-Guerrero">
+  <meta name="dcterms.date" content="2026-10-19">
+  <title>Bioestadística avanzada – Regresión logística. Parte 1</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <link rel="stylesheet" href="../../../site_libs/revealjs/dist/reset.css">
+  <link rel="stylesheet" href="../../../site_libs/revealjs/dist/reveal.css">
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+      vertical-align: middle;
+    }
+    /* CSS for syntax highlighting */
+    html { -webkit-text-size-adjust: 100%; }
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+      }
+    pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+    div.sourceCode
+      { color: #24292e;  }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span { color: #24292e; } /* Normal */
+    code span.al { color: #ff5555; font-weight: bold; } /* Alert */
+    code span.an { color: #6a737d; } /* Annotation */
+    code span.at { color: #d73a49; } /* Attribute */
+    code span.bn { color: #005cc5; } /* BaseN */
+    code span.bu { color: #d73a49; } /* BuiltIn */
+    code span.cf { color: #d73a49; } /* ControlFlow */
+    code span.ch { color: #032f62; } /* Char */
+    code span.cn { color: #005cc5; } /* Constant */
+    code span.co { color: #6a737d; } /* Comment */
+    code span.cv { color: #6a737d; } /* CommentVar */
+    code span.do { color: #6a737d; } /* Documentation */
+    code span.dt { color: #d73a49; } /* DataType */
+    code span.dv { color: #005cc5; } /* DecVal */
+    code span.er { color: #ff5555; text-decoration: underline; } /* Error */
+    code span.ex { color: #d73a49; font-weight: bold; } /* Extension */
+    code span.fl { color: #005cc5; } /* Float */
+    code span.fu { color: #6f42c1; } /* Function */
+    code span.im { color: #032f62; } /* Import */
+    code span.in { color: #6a737d; } /* Information */
+    code span.kw { color: #d73a49; } /* Keyword */
+    code span.op { color: #24292e; } /* Operator */
+    code span.ot { color: #6f42c1; } /* Other */
+    code span.pp { color: #d73a49; } /* Preprocessor */
+    code span.re { color: #6a737d; } /* RegionMarker */
+    code span.sc { color: #005cc5; } /* SpecialChar */
+    code span.ss { color: #032f62; } /* SpecialString */
+    code span.st { color: #032f62; } /* String */
+    code span.va { color: #e36209; } /* Variable */
+    code span.vs { color: #032f62; } /* VerbatimString */
+    code span.wa { color: #ff5555; } /* Warning */
+    /* CSS for citations */
+    div.csl-bib-body { }
+    div.csl-entry {
+      clear: both;
+      margin-bottom: 0em;
+    }
+    .hanging-indent div.csl-entry {
+      margin-left:2em;
+      text-indent:-2em;
+    }
+    div.csl-left-margin {
+      min-width:2em;
+      float:left;
+    }
+    div.csl-right-inline {
+      margin-left:2em;
+      padding-left:1em;
+    }
+    div.csl-indent {
+      margin-left: 2em;
+    }  </style>
+  <link rel="stylesheet" href="../../../site_libs/revealjs/dist/theme/quarto-992ed520baf37567c43dc1d740a96f26.css">
+  <link rel="stylesheet" href="estilos.css">
+  <link href="../../../site_libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
+  <link href="../../../site_libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
+  <link href="../../../site_libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
+  <link href="../../../site_libs/revealjs/plugin/reveal-chalkboard/font-awesome/css/all.css" rel="stylesheet">
+  <link href="../../../site_libs/revealjs/plugin/reveal-chalkboard/style.css" rel="stylesheet">
+  <link href="../../../site_libs/revealjs/plugin/quarto-support/footer.css" rel="stylesheet">
+  <style type="text/css">
+    .reveal div.sourceCode {
+      margin: 0;
+      overflow: auto;
+    }
+    .reveal div.hanging-indent {
+      margin-left: 1em;
+      text-indent: -1em;
+    }
+    .reveal .slide:not(.center) {
+      height: 100%;
+      overflow-y: auto;
+    }
+    .reveal .slide.scrollable {
+      overflow-y: auto;
+    }
+    .reveal .footnotes {
+      height: 100%;
+      overflow-y: auto;
+    }
+    .reveal .slide .absolute {
+      position: absolute;
+      display: block;
+    }
+    .reveal .footnotes ol {
+      counter-reset: ol;
+      list-style-type: none; 
+      margin-left: 0;
+    }
+    .reveal .footnotes ol li:before {
+      counter-increment: ol;
+      content: counter(ol) ". "; 
+    }
+    .reveal .footnotes ol li > p:first-child {
+      display: inline-block;
+    }
+    .reveal .slide ul,
+    .reveal .slide ol {
+      margin-bottom: 0.5em;
+    }
+    .reveal .slide ul li,
+    .reveal .slide ol li {
+      margin-top: 0.4em;
+      margin-bottom: 0.2em;
+    }
+    .reveal .slide ul[role="tablist"] li {
+      margin-bottom: 0;
+    }
+    .reveal .slide ul li > *:first-child,
+    .reveal .slide ol li > *:first-child {
+      margin-block-start: 0;
+    }
+    .reveal .slide ul li > *:last-child,
+    .reveal .slide ol li > *:last-child {
+      margin-block-end: 0;
+    }
+    .reveal .slide .columns:nth-child(3) {
+      margin-block-start: 0.8em;
+    }
+    .reveal blockquote {
+      box-shadow: none;
+    }
+    .reveal .tippy-content>* {
+      margin-top: 0.2em;
+      margin-bottom: 0.7em;
+    }
+    .reveal .tippy-content>*:last-child {
+      margin-bottom: 0.2em;
+    }
+    .reveal .slide > img.stretch.quarto-figure-center,
+    .reveal .slide > img.r-stretch.quarto-figure-center {
+      display: block;
+      margin-left: auto;
+      margin-right: auto; 
+    }
+    .reveal .slide > img.stretch.quarto-figure-left,
+    .reveal .slide > img.r-stretch.quarto-figure-left  {
+      display: block;
+      margin-left: 0;
+      margin-right: auto; 
+    }
+    .reveal .slide > img.stretch.quarto-figure-right,
+    .reveal .slide > img.r-stretch.quarto-figure-right  {
+      display: block;
+      margin-left: auto;
+      margin-right: 0; 
+    }
+  </style>
+</head>
+<body class="quarto-light">
+  <div class="reveal">
+    <div class="slides">
+
+<section id="title-slide" class="quarto-title-block center">
+  <h1 class="title">Regresión logística. Parte 1</h1>
+  <p class="subtitle">Modelos lineales generalizados · Fundamentos matemáticos · Construccion de un modelo básico · Interpretacion</p>
+
+<div class="quarto-title-authors">
+<div class="quarto-title-author">
+<div class="quarto-title-author-name">
+Edsaúl Emilio Pérez-Guerrero 
+</div>
+</div>
+</div>
+
+  <p class="date">2026-10-19</p>
+</section>
+<section id="objetivos-de-la-sesión" class="slide level2">
+<h2>Objetivos de la sesión</h2>
+<ul>
+<li>Entender las generalidades del modelo lineal generalizado y sus diferencias con la regresión lineal múltiple.</li>
+<li>Comprender por las variables binarias requieren un modelo diferente al de las variables continuas cuando se usas como variable de desenlace.</li>
+<li>Comprender los fundamentos matemáticos detrás del OR que se obtiene en la regresión logística</li>
+<li>Construir un modelo de regresión logística e interpretarlo.</li>
+</ul>
+<div class="small">
+<ul>
+<li>Paquetes: <code>ggplot2</code>, <code>broom</code>, <code>performance</code>.</li>
+<li>Base de datos:
+<ul>
+<li><code>estudio_AR_STAT4.csv</code> (carpeta <code>Bases/</code> del tema).</li>
+<li><code>sal_tension_arterial.csv</code> (carpeta <code>Bases/</code> del tema).</li>
+</ul></li>
+</ul>
+</div>
+</section>
+<section id="cómo-construir-una-regresión-para-identificar-la-asociación-del-gen-stat4-rs7574865-alelo-de-riesgo-t-con-la-artritis-reumatoíde" class="title-slide slide level1 center" data-background-color="#1f4e79">
+<h1>¿Cómo construir una regresión para identificar la asociación del gen <em>STAT4</em> rs7574865 (alelo de riesgo <strong>T</strong>) con la Artritis Reumatoíde?</h1>
+
+</section>
+
+<section>
+<section id="cómo-podemos-indentificar-factores-asociados-la-hipertensión-en-un-grupo-de-pacientes" class="title-slide slide level1 center" data-background-color="#1f4e79">
+<h1>¿Cómo podemos indentificar factores asociados la hipertensión en un grupo de pacientes?</h1>
+
+</section>
+<section id="nuestros-datos.-variantes-en-stat4" class="slide level2">
+<h2>Nuestros datos. Variantes en STAT4</h2>
+<div class="pregunta">
+<p><strong>¿Cómo podemos determinar si una variante genética está asociada con una enfermedad, cuantificar esa asociación y evaluar si nuestras conclusiones son estadísticamente válidas?</strong></p>
+</div>
+<ul>
+<li><strong>Estudio de casos y controles</strong>: 400 pacientes con <strong>artritis reumatoide (AR)</strong> y 400 controles sin AR.</li>
+<li><strong>Variante de interés</strong>: <em>STAT4</em> rs7574865 (alelo de riesgo <strong>T</strong>). En el estudio original el alelo T se encontró en 27 % de los cromosomas de casos y 22 % de controles; OR ≈ 1.32 <span class="citation" data-cites="remmers2007stat4">(<a href="#/referencias" role="doc-biblioref" onclick="">Remmers et&nbsp;al. 2007</a>)</span>.</li>
+<li><strong>Covariables</strong>: sexo, edad, tabaquismo, ancestría amerindia y el primer componente principal genético (PC1).</li>
+</ul>
+<div class="alerta">
+<p>Los datos que utilizaremos fueron simulados con base al estudio de <span class="citation" data-cites="remmers2007stat4">Remmers et&nbsp;al. (<a href="#/referencias" role="doc-biblioref" onclick="">2007</a>)</span>, la idea fue preservar datos lo más parecidos a la realidad.</p>
+</div>
+</section>
+<section id="la-base-de-datos-sal" class="slide level2">
+<h2>La base de datos sal</h2>
+<div class="pregunta">
+<p><strong>¿Cómo podemos indentificar factores asociados a la hipertensión?</strong></p>
+</div>
+<ul>
+<li>También utilizaremos la base de datos “sal_tension_arterial.csv” con algunas modificaciones.</li>
+</ul>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a aria-hidden="true" tabindex="-1"></a>df<span class="sc">$</span>Hipertension <span class="ot">&lt;-</span> <span class="fu">cut</span>(df<span class="sc">$</span>Tension_Arterial,<span class="at">breaks =</span> <span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">140</span>,<span class="cn">Inf</span>),</span>
+<span id="cb1-2"><a aria-hidden="true" tabindex="-1"></a>                       <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"Sin hipetensión"</span>, <span class="st">"Hipertensión"</span>))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<ul>
+<li><strong>Estudio transversal</strong>: con 80 pacientes y 6 variables.</li>
+<li>Se sabe por antecedentes previos del grupo de investigación que se puede establecer un punto de corte para las cifras de tensión arterial sistólica para diagnosticar a un paciente con hipertensión o sin hipertensión. Este punto de corte es 140 mmHg.</li>
+<li>Esta base tiene datos sobre el promedio del consumo de sal y su relación con la tensión arterial (ya la hemos utilizado). Contiene datos sobre comorbilidades, sexo, edad y sobre tabaquismo. En esta ocasión nos enfocaremos en la hipertensión.</li>
+</ul>
+</section></section>
+<section>
+<section id="el-modelo-lineal-generalizado-glm" class="title-slide slide level1 center" data-background-color="#1f4e79">
+<h1>0. El modelo lineal generalizado (GLM)</h1>
+
+</section>
+<section id="un-mismo-paciente-tres-preguntas-distintas" class="slide level2">
+<h2>Un mismo paciente, tres preguntas distintas</h2>
+
+<img data-src="Regresiion-logistica-part-1_files/figure-revealjs/mlg-datos-1.png" class="quarto-figure quarto-figure-center r-stretch" width="1200"><ul>
+<li>La <strong>variable dependiente</strong> cambia de naturaleza: continua, binaria, conteo.</li>
+<li>El predictor (edad) es el mismo. ¿Podemos usar <code>lm()</code> para las tres?</li>
+</ul>
+</section>
+<section id="qué-pasa-si-usamos-regresión-lineal-para-todo" class="slide level2">
+<h2>¿Qué pasa si usamos regresión lineal para todo?</h2>
+
+<img data-src="Regresiion-logistica-part-1_files/figure-revealjs/mlg-problema-1.png" class="quarto-figure quarto-figure-center r-stretch" width="1200"><div class="alerta">
+<p>La recta predice <strong>valores imposibles</strong> (zonas rojas). Además, en datos binarios y de conteo la varianza depende de la media, así que el supuesto de varianza constante no se cumple <span class="citation" data-cites="radecic2026glm">(<a href="#/referencias" role="doc-biblioref" onclick="">Radečić 2026</a>)</span>.</p>
+</div>
+</section>
+<section id="qué-es-un-modelo-lineal-generalizado" class="slide level2">
+<h2>¿Qué es un modelo lineal generalizado?</h2>
+<p>Un <strong>marco</strong> que extiende la regresión lineal a variables dependientes <strong>no normales</strong> <span class="citation" data-cites="nelder1972generalized radecic2026glm">(<a href="#/referencias" role="doc-biblioref" onclick="">Nelder y Wedderburn 1972</a>; <a href="#/referencias" role="doc-biblioref" onclick="">Radečić 2026</a>)</span>.</p>
+<table class="caption-top">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Componente</th>
+<th>¿Qué define?</th>
+<th>Ejemplo (diabetes sí/no)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Aleatorio</strong> (distribución)</td>
+<td>Tipo de dato que genera <span class="math inline">\(Y\)</span></td>
+<td>Binomial</td>
+</tr>
+<tr class="even">
+<td><strong>Sistemático</strong> (predictor lineal)</td>
+<td><span class="math inline">\(\eta = \beta_0 + \beta_1X_1 + \dots + \beta_kX_k\)</span></td>
+<td><span class="math inline">\(\beta_0 + \beta_1 \cdot \text{edad}\)</span></td>
+</tr>
+<tr class="odd">
+<td><strong>Función de enlace</strong> <span class="math inline">\(g(\cdot)\)</span></td>
+<td>Conecta la media de <span class="math inline">\(Y\)</span> con el predictor lineal</td>
+<td>logit: <span class="math inline">\(\ln\frac{p}{1-p} = \eta\)</span></td>
+</tr>
+</tbody>
+</table>
+<div class="clave">
+<p>El predictor lineal es <strong>el mismo</strong> que ya conoce. Lo nuevo es que el modelo es lineal en la <strong>escala del enlace</strong> (log-odds, log-conteo), no en la escala original de <span class="math inline">\(Y\)</span>.</p>
+</div>
+</section>
+<section id="qué-es-un-modelo-lineal-generalizado-1" class="slide level2">
+<h2>¿Qué es un modelo lineal generalizado?</h2>
+<p>Un GLM es una extensión de la regresión lineal que permite modelar variables dependientes con diferentes distribuciones de probabilidad.</p>
+<p>Su formulación general es:</p>
+<p><span class="math display">\[\boxed{g(\mu_i)=\beta_0+\beta_1X_{1i}+\cdots+\beta_pX_{pi}}\]</span></p>
+<p>Donde:</p>
+<ul>
+<li><span class="math inline">\(\mu_i=E(Y_i\mid X_i)\)</span>: valor esperado de la variable dependiente.</li>
+<li><span class="math inline">\(g(\cdot)\)</span>: función de enlace (link function).</li>
+<li><span class="math inline">\(\beta\)</span>: coeficientes del modelo.</li>
+<li><span class="math inline">\(X\)</span>: variables independientes.</li>
+</ul>
+<div class="clave">
+<ul>
+<li><p>La principal diferencia respecto a la regresión lineal es que el GLM no necesita modelar directamente la media de Y como una función lineal de X</p></li>
+<li><p>En su lugar, modela una transformación de esa media mediante la función de enlace.</p></li>
+</ul>
+</div>
+</section>
+<section id="diferentes-tipos-de-desenlace-para-el-glm" class="slide level2">
+<h2>Diferentes tipos de desenlace para el GLM</h2>
+<div id="tbl-distribuciones-glm" class="quarto-float quarto-figure quarto-figure-center">
+<figure class="quarto-float quarto-float-tbl">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-distribuciones-glm-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Tabla&nbsp;1: Distribuciones utilizadas en modelos lineales generalizados
+</figcaption>
+<div aria-describedby="tbl-distribuciones-glm-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="caption-top">
+<colgroup>
+<col style="width: 47%">
+<col style="width: 22%">
+<col style="width: 30%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Tipo de variable dependiente</th>
+<th style="text-align: left;">Distribución</th>
+<th style="text-align: left;">Ejemplo biomédico</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Continua</td>
+<td style="text-align: left;">Normal (gaussiana)</td>
+<td style="text-align: left;">Presión arterial</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Binaria (0/1)</td>
+<td style="text-align: left;">Bernoulli/binomial</td>
+<td style="text-align: left;">Presencia de artritis reumatoide</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Conteos</td>
+<td style="text-align: left;">Poisson</td>
+<td style="text-align: left;">Número de hospitalizaciones</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Proporción de éxitos</td>
+<td style="text-align: left;">Binomial</td>
+<td style="text-align: left;">Número de respondedores entre pacientes evaluados</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Continua positiva y asimétrica</td>
+<td style="text-align: left;">Gamma</td>
+<td style="text-align: left;">Concentración de biomarcadores positivos</td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+</section>
+<section id="modelo-lineal-vs-glm" class="slide level2">
+<h2>Modelo lineal vs GLM</h2>
+<table class="caption-top">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Aspecto</th>
+<th>Modelo lineal (<code>lm</code>)</th>
+<th>MLG (<code>glm</code>)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Distribución de <span class="math inline">\(Y\)</span></td>
+<td>Normal</td>
+<td>Familia exponencial (binomial, Poisson, Gamma…)</td>
+</tr>
+<tr class="even">
+<td>Enlace</td>
+<td>Identidad</td>
+<td>Logit, log, probit, identidad…</td>
+</tr>
+<tr class="odd">
+<td>Rango de predicciones</td>
+<td><span class="math inline">\(-\infty\)</span> a <span class="math inline">\(+\infty\)</span></td>
+<td>Restringido (0–1 para probabilidades; ≥ 0 para conteos)</td>
+</tr>
+<tr class="even">
+<td>Varianza</td>
+<td>Constante</td>
+<td>Depende de la media</td>
+</tr>
+<tr class="odd">
+<td>Estimación</td>
+<td>Mínimos cuadrados</td>
+<td><strong>Máxima verosimilitud</strong></td>
+</tr>
+<tr class="even">
+<td>Coeficientes</td>
+<td>Cambio en <span class="math inline">\(Y\)</span></td>
+<td>Cambio en la escala del enlace → se transforman (OR, RR)</td>
+</tr>
+<tr class="odd">
+<td>Bondad de ajuste</td>
+<td><span class="math inline">\(R^2\)</span>, prueba F</td>
+<td>Devianza, AIC/BIC, razón de verosimilitudes</td>
+</tr>
+</tbody>
+</table>
+<div class="small">
+<p>Fuentes: <span class="citation" data-cites="radecic2026glm">Radečić (<a href="#/referencias" role="doc-biblioref" onclick="">2026</a>)</span>; <span class="citation" data-cites="fox2016applied">Fox (<a href="#/referencias" role="doc-biblioref" onclick="">2016</a>)</span>; <span class="citation" data-cites="denis2020univariate">Denis (<a href="#/referencias" role="doc-biblioref" onclick="">2020</a>)</span>.</p>
+</div>
+</section>
+<section id="ejemplos-de-glm" class="slide level2">
+<h2>Ejemplos de GLM</h2>
+<table class="caption-top">
+<colgroup>
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Tipo de <span class="math inline">\(Y\)</span></th>
+<th>Distribución</th>
+<th>Enlace</th>
+<th>Ejemplo</th>
+<th>En R</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Continua</td>
+<td>Normal</td>
+<td>Identidad</td>
+<td>Presión arterial</td>
+<td><code>glm(y ~ x, family = gaussian)</code></td>
+</tr>
+<tr class="even">
+<td><strong>Binaria</strong></td>
+<td><strong>Binomial</strong></td>
+<td><strong>Logit</strong></td>
+<td><strong>AR sí/no</strong></td>
+<td><code>glm(y ~ x, family = binomial)</code></td>
+</tr>
+<tr class="odd">
+<td>Binaria</td>
+<td>Binomial</td>
+<td>Probit</td>
+<td>Respuesta a fármaco</td>
+<td><code>binomial(link = "probit")</code></td>
+</tr>
+<tr class="even">
+<td>Conteo</td>
+<td>Poisson</td>
+<td>Log</td>
+<td>N.º de brotes de lupus</td>
+<td><code>glm(y ~ x, family = poisson)</code></td>
+</tr>
+<tr class="odd">
+<td>Conteo sobredisperso</td>
+<td>Binomial negativa</td>
+<td>Log</td>
+<td>N.º de lesiones</td>
+<td><code>MASS::glm.nb()</code></td>
+</tr>
+<tr class="even">
+<td>Continua positiva y sesgada</td>
+<td>Gamma</td>
+<td>Log</td>
+<td>Costos hospitalarios</td>
+<td><code>Gamma(link = "log")</code></td>
+</tr>
+</tbody>
+</table>
+<div class="clave">
+<p>Misma sintaxis, mismo predictor lineal; solo cambia <code>family</code>. A partir de aquí nos concentramos en la fila resaltada: <strong>regresión logística</strong>.</p>
+</div>
+</section></section>
+<section>
+<section id="introducción-a-la-regresión-logística" class="title-slide slide level1 center" data-background-color="#1f4e79">
+<h1>1. Introducción a la regresión logística</h1>
+
+</section>
+<section id="tipos-de-variables-dependientes" class="slide level2">
+<h2>1.1 Tipos de variables dependientes</h2>
+<table class="caption-top">
+<colgroup>
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Tipo</th>
+<th>Subtipo</th>
+<th>Ejemplo</th>
+<th>Modelo</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Continua</strong></td>
+<td>—</td>
+<td>Nivel de anti-CCP, PCR, expresión génica</td>
+<td>Regresión lineal</td>
+</tr>
+<tr class="even">
+<td><strong>Categórica</strong></td>
+<td><strong>Binaria (dicotómica)</strong></td>
+<td><strong>AR sí/no</strong>, respuesta a metotrexato sí/no</td>
+<td><strong>Regresión logística</strong></td>
+</tr>
+<tr class="odd">
+<td></td>
+<td>Nominal (&gt; 2 categorías)</td>
+<td>Subtipo de leucemia</td>
+<td>Logística multinomial</td>
+</tr>
+<tr class="even">
+<td></td>
+<td>Ordinal</td>
+<td>Actividad DAS28: baja/moderada/alta</td>
+<td>Logística ordinal</td>
+</tr>
+<tr class="odd">
+<td>Conteo</td>
+<td>—</td>
+<td>Número de articulaciones inflamadas</td>
+<td>Poisson / binomial negativa</td>
+</tr>
+</tbody>
+</table>
+<div class="small">
+<p>La regresión logística modela una variable <strong>dicotómica</strong> codificada como <strong>1 = presenta el evento</strong> y <strong>0 = no lo presenta</strong> <span class="citation" data-cites="celis2014bioestadistica">(<a href="#/referencias" role="doc-biblioref" onclick="">Celis de la Rosa y Labrada Martagón 2014</a>)</span>.</p>
+</div>
+</section>
+<section id="regresión-lineal-vs.-regresión-logística" class="slide level2">
+<h2>1.2 Regresión lineal vs.&nbsp;regresión logística</h2>
+
+<img data-src="Regresiion-logistica-part-1_files/figure-revealjs/lineal-vs-logistica-1.png" class="quarto-figure quarto-figure-center r-stretch" width="1200"><table class="caption-top">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th></th>
+<th>Lineal</th>
+<th>Logística</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Predice</td>
+<td>El <strong>valor</strong> de <span class="math inline">\(Y\)</span></td>
+<td>La <strong>probabilidad</strong> de que <span class="math inline">\(Y = 1\)</span></td>
+</tr>
+<tr class="even">
+<td>Forma</td>
+<td>Recta</td>
+<td>Curva en <strong>S</strong> (sigmoide)</td>
+</tr>
+<tr class="odd">
+<td>Coeficiente</td>
+<td>Cambio en unidades de <span class="math inline">\(Y\)</span></td>
+<td>Cambio en <strong>log-odds</strong> → <strong>OR</strong></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="limitaciones-de-la-regresión-lineal-con-respuestas-binarias" class="slide level2 scrollable">
+<h2>1.3 Limitaciones de la regresión lineal con respuestas binarias</h2>
+
+<img data-src="Regresiion-logistica-part-1_files/figure-revealjs/limitaciones-lm-1.png" class="quarto-figure quarto-figure-center r-stretch" width="1200"><ol type="1">
+<li><strong>Predicciones imposibles</strong>: probabilidades &lt; 0 o &gt; 1.</li>
+<li><strong>Residuos no normales</strong>: para cada valor ajustado solo hay dos residuos posibles.</li>
+<li><strong>Heterocedasticidad</strong>: la varianza es <span class="math inline">\(p(1-p)\)</span>, máxima en <span class="math inline">\(p = 0.5\)</span>.</li>
+<li><strong>Relación no lineal</strong>: la probabilidad cambia poco en los extremos y mucho en el centro <span class="citation" data-cites="hosmer2013applied sperandei2014understanding">(<a href="#/referencias" role="doc-biblioref" onclick="">Hosmer, Lemeshow, y Sturdivant 2013</a>; <a href="#/referencias" role="doc-biblioref" onclick="">Sperandei 2014</a>)</span>.</li>
+</ol>
+</section>
+<section id="qué-pasa-si-quiero-asociar-el-consumo-de-sal-con-hipertensión" class="slide level2">
+<h2>¿Qué pasa si quiero asociar el consumo de sal con hipertensión?</h2>
+
+<img data-src="Regresiion-logistica-part-1_files/figure-revealjs/unnamed-chunk-3-1.png" width="1650" class="r-stretch"></section>
+<section id="qué-pasa-si-usamos-regresión-lineal-para-asociar-el-consumo-de-sal-con-la-hipertensión-variable-dependiente" class="slide level2">
+<h2>¿Qué pasa si usamos regresión lineal para asociar el consumo de sal con la hipertensión (variable dependiente)?</h2>
+
+<img data-src="Regresiion-logistica-part-1_files/figure-revealjs/unnamed-chunk-4-1.png" width="1650" class="r-stretch"></section>
+<section id="regresión-lineal-frente-a-logística-para-el-consumo-de-sal-con-factor-asociado-a-la-hipertensión." class="slide level2">
+<h2>Regresión lineal frente a logística para el consumo de sal con factor asociado a la hipertensión.</h2>
+
+<img data-src="Regresiion-logistica-part-1_files/figure-revealjs/unnamed-chunk-5-1.png" width="1650" class="r-stretch"></section>
+<section id="tercera-escala-logit" class="slide level2">
+<h2>Tercera escala: logit</h2>
+
+<img data-src="Regresiion-logistica-part-1_files/figure-revealjs/unnamed-chunk-6-1.png" width="1650" class="r-stretch"></section>
+<section id="regreso-a-probabilidades-función-logística-inversa" class="slide level2">
+<h2>Regreso a probabilidades: función logística inversa</h2>
+
+<img data-src="Regresiion-logistica-part-1_files/figure-revealjs/unnamed-chunk-7-1.png" width="1650" class="r-stretch"></section>
+<section id="aplicaciones-de-la-regresión-logística-algunas" class="slide level2">
+<h2>1.5 Aplicaciones de la regresión logística (algunas)</h2>
+<ul>
+<li><strong>Variables binarias</strong>: Asociaciones con variables binarias: Diagnóstico, asociación, desempeño</li>
+<li><strong>Estudios de asociación genética</strong> (candidato o GWAS): ¿el genotipo se asocia con la enfermedad? <span class="citation" data-cites="clarke2011basic">(<a href="#/referencias" role="doc-biblioref" onclick="">Clarke et&nbsp;al. 2011</a>)</span>.</li>
+<li><strong>Alelos HLA</strong> y autoinmunidad: OR de portar un alelo (p.&nbsp;ej., epítope compartido en AR).</li>
+<li><strong>Interacciones gen–ambiente</strong>: alelo de riesgo × tabaquismo <span class="citation" data-cites="cordell2009detecting">(<a href="#/referencias" role="doc-biblioref" onclick="">Cordell 2009</a>)</span>.</li>
+<li><strong>Farmacogenómica</strong>: respuesta (sí/no) a un tratamiento según genotipo.</li>
+<li><strong>Modelos de predicción clínica</strong>: puntajes de riesgo poligénico + factores clínicos <span class="citation" data-cites="steyerberg2019clinical">(<a href="#/referencias" role="doc-biblioref" onclick="">Steyerberg 2019</a>)</span>.</li>
+<li><strong>Epidemiología</strong>: ajuste por confusores en estudios de casos y controles, cohortes y transversales <span class="citation" data-cites="celis2014bioestadistica">(<a href="#/referencias" role="doc-biblioref" onclick="">Celis de la Rosa y Labrada Martagón 2014</a>)</span>.</li>
+</ul>
+<div class="clave">
+<p>Ventaja frente al análisis estratificado (Mantel–Haenszel): admite <strong>predictores continuos</strong> y <strong>muchas covariables simultáneamente</strong> <span class="citation" data-cites="sperandei2014understanding celis2014bioestadistica">(<a href="#/referencias" role="doc-biblioref" onclick="">Sperandei 2014</a>; <a href="#/referencias" role="doc-biblioref" onclick="">Celis de la Rosa y Labrada Martagón 2014</a>)</span>.</p>
+</div>
+</section>
+<section id="aplicaciones-de-la-regresión-logisitica" class="slide level2 scrollable">
+<h2>1.5 Aplicaciones de la regresión logisitica</h2>
+<ol type="1">
+<li>Identificación de factores de riesgo: evaluar la asociación entre exposiciones y la presencia de enfermedades.</li>
+<li>Identificación de factores protectores: determinar si determinadas características o intervenciones se asocian con menores odds de presentar un evento.</li>
+<li>Predicción de enfermedades: estimar la probabilidad de que un individuo presente una enfermedad a partir de sus características clínicas, demográficas o biológicas.</li>
+<li>Evaluación de biomarcadores: estudiar la asociación entre biomarcadores y desenlaces clínicos, como diagnóstico, progresión o respuesta al tratamiento.</li>
+<li>Evaluación de tratamientos: analizar la asociación entre intervenciones terapéuticas y desenlaces binarios, como respuesta/no respuesta o remisión/no remisión.</li>
+</ol>
+</section>
+<section id="aplicaciones-de-la-regresión-logisitica-1" class="slide level2 scrollable">
+<h2>1.5 Aplicaciones de la regresión logisitica</h2>
+<ol start="6" type="1">
+<li>Análisis de eventos adversos: identificar factores asociados con la aparición de complicaciones o efectos secundarios.</li>
+<li>Desarrollo de modelos de pronóstico: estimar la probabilidad de eventos clínicos, como mortalidad, hospitalización, recaída o complicaciones.</li>
+<li>Control de variables de confusión: estimar asociaciones ajustadas por otras variables que podrían influir en la relación estudiada.</li>
+<li>Evaluación de interacciones: determinar si la asociación entre una exposición y un desenlace cambia según características como edad, sexo o presencia de comorbilidades.</li>
+<li>Investigación epidemiológica: analizar asociaciones entre factores ambientales, ocupacionales, conductuales o sociodemográficos y desenlaces de salud.</li>
+<li>Investigación en salud pública: identificar factores asociados con vacunación, adherencia terapéutica, utilización de servicios de salud o participación en programas preventivos.</li>
+<li>Desarrollo de herramientas de apoyo a decisiones clínicas: combinar múltiples predictores para estimar probabilidades individuales y apoyar la estratificación del riesgo</li>
+</ol>
+</section>
+<section id="manos-a-la-obra-cargar-y-preparar-los-datos" class="slide level2">
+<h2>Manos a la obra: cargar y preparar los datos</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a aria-hidden="true" tabindex="-1"></a>datos <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"../Bases/estudio_AR_STAT4.csv"</span>) <span class="co"># Cambie la ruta, en mi caso necesito moverme una carpeta arriba</span></span>
+<span id="cb2-2"><a aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a aria-hidden="true" tabindex="-1"></a><span class="co"># Desenlace: 1 = caso (AR), 0 = control. La categoría "evento" debe ser 1.</span></span>
+<span id="cb2-4"><a aria-hidden="true" tabindex="-1"></a>datos<span class="sc">$</span>caso_f <span class="ot">&lt;-</span> <span class="fu">factor</span>(datos<span class="sc">$</span>caso, <span class="at">levels =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>), <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"Control"</span>, <span class="st">"Caso"</span>))</span>
+<span id="cb2-5"><a aria-hidden="true" tabindex="-1"></a><span class="co"># Los factores deben de estar correctamente etiquetados y en el orden correcto</span></span>
+<span id="cb2-6"><a aria-hidden="true" tabindex="-1"></a><span class="co"># Para algunas situaciones se prefiere mantenet 0 y 1</span></span>
+<span id="cb2-7"><a aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-8"><a aria-hidden="true" tabindex="-1"></a><span class="co"># Factores con su categoría de referencia en primer lugar</span></span>
+<span id="cb2-9"><a aria-hidden="true" tabindex="-1"></a>datos<span class="sc">$</span>sexo       <span class="ot">&lt;-</span> <span class="fu">factor</span>(datos<span class="sc">$</span>sexo, <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"Hombre"</span>, <span class="st">"Mujer"</span>))</span>
+<span id="cb2-10"><a aria-hidden="true" tabindex="-1"></a>datos<span class="sc">$</span>tabaquismo <span class="ot">&lt;-</span> <span class="fu">factor</span>(datos<span class="sc">$</span>tabaquismo, <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"Nunca"</span>, <span class="st">"Exfumador"</span>, <span class="st">"Actual"</span>))</span>
+<span id="cb2-11"><a aria-hidden="true" tabindex="-1"></a>datos<span class="sc">$</span>rs7574865  <span class="ot">&lt;-</span> <span class="fu">factor</span>(datos<span class="sc">$</span>rs7574865, <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"GG"</span>, <span class="st">"GT"</span>, <span class="st">"TT"</span>))</span>
+<span id="cb2-12"><a aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-13"><a aria-hidden="true" tabindex="-1"></a><span class="co"># Dosis alélica: número de copias del alelo de riesgo T (0, 1, 2)</span></span>
+<span id="cb2-14"><a aria-hidden="true" tabindex="-1"></a>datos<span class="sc">$</span>dosis_T <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(datos<span class="sc">$</span>rs7574865) <span class="sc">-</span> <span class="dv">1</span></span>
+<span id="cb2-15"><a aria-hidden="true" tabindex="-1"></a><span class="co"># as.numeric() sobre un factor no devuelve las etiquetas. Devuelve el código interno, es decir, la posición de cada nivel: GG = 1, GT = 2, TT = 3.</span></span>
+<span id="cb2-16"><a aria-hidden="true" tabindex="-1"></a><span class="co"># Al restar 1 se obtiene exactamente el número de alelos T:</span></span>
+<span id="cb2-17"><a aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-18"><a aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(datos[, <span class="fu">c</span>(<span class="st">"caso"</span>, <span class="st">"sexo"</span>, <span class="st">"edad"</span>, <span class="st">"tabaquismo"</span>, <span class="st">"PC1"</span>, <span class="st">"rs7574865"</span>, <span class="st">"dosis_T"</span>)])</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>'data.frame':   800 obs. of  7 variables:
+ $ caso      : int  1 0 0 0 1 1 1 0 0 1 ...
+ $ sexo      : Factor w/ 2 levels "Hombre","Mujer": 2 2 1 1 2 1 2 2 2 2 ...
+ $ edad      : int  49 37 34 54 66 34 59 28 55 69 ...
+ $ tabaquismo: Factor w/ 3 levels "Nunca","Exfumador",..: 3 2 1 1 2 2 3 3 1 3 ...
+ $ PC1       : num  1.951 0.189 0.237 -0.754 0.956 ...
+ $ rs7574865 : Factor w/ 3 levels "GG","GT","TT": 3 1 2 1 2 1 1 1 1 3 ...
+ $ dosis_T   : num  2 0 1 0 1 0 0 0 0 2 ...</code></pre>
+</div>
+</div>
+</section></section>
+<section>
+<section id="el-polimorfismo-se-asocia-con-la-rs7574865-ar" class="title-slide slide level1 center" data-background-color="#1f4e79">
+<h1>¿El polimorfismo se asocia con la rs7574865 AR?</h1>
+
+</section>
+<section id="primera-mirada-genotipo-por-grupo" class="slide level2">
+<h2>Primera mirada: genotipo por grupo</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a aria-hidden="true" tabindex="-1"></a>tabla <span class="ot">&lt;-</span> <span class="fu">table</span>(<span class="at">Genotipo =</span> datos<span class="sc">$</span>rs7574865, <span class="at">Grupo =</span> datos<span class="sc">$</span>caso_f)</span>
+<span id="cb4-2"><a aria-hidden="true" tabindex="-1"></a>tabla</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>        Grupo
+Genotipo Control Caso
+      GG     187  116
+      GT     175  188
+      TT      38   96</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(<span class="fu">prop.table</span>(tabla, <span class="at">margin =</span> <span class="dv">2</span>) <span class="sc">*</span> <span class="dv">100</span>, <span class="dv">1</span>)   <span class="co"># % por columna (como en Celis)</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>        Grupo
+Genotipo Control Caso
+      GG    46.8 29.0
+      GT    43.8 47.0
+      TT     9.5 24.0</code></pre>
+</div>
+</div>
+<div class="pregunta">
+<p>¿Qué genotipo es más frecuente en los casos? ¿Qué esperaría si el alelo T <strong>no</strong> tuviera relación con la AR?</p>
+</div>
+</section>
+<section id="primera-mirada-genotipo-por-grupo-1" class="slide level2">
+<h2>Primera mirada: genotipo por grupo</h2>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a aria-hidden="true" tabindex="-1"></a>datos <span class="sc">|&gt;</span> </span>
+<span id="cb8-2"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> caso_f, <span class="at">fill =</span> <span class="fu">factor</span>(rs7574865))) <span class="sc">+</span></span>
+<span id="cb8-3"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">position =</span> <span class="st">"dodge"</span>) <span class="sc">+</span></span>
+<span id="cb8-4"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb8-5"><a aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Grupo"</span>,</span>
+<span id="cb8-6"><a aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Frecuencia"</span>,</span>
+<span id="cb8-7"><a aria-hidden="true" tabindex="-1"></a>    <span class="at">fill =</span> <span class="st">"Genotipo"</span></span>
+<span id="cb8-8"><a aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb8-9"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+
+</div>
+<img data-src="Regresiion-logistica-part-1_files/figure-revealjs/unnamed-chunk-8-1.png" class="quarto-figure quarto-figure-center r-stretch" width="1200"></section>
+<section id="primera-mirada-genotipo-por-grupo-2" class="slide level2">
+<h2>Primera mirada: genotipo por grupo</h2>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a aria-hidden="true" tabindex="-1"></a>datos <span class="sc">|&gt;</span> </span>
+<span id="cb9-2"><a aria-hidden="true" tabindex="-1"></a>  ggstatsplot<span class="sc">::</span><span class="fu">ggbarstats</span>(<span class="at">x =</span> caso_f, <span class="at">y=</span> rs7574865)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+
+</div>
+<img data-src="Regresiion-logistica-part-1_files/figure-revealjs/unnamed-chunk-9-1.png" class="quarto-figure quarto-figure-center r-stretch" width="1200"></section></section>
+<section>
+<section id="fundamentos-matemáticos-de-la-regresión-logística" class="title-slide slide level1 center" data-background-color="#1f4e79">
+<h1>2. Fundamentos matemáticos de la regresión logística</h1>
+
+</section>
+<section id="probabilidad" class="slide level2">
+<h2>2.1 Probabilidad</h2>
+<p><strong>Probabilidad</strong> = eventos favorables / total de eventos. Va de <strong>0 a 1</strong> <span class="citation" data-cites="sperandei2014understanding">(<a href="#/referencias" role="doc-biblioref" onclick="">Sperandei 2014</a>)</span>.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a aria-hidden="true" tabindex="-1"></a><span class="co"># Probabilidad de ser caso dentro de cada genotipo (% por fila)</span></span>
+<span id="cb10-2"><a aria-hidden="true" tabindex="-1"></a>prop_fila <span class="ot">&lt;-</span> <span class="fu">prop.table</span>(tabla, <span class="at">margin =</span> <span class="dv">1</span>)</span>
+<span id="cb10-3"><a aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(prop_fila, <span class="dv">3</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>        Grupo
+Genotipo Control  Caso
+      GG   0.617 0.383
+      GT   0.482 0.518
+      TT   0.284 0.716</code></pre>
+</div>
+</div>
+<div class="alerta">
+<p>En un estudio de <strong>casos y controles</strong> el investigador fija cuántos casos y controles incluye (400 y 400). Estas “probabilidades” reflejan el muestreo, <strong>no</strong> el riesgo de AR en la población. Lo que sí es válido comparar son los <strong>odds ratio</strong> <span class="citation" data-cites="celis2014bioestadistica">(<a href="#/referencias" role="doc-biblioref" onclick="">Celis de la Rosa y Labrada Martagón 2014</a>)</span>.</p>
+</div>
+</section>
+<section id="odds-definición-e-interpretación" class="slide level2">
+<h2>2.2 Odds: definición e interpretación</h2>
+<p><span class="math display">\[\text{Odds} = \frac{p}{1-p} = \frac{\text{probabilidad de que ocurra}}{\text{probabilidad de que no ocurra}}\]</span></p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a aria-hidden="true" tabindex="-1"></a>p_caso <span class="ot">&lt;-</span> prop_fila[, <span class="st">"Caso"</span>]</span>
+<span id="cb12-2"><a aria-hidden="true" tabindex="-1"></a>odds   <span class="ot">&lt;-</span> p_caso <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">-</span> p_caso)</span>
+<span id="cb12-3"><a aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(<span class="fu">data.frame</span>(<span class="at">p =</span> p_caso, <span class="at">odds =</span> odds), <span class="dv">3</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>       p  odds
+GG 0.383 0.620
+GT 0.518 1.074
+TT 0.716 2.526</code></pre>
+</div>
+</div>
+<ul>
+<li>Odds = 1 → tantos casos como controles. Odds = 2 → <strong>2 casos por cada control</strong>.</li>
+<li>El odds va de <strong>0 a <span class="math inline">\(+\infty\)</span></strong>; la probabilidad de 0 a 1. <strong>No son sinónimos</strong> <span class="citation" data-cites="sperandei2014understanding">(<a href="#/referencias" role="doc-biblioref" onclick="">Sperandei 2014</a>)</span>.</li>
+</ul>
+</section>
+<section id="probabilidad-y-odds-no-son-lo-mismo" class="slide level2">
+<h2>Probabilidad y odds no son lo mismo</h2>
+
+<img data-src="Regresiion-logistica-part-1_files/figure-revealjs/prob-odds-plot-1.png" width="1200" class="r-stretch"><table class="caption-top">
+<thead>
+<tr class="header">
+<th>p</th>
+<th>0.01</th>
+<th>0.10</th>
+<th>0.25</th>
+<th>0.50</th>
+<th>0.75</th>
+<th>0.90</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Odds</td>
+<td>0.01</td>
+<td>0.11</td>
+<td>0.33</td>
+<td>1</td>
+<td>3</td>
+<td>9</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="transformación-logit-log-odds" class="slide level2">
+<h2>2.3 Transformación logit (log-odds)</h2>
+<p><span class="math display">\[\text{logit}(p) = \ln\left(\frac{p}{1-p}\right)\]</span></p>
+
+<img data-src="Regresiion-logistica-part-1_files/figure-revealjs/logit-plot-1.png" width="1200" class="r-stretch"><table class="caption-top">
+<thead>
+<tr class="header">
+<th>Escala</th>
+<th>Rango</th>
+<th>Valor “neutro”</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Probabilidad</td>
+<td>0 a 1</td>
+<td>0.5</td>
+</tr>
+<tr class="even">
+<td>Odds</td>
+<td>0 a <span class="math inline">\(+\infty\)</span></td>
+<td>1</td>
+</tr>
+<tr class="odd">
+<td><strong>Log-odds (logit)</strong></td>
+<td><span class="math inline">\(-\infty\)</span> a <span class="math inline">\(+\infty\)</span></td>
+<td><strong>0</strong></td>
+</tr>
+</tbody>
+</table>
+<div class="clave">
+<p>En la escala logit <strong>sí</strong> podemos usar un predictor lineal <span class="math inline">\(\beta_0 + \beta_1X\)</span> sin predecir valores imposibles.</p>
+</div>
+</section>
+<section id="función-logística-sigmoide" class="slide level2">
+<h2>2.4 Función logística (sigmoide)</h2>
+<p><span class="math display">\[f(z) = \frac{1}{1 + e^{-z}}\]</span></p>
+
+<img data-src="Regresiion-logistica-part-1_files/figure-revealjs/sigmoide-1.png" width="1200" class="r-stretch"><p>Cualquier valor de <span class="math inline">\(z\)</span> se transforma en un número <strong>entre 0 y 1</strong>: ideal para probabilidades. Es la <strong>inversa del logit</strong> <span class="citation" data-cites="celis2014bioestadistica">(<a href="#/referencias" role="doc-biblioref" onclick="">Celis de la Rosa y Labrada Martagón 2014</a>)</span>. En R: <code>plogis(z)</code>.</p>
+</section>
+<section id="ecuación-del-modelo" class="slide level2">
+<h2>2.5 Ecuación del modelo</h2>
+<p>Sustituyendo <span class="math inline">\(z\)</span> por el predictor lineal <span class="citation" data-cites="celis2014bioestadistica">(<a href="#/referencias" role="doc-biblioref" onclick="">Celis de la Rosa y Labrada Martagón 2014</a>)</span>:</p>
+<p><span class="math display">\[P(Y = 1 \mid X_1, \dots, X_k) = \frac{1}{1 + e^{-(\beta_0 + \beta_1X_1 + \dots + \beta_kX_k)}}\]</span></p>
+<p>Forma equivalente (la que estima R):</p>
+<p><span class="math display">\[\ln\left(\frac{p}{1-p}\right) = \beta_0 + \beta_1X_1 + \beta_2X_2 + \dots + \beta_kX_k\]</span></p>
+<ul>
+<li><span class="math inline">\(\beta_0\)</span>: log-odds del evento cuando todas las <span class="math inline">\(X = 0\)</span> (grupo de referencia).</li>
+<li><span class="math inline">\(\beta_j\)</span>: cambio en el log-odds por cada unidad de <span class="math inline">\(X_j\)</span>.</li>
+</ul>
+</section>
+<section id="nuestro-primer-modelo-ar-según-número-de-alelos-t" class="slide level2">
+<h2>Nuestro primer modelo: AR según número de alelos T</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a aria-hidden="true" tabindex="-1"></a>modelo_snp <span class="ot">&lt;-</span> <span class="fu">glm</span>(caso <span class="sc">~</span> dosis_T, <span class="at">data =</span> datos, <span class="at">family =</span> binomial) <span class="co"># binomial es para la regresión logística</span></span>
+<span id="cb14-2"><a aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(modelo_snp)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+glm(formula = caso ~ dosis_T, family = binomial, data = datos)
+
+Coefficients:
+            Estimate Std. Error z value      Pr(&gt;|z|)    
+(Intercept)   -0.523      0.110   -4.78 0.00000177158 ***
+dosis_T        0.667      0.105    6.32 0.00000000026 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 1109.0  on 799  degrees of freedom
+Residual deviance: 1066.8  on 798  degrees of freedom
+AIC: 1071
+
+Number of Fisher Scoring iterations: 4</code></pre>
+</div>
+</div>
+<p>También podemos obtener los OR</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">exp</span>(modelo_snp<span class="sc">$</span>coefficients)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>(Intercept)     dosis_T 
+     0.5926      1.9478 </code></pre>
+</div>
+</div>
+<div class="alerta">
+<p>La interpretación de los OR la veremos unas diapositivas adelante.</p>
+</div>
+</section>
+<section id="nuestro-primer-modelo-ar-según-número-de-alelos-t-1" class="slide level2">
+<h2>Nuestro primer modelo: AR según número de alelos T</h2>
+<p>Una forma más fácil:</p>
+<p>Con los log Odds:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a aria-hidden="true" tabindex="-1"></a>modelo_snp <span class="sc">|&gt;</span> </span>
+<span id="cb18-2"><a aria-hidden="true" tabindex="-1"></a>  gtsummary<span class="sc">::</span><span class="fu">tbl_regression</span>(<span class="at">exponentiate =</span> <span class="cn">FALSE</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div id="yksmdkzbev" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#yksmdkzbev table {
+  font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#yksmdkzbev thead, #yksmdkzbev tbody, #yksmdkzbev tfoot, #yksmdkzbev tr, #yksmdkzbev td, #yksmdkzbev th {
+  border-style: none;
+}
+
+#yksmdkzbev p {
+  margin: 0;
+  padding: 0;
+}
+
+#yksmdkzbev .gt_table {
+  display: table;
+  border-collapse: collapse;
+  line-height: normal;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#yksmdkzbev .gt_caption {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+#yksmdkzbev .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#yksmdkzbev .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 3px;
+  padding-bottom: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#yksmdkzbev .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#yksmdkzbev .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#yksmdkzbev .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#yksmdkzbev .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#yksmdkzbev .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#yksmdkzbev .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#yksmdkzbev .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#yksmdkzbev .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#yksmdkzbev .gt_spanner_row {
+  border-bottom-style: hidden;
+}
+
+#yksmdkzbev .gt_group_heading {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  text-align: left;
+}
+
+#yksmdkzbev .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#yksmdkzbev .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#yksmdkzbev .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#yksmdkzbev .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#yksmdkzbev .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#yksmdkzbev .gt_stub_row_group {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+  vertical-align: top;
+}
+
+#yksmdkzbev .gt_row_group_first td {
+  border-top-width: 2px;
+}
+
+#yksmdkzbev .gt_row_group_first th {
+  border-top-width: 2px;
+}
+
+#yksmdkzbev .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#yksmdkzbev .gt_first_summary_row {
+  border-top-style: solid;
+  border-top-color: #D3D3D3;
+}
+
+#yksmdkzbev .gt_first_summary_row.thick {
+  border-top-width: 2px;
+}
+
+#yksmdkzbev .gt_last_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#yksmdkzbev .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#yksmdkzbev .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#yksmdkzbev .gt_last_grand_summary_row_top {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: double;
+  border-bottom-width: 6px;
+  border-bottom-color: #D3D3D3;
+}
+
+#yksmdkzbev .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#yksmdkzbev .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#yksmdkzbev .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#yksmdkzbev .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#yksmdkzbev .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#yksmdkzbev .gt_sourcenote {
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#yksmdkzbev .gt_left {
+  text-align: left;
+}
+
+#yksmdkzbev .gt_center {
+  text-align: center;
+}
+
+#yksmdkzbev .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#yksmdkzbev .gt_font_normal {
+  font-weight: normal;
+}
+
+#yksmdkzbev .gt_font_bold {
+  font-weight: bold;
+}
+
+#yksmdkzbev .gt_font_italic {
+  font-style: italic;
+}
+
+#yksmdkzbev .gt_super {
+  font-size: 65%;
+}
+
+#yksmdkzbev .gt_footnote_marks {
+  font-size: 75%;
+  vertical-align: 0.4em;
+  position: initial;
+}
+
+#yksmdkzbev .gt_asterisk {
+  font-size: 100%;
+  vertical-align: 0;
+}
+
+#yksmdkzbev .gt_indent_1 {
+  text-indent: 5px;
+}
+
+#yksmdkzbev .gt_indent_2 {
+  text-indent: 10px;
+}
+
+#yksmdkzbev .gt_indent_3 {
+  text-indent: 15px;
+}
+
+#yksmdkzbev .gt_indent_4 {
+  text-indent: 20px;
+}
+
+#yksmdkzbev .gt_indent_5 {
+  text-indent: 25px;
+}
+
+#yksmdkzbev .katex-display {
+  display: inline-flex !important;
+  margin-bottom: 0.75em !important;
+}
+
+#yksmdkzbev div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+  height: 0px !important;
+}
+</style>
+
+<table class="gt_table caption-top" data-quarto-bootstrap="false">
+<thead>
+<tr class="gt_col_headings header">
+<th id="label" class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th" scope="col"><strong>Characteristic</strong></th>
+<th id="estimate" class="gt_col_heading gt_columns_bottom_border gt_center" data-quarto-table-cell-role="th" scope="col"><strong>log(OR)</strong></th>
+<th id="conf.low" class="gt_col_heading gt_columns_bottom_border gt_center" data-quarto-table-cell-role="th" scope="col"><strong>95% CI</strong></th>
+<th id="p.value" class="gt_col_heading gt_columns_bottom_border gt_center" data-quarto-table-cell-role="th" scope="col"><strong>p-value</strong></th>
+</tr>
+</thead>
+<tbody class="gt_table_body">
+<tr class="odd">
+<td class="gt_row gt_left" headers="label">dosis_T</td>
+<td class="gt_row gt_center" headers="estimate">0.67</td>
+<td class="gt_row gt_center" headers="conf.low">0.46, 0.88</td>
+<td class="gt_row gt_center" headers="p.value">&lt;0.001</td>
+</tr>
+</tbody><tfoot>
+<tr class="gt_sourcenotes odd">
+<td colspan="4" class="gt_sourcenote">Abbreviations: CI = Confidence Interval, OR = Odds Ratio</td>
+</tr>
+</tfoot>
+
+</table>
+
+</div>
+</div>
+</div>
+<p>Con los OR:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a aria-hidden="true" tabindex="-1"></a>modelo_snp <span class="sc">|&gt;</span> </span>
+<span id="cb19-2"><a aria-hidden="true" tabindex="-1"></a>  gtsummary<span class="sc">::</span><span class="fu">tbl_regression</span>(<span class="at">exponentiate =</span> <span class="cn">TRUE</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div id="plaofrvaok" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#plaofrvaok table {
+  font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#plaofrvaok thead, #plaofrvaok tbody, #plaofrvaok tfoot, #plaofrvaok tr, #plaofrvaok td, #plaofrvaok th {
+  border-style: none;
+}
+
+#plaofrvaok p {
+  margin: 0;
+  padding: 0;
+}
+
+#plaofrvaok .gt_table {
+  display: table;
+  border-collapse: collapse;
+  line-height: normal;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#plaofrvaok .gt_caption {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+#plaofrvaok .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#plaofrvaok .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 3px;
+  padding-bottom: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#plaofrvaok .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#plaofrvaok .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#plaofrvaok .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#plaofrvaok .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#plaofrvaok .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#plaofrvaok .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#plaofrvaok .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#plaofrvaok .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#plaofrvaok .gt_spanner_row {
+  border-bottom-style: hidden;
+}
+
+#plaofrvaok .gt_group_heading {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  text-align: left;
+}
+
+#plaofrvaok .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#plaofrvaok .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#plaofrvaok .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#plaofrvaok .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#plaofrvaok .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#plaofrvaok .gt_stub_row_group {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+  vertical-align: top;
+}
+
+#plaofrvaok .gt_row_group_first td {
+  border-top-width: 2px;
+}
+
+#plaofrvaok .gt_row_group_first th {
+  border-top-width: 2px;
+}
+
+#plaofrvaok .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#plaofrvaok .gt_first_summary_row {
+  border-top-style: solid;
+  border-top-color: #D3D3D3;
+}
+
+#plaofrvaok .gt_first_summary_row.thick {
+  border-top-width: 2px;
+}
+
+#plaofrvaok .gt_last_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#plaofrvaok .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#plaofrvaok .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#plaofrvaok .gt_last_grand_summary_row_top {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: double;
+  border-bottom-width: 6px;
+  border-bottom-color: #D3D3D3;
+}
+
+#plaofrvaok .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#plaofrvaok .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#plaofrvaok .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#plaofrvaok .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#plaofrvaok .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#plaofrvaok .gt_sourcenote {
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#plaofrvaok .gt_left {
+  text-align: left;
+}
+
+#plaofrvaok .gt_center {
+  text-align: center;
+}
+
+#plaofrvaok .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#plaofrvaok .gt_font_normal {
+  font-weight: normal;
+}
+
+#plaofrvaok .gt_font_bold {
+  font-weight: bold;
+}
+
+#plaofrvaok .gt_font_italic {
+  font-style: italic;
+}
+
+#plaofrvaok .gt_super {
+  font-size: 65%;
+}
+
+#plaofrvaok .gt_footnote_marks {
+  font-size: 75%;
+  vertical-align: 0.4em;
+  position: initial;
+}
+
+#plaofrvaok .gt_asterisk {
+  font-size: 100%;
+  vertical-align: 0;
+}
+
+#plaofrvaok .gt_indent_1 {
+  text-indent: 5px;
+}
+
+#plaofrvaok .gt_indent_2 {
+  text-indent: 10px;
+}
+
+#plaofrvaok .gt_indent_3 {
+  text-indent: 15px;
+}
+
+#plaofrvaok .gt_indent_4 {
+  text-indent: 20px;
+}
+
+#plaofrvaok .gt_indent_5 {
+  text-indent: 25px;
+}
+
+#plaofrvaok .katex-display {
+  display: inline-flex !important;
+  margin-bottom: 0.75em !important;
+}
+
+#plaofrvaok div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+  height: 0px !important;
+}
+</style>
+
+<table class="gt_table caption-top" data-quarto-bootstrap="false">
+<thead>
+<tr class="gt_col_headings header">
+<th id="label" class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th" scope="col"><strong>Characteristic</strong></th>
+<th id="estimate" class="gt_col_heading gt_columns_bottom_border gt_center" data-quarto-table-cell-role="th" scope="col"><strong>OR</strong></th>
+<th id="conf.low" class="gt_col_heading gt_columns_bottom_border gt_center" data-quarto-table-cell-role="th" scope="col"><strong>95% CI</strong></th>
+<th id="p.value" class="gt_col_heading gt_columns_bottom_border gt_center" data-quarto-table-cell-role="th" scope="col"><strong>p-value</strong></th>
+</tr>
+</thead>
+<tbody class="gt_table_body">
+<tr class="odd">
+<td class="gt_row gt_left" headers="label">dosis_T</td>
+<td class="gt_row gt_center" headers="estimate">1.95</td>
+<td class="gt_row gt_center" headers="conf.low">1.59, 2.40</td>
+<td class="gt_row gt_center" headers="p.value">&lt;0.001</td>
+</tr>
+</tbody><tfoot>
+<tr class="gt_sourcenotes odd">
+<td colspan="4" class="gt_sourcenote">Abbreviations: CI = Confidence Interval, OR = Odds Ratio</td>
+</tr>
+</tfoot>
+
+</table>
+
+</div>
+</div>
+</div>
+<div class="alerta">
+<p>La interpretación de los OR la veremos unas diapositivas adelante.</p>
+</div>
+</section>
+<section id="otra-forma-de-realizar-la-regresión-con-la-dosis-como-factor" class="slide level2">
+<h2>Otra forma de realizar la regresión con la dosis como factor</h2>
+<p>En lugar de utilizar la dosis como una variable numérica también podemos utilizarla como factor</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">glm</span>(caso <span class="sc">~</span> <span class="fu">as.factor</span>(dosis_T), <span class="at">data =</span> datos, <span class="at">family =</span> binomial) <span class="sc">|&gt;</span> </span>
+<span id="cb20-2"><a aria-hidden="true" tabindex="-1"></a>  gtsummary<span class="sc">::</span><span class="fu">tbl_regression</span>(<span class="at">exponentiate =</span> <span class="cn">TRUE</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div id="jaukysvkfl" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#jaukysvkfl table {
+  font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#jaukysvkfl thead, #jaukysvkfl tbody, #jaukysvkfl tfoot, #jaukysvkfl tr, #jaukysvkfl td, #jaukysvkfl th {
+  border-style: none;
+}
+
+#jaukysvkfl p {
+  margin: 0;
+  padding: 0;
+}
+
+#jaukysvkfl .gt_table {
+  display: table;
+  border-collapse: collapse;
+  line-height: normal;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#jaukysvkfl .gt_caption {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+#jaukysvkfl .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#jaukysvkfl .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 3px;
+  padding-bottom: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#jaukysvkfl .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#jaukysvkfl .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#jaukysvkfl .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#jaukysvkfl .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#jaukysvkfl .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#jaukysvkfl .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#jaukysvkfl .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#jaukysvkfl .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#jaukysvkfl .gt_spanner_row {
+  border-bottom-style: hidden;
+}
+
+#jaukysvkfl .gt_group_heading {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  text-align: left;
+}
+
+#jaukysvkfl .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#jaukysvkfl .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#jaukysvkfl .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#jaukysvkfl .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#jaukysvkfl .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#jaukysvkfl .gt_stub_row_group {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+  vertical-align: top;
+}
+
+#jaukysvkfl .gt_row_group_first td {
+  border-top-width: 2px;
+}
+
+#jaukysvkfl .gt_row_group_first th {
+  border-top-width: 2px;
+}
+
+#jaukysvkfl .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#jaukysvkfl .gt_first_summary_row {
+  border-top-style: solid;
+  border-top-color: #D3D3D3;
+}
+
+#jaukysvkfl .gt_first_summary_row.thick {
+  border-top-width: 2px;
+}
+
+#jaukysvkfl .gt_last_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#jaukysvkfl .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#jaukysvkfl .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#jaukysvkfl .gt_last_grand_summary_row_top {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: double;
+  border-bottom-width: 6px;
+  border-bottom-color: #D3D3D3;
+}
+
+#jaukysvkfl .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#jaukysvkfl .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#jaukysvkfl .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#jaukysvkfl .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#jaukysvkfl .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#jaukysvkfl .gt_sourcenote {
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#jaukysvkfl .gt_left {
+  text-align: left;
+}
+
+#jaukysvkfl .gt_center {
+  text-align: center;
+}
+
+#jaukysvkfl .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#jaukysvkfl .gt_font_normal {
+  font-weight: normal;
+}
+
+#jaukysvkfl .gt_font_bold {
+  font-weight: bold;
+}
+
+#jaukysvkfl .gt_font_italic {
+  font-style: italic;
+}
+
+#jaukysvkfl .gt_super {
+  font-size: 65%;
+}
+
+#jaukysvkfl .gt_footnote_marks {
+  font-size: 75%;
+  vertical-align: 0.4em;
+  position: initial;
+}
+
+#jaukysvkfl .gt_asterisk {
+  font-size: 100%;
+  vertical-align: 0;
+}
+
+#jaukysvkfl .gt_indent_1 {
+  text-indent: 5px;
+}
+
+#jaukysvkfl .gt_indent_2 {
+  text-indent: 10px;
+}
+
+#jaukysvkfl .gt_indent_3 {
+  text-indent: 15px;
+}
+
+#jaukysvkfl .gt_indent_4 {
+  text-indent: 20px;
+}
+
+#jaukysvkfl .gt_indent_5 {
+  text-indent: 25px;
+}
+
+#jaukysvkfl .katex-display {
+  display: inline-flex !important;
+  margin-bottom: 0.75em !important;
+}
+
+#jaukysvkfl div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+  height: 0px !important;
+}
+</style>
+
+<table class="gt_table caption-top" data-quarto-bootstrap="false">
+<colgroup>
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+</colgroup>
+<thead>
+<tr class="gt_col_headings header">
+<th id="label" class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th" scope="col"><strong>Characteristic</strong></th>
+<th id="estimate" class="gt_col_heading gt_columns_bottom_border gt_center" data-quarto-table-cell-role="th" scope="col"><strong>OR</strong></th>
+<th id="conf.low" class="gt_col_heading gt_columns_bottom_border gt_center" data-quarto-table-cell-role="th" scope="col"><strong>95% CI</strong></th>
+<th id="p.value" class="gt_col_heading gt_columns_bottom_border gt_center" data-quarto-table-cell-role="th" scope="col"><strong>p-value</strong></th>
+</tr>
+</thead>
+<tbody class="gt_table_body">
+<tr class="odd">
+<td class="gt_row gt_left" headers="label">as.factor(dosis_T)</td>
+<td class="gt_row gt_center" headers="estimate"><br>
+</td>
+<td class="gt_row gt_center" headers="conf.low"><br>
+</td>
+<td class="gt_row gt_center" headers="p.value"><br>
+</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="label">&nbsp;&nbsp;&nbsp;&nbsp;0</td>
+<td class="gt_row gt_center" headers="estimate">—</td>
+<td class="gt_row gt_center" headers="conf.low">—</td>
+<td class="gt_row gt_center" headers="p.value"><br>
+</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="label">&nbsp;&nbsp;&nbsp;&nbsp;1</td>
+<td class="gt_row gt_center" headers="estimate">1.73</td>
+<td class="gt_row gt_center" headers="conf.low">1.27, 2.36</td>
+<td class="gt_row gt_center" headers="p.value">&lt;0.001</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="label">&nbsp;&nbsp;&nbsp;&nbsp;2</td>
+<td class="gt_row gt_center" headers="estimate">4.07</td>
+<td class="gt_row gt_center" headers="conf.low">2.64, 6.39</td>
+<td class="gt_row gt_center" headers="p.value">&lt;0.001</td>
+</tr>
+</tbody><tfoot>
+<tr class="gt_sourcenotes odd">
+<td colspan="4" class="gt_sourcenote">Abbreviations: CI = Confidence Interval, OR = Odds Ratio</td>
+</tr>
+</tfoot>
+
+</table>
+
+</div>
+</div>
+</div>
+</section>
+<section id="cómo-se-estiman-los-coeficientes-máxima-verosimilitud" class="slide level2 scrollable">
+<h2>2.6 ¿Cómo se estiman los coeficientes? Máxima verosimilitud</h2>
+<ul>
+<li><p>No hay mínimos cuadrados, sino que los coeficientes se estima mediante máxima verosimilitud (Maximum Likelihood Estimation, MLE) <span class="citation" data-cites="perezguerrero2024bioestadistica celis2014bioestadistica">(<a href="#/referencias" role="doc-biblioref" onclick="">Pérez Guerrero 2024</a>; <a href="#/referencias" role="doc-biblioref" onclick="">Celis de la Rosa y Labrada Martagón 2014</a>)</span>:</p></li>
+<li><p>La máxima verosimilitud busca los valores de los coeficientes β que hacen que los resultados que observamos sean lo más probables posible según nuestro modelo.</p></li>
+<li><p>La idea es calcular qué tan probable sería observar nuestros resultados si las probabilidades estimadas por cada modelo fueran correctas.</p></li>
+</ul>
+<p>Más o menos así:</p>
+<ol type="1">
+<li>Proponer una curva (valores de <span class="math inline">\(\beta_0, \beta_1\)</span>).</li>
+<li>Calcular, para <strong>cada persona</strong>, la probabilidad de lo que realmente le pasó: <span class="math inline">\(\hat p_i\)</span> si es caso, <span class="math inline">\(1 - \hat p_i\)</span> si es control.</li>
+<li><strong>Multiplicar</strong> todas esas probabilidades → <strong>verosimilitud</strong> (en la práctica se suman sus logaritmos: <em>log-likelihood</em>).</li>
+<li>Cambiar la curva y repetir hasta encontrar la que hace <strong>más probables</strong> los datos observados.</li>
+</ol>
+<p>R lo hace por un algoritmo iterativo (IRLS); <code>summary()</code> reporta <em>“Number of Fisher Scoring iterations”</em>. El Fisher Scoring es un algoritmo numérico utilizado para encontrar los parámetros que maximizan una función de verosimilitud.</p>
+</section>
+<section id="los-valores-de-p-y-la-devianza" class="slide level2">
+<h2>Los valores de <code>p</code> y la devianza</h2>
+<ul>
+<li>Los valores de <span class="math inline">\(p\)</span> para los <span class="math inline">\(\beta\)</span> en la regresión logística se obtienen mediante la prueba de Wald:</li>
+</ul>
+<p><span class="math display">\[ z = \frac{\hat{\beta}-0}{SE(\hat{\beta})}\]</span></p>
+<ul>
+<li><p>La devianza es una medida de qué tan bien se ajusta un modelo de regresión logística a los datos observados.</p></li>
+<li><p>La devianza mide cuánto pierde nuestro modelo, en términos de log-verosimilitud, respecto a un modelo ideal que reproduce perfectamente los datos observados.</p></li>
+<li><p>Una devianza residual (devianza del intercepto - devianza del coeficiente) mejor puede indicar que el modelo bueno</p></li>
+</ul>
+</section></section>
+<section>
+<section id="interpretación-de-los-coeficientes" class="title-slide slide level1 center" data-background-color="#1f4e79">
+<h1>3. Interpretación de los coeficientes</h1>
+
+</section>
+<section id="interpretación-de-los-coeficientes-β" class="slide level2">
+<h2>3.1 Interpretación de los coeficientes β</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">coef</span>(modelo_snp)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>(Intercept)     dosis_T 
+    -0.5232      0.6667 </code></pre>
+</div>
+</div>
+<ul>
+<li><span class="math inline">\(\hat\beta_1 =\)</span> 0.667: cada alelo T <strong>aumenta el log-odds</strong> de AR en 0.667.</li>
+<li><strong>Signo</strong>: positivo → factor de riesgo; negativo → factor protector; 0 → sin asociación.</li>
+<li>El log-odds es difícil de comunicar. Por eso se transforma: <span class="math inline">\(e^{\beta}\)</span>.</li>
+</ul>
+<div class="clave">
+<p><span class="math inline">\(\beta &gt; 0 \Leftrightarrow OR &gt; 1\)</span> · <span class="math inline">\(\beta = 0 \Leftrightarrow OR = 1\)</span> · <span class="math inline">\(\beta &lt; 0 \Leftrightarrow OR &lt; 1\)</span></p>
+</div>
+</section>
+<section id="odds-ratio-cálculo-e-interpretación" class="slide level2">
+<h2>3.2 Odds Ratio: cálculo e interpretación</h2>
+<p>El OR compara los odds de dos grupos. Con una tabla 2 × 2: <span class="math inline">\(OR = \dfrac{a \cdot d}{b \cdot c}\)</span> <span class="citation" data-cites="celis2014bioestadistica">(<a href="#/referencias" role="doc-biblioref" onclick="">Celis de la Rosa y Labrada Martagón 2014</a>)</span>.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a aria-hidden="true" tabindex="-1"></a><span class="co"># Portador de al menos un alelo T (sí/no)</span></span>
+<span id="cb23-2"><a aria-hidden="true" tabindex="-1"></a>datos<span class="sc">$</span>portador_T <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(datos<span class="sc">$</span>dosis_T <span class="sc">&gt;=</span> <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">0</span>)</span>
+<span id="cb23-3"><a aria-hidden="true" tabindex="-1"></a>t2 <span class="ot">&lt;-</span> <span class="fu">table</span>(<span class="at">Portador =</span> datos<span class="sc">$</span>portador_T, <span class="at">Caso =</span> datos<span class="sc">$</span>caso)[<span class="dv">2</span><span class="sc">:</span><span class="dv">1</span>, <span class="dv">2</span><span class="sc">:</span><span class="dv">1</span>]</span>
+<span id="cb23-4"><a aria-hidden="true" tabindex="-1"></a>t2</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>        Caso
+Portador   1   0
+       1 284 213
+       0 116 187</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a aria-hidden="true" tabindex="-1"></a>(t2[<span class="dv">1</span>, <span class="dv">1</span>] <span class="sc">*</span> t2[<span class="dv">2</span>, <span class="dv">2</span>]) <span class="sc">/</span> (t2[<span class="dv">1</span>, <span class="dv">2</span>] <span class="sc">*</span> t2[<span class="dv">2</span>, <span class="dv">1</span>])   <span class="co"># OR = ad / bc</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 2.149</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a aria-hidden="true" tabindex="-1"></a><span class="co"># El mismo OR desde la regresión logística</span></span>
+<span id="cb27-2"><a aria-hidden="true" tabindex="-1"></a><span class="fu">exp</span>(<span class="fu">coef</span>(<span class="fu">glm</span>(caso <span class="sc">~</span> portador_T, <span class="at">data =</span> datos, <span class="at">family =</span> binomial)))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>(Intercept)  portador_T 
+     0.6203      2.1494 </code></pre>
+</div>
+</div>
+<div class="clave">
+<p>Con un predictor dicotómico, <span class="math inline">\(e^{\beta_1}\)</span> es <strong>exactamente</strong> el OR de la tabla 2 × 2 <span class="citation" data-cites="celis2014bioestadistica">(<a href="#/referencias" role="doc-biblioref" onclick="">Celis de la Rosa y Labrada Martagón 2014</a>)</span>.</p>
+</div>
+</section>
+<section id="or-por-alelo-modelo-aditivo" class="slide level2">
+<h2>OR por alelo (modelo aditivo)</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">exp</span>(<span class="fu">coef</span>(modelo_snp))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>(Intercept)     dosis_T 
+     0.5926      1.9478 </code></pre>
+</div>
+</div>
+<p><strong>Interpretación</strong>: por cada copia adicional del alelo T, los <strong>odds</strong> de tener AR se multiplican por 1.95 (aumentan 95 %).</p>
+<ul>
+<li>Dos alelos (TT vs.&nbsp;GG): <span class="math inline">\(OR = e^{2\beta_1}\)</span> = 3.79.</li>
+<li>El intercepto <span class="math inline">\(e^{\beta_0}\)</span> = odds de ser caso en GG. En casos y controles <strong>no</strong> se interpreta como riesgo poblacional <span class="citation" data-cites="sperandei2014understanding celis2014bioestadistica">(<a href="#/referencias" role="doc-biblioref" onclick="">Sperandei 2014</a>; <a href="#/referencias" role="doc-biblioref" onclick="">Celis de la Rosa y Labrada Martagón 2014</a>)</span>.</li>
+</ul>
+</section>
+<section id="predictores-continuos" class="slide level2">
+<h2>3.3 Predictores continuos</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a aria-hidden="true" tabindex="-1"></a>modelo_edad <span class="ot">&lt;-</span> <span class="fu">glm</span>(caso <span class="sc">~</span> edad, <span class="at">data =</span> datos, <span class="at">family =</span> binomial)</span>
+<span id="cb31-2"><a aria-hidden="true" tabindex="-1"></a><span class="fu">exp</span>(<span class="fu">coef</span>(modelo_edad))            <span class="co"># OR por cada año</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>(Intercept)        edad 
+     0.1362      1.0382 </code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">exp</span>(<span class="fu">coef</span>(modelo_edad)[<span class="dv">2</span>] <span class="sc">*</span> <span class="dv">10</span>)    <span class="co"># OR por cada 10 años</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> edad 
+1.455 </code></pre>
+</div>
+</div>
+<ul>
+<li>OR por <strong>1 año</strong>: 1.038 → los odds aumentan 3.8 % por año.</li>
+<li>OR por <strong>10 años</strong>: <span class="math inline">\(e^{10\beta}\)</span> = 1.45. Elija una unidad con sentido clínico.</li>
+<li>El intercepto corresponde a <strong>edad = 0</strong>: no tiene interpretación práctica <span class="citation" data-cites="sperandei2014understanding">(<a href="#/referencias" role="doc-biblioref" onclick="">Sperandei 2014</a>)</span>.</li>
+</ul>
+</section>
+<section id="predictores-categóricos" class="slide level2">
+<h2>3.3 Predictores categóricos</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a aria-hidden="true" tabindex="-1"></a>modelo_gen <span class="ot">&lt;-</span> <span class="fu">glm</span>(caso <span class="sc">~</span> rs7574865, <span class="at">data =</span> datos, <span class="at">family =</span> binomial)</span>
+<span id="cb35-2"><a aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(<span class="fu">exp</span>(<span class="fu">coef</span>(modelo_gen)), <span class="dv">3</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>(Intercept) rs7574865GT rs7574865TT 
+      0.620       1.732       4.073 </code></pre>
+</div>
+</div>
+<ul>
+<li>R crea <strong>variables dummy</strong> (<span class="math inline">\(k - 1\)</span>) automáticamente <span class="citation" data-cites="sperandei2014understanding">(<a href="#/referencias" role="doc-biblioref" onclick="">Sperandei 2014</a>)</span>.</li>
+<li><code>rs7574865GT</code>: odds de AR en <strong>GT vs.&nbsp;GG</strong> (referencia).</li>
+<li><code>rs7574865TT</code>: odds de AR en <strong>TT vs.&nbsp;GG</strong>.</li>
+<li>Cada OR se interpreta <strong>respecto a la categoría de referencia</strong>.</li>
+</ul>
+</section>
+<section id="probabilidad-odds-ratio-y-riesgo-relativo" class="slide level2">
+<h2>3.4 Probabilidad, Odds Ratio y Riesgo Relativo</h2>
+<table class="caption-top">
+<colgroup>
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Medida</th>
+<th>Fórmula</th>
+<th>Pregunta</th>
+<th>¿En casos y controles?</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Probabilidad (riesgo)</td>
+<td><span class="math inline">\(a/(a+b)\)</span></td>
+<td>¿Qué tan probable es el evento?</td>
+<td>No (muestreo fijado)</td>
+</tr>
+<tr class="even">
+<td>Riesgo relativo (RR)</td>
+<td><span class="math inline">\(\dfrac{a/(a+b)}{c/(c+d)}\)</span></td>
+<td>¿Cuántas veces más <strong>riesgo</strong>?</td>
+<td><strong>No</strong> se puede estimar</td>
+</tr>
+<tr class="odd">
+<td>Odds ratio (OR)</td>
+<td><span class="math inline">\(\dfrac{ad}{bc}\)</span></td>
+<td>¿Cuántas veces más <strong>odds</strong>?</td>
+<td><strong>Sí</strong></td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>Si el evento es <strong>raro</strong> (&lt; 10 %), OR ≈ RR. Si es frecuente, el OR se aleja de 1 <strong>más</strong> que el RR <span class="citation" data-cites="celis2014bioestadistica zhang1998whats">(<a href="#/referencias" role="doc-biblioref" onclick="">Celis de la Rosa y Labrada Martagón 2014</a>; <a href="#/referencias" role="doc-biblioref" onclick="">Zhang y Yu 1998</a>)</span>.</li>
+<li>Un OR grande puede corresponder a una <strong>probabilidad pequeña</strong> si el riesgo basal es bajo <span class="citation" data-cites="sperandei2014understanding">(<a href="#/referencias" role="doc-biblioref" onclick="">Sperandei 2014</a>)</span>.</li>
+</ul>
+</section>
+<section id="or-vs.-rr-según-la-frecuencia-del-evento" class="slide level2">
+<h2>OR vs.&nbsp;RR según la frecuencia del evento</h2>
+
+<img data-src="Regresiion-logistica-part-1_files/figure-revealjs/or-rr-1.png" width="1200" class="r-stretch"><div class="small">
+<p>La AR es poco frecuente (prevalencia &lt; 1–2 %), por lo que el OR de nuestro estudio aproxima razonablemente al RR <span class="citation" data-cites="celis2014bioestadistica">(<a href="#/referencias" role="doc-biblioref" onclick="">Celis de la Rosa y Labrada Martagón 2014</a>)</span>.</p>
+</div>
+</section>
+<section id="intervalos-de-confianza-del-95" class="slide level2">
+<h2>3.5 Intervalos de confianza del 95 %</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a aria-hidden="true" tabindex="-1"></a><span class="co"># IC por perfil de verosimilitud (recomendado), en escala OR</span></span>
+<span id="cb37-2"><a aria-hidden="true" tabindex="-1"></a><span class="fu">exp</span>(<span class="fu">confint</span>(modelo_snp))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>             2.5 % 97.5 %
+(Intercept) 0.4772 0.7334
+dosis_T     1.5874 2.4009</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a aria-hidden="true" tabindex="-1"></a><span class="co"># IC de Wald: exp(β ± 1.96·EE)  (fórmula de Celis)</span></span>
+<span id="cb39-2"><a aria-hidden="true" tabindex="-1"></a><span class="fu">exp</span>(<span class="fu">confint.default</span>(modelo_snp))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>             2.5 % 97.5 %
+(Intercept) 0.4782 0.7345
+dosis_T     1.5841 2.3950</code></pre>
+</div>
+</div>
+<ul>
+<li>Si el IC <strong>no incluye 1</strong> → asociación estadísticamente significativa (α = 0.05).</li>
+<li>El <strong>ancho</strong> indica <strong>precisión</strong>: estrecho = estimación precisa.</li>
+<li>Wald y perfil coinciden con muestras grandes; con muestras pequeñas o OR extremos prefiera el de perfil <span class="citation" data-cites="hosmer2013applied">(<a href="#/referencias" role="doc-biblioref" onclick="">Hosmer, Lemeshow, y Sturdivant 2013</a>)</span>.</li>
+</ul>
+<p>La forma más fácil de obtener los IC es <code>tbl_regression</code> de <code>gtsummary</code></p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a aria-hidden="true" tabindex="-1"></a>modelo_snp <span class="sc">|&gt;</span> </span>
+<span id="cb41-2"><a aria-hidden="true" tabindex="-1"></a>  gtsummary<span class="sc">::</span><span class="fu">tbl_regression</span>(<span class="at">exponetiate=</span>T)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div id="cnqtwaltwh" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#cnqtwaltwh table {
+  font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#cnqtwaltwh thead, #cnqtwaltwh tbody, #cnqtwaltwh tfoot, #cnqtwaltwh tr, #cnqtwaltwh td, #cnqtwaltwh th {
+  border-style: none;
+}
+
+#cnqtwaltwh p {
+  margin: 0;
+  padding: 0;
+}
+
+#cnqtwaltwh .gt_table {
+  display: table;
+  border-collapse: collapse;
+  line-height: normal;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#cnqtwaltwh .gt_caption {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+#cnqtwaltwh .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#cnqtwaltwh .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 3px;
+  padding-bottom: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#cnqtwaltwh .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#cnqtwaltwh .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#cnqtwaltwh .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#cnqtwaltwh .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#cnqtwaltwh .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#cnqtwaltwh .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#cnqtwaltwh .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#cnqtwaltwh .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#cnqtwaltwh .gt_spanner_row {
+  border-bottom-style: hidden;
+}
+
+#cnqtwaltwh .gt_group_heading {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  text-align: left;
+}
+
+#cnqtwaltwh .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#cnqtwaltwh .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#cnqtwaltwh .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#cnqtwaltwh .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#cnqtwaltwh .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#cnqtwaltwh .gt_stub_row_group {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+  vertical-align: top;
+}
+
+#cnqtwaltwh .gt_row_group_first td {
+  border-top-width: 2px;
+}
+
+#cnqtwaltwh .gt_row_group_first th {
+  border-top-width: 2px;
+}
+
+#cnqtwaltwh .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#cnqtwaltwh .gt_first_summary_row {
+  border-top-style: solid;
+  border-top-color: #D3D3D3;
+}
+
+#cnqtwaltwh .gt_first_summary_row.thick {
+  border-top-width: 2px;
+}
+
+#cnqtwaltwh .gt_last_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#cnqtwaltwh .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#cnqtwaltwh .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#cnqtwaltwh .gt_last_grand_summary_row_top {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: double;
+  border-bottom-width: 6px;
+  border-bottom-color: #D3D3D3;
+}
+
+#cnqtwaltwh .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#cnqtwaltwh .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#cnqtwaltwh .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#cnqtwaltwh .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#cnqtwaltwh .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#cnqtwaltwh .gt_sourcenote {
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#cnqtwaltwh .gt_left {
+  text-align: left;
+}
+
+#cnqtwaltwh .gt_center {
+  text-align: center;
+}
+
+#cnqtwaltwh .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#cnqtwaltwh .gt_font_normal {
+  font-weight: normal;
+}
+
+#cnqtwaltwh .gt_font_bold {
+  font-weight: bold;
+}
+
+#cnqtwaltwh .gt_font_italic {
+  font-style: italic;
+}
+
+#cnqtwaltwh .gt_super {
+  font-size: 65%;
+}
+
+#cnqtwaltwh .gt_footnote_marks {
+  font-size: 75%;
+  vertical-align: 0.4em;
+  position: initial;
+}
+
+#cnqtwaltwh .gt_asterisk {
+  font-size: 100%;
+  vertical-align: 0;
+}
+
+#cnqtwaltwh .gt_indent_1 {
+  text-indent: 5px;
+}
+
+#cnqtwaltwh .gt_indent_2 {
+  text-indent: 10px;
+}
+
+#cnqtwaltwh .gt_indent_3 {
+  text-indent: 15px;
+}
+
+#cnqtwaltwh .gt_indent_4 {
+  text-indent: 20px;
+}
+
+#cnqtwaltwh .gt_indent_5 {
+  text-indent: 25px;
+}
+
+#cnqtwaltwh .katex-display {
+  display: inline-flex !important;
+  margin-bottom: 0.75em !important;
+}
+
+#cnqtwaltwh div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+  height: 0px !important;
+}
+</style>
+
+<table class="gt_table caption-top" data-quarto-bootstrap="false">
+<thead>
+<tr class="gt_col_headings header">
+<th id="label" class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th" scope="col"><strong>Characteristic</strong></th>
+<th id="estimate" class="gt_col_heading gt_columns_bottom_border gt_center" data-quarto-table-cell-role="th" scope="col"><strong>log(OR)</strong></th>
+<th id="conf.low" class="gt_col_heading gt_columns_bottom_border gt_center" data-quarto-table-cell-role="th" scope="col"><strong>95% CI</strong></th>
+<th id="p.value" class="gt_col_heading gt_columns_bottom_border gt_center" data-quarto-table-cell-role="th" scope="col"><strong>p-value</strong></th>
+</tr>
+</thead>
+<tbody class="gt_table_body">
+<tr class="odd">
+<td class="gt_row gt_left" headers="label">dosis_T</td>
+<td class="gt_row gt_center" headers="estimate">0.67</td>
+<td class="gt_row gt_center" headers="conf.low">0.46, 0.88</td>
+<td class="gt_row gt_center" headers="p.value">&lt;0.001</td>
+</tr>
+</tbody><tfoot>
+<tr class="gt_sourcenotes odd">
+<td colspan="4" class="gt_sourcenote">Abbreviations: CI = Confidence Interval, OR = Odds Ratio</td>
+</tr>
+</tfoot>
+
+</table>
+
+</div>
+</div>
+</div>
+</section>
+<section id="significancia-estadística-vs.-relevancia-biológica" class="slide level2">
+<h2>3.6 Significancia estadística vs.&nbsp;relevancia biológica</h2>
+
+<img data-src="Regresiion-logistica-part-1_files/figure-revealjs/n-vs-ic-1.png" width="1200" class="r-stretch"><ul>
+<li>El valor <em>p</em> depende del <strong>tamaño de muestra</strong>; el OR no. En un GWAS con 100 000 personas, un OR de 1.05 es “muy significativo” <span class="citation" data-cites="wasserstein2016asa">(<a href="#/referencias" role="doc-biblioref" onclick="">Wasserstein y Lazar 2016</a>)</span>.</li>
+<li><strong>Relevancia biológica</strong>: ¿el efecto es grande? ¿es plausible (función de <em>STAT4</em> en la vía de IL-12/IL-23)? ¿se replica en otras poblaciones? ¿cambia decisiones clínicas?</li>
+<li>Un OR de 50 puede llegar a no ser importante, por ejemplo para un estudio de un tamaño de muestra pequeño.</li>
+<li>A veces los OR con IC gigantes pueden reflejar la realidad.</li>
+</ul>
+</section></section>
+<section>
+<section id="cierre" class="title-slide slide level1 center" data-background-color="#1f4e79">
+<h1>Cierre</h1>
+
+</section>
+<section id="mensajes-clave" class="slide level2 scrollable">
+<h2>Mensajes clave</h2>
+<ol type="1">
+<li>Un <strong>MLG</strong> = distribución + predictor lineal + función de enlace. La regresión logística es el MLG con distribución <strong>binomial</strong> y enlace <strong>logit</strong>.</li>
+<li>La regresión lineal falla con respuestas binarias: predicciones imposibles, residuos no normales, heterocedasticidad.</li>
+<li><strong>Probabilidad ≠ odds ≠ log-odds</strong>. El modelo es lineal en el <strong>log-odds</strong>.</li>
+<li>Los coeficientes se estiman por <strong>máxima verosimilitud</strong>.</li>
+<li><span class="math inline">\(e^{\beta}\)</span> = <strong>OR</strong>. Por alelo, por año o respecto a una categoría de referencia.</li>
+<li>En casos y controles se estima el <strong>OR</strong>, no el RR ni el riesgo absoluto.</li>
+<li>Reporte siempre <strong>OR + IC 95 %</strong> y discuta la <strong>relevancia</strong>, no solo el valor <em>p</em>.</li>
+</ol>
+</section></section>
+<section>
+<section id="practica" class="title-slide slide level1 center" data-background-color="#1f4e79">
+<h1>Practica</h1>
+
+</section>
+<section id="práctica-en-clase" class="slide level2 scrollable">
+<h2>Práctica en clase</h2>
+<p>Con <code>estudio_AR_STAT4.csv</code>:</p>
+<ol type="1">
+<li>Calcule a mano (tabla 2 × 2) el OR de <strong>ser mujer</strong> para AR y compruébelo con <code>glm()</code>.</li>
+<li>Ajuste <code>glm(caso ~ tabaquismo, family = binomial)</code>. Interprete cada OR respecto a “Nunca”.</li>
+<li>Calcule la probabilidad predicha de ser caso para una persona de 30, 50 y 70 años con <code>predict(..., type = "response")</code>. ¿Por qué esa probabilidad <strong>no</strong> es el riesgo poblacional?</li>
+<li>Para el modelo de edad, obtenga el OR por cada <strong>5 años</strong> con su IC 95 %.</li>
+<li>Utilice los algoritmos <code>step</code> para encontrar un modelo en el que identifique factores asociados a la AR. Ajuste por todas las variables de la base.</li>
+</ol>
+</section>
+<section id="práctica-en-clase-2" class="slide level2 scrollable">
+<h2>Práctica en clase 2</h2>
+<p>Con <code>sal_tension_arterial.csv</code>:</p>
+<ol type="1">
+<li>Identifique de forma individual y mediante regresión logística los factores asociados a la hipertensión (más de 140 mm/Hg)</li>
+<li>Construya un modelo ajustado de forma manual, incluya interacciones y confusores el caso de ser necesario.</li>
+<li>Ajute el modelo con los algoritmos <code>step</code></li>
+</ol>
+</section></section>
+<section>
+<section id="interpretación-de-or." class="title-slide slide level1 center" data-background-color="#1f4e79">
+<h1>Interpretación de OR.</h1>
+
+</section>
+<section id="interpretación-de-odds-ratios-or" class="slide level2">
+<h2>Interpretación de Odds Ratios (OR)</h2>
+<p>El <strong>Odds Ratio (OR)</strong> expresa cuántas veces son las <em>odds</em> de un evento en un grupo respecto a otro.</p>
+<ul>
+<li><strong>OR = 1:</strong> ausencia de asociación en la escala de odds.</li>
+<li><strong>OR &gt; 1:</strong> mayores odds del evento.</li>
+<li><strong>OR &lt; 1:</strong> menores odds del evento.</li>
+</ul>
+<div class="callout callout-important callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Importante</strong></p>
+</div>
+<div class="callout-content">
+<p>Un OR no representa directamente un cambio en la probabilidad ni en el riesgo.</p>
+</div>
+</div>
+</div>
+<div class="callout callout-important callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Importante</strong></p>
+</div>
+<div class="callout-content">
+<p>La forma más fácil de interpretar un OR siempre es utilizando los odds. Así evita hablar de riesgos, probabilidades etc. Hablar de riesgos no es incorrecto, pero depende mucho del contexto del estudio.</p>
+</div>
+</div>
+</div>
+<div class="callout callout-important callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Importante</strong></p>
+</div>
+<div class="callout-content">
+<p>Cuando un OR es menor a 1 puede utilizar el reciproco para facilitar su interpretación.</p>
+</div>
+</div>
+</div>
+<p>Los ejemplos que se muestran a continuación son genéricos. Úselos con precaución.</p>
+</section>
+<section id="ejemplo-1.-tabaquismo-y-cáncer-pulmonar" class="slide level2">
+<h2>Ejemplo 1. Tabaquismo y cáncer pulmonar</h2>
+<p><span class="math display">\[
+OR = 3.50 \qquad IC_{95\%}: 2.80-4.40
+\]</span></p>
+<p><strong>Interpretación:</strong></p>
+<p>Las personas fumadoras presentan odds de cáncer pulmonar <strong>3.5 veces las de las personas no fumadoras</strong>.</p>
+<p>El intervalo de confianza indica que los datos son compatibles con OR entre 2.80 y 4.40.</p>
+<p><strong>Preguntas:</strong></p>
+<ul>
+<li>¿La asociación es estadísticamente significativa?</li>
+<li>¿La magnitud de la asociación es importante?</li>
+<li>¿El intervalo de confianza es preciso?</li>
+</ul>
+</section>
+<section id="ejemplo-2.-obesidad-e-hipertensión" class="slide level2">
+<h2>Ejemplo 2. Obesidad e hipertensión</h2>
+<p><span class="math display">\[
+OR = 1.80 \qquad IC_{95\%}: 1.40-2.30
+\]</span></p>
+<p><strong>Interpretación:</strong></p>
+<p>Las personas con obesidad presentan odds de hipertensión <strong>80% mayores</strong> que las personas sin obesidad.</p>
+<p>El intervalo de confianza es compatible con incrementos en las odds de entre <strong>40% y 130%</strong>.</p>
+<p><strong>Preguntas:</strong></p>
+<ul>
+<li>¿Existe evidencia estadística de asociación?</li>
+<li>¿Qué nos dice el intervalo sobre la magnitud del efecto?</li>
+</ul>
+</section>
+<section id="ejemplo-3.-tratamiento-y-mortalidad" class="slide level2">
+<h2>Ejemplo 3. Tratamiento y mortalidad</h2>
+<p><span class="math display">\[
+OR = 0.40 \qquad IC_{95\%}: 0.25-0.64
+\]</span></p>
+<p><strong>Interpretación:</strong></p>
+<p>Los pacientes tratados presentan odds de mortalidad <strong>60% menores</strong> que los pacientes no tratados.</p>
+<p>El intervalo de confianza es compatible con reducciones en las odds de entre <strong>36% y 75%</strong>.</p>
+<p><strong>Preguntas:</strong></p>
+<ul>
+<li>¿El tratamiento presenta una asociación protectora?</li>
+<li>¿La asociación es estadísticamente significativa?</li>
+<li>¿Podemos afirmar que el riesgo de morir disminuye 60%?</li>
+</ul>
+</section>
+<section id="ejemplo-4.-actividad-física-y-diabetes" class="slide level2">
+<h2>Ejemplo 4. Actividad física y diabetes</h2>
+<p><span class="math display">\[
+OR = 0.75 \qquad IC_{95\%}: 0.60-0.93
+\]</span></p>
+<p><strong>Interpretación:</strong></p>
+<p>Las personas físicamente activas presentan odds de diabetes <strong>25% menores</strong> que las personas sedentarias.</p>
+<p>El intervalo de confianza es compatible con reducciones en las odds de entre <strong>7% y 40%</strong>.</p>
+<p><strong>Preguntas:</strong></p>
+<ul>
+<li>¿La asociación es estadísticamente significativa?</li>
+<li>¿Qué tan precisa es la estimación?</li>
+<li>¿Podemos interpretar esta asociación como causal?</li>
+</ul>
+</section>
+<section id="ejemplo-5.-significativo-pero-con-efecto-pequeño" class="slide level2">
+<h2>Ejemplo 5. Significativo, pero con efecto pequeño</h2>
+<p><strong>Exposición ambiental y enfermedad respiratoria</strong></p>
+<p><span class="math display">\[
+OR = 1.08 \qquad IC_{95\%}: 1.03-1.13
+\]</span></p>
+<p><strong>Interpretación:</strong></p>
+<p>Las personas expuestas presentan odds de enfermedad respiratoria <strong>8% mayores</strong> que las no expuestas.</p>
+<p>El resultado es estadísticamente significativo.</p>
+<p><strong>Preguntas:</strong></p>
+<ul>
+<li>¿Un efecto estadísticamente significativo es necesariamente importante?</li>
+<li>¿Una asociación pequeña puede tener relevancia poblacional?</li>
+<li>¿Qué información adicional necesitaríamos?</li>
+</ul>
+</section>
+<section id="ejemplo-6.-asociación-grande-pero-imprecisa" class="slide level2">
+<h2>Ejemplo 6. Asociación grande, pero imprecisa</h2>
+<p><strong>Biomarcador y respuesta al tratamiento</strong></p>
+<p><span class="math display">\[
+OR = 2.50 \qquad IC_{95\%}: 0.80-7.80
+\]</span></p>
+<p><strong>Interpretación:</strong></p>
+<p>Los pacientes positivos al biomarcador presentan odds estimadas de respuesta <strong>2.5 veces las de los pacientes negativos</strong>.</p>
+<p>Sin embargo, el intervalo es compatible tanto con una reducción del 20% como con un aumento del 680% en las odds.</p>
+<p><strong>Preguntas:</strong></p>
+<ul>
+<li>¿La asociación es estadísticamente significativa?</li>
+<li>¿Podemos concluir que no existe asociación?</li>
+<li>¿Qué indica la amplitud del intervalo de confianza?</li>
+</ul>
+</section>
+<section id="ejemplo-7.-asociación-protectora-pero-incierta" class="slide level2">
+<h2>Ejemplo 7. Asociación protectora, pero incierta</h2>
+<p><strong>Tratamiento preventivo y hospitalización</strong></p>
+<p><span class="math display">\[
+OR = 0.35 \qquad IC_{95\%}: 0.08-1.50
+\]</span></p>
+<p><strong>Interpretación:</strong></p>
+<p>Los pacientes tratados presentan odds estimadas de hospitalización <strong>65% menores</strong> que los no tratados.</p>
+<p>Sin embargo, el intervalo es compatible con una reducción de hasta 92% o un aumento de hasta 50% en las odds.</p>
+<p><strong>Preguntas:</strong></p>
+<ul>
+<li>¿Podemos afirmar que el tratamiento es protector?</li>
+<li>¿Qué significa que el intervalo incluya OR = 1?</li>
+<li>¿La falta de significancia demuestra ausencia de efecto?</li>
+</ul>
+</section>
+<section id="ejemplo-8.-dos-estudios-con-el-mismo-or" class="slide level2">
+<h2>Ejemplo 8. Dos estudios con el mismo OR</h2>
+<p><strong>Exposición a contaminación y enfermedad respiratoria</strong></p>
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th>Característica</th>
+<th style="text-align: right;">Estudio A</th>
+<th style="text-align: right;">Estudio B</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>OR</td>
+<td style="text-align: right;">1.80</td>
+<td style="text-align: right;">1.80</td>
+</tr>
+<tr class="even">
+<td>IC del 95%</td>
+<td style="text-align: right;">1.70–1.91</td>
+<td style="text-align: right;">1.01–3.20</td>
+</tr>
+<tr class="odd">
+<td>Significativo</td>
+<td style="text-align: right;">Sí</td>
+<td style="text-align: right;">Sí</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Preguntas:</strong></p>
+<ul>
+<li>¿Ambos estudios estiman la misma magnitud de asociación?</li>
+<li>¿Cuál presenta mayor precisión?</li>
+<li>¿Cuál proporciona una estimación más informativa?</li>
+</ul>
+</section>
+<section id="ejemplo-9.-no-significativo-pero-preciso" class="slide level2">
+<h2>Ejemplo 9. No significativo, pero preciso</h2>
+<p><strong>Exposición ocupacional y enfermedad cardiovascular</strong></p>
+<p><span class="math display">\[
+OR = 1.01 \qquad IC_{95\%}: 0.99-1.03
+\]</span></p>
+<p><strong>Interpretación:</strong></p>
+<p>Las personas expuestas presentan odds estimadas de enfermedad cardiovascular <strong>1% mayores</strong>.</p>
+<p>El intervalo es compatible con una reducción del 1% o un incremento del 3% en las odds.</p>
+<p><strong>Preguntas:</strong></p>
+<ul>
+<li>¿El resultado es estadísticamente significativo?</li>
+<li>¿El intervalo permite descartar asociaciones grandes?</li>
+<li>¿Qué diferencia existe entre ausencia de significancia y ausencia de asociación?</li>
+</ul>
+</section>
+<section id="ejemplo-10.-dos-resultados-no-significativos" class="slide level2">
+<h2>Ejemplo 10. Dos resultados no significativos</h2>
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th>Característica</th>
+<th style="text-align: right;">Estudio A</th>
+<th style="text-align: right;">Estudio B</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>OR</td>
+<td style="text-align: right;">1.01</td>
+<td style="text-align: right;">2.50</td>
+</tr>
+<tr class="even">
+<td>IC del 95%</td>
+<td style="text-align: right;">0.99–1.03</td>
+<td style="text-align: right;">0.80–7.80</td>
+</tr>
+<tr class="odd">
+<td>Significativo</td>
+<td style="text-align: right;">No</td>
+<td style="text-align: right;">No</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Preguntas:</strong></p>
+<ul>
+<li>¿Ambos estudios permiten llegar a la misma conclusión?</li>
+<li>¿Cuál tiene mayor incertidumbre?</li>
+<li>¿Cuál permite descartar asociaciones de gran magnitud?</li>
+<li>¿En cuál sería más importante obtener información adicional?</li>
+</ul>
+</section>
+<section id="ejemplo-11.-significancia-estadística-y-relevancia-clínica" class="slide level2">
+<h2>Ejemplo 11. Significancia estadística y relevancia clínica</h2>
+<p><strong>Tratamiento y complicaciones cardiovasculares</strong></p>
+<p><span class="math display">\[
+OR = 0.98 \qquad IC_{95\%}: 0.97-0.99
+\]</span></p>
+<p><strong>Interpretación:</strong></p>
+<p>Los pacientes tratados presentan odds de complicaciones cardiovasculares <strong>2% menores</strong> que los no tratados.</p>
+<p>El resultado es estadísticamente significativo.</p>
+<p><strong>Preguntas:</strong></p>
+<ul>
+<li>¿Una reducción del 2% en las odds justifica utilizar el tratamiento?</li>
+<li>¿Qué importancia tiene el riesgo basal?</li>
+<li>¿Qué papel tienen los efectos adversos y el costo?</li>
+<li>¿Es suficiente conocer el OR para tomar una decisión clínica?</li>
+</ul>
+</section>
+<section id="ejercicio.-interpreta-los-resultados" class="slide level2 scrollable">
+<h2>Ejercicio. Interpreta los resultados</h2>
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th>Estudio</th>
+<th style="text-align: right;">OR</th>
+<th>IC del 95%</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>A</td>
+<td style="text-align: right;">3.50</td>
+<td>2.80–4.40</td>
+</tr>
+<tr class="even">
+<td>B</td>
+<td style="text-align: right;">1.08</td>
+<td>1.03–1.13</td>
+</tr>
+<tr class="odd">
+<td>C</td>
+<td style="text-align: right;">0.40</td>
+<td>0.25–0.64</td>
+</tr>
+<tr class="even">
+<td>D</td>
+<td style="text-align: right;">2.50</td>
+<td>0.80–7.80</td>
+</tr>
+<tr class="odd">
+<td>E</td>
+<td style="text-align: right;">1.01</td>
+<td>0.99–1.03</td>
+</tr>
+<tr class="even">
+<td>F</td>
+<td style="text-align: right;">1.80</td>
+<td>1.01–3.20</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Para cada estudio:</strong></p>
+<ol type="1">
+<li>Interpreta el OR.</li>
+<li>Determina si es estadísticamente significativo.</li>
+<li>Evalúa la precisión de la estimación.</li>
+<li>Discute su posible relevancia clínica o biológica.</li>
+</ol>
+</section>
+<section id="significancia-estadística-vs.-relevancia-biológica-1" class="slide level2">
+<h2>Significancia estadística vs.&nbsp;relevancia biológica</h2>
+<p><strong>Significancia estadística</strong></p>
+<ul>
+<li>Evalúa la evidencia contra la hipótesis nula.</li>
+<li>Depende de la estimación y su incertidumbre.</li>
+<li>No establece la importancia del efecto.</li>
+</ul>
+<p><strong>Relevancia biológica o clínica</strong></p>
+<ul>
+<li>Depende de la magnitud y el contexto del efecto.</li>
+<li>Considera mecanismos biológicos y consecuencias clínicas.</li>
+<li>No puede determinarse únicamente mediante el valor de p.</li>
+</ul>
+<p><span class="math display">\[
+\boxed{
+\text{Significancia estadística}
+\neq
+\text{Relevancia biológica}
+}
+\]</span></p>
+</section>
+<section id="mensajes-principales" class="slide level2">
+<h2>Mensajes principales</h2>
+<ul>
+<li>El <strong>OR</strong> describe la magnitud y dirección de una asociación en la escala de odds.</li>
+<li>El <strong>intervalo de confianza</strong> informa sobre la precisión de la estimación.</li>
+<li>Un resultado estadísticamente significativo puede tener un efecto pequeño.</li>
+<li>Un resultado no significativo puede ser compatible con efectos importantes.</li>
+<li>Un intervalo estrecho permite estimar la asociación con mayor precisión.</li>
+<li>La relevancia clínica o biológica requiere considerar el contexto.</li>
+</ul>
+<div class="callout callout-important callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Importante</strong></p>
+</div>
+<div class="callout-content">
+<p>La interpretación de un resultado no debe depender exclusivamente del valor de p.</p>
+</div>
+</div>
+</div>
+</section>
+<section id="consideraciones-finales" class="slide level2 scrollable">
+<h2>Consideraciones finales</h2>
+<p><strong>Al interpretar un OR, debemos preguntarnos:</strong></p>
+<ol type="1">
+<li>¿Cuál es la dirección de la asociación?</li>
+<li>¿Qué tan grande es el efecto estimado?</li>
+<li>¿Qué tan precisa es la estimación?</li>
+<li>¿El intervalo de confianza incluye el valor nulo?</li>
+<li>¿Qué magnitudes de asociación son compatibles con los datos?</li>
+<li>¿La asociación tiene relevancia biológica o clínica?</li>
+</ol>
+<p><strong>Nota:</strong> Todos los resultados presentados son hipotéticos y se utilizan exclusivamente con fines didácticos.</p>
+</section></section>
+<section>
+<section id="interpretación-de-or-parte-2." class="title-slide slide level1 center" data-background-color="#1f4e79">
+<h1>Interpretación de OR parte 2.</h1>
+
+</section>
+<section id="ejemplo-1.-significativo-ic-estrecho-efecto-pequeño" class="slide level2">
+<h2>Ejemplo 1. Significativo, IC estrecho, efecto pequeño</h2>
+<blockquote>
+<p>GWAS de diabetes tipo 2, <em>n</em> = 200 000. Alelo de riesgo de un SNP: <strong>OR = 1.08 (IC 95 %: 1.05–1.11)</strong>, p = 1 × 10⁻⁹.</p>
+</blockquote>
+<ul>
+<li><strong>Interpretación:</strong> cada copia del alelo se asocia con odds de diabetes 8 % mayores. Con 95 % de confianza, el aumento real está entre 5 % y 11 %.</li>
+<li><strong>Estadística:</strong> asociación muy sólida; el IC está lejos de 1 y es estrecho.</li>
+<li><strong>Biológica/clínica:</strong> el efecto individual es <strong>muy pequeño</strong>. No sirve para predecir quién enfermará, pero puede señalar un gen o una vía biológica relevante.</li>
+<li><strong>Pregunta:</strong> ¿le diría a un paciente portador que tiene “alto riesgo”?</li>
+</ul>
+</section>
+<section id="ejemplo-2.-no-significativo-ic-muy-amplio-efecto-potencialmente-grande" class="slide level2">
+<h2>Ejemplo 2. No significativo, IC muy amplio, efecto potencialmente grande</h2>
+<blockquote>
+<p>Variante rara en un gen candidato de lupus, 75 casos y 75 controles: <strong>OR = 3.2 (IC 95 %: 0.85–12.0)</strong>, p = 0.08.</p>
+</blockquote>
+<ul>
+<li><strong>Interpretación:</strong> el resultado es compatible con desde una ligera reducción de los odds (−15 %) hasta un aumento de 12 veces.</li>
+<li><strong>Estadística:</strong> no significativo, pero el IC es tan amplio que <strong>no descarta un efecto grande</strong>.</li>
+<li><strong>Error frecuente:</strong> concluir que “la variante no se asocia con lupus”. Lo correcto es decir que el estudio <strong>no tiene precisión</strong> para responder; es <strong>inconcluso</strong>.</li>
+<li><strong>Pregunta:</strong> ¿qué cambiaría para estrechar el IC? (más casos, más portadores, un metaanálisis).</li>
+</ul>
+</section>
+<section id="ejemplo-3.-significativo-ic-amplio" class="slide level2">
+<h2>Ejemplo 3. Significativo, IC amplio</h2>
+<blockquote>
+<p>Portadores de una mutación en un gen de reparación del ADN vs.&nbsp;no portadores en cáncer de mama de inicio temprano: <strong>OR = 6.5 (IC 95 %: 1.4–30.2)</strong>, p = 0.02.</p>
+</blockquote>
+<ul>
+<li><strong>Interpretación:</strong> los odds en portadores son 6.5 veces los de no portadores. El efecto real podría ser modesto (1.4) o enorme (30).</li>
+<li><strong>Estadística:</strong> significativo, pero <strong>muy impreciso</strong>. Pocos portadores generan celdas con conteos bajos, y con datos escasos los OR tienden a <strong>sobreestimarse</strong>.</li>
+<li><strong>Biológica:</strong> si el límite inferior es plausible (1.4), el hallazgo aún podría importar, pero el 6.5 no debe citarse como “el efecto”.</li>
+<li><strong>Pregunta:</strong> ¿qué número reportaría en el resumen del artículo? ¿Solo 6.5?</li>
+</ul>
+</section></section>
+<section>
+<section id="or-menores-que-1-factores-protectores" class="title-slide slide level1 center">
+<h1>OR menores que 1 (factores protectores)</h1>
+
+</section>
+<section id="ejemplo-4.-protector-significativo-ic-estrecho" class="slide level2">
+<h2>Ejemplo 4. Protector, significativo, IC estrecho</h2>
+<blockquote>
+<p>Alelo A de un SNP en <em>IL23R</em> y enfermedad inflamatoria intestinal: <strong>OR = 0.62 (IC 95 %: 0.51–0.75)</strong>, p &lt; 0.001.</p>
+</blockquote>
+<ul>
+<li><strong>Interpretación correcta:</strong> cada copia del alelo A se asocia con odds <strong>38 % menores</strong> (1 − 0.62 = 0.38). La reducción real está entre 25 % y 49 %.</li>
+<li><strong>Equivalencia útil:</strong> visto desde el otro alelo, OR = 1/0.62 = <strong>1.61</strong> (IC 1.33–1.96). Es la misma información con otra referencia.</li>
+<li><strong>Error frecuente:</strong> “reduce el riesgo un 38 %”. Es una reducción de <strong>odds</strong>; solo se parece al riesgo si la enfermedad es rara.</li>
+</ul>
+</section>
+<section id="ejemplo-5.-protector-no-significativo-ic-amplio" class="slide level2">
+<h2>Ejemplo 5. Protector, no significativo, IC amplio</h2>
+<blockquote>
+<p>Consumo de omega-3 (sí/no) y AR, 120 casos y 120 controles: <strong>OR = 0.70 (IC 95 %: 0.35–1.40)</strong>, p = 0.31.</p>
+</blockquote>
+<ul>
+<li><strong>Interpretación:</strong> compatible con desde una reducción de 65 % de los odds hasta un aumento de 40 %.</li>
+<li><strong>Estadística y biológica:</strong> <strong>inconcluso</strong>. No apoya ni descarta un efecto protector.</li>
+<li><strong>Pregunta:</strong> compárelo con el Ejemplo 6. ¿Cuál aporta más información sobre la “ausencia de efecto”?</li>
+</ul>
+</section>
+<section id="ejemplo-6.-or-1-con-ic-estrecho-un-nulo-informativo" class="slide level2">
+<h2>Ejemplo 6. OR ≈ 1 con IC estrecho: un “nulo informativo”</h2>
+<blockquote>
+<p>SNP candidato y AR en un consorcio con 50 000 participantes: <strong>OR = 1.01 (IC 95 %: 0.97–1.05)</strong>, p = 0.62.</p>
+</blockquote>
+<ul>
+<li><strong>Interpretación:</strong> el estudio <strong>descarta</strong> efectos mayores de ±5 % en los odds.</li>
+<li><strong>Contraste clave:</strong> el Ejemplo 5 y este son ambos “no significativos”, pero aquí sí hay <strong>evidencia de ausencia de un efecto relevante</strong>. En el 5 solo hay <strong>ausencia de evidencia</strong>.</li>
+</ul>
+</section></section>
+<section>
+<section id="trampas-de-interpretación" class="title-slide slide level1 center">
+<h1>Trampas de interpretación</h1>
+
+</section>
+<section id="ejemplo-7.-la-unidad-del-predictor-cambia-todo" class="slide level2">
+<h2>Ejemplo 7. La unidad del predictor cambia todo</h2>
+<blockquote>
+<p>Colesterol LDL (mg/dL) y enfermedad coronaria: <strong>OR = 1.005 por mg/dL (IC 95 %: 1.003–1.007)</strong>.</p>
+</blockquote>
+<ul>
+<li>Parece trivial, pero por cada <strong>40 mg/dL</strong>: OR = 1.005⁴⁰ = <strong>1.22 (IC 95 %: 1.13–1.32)</strong>.</li>
+<li><strong>Lección:</strong> un OR “pequeño” puede deberse a una unidad pequeña. Reporte el OR en una unidad con <strong>sentido clínico</strong> (10 años, 1 DE, 40 mg/dL).</li>
+</ul>
+</section>
+<section id="ejemplo-8.-el-mismo-or-distinta-relevancia-según-el-riesgo-basal" class="slide level2">
+<h2>Ejemplo 8. El mismo OR, distinta relevancia según el riesgo basal</h2>
+<blockquote>
+<p><strong>OR = 2.0</strong> en ambos escenarios:</p>
+</blockquote>
+<table class="caption-top">
+<colgroup>
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Escenario</th>
+<th>Riesgo sin exposición</th>
+<th>Riesgo con exposición</th>
+<th>Diferencia absoluta</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Enfermedad rara</td>
+<td>0.1 %</td>
+<td>≈ 0.2 %</td>
+<td>+0.1 puntos (1 caso extra por cada 1 000 expuestos)</td>
+</tr>
+<tr class="even">
+<td>Desenlace frecuente</td>
+<td>20 %</td>
+<td>≈ 33 %</td>
+<td>+13 puntos (13 casos extra por cada 100 expuestos)</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li><strong>Lección:</strong> el OR es <strong>relativo</strong>. El impacto clínico o poblacional depende del riesgo basal.</li>
+<li>Además, con un desenlace frecuente el OR (2.0) <strong>exagera</strong> el riesgo relativo, que aquí es 1.67.</li>
+</ul>
+</section>
+<section id="ejemplo-9.-el-umbral-de-0.05-es-arbitrario" class="slide level2">
+<h2>Ejemplo 9. El umbral de 0.05 es arbitrario</h2>
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th>Estudio</th>
+<th>OR</th>
+<th>IC 95 %</th>
+<th>p</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>A</td>
+<td>1.35</td>
+<td>1.00–1.82</td>
+<td>0.049</td>
+</tr>
+<tr class="even">
+<td>B</td>
+<td>1.34</td>
+<td>0.99–1.81</td>
+<td>0.051</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>Según la regla del <em>p</em> &lt; 0.05, A “encontró asociación” y B “no la encontró”.</li>
+<li>En realidad son <strong>prácticamente idénticos</strong>: mismo efecto y misma precisión.</li>
+<li><strong>Lección:</strong> interprete el <strong>OR y su IC completo</strong>, no la etiqueta de “significativo / no significativo”.</li>
+</ul>
+</section></section>
+<section>
+<section id="resumen" class="title-slide slide level1 center">
+<h1>Resumen</h1>
+
+</section>
+<section id="significancia-estadística-vs.-relevancia-biológica-2" class="slide level2">
+<h2>Significancia estadística vs.&nbsp;relevancia biológica</h2>
+<table class="caption-top">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Efecto biológicamente relevante</strong></th>
+<th><strong>Efecto biológicamente irrelevante</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Estadísticamente significativo</strong></td>
+<td>Ej. 3 y 4: hallazgo importante (en el 3, confirmar la magnitud)</td>
+<td>Ej. 1: real pero pequeño; típico de muestras enormes</td>
+</tr>
+<tr class="even">
+<td><strong>No significativo, IC amplio</strong></td>
+<td>Ej. 2 y 5: <strong>inconcluso</strong>, puede haber un efecto importante</td>
+<td>—</td>
+</tr>
+<tr class="odd">
+<td><strong>No significativo, IC estrecho alrededor de 1</strong></td>
+<td>—</td>
+<td>Ej. 6: evidencia de <strong>ausencia</strong> de efecto relevante</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="ideas-clave" class="slide level2 scrollable">
+<h2>Ideas clave</h2>
+<ol type="1">
+<li><strong>La significancia estadística responde:</strong> ¿es compatible con el azar? Depende mucho del <strong>tamaño de muestra</strong>.</li>
+<li><strong>La relevancia biológica responde:</strong> ¿el efecto es lo bastante grande para importar? Depende de la magnitud, el riesgo basal, la plausibilidad y el contexto.</li>
+<li><strong>El IC 95 % une ambas:</strong> su <strong>posición</strong> respecto a 1 indica la dirección y la significancia; su <strong>ancho</strong> indica la precisión; sus <strong>límites</strong> muestran los efectos más pequeños y más grandes compatibles con los datos.</li>
+<li><strong>Antes de concluir “no hay efecto”</strong>, mire el ancho del IC.</li>
+</ol>
+</section>
+<section id="referencias" class="slide level2 smaller scrollable">
+<h2>Referencias</h2>
+<div id="refs" class="small references csl-bib-body hanging-indent" data-entry-spacing="0" role="list">
+<div id="ref-celis2014bioestadistica" class="csl-entry" role="listitem">
+Celis de la Rosa, Alfredo de Jesús, y Vanessa Labrada Martagón. 2014. <span>«Análisis estratificado y regresión logística»</span>. En <em>Bioestadística</em>, 3.ª ed., 209-30. Ciudad de México: El Manual Moderno.
+</div>
+<div id="ref-clarke2011basic" class="csl-entry" role="listitem">
+Clarke, Geraldine M., Carl A. Anderson, Fredrik H. Pettersson, Lon R. Cardon, Andrew P. Morris, y Krina T. Zondervan. 2011. <span>«Basic Statistical Analysis in Genetic Case-Control Studies»</span>. <em>Nature Protocols</em> 6 (2): 121-33. <a href="https://doi.org/10.1038/nprot.2010.182">https://doi.org/10.1038/nprot.2010.182</a>.
+</div>
+<div id="ref-cordell2009detecting" class="csl-entry" role="listitem">
+Cordell, Heather J. 2009. <span>«Detecting Gene-Gene Interactions that Underlie Human Diseases»</span>. <em>Nature Reviews Genetics</em> 10 (6): 392-404. <a href="https://doi.org/10.1038/nrg2579">https://doi.org/10.1038/nrg2579</a>.
+</div>
+<div id="ref-denis2020univariate" class="csl-entry" role="listitem">
+Denis, Daniel J. 2020. <em>Univariate, Bivariate, and Multivariate Statistics Using R: Quantitative Tools for Data Analysis and Data Science</em>. Hoboken, NJ: John Wiley &amp; Sons, Inc.
+</div>
+<div id="ref-fox2016applied" class="csl-entry" role="listitem">
+Fox, John. 2016. <em>Applied Regression Analysis and Generalized Linear Models</em>. 3.ª ed. Thousand Oaks, CA: SAGE Publications.
+</div>
+<div id="ref-hosmer2013applied" class="csl-entry" role="listitem">
+Hosmer, David W., Stanley Lemeshow, y Rodney X. Sturdivant. 2013. <em>Applied Logistic Regression</em>. 3.ª ed. Hoboken, NJ: John Wiley &amp; Sons. <a href="https://doi.org/10.1002/9781118548387">https://doi.org/10.1002/9781118548387</a>.
+</div>
+<div id="ref-nelder1972generalized" class="csl-entry" role="listitem">
+Nelder, J. A., y R. W. M. Wedderburn. 1972. <span>«Generalized Linear Models»</span>. <em>Journal of the Royal Statistical Society. Series A (General)</em> 135 (3): 370-84. <a href="https://doi.org/10.2307/2344614">https://doi.org/10.2307/2344614</a>.
+</div>
+<div id="ref-perezguerrero2024bioestadistica" class="csl-entry" role="listitem">
+Pérez Guerrero, Edsaúl Emilio. 2024. <em>Bioestadística en R para ciencias de la salud: Guía práctica</em>. 1.ª ed. Zapopan, Jalisco, México: Editorial Innovación Educativa. <a href="https://www.cucs.udg.mx/libros/lectura_cucs.php?libro=Bioestadistica_enR_digital">https://www.cucs.udg.mx/libros/lectura_cucs.php?libro=Bioestadistica_enR_digital</a>.
+</div>
+<div id="ref-radecic2026glm" class="csl-entry" role="listitem">
+Radečić, Dario. 2026. <span>«Generalized Linear Models (<span>GLM</span>): What You Should Know»</span>. DataCamp Tutorial. <a href="https://www.datacamp.com/tutorial/generalized-linear-model">https://www.datacamp.com/tutorial/generalized-linear-model</a>.
+</div>
+<div id="ref-remmers2007stat4" class="csl-entry" role="listitem">
+Remmers, Elaine F., Robert M. Plenge, Annette T. Lee, Robert R. Graham, Geoffrey Hom, Timothy W. Behrens, et&nbsp;al. 2007. <span>«<span>STAT4</span> and the Risk of Rheumatoid Arthritis and Systemic Lupus Erythematosus»</span>. <em>New England Journal of Medicine</em> 357 (10): 977-86. <a href="https://doi.org/10.1056/NEJMoa073003">https://doi.org/10.1056/NEJMoa073003</a>.
+</div>
+<div id="ref-sperandei2014understanding" class="csl-entry" role="listitem">
+Sperandei, Sandro. 2014. <span>«Understanding Logistic Regression Analysis»</span>. <em>Biochemia Medica</em> 24 (1): 12-18. <a href="https://doi.org/10.11613/BM.2014.003">https://doi.org/10.11613/BM.2014.003</a>.
+</div>
+<div id="ref-steyerberg2019clinical" class="csl-entry" role="listitem">
+Steyerberg, Ewout W. 2019. <em>Clinical Prediction Models: A Practical Approach to Development, Validation, and Updating</em>. 2.ª ed. Cham: Springer. <a href="https://doi.org/10.1007/978-3-030-16399-0">https://doi.org/10.1007/978-3-030-16399-0</a>.
+</div>
+<div id="ref-wasserstein2016asa" class="csl-entry" role="listitem">
+Wasserstein, Ronald L., y Nicole A. Lazar. 2016. <span>«The <span>ASA</span> Statement on p-Values: Context, Process, and Purpose»</span>. <em>The American Statistician</em> 70 (2): 129-33. <a href="https://doi.org/10.1080/00031305.2016.1154108">https://doi.org/10.1080/00031305.2016.1154108</a>.
+</div>
+<div id="ref-zhang1998whats" class="csl-entry" role="listitem">
+Zhang, Jun, y Kai F. Yu. 1998. <span>«What’s the Relative Risk? A Method of Correcting the Odds Ratio in Cohort Studies of Common Outcomes»</span>. <em>JAMA</em> 280 (19): 1690-91. <a href="https://doi.org/10.1001/jama.280.19.1690">https://doi.org/10.1001/jama.280.19.1690</a>.
+</div>
+</div>
+
+
+</section></section>
+    </div>
+  <div class="quarto-auto-generated-content" style="display: none;">
+<div class="footer footer-default">
+<p>Bioestadística con R · Regresión logística — Parte 1</p>
+</div>
+</div></div>
+
+  <script>window.backupDefine = window.define; window.define = undefined;</script>
+  <script src="../../../site_libs/revealjs/dist/reveal.js"></script>
+  <!-- reveal.js plugins -->
+  <script src="../../../site_libs/revealjs/plugin/quarto-line-highlight/line-highlight.js"></script>
+  <script src="../../../site_libs/revealjs/plugin/pdf-export/pdfexport.js"></script>
+  <script src="../../../site_libs/revealjs/plugin/reveal-menu/menu.js"></script>
+  <script src="../../../site_libs/revealjs/plugin/reveal-menu/quarto-menu.js"></script>
+  <script src="../../../site_libs/revealjs/plugin/reveal-chalkboard/plugin.js"></script>
+  <script src="../../../site_libs/revealjs/plugin/quarto-support/support.js"></script>
+  
+
+  <script src="../../../site_libs/revealjs/plugin/notes/notes.js"></script>
+  <script src="../../../site_libs/revealjs/plugin/search/search.js"></script>
+  <script src="../../../site_libs/revealjs/plugin/zoom/zoom.js"></script>
+  <script src="../../../site_libs/revealjs/plugin/math/math.js"></script>
+  <script>window.define = window.backupDefine; window.backupDefine = undefined;</script>
+
+  <script>
+
+      // Full list of configuration options available at:
+      // https://revealjs.com/config/
+      Reveal.initialize({
+'controlsAuto': true,
+'previewLinksAuto': false,
+'pdfSeparateFragments': false,
+'autoAnimateEasing': "ease",
+'autoAnimateDuration': 1,
+'autoAnimateUnmatched': true,
+'jumpToSlide': true,
+'menu': {"side":"left","useTextContentForMissingTitles":true,"markers":false,"loadIcons":false,"custom":[{"title":"Tools","icon":"<i class=\"fas fa-gear\"></i>","content":"<ul class=\"slide-menu-items\">\n<li class=\"slide-tool-item active\" data-item=\"0\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.fullscreen(event)\"><kbd>f</kbd> Fullscreen</a></li>\n<li class=\"slide-tool-item\" data-item=\"1\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.speakerMode(event)\"><kbd>s</kbd> Speaker View</a></li>\n<li class=\"slide-tool-item\" data-item=\"2\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.overview(event)\"><kbd>o</kbd> Slide Overview</a></li>\n<li class=\"slide-tool-item\" data-item=\"3\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.togglePdfExport(event)\"><kbd>e</kbd> PDF Export Mode</a></li>\n<li class=\"slide-tool-item\" data-item=\"4\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.toggleScrollView(event)\"><kbd>r</kbd> Scroll View Mode</a></li>\n<li class=\"slide-tool-item\" data-item=\"5\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.toggleChalkboard(event)\"><kbd>b</kbd> Toggle Chalkboard</a></li>\n<li class=\"slide-tool-item\" data-item=\"6\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.toggleNotesCanvas(event)\"><kbd>c</kbd> Toggle Notes Canvas</a></li>\n<li class=\"slide-tool-item\" data-item=\"7\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.downloadDrawings(event)\"><kbd>d</kbd> Download Drawings</a></li>\n<li class=\"slide-tool-item\" data-item=\"8\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.keyboardHelp(event)\"><kbd>?</kbd> Keyboard Help</a></li>\n</ul>"}],"openButton":true},
+'chalkboard': {"buttons":true},
+'smaller': false,
+ 
+        // Display controls in the bottom right corner
+        controls: false,
+
+        // Help the user learn the controls by providing hints, for example by
+        // bouncing the down arrow when they first encounter a vertical slide
+        controlsTutorial: false,
+
+        // Determines where controls appear, "edges" or "bottom-right"
+        controlsLayout: 'edges',
+
+        // Visibility rule for backwards navigation arrows; "faded", "hidden"
+        // or "visible"
+        controlsBackArrows: 'faded',
+
+        // Display a presentation progress bar
+        progress: true,
+
+        // Display the page number of the current slide
+        slideNumber: 'c/t',
+
+        // 'all', 'print', or 'speaker'
+        showSlideNumber: 'all',
+
+        // Add the current slide number to the URL hash so that reloading the
+        // page/copying the URL will return you to the same slide
+        hash: true,
+
+        // Start with 1 for the hash rather than 0
+        hashOneBasedIndex: false,
+
+        // Flags if we should monitor the hash and change slides accordingly
+        respondToHashChanges: true,
+
+        // Push each slide change to the browser history
+        history: true,
+
+        // Enable keyboard shortcuts for navigation
+        keyboard: true,
+
+        // Enable the slide overview mode
+        overview: true,
+
+        // Disables the default reveal.js slide layout (scaling and centering)
+        // so that you can use custom CSS layout
+        disableLayout: false,
+
+        // Vertical centering of slides
+        center: false,
+
+        // Enables touch navigation on devices with touch input
+        touch: true,
+
+        // Loop the presentation
+        loop: false,
+
+        // Change the presentation direction to be RTL
+        rtl: false,
+
+        // see https://revealjs.com/vertical-slides/#navigation-mode
+        navigationMode: 'linear',
+
+        // Randomizes the order of slides each time the presentation loads
+        shuffle: false,
+
+        // Turns fragments on and off globally
+        fragments: true,
+
+        // Flags whether to include the current fragment in the URL,
+        // so that reloading brings you to the same fragment position
+        fragmentInURL: false,
+
+        // Flags if the presentation is running in an embedded mode,
+        // i.e. contained within a limited portion of the screen
+        embedded: false,
+
+        // Flags if we should show a help overlay when the questionmark
+        // key is pressed
+        help: true,
+
+        // Flags if it should be possible to pause the presentation (blackout)
+        pause: true,
+
+        // Flags if speaker notes should be visible to all viewers
+        showNotes: false,
+
+        // Global override for autoplaying embedded media (null/true/false)
+        autoPlayMedia: null,
+
+        // Global override for preloading lazy-loaded iframes (null/true/false)
+        preloadIframes: null,
+
+        // Number of milliseconds between automatically proceeding to the
+        // next slide, disabled when set to 0, this value can be overwritten
+        // by using a data-autoslide attribute on your slides
+        autoSlide: 0,
+
+        // Stop auto-sliding after user input
+        autoSlideStoppable: true,
+
+        // Use this method for navigation when auto-sliding
+        autoSlideMethod: null,
+
+        // Specify the average time in seconds that you think you will spend
+        // presenting each slide. This is used to show a pacing timer in the
+        // speaker view
+        defaultTiming: null,
+
+        // Enable slide navigation via mouse wheel
+        mouseWheel: false,
+
+        // The display mode that will be used to show slides
+        display: 'block',
+
+        // Hide cursor if inactive
+        hideInactiveCursor: true,
+
+        // Time before the cursor is hidden (in ms)
+        hideCursorTime: 5000,
+
+        // Opens links in an iframe preview overlay
+        previewLinks: false,
+
+        // Transition style (none/fade/slide/convex/concave/zoom)
+        transition: 'fade',
+
+        // Transition speed (default/fast/slow)
+        transitionSpeed: 'default',
+
+        // Transition style for full page slide backgrounds
+        // (none/fade/slide/convex/concave/zoom)
+        backgroundTransition: 'none',
+
+        // Number of slides away from the current that are visible
+        viewDistance: 3,
+
+        // Number of slides away from the current that are visible on mobile
+        // devices. It is advisable to set this to a lower number than
+        // viewDistance in order to save resources.
+        mobileViewDistance: 2,
+
+        // The "normal" size of the presentation, aspect ratio will be preserved
+        // when the presentation is scaled to fit different resolutions. Can be
+        // specified using percentage units.
+        width: 1600,
+
+        height: 900,
+
+        // Factor of the display size that should remain empty around the content
+        margin: 0.1,
+
+        math: {
+          mathjax: 'https://cdn.jsdelivr.net/npm/mathjax@2.7.9/MathJax.js',
+          config: 'TeX-AMS_HTML-full',
+          tex2jax: {
+            inlineMath: [['\\(','\\)']],
+            displayMath: [['\\[','\\]']],
+            balanceBraces: true,
+            processEscapes: false,
+            processRefs: true,
+            processEnvironments: true,
+            preview: 'TeX',
+            skipTags: ['script','noscript','style','textarea','pre','code'],
+            ignoreClass: 'tex2jax_ignore',
+            processClass: 'tex2jax_process'
+          },
+        },
+
+        // reveal.js plugins
+        plugins: [QuartoLineHighlight, PdfExport, RevealMenu, RevealChalkboard, QuartoSupport,
+
+          RevealMath,
+          RevealNotes,
+          RevealSearch,
+          RevealZoom
+        ]
+      });
+    </script>
+    
+    <script>
+      // htmlwidgets need to know to resize themselves when slides are shown/hidden.
+      // Fire the "slideenter" event (handled by htmlwidgets.js) when the current
+      // slide changes (different for each slide format).
+      (function () {
+        // dispatch for htmlwidgets
+        function fireSlideEnter() {
+          const event = window.document.createEvent("Event");
+          event.initEvent("slideenter", true, true);
+          window.document.dispatchEvent(event);
+        }
+
+        function fireSlideChanged(previousSlide, currentSlide) {
+          fireSlideEnter();
+
+          // dispatch for shiny
+          if (window.jQuery) {
+            if (previousSlide) {
+              window.jQuery(previousSlide).trigger("hidden");
+            }
+            if (currentSlide) {
+              window.jQuery(currentSlide).trigger("shown");
+            }
+          }
+        }
+
+        // hookup for slidy
+        if (window.w3c_slidy) {
+          window.w3c_slidy.add_observer(function (slide_num) {
+            // slide_num starts at position 1
+            fireSlideChanged(null, w3c_slidy.slides[slide_num - 1]);
+          });
+        }
+
+      })();
+    </script>
+
+    <script id="quarto-html-after-body" type="application/javascript">
+      window.document.addEventListener("DOMContentLoaded", function (event) {
+        const tabsets =  window.document.querySelectorAll(".panel-tabset-tabby")
+        tabsets.forEach(function(tabset) {
+          const tabby = new Tabby('#' + tabset.id);
+        });
+        const isCodeAnnotation = (el) => {
+          for (const clz of el.classList) {
+            if (clz.startsWith('code-annotation-')) {                     
+              return true;
+            }
+          }
+          return false;
+        }
+        const onCopySuccess = function(e) {
+          // button target
+          const button = e.trigger;
+          // don't keep focus
+          button.blur();
+          // flash "checked"
+          button.classList.add('code-copy-button-checked');
+          var currentTitle = button.getAttribute("title");
+          button.setAttribute("title", "Copiado");
+          let tooltip;
+          if (window.bootstrap) {
+            button.setAttribute("data-bs-toggle", "tooltip");
+            button.setAttribute("data-bs-placement", "left");
+            button.setAttribute("data-bs-title", "Copiado");
+            tooltip = new bootstrap.Tooltip(button, 
+              { trigger: "manual", 
+                customClass: "code-copy-button-tooltip",
+                offset: [0, -8]});
+            tooltip.show();    
+          }
+          setTimeout(function() {
+            if (tooltip) {
+              tooltip.hide();
+              button.removeAttribute("data-bs-title");
+              button.removeAttribute("data-bs-toggle");
+              button.removeAttribute("data-bs-placement");
+            }
+            button.setAttribute("title", currentTitle);
+            button.classList.remove('code-copy-button-checked');
+          }, 1000);
+          // clear code selection
+          e.clearSelection();
+        }
+        const getTextToCopy = function(trigger) {
+          const outerScaffold = trigger.parentElement.cloneNode(true);
+          const codeEl = outerScaffold.querySelector('code');
+          for (const childEl of codeEl.children) {
+            if (isCodeAnnotation(childEl)) {
+              childEl.remove();
+            }
+          }
+          return codeEl.innerText;
+        }
+        const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+          text: getTextToCopy
+        });
+        clipboard.on('success', onCopySuccess);
+        if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+          const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+            text: getTextToCopy,
+            container: window.document.getElementById('quarto-embedded-source-code-modal')
+          });
+          clipboardModal.on('success', onCopySuccess);
+        }
+          var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+          var mailtoRegex = new RegExp(/^mailto:/);
+            var filterRegex = new RegExp('/' + window.location.host + '/');
+          var isInternal = (href) => {
+              return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+          }
+          // Inspect non-navigation links and adorn them if external
+         var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+          for (var i=0; i<links.length; i++) {
+            const link = links[i];
+            if (!isInternal(link.href)) {
+              // undo the damage that might have been done by quarto-nav.js in the case of
+              // links that we want to consider external
+              if (link.dataset.originalHref !== undefined) {
+                link.href = link.dataset.originalHref;
+              }
+            }
+          }
+        function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+          const config = {
+            allowHTML: true,
+            maxWidth: 500,
+            delay: 100,
+            arrow: false,
+            appendTo: function(el) {
+                return el.closest('section.slide') || el.parentElement;
+            },
+            interactive: true,
+            interactiveBorder: 10,
+            theme: 'light-border',
+            placement: 'bottom-start',
+          };
+          if (contentFn) {
+            config.content = contentFn;
+          }
+          if (onTriggerFn) {
+            config.onTrigger = onTriggerFn;
+          }
+          if (onUntriggerFn) {
+            config.onUntrigger = onUntriggerFn;
+          }
+            config['offset'] = [0,0];
+            config['maxWidth'] = 700;
+          window.tippy(el, config); 
+        }
+        const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+        for (var i=0; i<noterefs.length; i++) {
+          const ref = noterefs[i];
+          tippyHover(ref, function() {
+            // use id or data attribute instead here
+            let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+            try { href = new URL(href).hash; } catch {}
+            const id = href.replace(/^#\/?/, "");
+            const note = window.document.getElementById(id);
+            if (note) {
+              return note.innerHTML;
+            } else {
+              return "";
+            }
+          });
+        }
+        const findCites = (el) => {
+          const parentEl = el.parentElement;
+          if (parentEl) {
+            const cites = parentEl.dataset.cites;
+            if (cites) {
+              return {
+                el,
+                cites: cites.split(' ')
+              };
+            } else {
+              return findCites(el.parentElement)
+            }
+          } else {
+            return undefined;
+          }
+        };
+        var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+        for (var i=0; i<bibliorefs.length; i++) {
+          const ref = bibliorefs[i];
+          const citeInfo = findCites(ref);
+          if (citeInfo) {
+            tippyHover(citeInfo.el, function() {
+              var popup = window.document.createElement('div');
+              citeInfo.cites.forEach(function(cite) {
+                var citeDiv = window.document.createElement('div');
+                citeDiv.classList.add('hanging-indent');
+                citeDiv.classList.add('csl-entry');
+                var biblioDiv = window.document.getElementById('ref-' + cite);
+                if (biblioDiv) {
+                  citeDiv.innerHTML = biblioDiv.innerHTML;
+                }
+                popup.appendChild(citeDiv);
+              });
+              return popup.innerHTML;
+            });
+          }
+        }
+      });
+      </script>
+    
+
+</body></html>

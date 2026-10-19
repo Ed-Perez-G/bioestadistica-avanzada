@@ -1,5 +1,5 @@
 ---
-title: "Regresión logística I"
+title: "Regresión logística. Parte I"
 subtitle: "Modelos lineales generalizados · Fundamentos · Odds y logit · Interpretación de coeficientes"
 author: "Edsaúl Emilio Pérez-Guerrero"
 date: today
@@ -20,7 +20,7 @@ format:
     fig-height: 4.5
     fig-dpi: 150
     transition: fade
-    footer: "Bioestadística con R · Regresión logística — Parte 1"
+    footer: "Bioestadística. Regresión logística — Parte 1"
     width: 1600
     height: 900
     scrollable: true
