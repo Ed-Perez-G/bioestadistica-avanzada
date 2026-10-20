@@ -25,7 +25,7 @@
     "href": "temas/tema-06/index-06.html#material-de-clase",
     "title": "Tema 6: Regresión logística",
     "section": "Material de clase",
-    "text": "Material de clase\n\nRegresión logística parte 1"
+    "text": "Material de clase\n\nRegresión logística parte 1\nRegresión logística parte 2"
   },
   {
     "objectID": "temas/tema-06/index-06.html#base-de-datos-tema-06",
@@ -40,6 +40,272 @@
     "title": "Tema 6: Regresión logística",
     "section": "Paquetes necesarios",
     "text": "Paquetes necesarios\ninstall.packages(c(\"ggplot2\", \"patchwork\", \"broom\", \"ggeffects\",\n                   \"performance\", \"see\", \"pROC\", \"logistf\", \"gtsummary\"))"
+  },
+  {
+    "objectID": "temas/tema-06/Regresion_logistica_final2/Regresion_logistica_parte2.html#objetivos-de-la-sesión",
+    "href": "temas/tema-06/Regresion_logistica_final2/Regresion_logistica_parte2.html#objetivos-de-la-sesión",
+    "title": "Regresión logística. Parte 2",
+    "section": "Objetivos de la sesión",
+    "text": "Objetivos de la sesión\n\nRevisión de actividades\nComprender y evaluar los supuestos que se deben de cumplir en la regresión logístic\nPresentar datos de una regersión logística adecuadamente\n\nLibrerías de la sesión\n\nlibrary(gtsummary)\nlibrary(MASS)\nlibrary(tidyverse)\nlibrary(performance)"
+  },
+  {
+    "objectID": "temas/tema-06/Regresion_logistica_final2/Regresion_logistica_parte2.html#revisión-de-la-regresión-de-stat4-en-ar",
+    "href": "temas/tema-06/Regresion_logistica_final2/Regresion_logistica_parte2.html#revisión-de-la-regresión-de-stat4-en-ar",
+    "title": "Regresión logística. Parte 2",
+    "section": "Revisión de la regresión de STAT4 en AR",
+    "text": "Revisión de la regresión de STAT4 en AR\nEl siguiente código es para importar y preparar de nuevo la base de datos:\n\ndatos &lt;- read.csv(\"../Bases/estudio_AR_STAT4.csv\") # Cambie la ruta, en mi caso necesito moverme una carpeta arriba\n\n# Desenlace: 1 = caso (AR), 0 = control. La categoría \"evento\" debe ser 1.\ndatos$caso_f &lt;- factor(datos$caso, levels = c(0, 1), labels = c(\"Control\", \"Caso\"))\n# Los factores deben de estar correctamente etiquetados y en el orden correcto\n# Para algunas situaciones se prefiere mantenet 0 y 1\n\n# Factores con su categoría de referencia en primer lugar\ndatos$sexo       &lt;- factor(datos$sexo, levels = c(\"Hombre\", \"Mujer\"))\ndatos$tabaquismo &lt;- factor(datos$tabaquismo, levels = c(\"Nunca\", \"Exfumador\", \"Actual\"))\ndatos$rs7574865  &lt;- factor(datos$rs7574865, levels = c(\"GG\", \"GT\", \"TT\"))\n\n# Dosis alélica: número de copias del alelo de riesgo T (0, 1, 2)\ndatos$dosis_T &lt;- as.numeric(datos$rs7574865) - 1\n# as.numeric() sobre un factor no devuelve las etiquetas. Devuelve el código interno, es decir, la posición de cada nivel: GG = 1, GT = 2, TT = 3.\n# Al restar 1 se obtiene exactamente el número de alelos T:\n\nstr(datos[, c(\"caso\", \"sexo\", \"edad\", \"tabaquismo\", \"PC1\", \"rs7574865\", \"dosis_T\")])\n\n'data.frame':   800 obs. of  7 variables:\n $ caso      : int  1 0 0 0 1 1 1 0 0 1 ...\n $ sexo      : Factor w/ 2 levels \"Hombre\",\"Mujer\": 2 2 1 1 2 1 2 2 2 2 ...\n $ edad      : int  49 37 34 54 66 34 59 28 55 69 ...\n $ tabaquismo: Factor w/ 3 levels \"Nunca\",\"Exfumador\",..: 3 2 1 1 2 2 3 3 1 3 ...\n $ PC1       : num  1.951 0.189 0.237 -0.754 0.956 ...\n $ rs7574865 : Factor w/ 3 levels \"GG\",\"GT\",\"TT\": 3 1 2 1 2 1 1 1 1 3 ...\n $ dosis_T   : num  2 0 1 0 1 0 0 0 0 2 ..."
+  },
+  {
+    "objectID": "temas/tema-06/Regresion_logistica_final2/Regresion_logistica_parte2.html#revisión-de-la-regresión-de-stat4-en-ar-1",
+    "href": "temas/tema-06/Regresion_logistica_final2/Regresion_logistica_parte2.html#revisión-de-la-regresión-de-stat4-en-ar-1",
+    "title": "Regresión logística. Parte 2",
+    "section": "Revisión de la regresión de STAT4 en AR",
+    "text": "Revisión de la regresión de STAT4 en AR\nAjuste glm(caso ~ tabaquismo, family = binomial). Interprete cada OR respecto a “Nunca”.\n\nglm(caso_f ~ tabaquismo, data= datos, family = binomial) |&gt;\n  gtsummary::tbl_regression(exponentiate = T)\n\n\n\n\n\n\n\n\n\n\n\n\n\nCharacteristic\nOR\n95% CI\np-value\n\n\n\n\ntabaquismo\n\n\n\n\n\n\n\n\n    Nunca\n—\n—\n\n\n\n\n    Exfumador\n1.37\n0.95, 1.98\n0.094\n\n\n    Actual\n2.18\n1.58, 3.03\n&lt;0.001\n\n\n\nAbbreviations: CI = Confidence Interval, OR = Odds Ratio\n\n\n\n\n\n\n\n\n\nEn comparación con los individuos que nunca habían fumado, los fumadores actuales presentaron mayores odds de artritis reumatoide (OR = 2.18; IC del 95%: 1.58–3.00; p &lt; 0.001). Por su parte, los exfumadores también mostraron mayores odds de AR (OR = 1.36; IC del 95%: 0.95–1.97), aunque esta asociación no alcanzó significancia estadística (p = 0.094)."
+  },
+  {
+    "objectID": "temas/tema-06/Regresion_logistica_final2/Regresion_logistica_parte2.html#revisión-de-la-regresión-de-stat4-en-ar-2",
+    "href": "temas/tema-06/Regresion_logistica_final2/Regresion_logistica_parte2.html#revisión-de-la-regresión-de-stat4-en-ar-2",
+    "title": "Regresión logística. Parte 2",
+    "section": "Revisión de la regresión de STAT4 en AR",
+    "text": "Revisión de la regresión de STAT4 en AR\nCalcule la probabilidad predicha de ser caso para una persona de 30, 50 y 70 años con predict(…, type = “response”). ¿Por qué esa probabilidad no es el riesgo poblacional?\n\nmodelo &lt;- glm(\n  caso ~ edad,\n  family = binomial(link = \"logit\"),\n  data = datos\n)\n\nsummary(modelo)\n\n\nCall:\nglm(formula = caso ~ edad, family = binomial(link = \"logit\"), \n    data = datos)\n\nCoefficients:\n            Estimate Std. Error z value        Pr(&gt;|z|)    \n(Intercept) -1.99347    0.28996   -6.87 0.0000000000062 ***\nedad         0.03747    0.00526    7.12 0.0000000000010 ***\n---\nSignif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1\n\n(Dispersion parameter for binomial family taken to be 1)\n\n    Null deviance: 1109.0  on 799  degrees of freedom\nResidual deviance: 1054.9  on 798  degrees of freedom\nAIC: 1059\n\nNumber of Fisher Scoring iterations: 4\n\n\n\nnuevos &lt;- data.frame(\n  edad = c(30, 50, 70)\n)\n\nnuevos$probabilidad &lt;- predict(\n  modelo,\n  newdata = nuevos,\n  type = \"response\"\n)\n\nnuevos\n\n  edad probabilidad\n1   30       0.2954\n2   50       0.4701\n3   70       0.6524"
+  },
+  {
+    "objectID": "temas/tema-06/Regresion_logistica_final2/Regresion_logistica_parte2.html#revisión-de-la-regresión-de-stat4-en-ar-3",
+    "href": "temas/tema-06/Regresion_logistica_final2/Regresion_logistica_parte2.html#revisión-de-la-regresión-de-stat4-en-ar-3",
+    "title": "Regresión logística. Parte 2",
+    "section": "Revisión de la regresión de STAT4 en AR",
+    "text": "Revisión de la regresión de STAT4 en AR\nCalcule la probabilidad predicha de ser caso para una persona de 30, 50 y 70 años con predict(…, type = “response”). ¿Por qué esa probabilidad no es el riesgo poblacional?"
+  },
+  {
+    "objectID": "temas/tema-06/Regresion_logistica_final2/Regresion_logistica_parte2.html#revisión-de-la-regresión-de-stat4-en-ar-4",
+    "href": "temas/tema-06/Regresion_logistica_final2/Regresion_logistica_parte2.html#revisión-de-la-regresión-de-stat4-en-ar-4",
+    "title": "Regresión logística. Parte 2",
+    "section": "Revisión de la regresión de STAT4 en AR",
+    "text": "Revisión de la regresión de STAT4 en AR\nPara el modelo de edad, obtenga el OR por cada 5 años con su IC 95 %.\n\nmodelo &lt;- glm(\n  caso ~ edad,\n  family = binomial,\n  data = datos\n)\n\nsummary(modelo)\n\n\nCall:\nglm(formula = caso ~ edad, family = binomial, data = datos)\n\nCoefficients:\n            Estimate Std. Error z value        Pr(&gt;|z|)    \n(Intercept) -1.99347    0.28996   -6.87 0.0000000000062 ***\nedad         0.03747    0.00526    7.12 0.0000000000010 ***\n---\nSignif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1\n\n(Dispersion parameter for binomial family taken to be 1)\n\n    Null deviance: 1109.0  on 799  degrees of freedom\nResidual deviance: 1054.9  on 798  degrees of freedom\nAIC: 1059\n\nNumber of Fisher Scoring iterations: 4\n\n\n\n# Extraer el coeficiente de edad\nbeta &lt;- coef(modelo)[\"edad\"]\n\n# OR por cada 5 años\nexp(5 * beta)\n\n edad \n1.206"
+  },
+  {
+    "objectID": "temas/tema-06/Regresion_logistica_final2/Regresion_logistica_parte2.html#revisión-de-la-regresión-de-stat4-en-ar-5",
+    "href": "temas/tema-06/Regresion_logistica_final2/Regresion_logistica_parte2.html#revisión-de-la-regresión-de-stat4-en-ar-5",
+    "title": "Regresión logística. Parte 2",
+    "section": "Revisión de la regresión de STAT4 en AR",
+    "text": "Revisión de la regresión de STAT4 en AR\nUtilice los algoritmos step para encontrar un modelo en el que identifique factores asociados a la AR. Ajuste por todas las variables de la base.\n\nlibrary(MASS)\nlibrary(tidyverse)\n\ndatos |&gt; \n  dplyr::select(-caso, -PC1, -id, -rs7574865) -&gt;datos2\n\n\nmodelo.vacio &lt;- glm(caso_f~1, data = datos2, family= \"binomial\")\nmodelo.completo &lt;- glm(caso_f~., data = datos2, family= \"binomial\")\nmodelo.step &lt;- step(\n  modelo.completo,\n  direction = \"both\",\n  trace = 0\n)"
+  },
+  {
+    "objectID": "temas/tema-06/Regresion_logistica_final2/Regresion_logistica_parte2.html#revisión-de-la-regresión-de-stat4-en-ar-6",
+    "href": "temas/tema-06/Regresion_logistica_final2/Regresion_logistica_parte2.html#revisión-de-la-regresión-de-stat4-en-ar-6",
+    "title": "Regresión logística. Parte 2",
+    "section": "Revisión de la regresión de STAT4 en AR",
+    "text": "Revisión de la regresión de STAT4 en AR\nUtilice los algoritmos step para encontrar un modelo en el que identifique factores asociados a la AR. Ajuste por todas las variables de la base.\n\nmodelo.step |&gt; \n  tbl_regression(exponentiate = T)\n\n\n\n\n\n\n\n\n\n\n\n\n\nCharacteristic\nOR\n95% CI\np-value\n\n\n\n\nsexo\n\n\n\n\n\n\n\n\n    Hombre\n—\n—\n\n\n\n\n    Mujer\n1.85\n1.32, 2.59\n&lt;0.001\n\n\nedad\n1.05\n1.03, 1.06\n&lt;0.001\n\n\ntabaquismo\n\n\n\n\n\n\n\n\n    Nunca\n—\n—\n\n\n\n\n    Exfumador\n1.57\n1.03, 2.42\n0.039\n\n\n    Actual\n2.26\n1.55, 3.32\n&lt;0.001\n\n\nancestria\n23.2\n10.4, 53.0\n&lt;0.001\n\n\nvar_rara\n24,047,480\n0.00,\n\n&gt;0.9\n\n\nSNP01\n1.40\n0.94, 2.09\n0.10\n\n\nSNP03\n1.57\n1.13, 2.17\n0.007\n\n\nSNP06\n0.78\n0.58, 1.05\n0.11\n\n\nSNP11\n0.60\n0.46, 0.78\n&lt;0.001\n\n\nSNP14\n0.83\n0.65, 1.06\n0.14\n\n\nSNP17\n0.80\n0.63, 1.01\n0.059\n\n\nSNP18\n0.80\n0.64, 1.01\n0.064\n\n\ndosis_T\n1.45\n1.13, 1.85\n0.003\n\n\n\nAbbreviations: CI = Confidence Interval, OR = Odds Ratio"
+  },
+  {
+    "objectID": "temas/tema-06/Regresion_logistica_final2/Regresion_logistica_parte2.html#revisión-de-la-regresión-de-los-factores-asociados-a-la-ht",
+    "href": "temas/tema-06/Regresion_logistica_final2/Regresion_logistica_parte2.html#revisión-de-la-regresión-de-los-factores-asociados-a-la-ht",
+    "title": "Regresión logística. Parte 2",
+    "section": "Revisión de la regresión de los factores asociados a la HT",
+    "text": "Revisión de la regresión de los factores asociados a la HT\n\nsu turno"
+  },
+  {
+    "objectID": "temas/tema-06/Regresion_logistica_final2/Regresion_logistica_parte2.html#datos-y-modelo-de-trabajo",
+    "href": "temas/tema-06/Regresion_logistica_final2/Regresion_logistica_parte2.html#datos-y-modelo-de-trabajo",
+    "title": "Regresión logística. Parte 2",
+    "section": "Datos y modelo de trabajo",
+    "text": "Datos y modelo de trabajo\nPara esta sesión vamos a utilizar el siguiente modelo:\n\ndatos &lt;- read.csv(\"../Bases/estudio_AR_STAT4.csv\")\ndatos$sexo       &lt;- factor(datos$sexo, levels = c(\"Hombre\", \"Mujer\"))\ndatos$tabaquismo &lt;- factor(datos$tabaquismo, levels = c(\"Nunca\", \"Exfumador\", \"Actual\"))\ndatos$rs7574865  &lt;- factor(datos$rs7574865, levels = c(\"GG\", \"GT\", \"TT\"))\ndatos$dosis_T    &lt;- as.numeric(datos$rs7574865) - 1\n\n# Modelo final de la Parte 2: aditivo, ajustado por sexo, edad, tabaquismo y PC1\nm_final &lt;- glm(caso ~ dosis_T + sexo + edad + tabaquismo + PC1,\n               data = datos, family = binomial)\n\nPC1: es una variable ficticia simulada para evaluar la colinealidad. En la práctica no tiene sentido incluir una variable de una PC y las variables con las se estimó el PC."
+  },
+  {
+    "objectID": "temas/tema-06/Regresion_logistica_final2/Regresion_logistica_parte2.html#supuestos-de-la-regresión-logística",
+    "href": "temas/tema-06/Regresion_logistica_final2/Regresion_logistica_parte2.html#supuestos-de-la-regresión-logística",
+    "title": "Regresión logística. Parte 2",
+    "section": "Supuestos de la regresión logística",
+    "text": "Supuestos de la regresión logística\n\nVariable dependiente binaria. La variable respuesta debe tener dos categorías (por ejemplo, caso y control), ya que el modelo estima la probabilidad de uno de estos eventos. No es necesario evaluar si se hace una regresión para una variable bianaria. NO\nIndependencia de las observaciones. Las observaciones deben ser independientes entre sí para obtener errores estándar e inferencias estadísticas válidas. No se evalúa, depende del diseño del estudio. NO\nLinealidad en el logit. Las variables independientes continuas deben tener una relación aproximadamente lineal con el logaritmo de las odds (logit). Se puede evaluar gráficamente y mediante la intrudicción de términos al cuadrado. SI, PLOTS y SPLINE METHOD\nAusencia de multicolinealidad. Las variables independientes no deben ser combinaciones lineales de otras variables, porque esto impide estimar sus coeficientes de manera única. Una multicolinealidad elevada también puede producir estimaciones inestables. SI, CHECK_MODEL"
+  },
+  {
+    "objectID": "temas/tema-06/Regresion_logistica_final2/Regresion_logistica_parte2.html#supuestos-de-la-regresión-logística-1",
+    "href": "temas/tema-06/Regresion_logistica_final2/Regresion_logistica_parte2.html#supuestos-de-la-regresión-logística-1",
+    "title": "Regresión logística. Parte 2",
+    "section": "Supuestos de la regresión logística",
+    "text": "Supuestos de la regresión logística\n\nAusencia de separación completa o cuasicompleta. Ninguna variable o combinación de variables debe separar perfectamente los casos de los controles, porque esto puede impedir obtener estimaciones finitas mediante máxima verosimilitud. SI, SUMMARY Y TABLAS DE LOS TÉRMINOS\nTamaño de muestra e información suficientes. Debe existir suficiente información sobre casos y controles en relación con la complejidad del modelo para obtener estimaciones estables y evitar el sobreajuste. NO, DEPENDE DEL CONTEXTO\nEspecificación adecuada del modelo. El modelo debe representar razonablemente las relaciones entre las variables, incluyendo posibles efectos no lineales e interacciones relevantes, para evitar estimaciones distorsionadas. En pocas palabras, un modelo adecuado. SI, CUANDO SE CONSTRUYE EL MODELO"
+  },
+  {
+    "objectID": "temas/tema-06/Regresion_logistica_final2/Regresion_logistica_parte2.html#panorama-general-con-check_model",
+    "href": "temas/tema-06/Regresion_logistica_final2/Regresion_logistica_parte2.html#panorama-general-con-check_model",
+    "title": "Regresión logística. Parte 2",
+    "section": "Panorama general con check_model()",
+    "text": "Panorama general con check_model()\n\ncheck_model(m_final)\n\n\nNo evalúa todos los supuestos pero permite obtener una visión general sobre el modelo, quizá más de lo que necesitamos (sarcasmo)."
+  },
+  {
+    "objectID": "temas/tema-06/Regresion_logistica_final2/Regresion_logistica_parte2.html#panorama-general-con-check_model-output",
+    "href": "temas/tema-06/Regresion_logistica_final2/Regresion_logistica_parte2.html#panorama-general-con-check_model-output",
+    "title": "Regresión logística. Parte 2",
+    "section": "Panorama general con check_model()",
+    "text": "Panorama general con check_model()"
+  },
+  {
+    "objectID": "temas/tema-06/Regresion_logistica_final2/Regresion_logistica_parte2.html#cómo-leer-check_model-en-regresión-logística",
+    "href": "temas/tema-06/Regresion_logistica_final2/Regresion_logistica_parte2.html#cómo-leer-check_model-en-regresión-logística",
+    "title": "Regresión logística. Parte 2",
+    "section": "¿Cómo leer check_model() en regresión logística?",
+    "text": "¿Cómo leer check_model() en regresión logística?\n\nPosterior predictive check: las predicciones del modelo deben reproducir la proporción observada de 0 y 1.\nBinned residuals: residuos promedio por grupos de probabilidad predicha; ≈ 95 % deben caer dentro de las bandas de error (Gelman y Hill 2007).\nInfluential observations: puntos fuera de las líneas de contorno de Cook son influyentes.\nCollinearity: VIF de cada predictor.\nUniformity of residuals: residuos cuantílicos simulados; deben seguir la diagonal (Lüdecke et al. 2021)."
+  },
+  {
+    "objectID": "temas/tema-06/Regresion_logistica_final2/Regresion_logistica_parte2.html#linealidad-entre-predictores-continuos-y-log-odds",
+    "href": "temas/tema-06/Regresion_logistica_final2/Regresion_logistica_parte2.html#linealidad-entre-predictores-continuos-y-log-odds",
+    "title": "Regresión logística. Parte 2",
+    "section": "Linealidad entre predictores continuos y log-odds",
+    "text": "Linealidad entre predictores continuos y log-odds\n\n# Logit empírico por deciles de edad: si es lineal, los puntos siguen una recta\ndatos$decil_edad &lt;- cut(datos$edad, quantile(datos$edad, seq(0, 1, 0.1)), include.lowest = TRUE)\nlin &lt;- aggregate(cbind(edad, caso) ~ decil_edad, data = datos, FUN = mean)\nlin$logit &lt;- log(lin$caso / (1 - lin$caso))\n\nggplot(lin, aes(edad, logit)) + geom_point(size = 3, col = azul) +\n  geom_smooth(method = \"lm\", se = FALSE, col = rojo) +\n  labs(x = \"Edad (media del decil)\", y = \"logit empírico de AR\")"
+  },
+  {
+    "objectID": "temas/tema-06/Regresion_logistica_final2/Regresion_logistica_parte2.html#prueba-formal-mejora-un-término-no-lineal",
+    "href": "temas/tema-06/Regresion_logistica_final2/Regresion_logistica_parte2.html#prueba-formal-mejora-un-término-no-lineal",
+    "title": "Regresión logística. Parte 2",
+    "section": "Prueba formal: ¿mejora un término no lineal?",
+    "text": "Prueba formal: ¿mejora un término no lineal?\n\nEl gráfico anterior solo es un método empirico\nOtra alternativa es probar si variables no lineales mejoran el modelo\nSi introducir al modelo una variable no lineal mejora, tendremos evidencia de que no hay relación lineal\nEstos métodos se basan en el supuesto de que si la relación de la variables es constante no debería haber cambios.\n\n\nm_cuad &lt;- glm(caso ~ dosis_T + sexo + edad + I(edad^2) + tabaquismo + PC1,\n              data = datos, family = binomial)\nanova(m_final, m_cuad, test = \"Chisq\")\n\nAnalysis of Deviance Table\n\nModel 1: caso ~ dosis_T + sexo + edad + tabaquismo + PC1\nModel 2: caso ~ dosis_T + sexo + edad + I(edad^2) + tabaquismo + PC1\n  Resid. Df Resid. Dev Df  Deviance Pr(&gt;Chi)\n1       793        928                      \n2       792        928  1 0.0000248        1\n\n\n\nSi el término cuadrático (o un spline) no mejora el ajuste → se acepta la linealidad en el logit.\nSi no es lineal: transformar (log, polinomio, splines) o categorizar con dummy (Celis de la Rosa y Labrada Martagón 2014) (Hosmer, Lemeshow, y Sturdivant 2013; Pérez Guerrero 2024)."
+  },
+  {
+    "objectID": "temas/tema-06/Regresion_logistica_final2/Regresion_logistica_parte2.html#otra-alternativa-es-utilizar-los-spline",
+    "href": "temas/tema-06/Regresion_logistica_final2/Regresion_logistica_parte2.html#otra-alternativa-es-utilizar-los-spline",
+    "title": "Regresión logística. Parte 2",
+    "section": "Otra alternativa es utilizar los spline",
+    "text": "Otra alternativa es utilizar los spline\n\nUn spline es una función matemática que permite representar relaciones no lineales mediante segmentos de funciones polinómicas conectados suavemente.\nAgrega múltiples rectas\n\n\nlibrary(splines)\n\nns(datos$edad, df = 4)\n\n\nns() significa natural cubic splines.\nedad es la variable continua.\ndf = 4 especifica cuatro grados de libertad para representar su relación con el logit.\n\nLuego se comparan los modelos"
+  },
+  {
+    "objectID": "temas/tema-06/Regresion_logistica_final2/Regresion_logistica_parte2.html#otra-alternativa-es-utilizar-los-spline-1",
+    "href": "temas/tema-06/Regresion_logistica_final2/Regresion_logistica_parte2.html#otra-alternativa-es-utilizar-los-spline-1",
+    "title": "Regresión logística. Parte 2",
+    "section": "Otra alternativa es utilizar los spline",
+    "text": "Otra alternativa es utilizar los spline\n\nlibrary(splines)\n\nmodelo_lineal &lt;- glm(\n  caso ~ edad,\n  family = binomial,\n  data = datos\n)\n\nmodelo_spline &lt;- glm(\n  caso ~ ns(edad, df = 4),\n  family = binomial,\n  data = datos\n)\n\nanova(\n  modelo_lineal,\n  modelo_spline,\n  test = \"Chisq\"\n)\n\nAnalysis of Deviance Table\n\nModel 1: caso ~ edad\nModel 2: caso ~ ns(edad, df = 4)\n  Resid. Df Resid. Dev Df Deviance Pr(&gt;Chi)\n1       798       1055                     \n2       795       1052  3      3.1     0.38"
+  },
+  {
+    "objectID": "temas/tema-06/Regresion_logistica_final2/Regresion_logistica_parte2.html#así-se-ve-una-violación-de-linealidad-de-forma-gráfica",
+    "href": "temas/tema-06/Regresion_logistica_final2/Regresion_logistica_parte2.html#así-se-ve-una-violación-de-linealidad-de-forma-gráfica",
+    "title": "Regresión logística. Parte 2",
+    "section": "Así se ve una violación de linealidad de forma gráfica",
+    "text": "Así se ve una violación de linealidad de forma gráfica"
+  },
+  {
+    "objectID": "temas/tema-06/Regresion_logistica_final2/Regresion_logistica_parte2.html#multicolinealidad-entre-predictores",
+    "href": "temas/tema-06/Regresion_logistica_final2/Regresion_logistica_parte2.html#multicolinealidad-entre-predictores",
+    "title": "Regresión logística. Parte 2",
+    "section": "Multicolinealidad entre predictores",
+    "text": "Multicolinealidad entre predictores\nSe puede evaluar desde el check_model, este es un ejemplo de lo que podría pasar con una alta colinealidad:\nPC1 y la proporción de ancestría miden casi lo mismo (r = 0.96). ¿Qué pasa si incluimos ambas?\n\nm_colin &lt;- glm(caso ~ dosis_T + sexo + edad + tabaquismo + PC1 + ancestria,\n               data = datos, family = binomial)\ncheck_collinearity(m_colin)\n\n# Check for Multicollinearity\n\nLow Correlation\n\n       Term  VIF        VIF 95% CI adj. VIF Tolerance Tolerance 95% CI\n    dosis_T 1.08 [ 1.03,     1.22]     1.04      0.92     [0.82, 0.97]\n       sexo 1.00 [ 1.00,      Inf]     1.00      1.00     [0.00, 1.00]\n       edad 1.01 [ 1.00,     3.74]     1.01      0.99     [0.27, 1.00]\n tabaquismo 1.01 [ 1.00,     3.54]     1.00      0.99     [0.28, 1.00]\n\nHigh Correlation\n\n      Term   VIF        VIF 95% CI adj. VIF Tolerance Tolerance 95% CI\n       PC1 11.72 [10.29,    13.37]     3.42      0.09     [0.07, 0.10]\n ancestria 11.88 [10.43,    13.56]     3.45      0.08     [0.07, 0.10]"
+  },
+  {
+    "objectID": "temas/tema-06/Regresion_logistica_final2/Regresion_logistica_parte2.html#consecuencias-de-la-colinealidad",
+    "href": "temas/tema-06/Regresion_logistica_final2/Regresion_logistica_parte2.html#consecuencias-de-la-colinealidad",
+    "title": "Regresión logística. Parte 2",
+    "section": "Consecuencias de la colinealidad",
+    "text": "Consecuencias de la colinealidad\n\n\n           modelo term estimate std.error           p.value\n1        Solo PC1  PC1   0.6486    0.0942 0.000000000005782\n2 PC1 + ancestría  PC1  -0.1335    0.3117 0.668476151190942\n\n\n# Check for Multicollinearity\n\nLow Correlation\n\n       Term  VIF       VIF 95% CI adj. VIF Tolerance Tolerance 95% CI\n    dosis_T 1.07 [1.02,     1.21]     1.03      0.93     [0.82, 0.98]\n       sexo 1.00 [1.00,      Inf]     1.00      1.00     [0.00, 1.00]\n       edad 1.01 [1.00,    10.38]     1.01      0.99     [0.10, 1.00]\n tabaquismo 1.01 [1.00,     6.15]     1.00      0.99     [0.16, 1.00]\n        PC1 1.07 [1.03,     1.21]     1.04      0.93     [0.82, 0.98]\n\n\n\nEl coeficiente de PC1 cambia de signo y su EE se multiplica: no es posible separar dos variables casi idénticas.\nVIF &gt; 5–10 suele indicar problema, aunque son puntos de corte orientativos (O’Brien 2007). Solución: conservar una de las variables."
+  },
+  {
+    "objectID": "temas/tema-06/Regresion_logistica_final2/Regresion_logistica_parte2.html#separación-completa-y-cuasicompleta",
+    "href": "temas/tema-06/Regresion_logistica_final2/Regresion_logistica_parte2.html#separación-completa-y-cuasicompleta",
+    "title": "Regresión logística. Parte 2",
+    "section": "Separación completa y cuasicompleta",
+    "text": "Separación completa y cuasicompleta\nOcurre cuando un predictor (o combinación) separa perfectamente casos de controles (Heinze y Schemper 2002). Las variables con pocos conteos tienden a comportarse así.\nEste es un ejemplo, utilizando la variable rara de la base datos\n\ntable(Variante_rara = datos$var_rara, Caso = datos$caso)\n\n             Caso\nVariante_rara   0   1\n            0 400 393\n            1   0   7\n\nm_sep &lt;- glm(caso ~ var_rara + dosis_T + sexo + edad + tabaquismo + PC1, data = datos, family = binomial)\nsummary(m_sep)$coefficients[\"var_rara\", ]\n\n  Estimate Std. Error    z value   Pr(&gt;|z|) \n   16.8739   516.0436     0.0327     0.9739 \n\n\n\nTodos los portadores de la variante rara son casos (celda con 0) → el OR “tiende a infinito”.\nSeñales: \\(\\beta\\) gigantes (&gt; 10)."
+  },
+  {
+    "objectID": "temas/tema-06/Regresion_logistica_final2/Regresion_logistica_parte2.html#qué-hacer-ante-separación",
+    "href": "temas/tema-06/Regresion_logistica_final2/Regresion_logistica_parte2.html#qué-hacer-ante-separación",
+    "title": "Regresión logística. Parte 2",
+    "section": "¿Qué hacer ante separación?",
+    "text": "¿Qué hacer ante separación?\n\nNo eliminar la variable solo por eso: es probablemente un efecto fuerte.\nRegresión logística penalizada de Firth: estimaciones finitas y con menor sesgo en muestras pequeñas (Firth 1993; Heinze y Schemper 2002).\nAgrupar categorías raras (p. ej., modelo dominante en lugar de genotípico), regresión logística exacta o métodos bayesianos.\n\nCodigo de ejemplo:\n\n# install.packages(\"logistf\")\nlibrary(logistf)\nm_firth &lt;- logistf(caso ~ var_rara + dosis_T + sexo + edad + tabaquismo + PC1, data = datos)\nsummary(m_firth)   # OR finito con IC por verosimilitud perfilada penalizada"
+  },
+  {
+    "objectID": "temas/tema-06/Regresion_logistica_final2/Regresion_logistica_parte2.html#residuos-agrupados-binned-residuals-de-check-model",
+    "href": "temas/tema-06/Regresion_logistica_final2/Regresion_logistica_parte2.html#residuos-agrupados-binned-residuals-de-check-model",
+    "title": "Regresión logística. Parte 2",
+    "section": "Residuos agrupados (binned residuals) de check model",
+    "text": "Residuos agrupados (binned residuals) de check model\n\nresiduos_agrupados &lt;- binned_residuals(m_final) # permite conocer el % de valores fuera\nresiduos_agrupados\n\nWarning: About 86% of the residuals are inside the error bounds (~95% or higher would be good).\n\nplot(residuos_agrupados) # la misma gráfica del check model"
+  },
+  {
+    "objectID": "temas/tema-06/Regresion_logistica_final2/Regresion_logistica_parte2.html#interpretación-de-los-residuos-agrupados",
+    "href": "temas/tema-06/Regresion_logistica_final2/Regresion_logistica_parte2.html#interpretación-de-los-residuos-agrupados",
+    "title": "Regresión logística. Parte 2",
+    "section": "Interpretación de los residuos agrupados",
+    "text": "Interpretación de los residuos agrupados\nEn un modelo correctamente especificado, esperamos que:\n\nLos residuos promedio estén próximos a cero.\nNo exista una tendencia sistemática ascendente o descendente.\nAproximadamente el 95% de los puntos se encuentre dentro de los límites de referencia (Gelman y Hill 2007; Lüdecke et al. 2021).\n\n\nAquí ≈ 86 % de los grupos cae dentro de las bandas (lo ideal es ≥ 95 %): señal de desajuste moderado.\n\n\nUn diagnóstico “imperfecto” no invalida automáticamente el OR del SNP, pero obliga a investigar: ¿variables omitidas?, ¿términos no lineales?, ¿interacciones?"
+  },
+  {
+    "objectID": "temas/tema-06/Regresion_logistica_final2/Regresion_logistica_parte2.html#observaciones-influyentes",
+    "href": "temas/tema-06/Regresion_logistica_final2/Regresion_logistica_parte2.html#observaciones-influyentes",
+    "title": "Regresión logística. Parte 2",
+    "section": "Observaciones influyentes",
+    "text": "Observaciones influyentes\n\ncheck_outliers(m_final)\n\nOK: No outliers detected.\n- Based on the following method and threshold: cook (0.8).\n- For variable: (Whole model)\n\n# Las 5 observaciones con mayor distancia de Cook\ncook &lt;- cooks.distance(m_final)\ndatos[order(cook, decreasing = TRUE)[1:5], c(\"id\", \"caso\", \"rs7574865\", \"sexo\", \"edad\", \"tabaquismo\")]\n\n       id caso rs7574865   sexo edad tabaquismo\n159 ID159    0        GT Hombre   75     Actual\n307 ID307    0        TT  Mujer   75     Actual\n624 ID624    1        GG Hombre   27      Nunca\n561 ID561    0        GG  Mujer   58     Actual\n473 ID473    0        GG  Mujer   67     Actual\n\n\n\nUna observación influyente no se elimina por defecto: se revisa (¿error de captura o genotipificación?) y se evalúa si las conclusiones cambian sin ella (análisis de sensibilidad)."
+  },
+  {
+    "objectID": "temas/tema-06/Regresion_logistica_final2/Regresion_logistica_parte2.html#interacción-confusión",
+    "href": "temas/tema-06/Regresion_logistica_final2/Regresion_logistica_parte2.html#interacción-confusión",
+    "title": "Regresión logística. Parte 2",
+    "section": "Interacción, confusión",
+    "text": "Interacción, confusión\n\nSe evaluan e interpretan de forma similar a la regresión lineal\n\n\nla principal diferencia es que en la regresión logística las interacciones son aditivas en la escala del logit, pero multiplicativas en la escala de los odds ratios (OR).\n\n::: La asociación entre obesidad e hipertensión depende del tabaquismo. Entre los no fumadores, la obesidad se asocia con un OR de 2.00, mientras que entre los fumadores el OR correspondiente es de 4.00. Por tanto, el OR asociado con obesidad es dos veces mayor entre fumadores que entre no fumadores :::"
+  },
+  {
+    "objectID": "temas/tema-06/Regresion_logistica_final2/Regresion_logistica_parte2.html#interpretación-de-los-coeficientes-de-interacción",
+    "href": "temas/tema-06/Regresion_logistica_final2/Regresion_logistica_parte2.html#interpretación-de-los-coeficientes-de-interacción",
+    "title": "Regresión logística. Parte 2",
+    "section": "Interpretación de los coeficientes de interacción",
+    "text": "Interpretación de los coeficientes de interacción\nEjemplo: Asociación entre obesidad, tabaquismo e hipertensión arterial (HTA).\n\\[\n\\operatorname{logit}(p)=\n\\beta_0+\\beta_1(\\text{Obesidad})+\n\\beta_2(\\text{Tabaquismo})+\n\\beta_3(\\text{Obesidad}\\times\\text{Tabaquismo})\n\\]\nResultados hipotéticos:\n\n\n\nVariable\nCoeficiente (β)\nOR = exp(β)\n\n\n\n\nIntercepto\n-2.00\n0.14\n\n\nObesidad\n0.69\n2.00\n\n\nTabaquismo\n0.41\n1.51\n\n\nObesidad × Tabaquismo\n0.69\n2.00\n\n\n\nInterpretación:\n\nObesidad: Entre no fumadores, las odds de HTA son 2 veces mayores en personas con obesidad.\nTabaquismo: Entre personas sin obesidad, las odds de HTA son 1.51 veces mayores en fumadores.\nInteracción: El OR de obesidad es 2 veces mayor entre fumadores que entre no fumadores.\n\n\n\n\n\n\n\nNota\n\n\nLos efectos principales se interpretan en el nivel de referencia de la otra variable."
+  },
+  {
+    "objectID": "temas/tema-06/Regresion_logistica_final2/Regresion_logistica_parte2.html#por-qué-la-interacción-es-multiplicativa",
+    "href": "temas/tema-06/Regresion_logistica_final2/Regresion_logistica_parte2.html#por-qué-la-interacción-es-multiplicativa",
+    "title": "Regresión logística. Parte 2",
+    "section": "¿Por qué la interacción es multiplicativa?",
+    "text": "¿Por qué la interacción es multiplicativa?\nEn regresión logística, los coeficientes se suman en la escala del logit, pero los OR se multiplican.\n\\[\nOR=e^{\\beta_1+\\beta_2+\\beta_3}\n=e^{\\beta_1}\\times e^{\\beta_2}\\times e^{\\beta_3}\n\\]\nComparación de las cuatro combinaciones:\n\n\n\nObesidad\nTabaquismo\nOR respecto al grupo de referencia\n\n\n\n\nNo\nNo\n1.00\n\n\nSí\nNo\n2.00\n\n\nNo\nSí\n1.51\n\n\nSí\nSí\n6.04\n\n\n\nCálculo para personas con obesidad y tabaquismo:\n\\[\nOR=2.00\\times1.51\\times2.00=\\boxed{6.04}\n\\]\n\n\n\n\n\n\nTip\n\n\nInterpretación: Las personas con obesidad que fuman presentan odds de HTA aproximadamente 6 veces mayores que las personas sin obesidad que no fuman.\n\n\n\nImportante: El OR de interacción (2.00) no es el OR conjunto (6.04)."
+  },
+  {
+    "objectID": "temas/tema-06/Regresion_logistica_final2/Regresion_logistica_parte2.html#qué-sucede-si-no-existe-interacción",
+    "href": "temas/tema-06/Regresion_logistica_final2/Regresion_logistica_parte2.html#qué-sucede-si-no-existe-interacción",
+    "title": "Regresión logística. Parte 2",
+    "section": "¿Qué sucede si no existe interacción?",
+    "text": "¿Qué sucede si no existe interacción?\nEn regresión logística, en ausencia de interacción, los OR se multiplican, no se suman.\nSupongamos que:\n\nOR de obesidad = 2.00\nOR de tabaquismo = 1.51\nOR de interacción = 2.00\n\n\n\n\nCondición\nSin interacción\nCon interacción\n\n\n\n\nSin obesidad y sin tabaquismo\n1.00\n1.00\n\n\nSolo obesidad\n2.00\n2.00\n\n\nSolo tabaquismo\n1.51\n1.51\n\n\nObesidad + tabaquismo\n3.02\n6.04\n\n\n\n\n\nSin interacción\n\\[\nOR=2\\times1.51=\\boxed{3.02}\n\\]\n\nCon interacción\n\\[\nOR=2\\times1.51\\times2=\\boxed{6.04}\n\\]\n\n\n\n\n\n\n\nNota\n\n\nLa ausencia de interacción significa que el efecto conjunto es multiplicativo en la escala de los OR."
+  },
+  {
+    "objectID": "temas/tema-06/Regresion_logistica_final2/Regresion_logistica_parte2.html#comparación-de-modelos-1",
+    "href": "temas/tema-06/Regresion_logistica_final2/Regresion_logistica_parte2.html#comparación-de-modelos-1",
+    "title": "Regresión logística. Parte 2",
+    "section": "Comparación de modelos",
+    "text": "Comparación de modelos\n\nLa comparación de modelos sigue los mismos principios que revisamos en regresión lineal.\nSe puede usar AIC y BIC, una pseudo R2\n\n\\[AIC = -2\\ln L + 2k \\qquad BIC = -2\\ln L + k\\ln(n)\\]\n\ndatos$dominante &lt;- ifelse(datos$dosis_T &gt;= 1, 1, 0)\ndatos$recesivo  &lt;- ifelse(datos$dosis_T == 2, 1, 0)\nm_dom &lt;- glm(caso ~ dominante + sexo + edad + tabaquismo + PC1, data = datos, family = binomial)\nm_rec &lt;- glm(caso ~ recesivo  + sexo + edad + tabaquismo + PC1, data = datos, family = binomial)\nm_gen &lt;- glm(caso ~ rs7574865 + sexo + edad + tabaquismo + PC1, data = datos, family = binomial)\n\ncompare_performance(m_final, m_dom, m_rec, m_gen, metrics = c(\"AIC\", \"BIC\", \"R2\"))\n\n# Comparison of Model Performance Indices\n\nName    | Model | AIC (weights) | BIC (weights) | Tjur's R2\n-----------------------------------------------------------\nm_final |   glm | 941.9 (0.521) | 974.7 (0.670) |     0.209\nm_dom   |   glm | 946.5 (0.054) | 979.3 (0.069) |     0.204\nm_rec   |   glm | 944.1 (0.179) | 976.8 (0.230) |     0.207\nm_gen   |   glm | 943.4 (0.246) | 980.9 (0.030) |     0.209"
+  },
+  {
+    "objectID": "temas/tema-06/Regresion_logistica_final2/Regresion_logistica_parte2.html#comparación-de-modelos-2",
+    "href": "temas/tema-06/Regresion_logistica_final2/Regresion_logistica_parte2.html#comparación-de-modelos-2",
+    "title": "Regresión logística. Parte 2",
+    "section": "Comparación de modelos",
+    "text": "Comparación de modelos\n\nMenor AIC/BIC = mejor balance entre ajuste y complejidad. Diferencias &lt; 2 son poco relevantes (Burnham y Anderson 2002).\nBIC penaliza más los parámetros (favorece modelos simples). Sirven también para modelos no anidados.\n\\(R^2\\) en logística: pseudo-\\(R^2\\) (Tjur, Nagelkerke); no se interpretan como en regresión lineal (Tjur 2009).\n“Unlike traditional R², pseudo R-squared values do not represent the exact proportion of”explained variance”. Instead, they typically evaluate the improvement of a fitted model’s log-likelihood over a null model (intercept-only)” Hemmert et al. (2018)"
+  },
+  {
+    "objectID": "temas/tema-06/Regresion_logistica_final2/Regresion_logistica_parte2.html#presentación-de-tablas-de-regresión-logística",
+    "href": "temas/tema-06/Regresion_logistica_final2/Regresion_logistica_parte2.html#presentación-de-tablas-de-regresión-logística",
+    "title": "Regresión logística. Parte 2",
+    "section": "Presentación de tablas de regresión logística",
+    "text": "Presentación de tablas de regresión logística\n\nSe sugiere incluir tablas:\n\nVariables\nOR\nIC\nValores de \\(p\\)\nDeben especificarse las categorías de referencia\n\nLas unidades de las variables continuas\nlas covariables incluidas en el modelo ajustado.\n\nSi tiene un modelo ajustado incluya las variables sin ajustar en un tabla y en otra (o parte de la misma) incluya el modelo ajustado.\ngtsummary puede ayudar con la presentación de los resultados."
+  },
+  {
+    "objectID": "temas/tema-06/Regresion_logistica_final2/Regresion_logistica_parte2.html#presentación-de-tablas-de-una-regresión-logística",
+    "href": "temas/tema-06/Regresion_logistica_final2/Regresion_logistica_parte2.html#presentación-de-tablas-de-una-regresión-logística",
+    "title": "Regresión logística. Parte 2",
+    "section": "Presentación de tablas de una regresión logística",
+    "text": "Presentación de tablas de una regresión logística\nTabla 1. Factores asociados con artritis reumatoide\n\n\n\n\n\n\n\n\n\n\nVariable\nOR crudo (IC 95%)\np\nOR ajustado (IC 95%)\np\n\n\n\n\nEdad (5 años)\n1.18 (1.10–1.27)\n&lt;0.001\n1.12 (1.03–1.22)\n0.008\n\n\nSexo\n\n\n\n\n\n\nHombre\nRef.\n—\nRef.\n—\n\n\nMujer\n2.10 (1.55–2.85)\n&lt;0.001\n1.85 (1.32–2.59)\n&lt;0.001\n\n\nTabaquismo\n\n\n\n\n\n\nNunca\nRef.\n—\nRef.\n—\n\n\nExfumador\n1.45 (1.02–2.06)\n0.038\n1.28 (0.87–1.88)\n0.210\n\n\nActual\n2.65 (1.85–3.80)\n&lt;0.001\n2.18 (1.48–3.21)\n&lt;0.001\n\n\nAncestría (0.1 unidades)\n1.15 (1.06–1.25)\n0.001\n1.09 (0.99–1.20)\n0.078\n\n\n\n\n\n\n\n\n\nNota\n\n\nDatos hipotéticos. OR: odds ratio; IC: intervalo de confianza.\nLos OR crudos se obtuvieron mediante modelos univariables. Los OR ajustados provienen de un modelo multivariable que incluye todas las variables presentadas."
+  },
+  {
+    "objectID": "temas/tema-06/Regresion_logistica_final2/Regresion_logistica_parte2.html#forest-plot",
+    "href": "temas/tema-06/Regresion_logistica_final2/Regresion_logistica_parte2.html#forest-plot",
+    "title": "Regresión logística. Parte 2",
+    "section": "Forest plot",
+    "text": "Forest plot\n\n# Extraer OR e intervalos de confianza\nresultados &lt;- tidy(\n  m_final,\n  exponentiate = TRUE,\n  conf.int = TRUE\n) |&gt;\n  filter(term != \"(Intercept)\")\n\n\nggplot(\n  resultados,\n  aes(x = estimate, y = reorder(term, estimate))\n) +\n  geom_point(size = 3, color = \"steelblue\") +\n  geom_errorbarh(\n    aes(xmin = conf.low, xmax = conf.high),\n    height = 0.2\n  ) +\n  geom_vline(\n    xintercept = 1,\n    linetype = \"dashed\",\n    color = \"red\"\n  ) +\n  scale_x_log10() +\n  labs(\n    x = \"Odds ratio (IC 95%)\",\n    y = NULL,\n    title = \"Factores asociados con artritis reumatoide\"\n  ) +\n  theme_bw()"
+  },
+  {
+    "objectID": "temas/tema-06/Regresion_logistica_final2/Regresion_logistica_parte2.html#forest-plot-1",
+    "href": "temas/tema-06/Regresion_logistica_final2/Regresion_logistica_parte2.html#forest-plot-1",
+    "title": "Regresión logística. Parte 2",
+    "section": "Forest plot",
+    "text": "Forest plot"
+  },
+  {
+    "objectID": "temas/tema-06/Regresion_logistica_final2/Regresion_logistica_parte2.html#referencias",
+    "href": "temas/tema-06/Regresion_logistica_final2/Regresion_logistica_parte2.html#referencias",
+    "title": "Regresión logística. Parte 2",
+    "section": "Referencias",
+    "text": "Referencias\n\n\nBurnham, Kenneth P., y David R. Anderson. 2002. Model Selection and Multimodel Inference: A Practical Information-Theoretic Approach. 2.ª ed. New York: Springer.\n\n\nCelis de la Rosa, Alfredo de Jesús, y Vanessa Labrada Martagón. 2014. «Análisis estratificado y regresión logística». En Bioestadística, 3.ª ed., 209-30. Ciudad de México: El Manual Moderno.\n\n\nFirth, David. 1993. «Bias Reduction of Maximum Likelihood Estimates». Biometrika 80 (1): 27-38. https://doi.org/10.1093/biomet/80.1.27.\n\n\nGelman, Andrew, y Jennifer Hill. 2007. Data Analysis Using Regression and Multilevel/Hierarchical Models. Cambridge: Cambridge University Press.\n\n\nHeinze, Georg, y Michael Schemper. 2002. «A Solution to the Problem of Separation in Logistic Regression». Statistics in Medicine 21 (16): 2409-19. https://doi.org/10.1002/sim.1047.\n\n\nHemmert, Giselmar A. J., Laura M. Schons, Jan Wieseke, y Heiko Schimmelpfennig. 2018. «Log-likelihood-based Pseudo-R2 in Logistic Regression: Deriving Sample-sensitive Benchmarks». Sociological Methods & Research 47 (3): 507-31. https://doi.org/10.1177/0049124116638107.\n\n\nHosmer, David W., Stanley Lemeshow, y Rodney X. Sturdivant. 2013. Applied Logistic Regression. 3.ª ed. Hoboken, NJ: John Wiley & Sons. https://doi.org/10.1002/9781118548387.\n\n\nLüdecke, Daniel, Mattan S. Ben-Shachar, Indrajeet Patil, Philip Waggoner, y Dominique Makowski. 2021. «performance: An R Package for Assessment, Comparison and Testing of Statistical Models». Journal of Open Source Software 6 (60): 3139. https://doi.org/10.21105/joss.03139.\n\n\nO’Brien, Robert M. 2007. «A Caution Regarding Rules of Thumb for Variance Inflation Factors». Quality & Quantity 41 (5): 673-90. https://doi.org/10.1007/s11135-006-9018-6.\n\n\nPérez Guerrero, Edsaúl Emilio. 2024. Bioestadística en R para ciencias de la salud: Guía práctica. 1.ª ed. Zapopan, Jalisco, México: Editorial Innovación Educativa. https://www.cucs.udg.mx/libros/lectura_cucs.php?libro=Bioestadistica_enR_digital.\n\n\nTjur, Tue. 2009. «Coefficients of Determination in Logistic Regression Models—A New Proposal: The Coefficient of Discrimination». The American Statistician 63 (4): 366-72. https://doi.org/10.1198/tast.2009.08210."
   },
   {
     "objectID": "temas/tema-06/Regresion_logistica_P3/Regresion_logistica_P3.html#objetivos-de-la-sesión",
@@ -4197,7 +4463,7 @@
     "href": "temas/tema-04/tema-04-ejercicio-integrador.html#paso-5.-tamaño-del-efecto-con-ic-95-1",
     "title": "Ejercicio integrador",
     "section": "Paso 5. Tamaño del efecto con IC 95 %",
-    "text": "Paso 5. Tamaño del efecto con IC 95 %\n\nepsilon &lt;- rank_epsilon_squared(bili ~ estadio, data = datos, alternative = \"two.sided\")\nepsilon\n\nEpsilon2 (rank) |       95% CI\n------------------------------\n0.11            | [0.07, 0.20]\n\ninterpret_epsilon_squared(epsilon$rank_epsilon_squared)\n\n[1] \"medium\"\n(Rules: field2013)"
+    "text": "Paso 5. Tamaño del efecto con IC 95 %\n\nepsilon &lt;- rank_epsilon_squared(bili ~ estadio, data = datos, alternative = \"two.sided\")\nepsilon\n\nEpsilon2 (rank) |       95% CI\n------------------------------\n0.11            | [0.06, 0.18]\n\ninterpret_epsilon_squared(epsilon$rank_epsilon_squared)\n\n[1] \"medium\"\n(Rules: field2013)"
   },
   {
     "objectID": "temas/tema-04/tema-04-ejercicio-integrador.html#paso-6.-prueba-pos-hoc-1",
@@ -4631,7 +4897,7 @@
     "href": "temas/tema-05/Modelos_lineales_P1/Modelos_lineales_P1.html#pruebas-individuales-con-performance",
     "title": "Modelos lineales I",
     "section": "Pruebas individuales con performance",
-    "text": "Pruebas individuales con performance\n\ncheck_normality(modelo)           # Shapiro-Wilk sobre residuales estudentizados\n\nOK: residuals appear as normally distributed (p = 0.719).\n\ncheck_heteroscedasticity(modelo)  # Breusch-Pagan\n\nOK: Error variance appears to be homoscedastic (p = 0.859).\n\ncheck_autocorrelation(modelo)     # Durbin-Watson (independencia)\n\nOK: Residuals appear to be independent and not autocorrelated (p = 0.632).\n\ncheck_outliers(modelo)            # distancia de Cook\n\nOK: No outliers detected.\n- Based on the following method and threshold: cook (0.7).\n- For variable: (Whole model)\n\n\n\nLas pruebas complementan a los gráficos, no los sustituyen. Con n grande detectan desviaciones irrelevantes; con n pequeña no detectan problemas serios."
+    "text": "Pruebas individuales con performance\n\ncheck_normality(modelo)           # Shapiro-Wilk sobre residuales estudentizados\n\nOK: residuals appear as normally distributed (p = 0.719).\n\ncheck_heteroscedasticity(modelo)  # Breusch-Pagan\n\nOK: Error variance appears to be homoscedastic (p = 0.859).\n\ncheck_autocorrelation(modelo)     # Durbin-Watson (independencia)\n\nOK: Residuals appear to be independent and not autocorrelated (p = 0.662).\n\ncheck_outliers(modelo)            # distancia de Cook\n\nOK: No outliers detected.\n- Based on the following method and threshold: cook (0.7).\n- For variable: (Whole model)\n\n\n\nLas pruebas complementan a los gráficos, no los sustituyen. Con n grande detectan desviaciones irrelevantes; con n pequeña no detectan problemas serios."
   },
   {
     "objectID": "temas/tema-05/Modelos_lineales_P1/Modelos_lineales_P1.html#apalancamiento-e-influencia-con-base-r",
@@ -6389,5 +6655,40 @@
     "title": "Regresión logística. Parte 1",
     "section": "Referencias",
     "text": "Referencias\n\n\nCelis de la Rosa, Alfredo de Jesús, y Vanessa Labrada Martagón. 2014. «Análisis estratificado y regresión logística». En Bioestadística, 3.ª ed., 209-30. Ciudad de México: El Manual Moderno.\n\n\nClarke, Geraldine M., Carl A. Anderson, Fredrik H. Pettersson, Lon R. Cardon, Andrew P. Morris, y Krina T. Zondervan. 2011. «Basic Statistical Analysis in Genetic Case-Control Studies». Nature Protocols 6 (2): 121-33. https://doi.org/10.1038/nprot.2010.182.\n\n\nCordell, Heather J. 2009. «Detecting Gene-Gene Interactions that Underlie Human Diseases». Nature Reviews Genetics 10 (6): 392-404. https://doi.org/10.1038/nrg2579.\n\n\nDenis, Daniel J. 2020. Univariate, Bivariate, and Multivariate Statistics Using R: Quantitative Tools for Data Analysis and Data Science. Hoboken, NJ: John Wiley & Sons, Inc.\n\n\nFox, John. 2016. Applied Regression Analysis and Generalized Linear Models. 3.ª ed. Thousand Oaks, CA: SAGE Publications.\n\n\nHosmer, David W., Stanley Lemeshow, y Rodney X. Sturdivant. 2013. Applied Logistic Regression. 3.ª ed. Hoboken, NJ: John Wiley & Sons. https://doi.org/10.1002/9781118548387.\n\n\nNelder, J. A., y R. W. M. Wedderburn. 1972. «Generalized Linear Models». Journal of the Royal Statistical Society. Series A (General) 135 (3): 370-84. https://doi.org/10.2307/2344614.\n\n\nPérez Guerrero, Edsaúl Emilio. 2024. Bioestadística en R para ciencias de la salud: Guía práctica. 1.ª ed. Zapopan, Jalisco, México: Editorial Innovación Educativa. https://www.cucs.udg.mx/libros/lectura_cucs.php?libro=Bioestadistica_enR_digital.\n\n\nRadečić, Dario. 2026. «Generalized Linear Models (GLM): What You Should Know». DataCamp Tutorial. https://www.datacamp.com/tutorial/generalized-linear-model.\n\n\nRemmers, Elaine F., Robert M. Plenge, Annette T. Lee, Robert R. Graham, Geoffrey Hom, Timothy W. Behrens, et al. 2007. «STAT4 and the Risk of Rheumatoid Arthritis and Systemic Lupus Erythematosus». New England Journal of Medicine 357 (10): 977-86. https://doi.org/10.1056/NEJMoa073003.\n\n\nSperandei, Sandro. 2014. «Understanding Logistic Regression Analysis». Biochemia Medica 24 (1): 12-18. https://doi.org/10.11613/BM.2014.003.\n\n\nSteyerberg, Ewout W. 2019. Clinical Prediction Models: A Practical Approach to Development, Validation, and Updating. 2.ª ed. Cham: Springer. https://doi.org/10.1007/978-3-030-16399-0.\n\n\nWasserstein, Ronald L., y Nicole A. Lazar. 2016. «The ASA Statement on p-Values: Context, Process, and Purpose». The American Statistician 70 (2): 129-33. https://doi.org/10.1080/00031305.2016.1154108.\n\n\nZhang, Jun, y Kai F. Yu. 1998. «What’s the Relative Risk? A Method of Correcting the Odds Ratio in Cohort Studies of Common Outcomes». JAMA 280 (19): 1690-91. https://doi.org/10.1001/jama.280.19.1690."
+  },
+  {
+    "objectID": "temas/tema-06/Regresion_logistica_final2/Untitled.html#revisión-de-la-regresión-de-stat4-en-ar",
+    "href": "temas/tema-06/Regresion_logistica_final2/Untitled.html#revisión-de-la-regresión-de-stat4-en-ar",
+    "title": "Regresión logística. Parte 2",
+    "section": "Revisión de la regresión de STAT4 en AR",
+    "text": "Revisión de la regresión de STAT4 en AR"
+  },
+  {
+    "objectID": "temas/tema-06/Regresion_logistica_final2/Untitled.html#revisión-de-la-regresión-de-los-factores-asociados-a-la-ht",
+    "href": "temas/tema-06/Regresion_logistica_final2/Untitled.html#revisión-de-la-regresión-de-los-factores-asociados-a-la-ht",
+    "title": "Regresión logística. Parte 2",
+    "section": "Revisión de la regresión de los factores asociados a la HT",
+    "text": "Revisión de la regresión de los factores asociados a la HT"
+  },
+  {
+    "objectID": "temas/tema-06/Regresion_logistica_final2/Untitled.html#panorama-general-con-check_model",
+    "href": "temas/tema-06/Regresion_logistica_final2/Untitled.html#panorama-general-con-check_model",
+    "title": "Regresión logística. Parte 2",
+    "section": "Panorama general con check_model()",
+    "text": "Panorama general con check_model()\n\ncheck_model() de la librería performance Permite realizar gráficos diagnóstico.\n\n\nperformance::check_model(modelo)"
+  },
+  {
+    "objectID": "temas/tema-06/Regresion_logistica_final2/Untitled.html#panorama-general-con-check_model-output",
+    "href": "temas/tema-06/Regresion_logistica_final2/Untitled.html#panorama-general-con-check_model-output",
+    "title": "Regresión logística. Parte 2",
+    "section": "Panorama general con check_model()",
+    "text": "Panorama general con check_model()"
+  },
+  {
+    "objectID": "temas/tema-06/Regresion_logistica_final2/Untitled.html#cómo-leer-check_model-en-regresión-logística",
+    "href": "temas/tema-06/Regresion_logistica_final2/Untitled.html#cómo-leer-check_model-en-regresión-logística",
+    "title": "Regresión logística. Parte 2",
+    "section": "¿Cómo leer check_model() en regresión logística?",
+    "text": "¿Cómo leer check_model() en regresión logística?\n\nPosterior predictive check: las predicciones del modelo deben reproducir la proporción observada de 0 y 1.\nBinned residuals: residuos promedio por grupos de probabilidad predicha; ≈ 95 % deben caer dentro de las bandas de error (Gelman y Hill 2007).\nInfluential observations: puntos fuera de las líneas de contorno de Cook son influyentes.\nCollinearity: VIF de cada predictor.\nUniformity of residuals: residuos cuantílicos simulados; deben seguir la diagonal.\n\n\nCada panel se revisa a detalle en las siguientes diapositivas (Lüdecke et al. 2021).\n\n\n\n\n\nGelman, Andrew, y Jennifer Hill. 2007. Data Analysis Using Regression and Multilevel/Hierarchical Models. Cambridge: Cambridge University Press.\n\n\nHosmer, David W., Stanley Lemeshow, y Rodney X. Sturdivant. 2013. Applied Logistic Regression. 3.ª ed. Hoboken, NJ: John Wiley & Sons. https://doi.org/10.1002/9781118548387.\n\n\nLüdecke, Daniel, Mattan S. Ben-Shachar, Indrajeet Patil, Philip Waggoner, y Dominique Makowski. 2021. «performance: An R Package for Assessment, Comparison and Testing of Statistical Models». Journal of Open Source Software 6 (60): 3139. https://doi.org/10.21105/joss.03139.\n\n\nPérez Guerrero, Edsaúl Emilio. 2024. Bioestadística en R para ciencias de la salud: Guía práctica. 1.ª ed. Zapopan, Jalisco, México: Editorial Innovación Educativa. https://www.cucs.udg.mx/libros/lectura_cucs.php?libro=Bioestadistica_enR_digital."
   }
 ]

@@ -6,9 +6,6 @@
 # Los parámetros están inspirados en la literatura (Remmers et al., 2007,
 # NEJM: OR por alelo T ~1.3; frecuencia del alelo T ~0.22 en controles
 # europeos), pero NO son datos reales de pacientes.
-#
-# Como conocemos la "verdad" que generó los datos, podemos comprobar
-# si la regresión logística la recupera.
 # =============================================================
 
 set.seed(2026)
